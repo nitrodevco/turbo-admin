@@ -1,0 +1,82 @@
+import { useSession } from '#/auth/session';
+
+/**
+ * The admin API. Empty means the panel's own origin, which is how it is deployed (the panel's
+ * site proxies `/api` to Turbo) and how it runs in development (Vite proxies it the same way).
+ * Set `VITE_API_URL` only when the API lives somewhere else.
+ */
+const API_URL = (import.meta.env.VITE_API_URL ?? '').replace(/\/+$/, '');
+
+export class ApiError extends Error {
+    readonly status: number;
+
+    constructor(status: number, message: string) {
+        super(message);
+        this.status = status;
+    }
+}
+
+const MESSAGES: Record<number, string> = {
+    400: 'The server could not use that request.',
+    401: 'Your session has ended. Sign in again.',
+    403: 'You do not have access to the admin panel.',
+    429: 'Too many attempts. Wait a minute and try again.',
+    500: 'The server ran into a problem. It is in the server log.',
+};
+
+/** The server's own explanation, when it gave one (`{ "message": "..." }`). */
+const messageOf = async (response: Response) => {
+    try {
+        const body = (await response.json()) as { message?: unknown };
+
+        return typeof body.message === 'string' ? body.message : null;
+    } catch {
+        return null;
+    }
+};
+
+/**
+ * Calls the admin API as the signed-in player. A 401 on a signed-in request means the session is
+ * gone (expired, signed out elsewhere, or the server restarted), so it is dropped and the app
+ * returns to sign-in.
+ */
+export const api = async <T>(path: string, init: RequestInit = {}): Promise<T> => {
+    const token = useSession.getState().session?.token;
+    const headers = new Headers(init.headers);
+
+    if (init.body !== undefined)
+        headers.set('Content-Type', 'application/json');
+
+    if (token)
+        headers.set('Authorization', `Bearer ${token}`);
+
+    let response: Response;
+
+    try {
+        response = await fetch(`${API_URL}/api${path}`, { ...init, headers });
+    } catch {
+        throw new ApiError(0, 'Cannot reach the admin API. Is the server running with Turbo:Admin:Enabled?');
+    }
+
+    if (response.status === 401 && token)
+        useSession.getState().signOut();
+
+    if (!response.ok) {
+        const message = (await messageOf(response)) ?? MESSAGES[response.status] ?? `The server answered ${response.status}.`;
+
+        throw new ApiError(response.status, message);
+    }
+
+    if (response.status === 204)
+        return undefined as T;
+
+    return (await response.json()) as T;
+};
+
+export const post = <T>(path: string, body?: unknown) =>
+    api<T>(path, { method: 'POST', body: body === undefined ? undefined : JSON.stringify(body) });
+
+export const put = <T>(path: string, body: unknown) =>
+    api<T>(path, { method: 'PUT', body: JSON.stringify(body) });
+
+export const remove = <T>(path: string) => api<T>(path, { method: 'DELETE' });

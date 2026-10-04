@@ -1,0 +1,254 @@
+import { SquareTerminal } from 'lucide-react';
+import { type FormEvent, type KeyboardEvent, useEffect, useMemo, useRef, useState } from 'react';
+
+import { useCommands, useRunCommand } from '#/api/queries';
+import type { CommandInfo, RunCommandResponse } from '#/api/types';
+import { Button, ErrorNotice, FIELD_CLASS, Input, Loading, PageBody, PageHeader, Panel } from '#/components/ui';
+import { cx } from '#/lib/cx';
+
+interface Entry {
+    id: number;
+    line: string;
+    response?: RunCommandResponse;
+    error?: string;
+}
+
+const OUTCOMES: Record<string, { label: string; tone: string }> = {
+    Completed: { label: 'Done', tone: 'text-emerald-600 dark:text-emerald-400' },
+    AwaitingConfirmation: { label: 'Needs confirming', tone: 'text-amber-600 dark:text-amber-400' },
+    Refused: { label: 'Not allowed', tone: 'text-red-600 dark:text-red-400' },
+    BindFailed: { label: 'Check the arguments', tone: 'text-red-600 dark:text-red-400' },
+    NeedsRoom: { label: 'Room only', tone: 'text-muted' },
+};
+
+const outcomeOf = (entry: Entry) => {
+    if (entry.error)
+        return { label: 'Failed', tone: 'text-red-600 dark:text-red-400' };
+
+    if (!entry.response)
+        return { label: 'Running...', tone: 'text-muted' };
+
+    if (!entry.response.found)
+        return { label: 'Unknown command', tone: 'text-red-600 dark:text-red-400' };
+
+    const outcome = entry.response.outcome ?? '';
+
+    return OUTCOMES[outcome] ?? { label: outcome, tone: 'text-muted' };
+};
+
+const CommandList = ({ commands, onPick }: { commands: CommandInfo[]; onPick: (command: CommandInfo) => void }) => {
+    const [ filter, setFilter ] = useState('');
+
+    const groups = useMemo(() => {
+        const needle = filter.trim().toLowerCase();
+        const shown = commands.filter(command =>
+            needle === ''
+            || command.name.includes(needle)
+            || command.aliases.some(alias => alias.includes(needle))
+            || command.description.toLowerCase().includes(needle));
+
+        return Object.entries(Object.groupBy(shown, command => command.category));
+    }, [ commands, filter ]);
+
+    return (
+        <Panel title="Commands" className="flex max-h-[70dvh] flex-col">
+            <div className="border-b border-line p-3">
+                <Input
+                    type="search"
+                    value={filter}
+                    onChange={event => setFilter(event.target.value)}
+                    placeholder="Find a command"
+                    aria-label="Find a command"
+                />
+            </div>
+            <div className="overflow-y-auto p-2">
+                {groups.length === 0 && <p className="p-2 text-sm text-muted">No command matches.</p>}
+                {groups.map(([ category, list ]) => (
+                    <div key={category} className="mb-3">
+                        <div className="px-2 py-1 text-xs font-semibold tracking-wide text-muted uppercase">{category}</div>
+                        {list?.map(command => (
+                            <button
+                                key={command.name}
+                                type="button"
+                                disabled={command.needsRoom}
+                                onClick={() => onPick(command)}
+                                title={command.help.join('\n')}
+                                className="block w-full rounded-md px-2 py-1.5 text-left hover:bg-subtle disabled:cursor-not-allowed disabled:opacity-50"
+                            >
+                                <span className="font-mono text-sm">{command.name}</span>
+                                {command.needsRoom && <span className="ml-2 text-xs text-muted">room only</span>}
+                                <span className="block truncate text-xs text-muted">{command.description}</span>
+                            </button>
+                        ))}
+                    </div>
+                ))}
+            </div>
+        </Panel>
+    );
+};
+
+/**
+ * The operator commands, run as the signed-in player: the same nodes, limits, confirmations and
+ * command log as typing them in the hotel.
+ */
+export const ConsolePage = () => {
+    const commands = useCommands();
+    const run = useRunCommand();
+    const [ entries, setEntries ] = useState<Entry[]>([]);
+    const [ line, setLine ] = useState('');
+    const [ historyIndex, setHistoryIndex ] = useState<number | null>(null);
+    const [ picked, setPicked ] = useState<CommandInfo | null>(null);
+    const nextId = useRef(0);
+    const input = useRef<HTMLInputElement>(null);
+    const bottom = useRef<HTMLDivElement>(null);
+
+    // A block, not an expression: newer browsers return a Promise from scrollIntoView, and an
+    // effect may only return a clean-up function.
+    useEffect(() => {
+        bottom.current?.scrollIntoView({ block: 'end' });
+    }, [ entries ]);
+
+    const submit = (text: string) => {
+        const trimmed = text.trim();
+
+        if (trimmed === '' || run.isPending)
+            return;
+
+        const id = nextId.current++;
+
+        setEntries(previous => [ ...previous, { id, line: trimmed } ]);
+        setLine('');
+        setHistoryIndex(null);
+
+        run.mutate(trimmed, {
+            onSuccess: response => setEntries(previous => previous.map(entry => entry.id === id ? { ...entry, response } : entry)),
+            onError: error => setEntries(previous => previous.map(entry => entry.id === id ? { ...entry, error: error.message } : entry)),
+        });
+    };
+
+    const handleSubmit = (event: FormEvent) => {
+        event.preventDefault();
+        submit(line);
+    };
+
+    // Up and down walk through what was typed before, newest first, as a shell does.
+    const handleKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
+        if (event.key !== 'ArrowUp' && event.key !== 'ArrowDown')
+            return;
+
+        const typed = entries.map(entry => entry.line);
+
+        if (typed.length === 0)
+            return;
+
+        event.preventDefault();
+
+        const current = historyIndex ?? typed.length;
+        const next = event.key === 'ArrowUp' ? Math.max(0, current - 1) : current + 1;
+
+        if (next >= typed.length) {
+            setHistoryIndex(null);
+            setLine('');
+
+            return;
+        }
+
+        setHistoryIndex(next);
+        setLine(typed[next] ?? '');
+    };
+
+    const pick = (command: CommandInfo) => {
+        setPicked(command);
+        setLine(`${command.name} `);
+        input.current?.focus();
+    };
+
+    return (
+        <>
+            <PageHeader title="Console" icon={<SquareTerminal />} description="Operator commands, run as you, with your permissions" />
+            <PageBody className="grid gap-5 lg:grid-cols-[18rem_1fr]">
+                <div className="order-2 lg:order-1">
+                    {commands.isPending && <Loading />}
+                    {commands.error && <ErrorNotice error={commands.error} />}
+                    {commands.data && <CommandList commands={commands.data} onPick={pick} />}
+                </div>
+                <div className="order-1 flex min-w-0 flex-col gap-3 lg:order-2">
+                    <Panel className="min-h-80 flex-1">
+                        <div className="max-h-[60dvh] overflow-y-auto p-4 font-mono text-sm">
+                            {entries.length === 0 && (
+                                <p className="font-sans text-muted">
+                                    Type a command as you would in the hotel, without the colon if you like:
+                                    {' '}
+                                    <code className="font-mono">online</code>
+                                    ,
+                                    {' '}
+                                    <code className="font-mono">whois Alice</code>
+                                    ,
+                                    {' '}
+                                    <code className="font-mono">hotelalert Back in five</code>
+                                    .
+                                </p>
+                            )}
+                            {entries.map((entry) => {
+                                const outcome = outcomeOf(entry);
+                                const awaiting = entry.response?.outcome === 'AwaitingConfirmation';
+
+                                return (
+                                    <div key={entry.id} className="mb-4">
+                                        <div className="flex flex-wrap items-baseline justify-between gap-2">
+                                            <span className="text-muted">
+                                                &gt;
+                                                {' '}
+                                                <span className="text-ink">{entry.line}</span>
+                                            </span>
+                                            <span className={`font-sans text-xs ${outcome.tone}`}>{outcome.label}</span>
+                                        </div>
+                                        {entry.error && <p className="mt-1 text-red-600 dark:text-red-400">{entry.error}</p>}
+                                        {entry.response?.lines.map((output, index) => (
+                                            <p
+                                                key={index}
+                                                className={`mt-1 whitespace-pre-wrap ${output.kind === 'reply' ? 'text-muted' : 'text-ink'}`}
+                                            >
+                                                {output.text}
+                                            </p>
+                                        ))}
+                                        {awaiting && (
+                                            <button
+                                                type="button"
+                                                onClick={() => submit('confirm')}
+                                                disabled={run.isPending}
+                                                className="mt-2 rounded-md bg-amber-500 px-3 py-1 font-sans text-sm font-medium text-white shadow-sm hover:bg-amber-600 disabled:opacity-50"
+                                            >
+                                                Confirm
+                                            </button>
+                                        )}
+                                    </div>
+                                );
+                            })}
+                            <div ref={bottom} />
+                        </div>
+                    </Panel>
+                    {picked && line.startsWith(picked.name) && picked.help.length > 0 && (
+                        <div className="rounded-md border border-line bg-subtle px-3 py-2 font-mono text-xs text-muted">
+                            {picked.help.map((help, index) => <div key={index}>{help}</div>)}
+                        </div>
+                    )}
+                    <form onSubmit={handleSubmit} className="flex gap-2">
+                        <input
+                            ref={input}
+                            value={line}
+                            onChange={event => setLine(event.target.value)}
+                            onKeyDown={handleKeyDown}
+                            placeholder="Command"
+                            aria-label="Command"
+                            autoComplete="off"
+                            spellCheck={false}
+                            className={cx(FIELD_CLASS, 'min-w-0 flex-1 font-mono')}
+                        />
+                        <Button type="submit" disabled={run.isPending || line.trim() === ''}>Run</Button>
+                    </form>
+                </div>
+            </PageBody>
+        </>
+    );
+};
