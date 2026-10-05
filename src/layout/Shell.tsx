@@ -1,44 +1,77 @@
 import { useQueryClient } from '@tanstack/react-query';
-import { Gauge, House, KeyRound, LogOut, Monitor, Moon, ShieldCheck, SquareTerminal, Sun, UserRound, X, Zap } from 'lucide-react';
-import { type ReactNode, useEffect, useRef, useState } from 'react';
-import { NavLink, Outlet, useLocation } from 'react-router';
+import { Gauge, House, KeyRound, LogOut, Monitor, Moon, Search, ShieldCheck, SquareTerminal, Sun, UserRound, Users, X } from 'lucide-react';
+import { type KeyboardEvent as ReactKeyboardEvent, type ReactNode, useEffect, useRef, useState } from 'react';
+import { Link, NavLink, Outlet, useLocation, useNavigate } from 'react-router';
 
 import { post } from '#/api/client';
+import { useLiveUpdates } from '#/api/live';
 import { useMe } from '#/api/queries';
+import type { MeResponse } from '#/api/types';
 import { useSession } from '#/auth/session';
+import { Segmented } from '#/components/ui';
 import { cx } from '#/lib/cx';
 import { setTheme, type ThemeChoice, useTheme } from '#/lib/theme';
 
 import { useDrawer } from './drawer';
 
-const NAV = [
+interface NavItem {
+    to: string;
+    label: string;
+    icon: ReactNode;
+    end: boolean;
+    needs?: keyof Pick<MeResponse, 'canViewRooms' | 'canViewPlayers' | 'canViewPermissions' | 'canResetPasskeys'>;
+}
+
+const NAV: NavItem[] = [
     { to: '/', label: 'Dashboard', icon: <Gauge />, end: true },
     { to: '/rooms', label: 'Rooms', icon: <House />, end: false, needs: 'canViewRooms' },
-    { to: '/console', label: 'Console', icon: <SquareTerminal />, end: false },
+    { to: '/players', label: 'Players', icon: <Users />, end: false, needs: 'canViewPlayers' },
     { to: '/permissions', label: 'Permissions', icon: <KeyRound />, end: false, needs: 'canViewPermissions' },
+    { to: '/console', label: 'Console', icon: <SquareTerminal />, end: false },
     { to: '/staff', label: 'Staff', icon: <ShieldCheck />, end: false, needs: 'canResetPasskeys' },
-] as const;
-
-const navRow = 'group relative flex w-full items-center gap-2.5 rounded-md px-2 py-1.5 text-left text-sm transition [&>svg]:size-4 [&>svg]:shrink-0 [&>svg]:transition';
-const navRowActive = 'bg-zinc-800 text-white before:absolute before:inset-y-1.5 before:-left-3 before:w-1 before:rounded-r-full before:bg-indigo-400 [&>svg]:text-indigo-300';
-const navRowIdle = 'hover:bg-zinc-800/60 hover:text-white hover:[&>svg]:-rotate-6 hover:[&>svg]:scale-110';
-
-const footerButton = 'grid size-7 place-items-center rounded-md bg-zinc-800 text-zinc-400 transition hover:text-white [&>svg]:size-3.5';
-
-const THEMES: { value: ThemeChoice; label: string; icon: ReactNode }[] = [
-    { value: 'light', label: 'Light', icon: <Sun /> },
-    { value: 'dark', label: 'Dark', icon: <Moon /> },
-    { value: 'system', label: 'As the system is', icon: <Monitor /> },
 ];
 
-/** Light, dark or as the system is: the chosen one's icon, which opens to all three above it. */
-const ThemeSwitch = () => {
+const THEMES: { value: ThemeChoice; label: string; icon: ReactNode }[] = [
+    { value: 'dark', label: 'Dark', icon: <Moon /> },
+    { value: 'light', label: 'Light', icon: <Sun /> },
+    { value: 'system', label: 'System', icon: <Monitor /> },
+];
+
+const useNav = () => {
+    const { data: me } = useMe();
+
+    return NAV.filter(item => !item.needs || me?.[item.needs]);
+};
+
+const useSignOut = () => {
+    const signOut = useSession(state => state.signOut);
+    const queryClient = useQueryClient();
+
+    return async () => {
+        // Ending the session on the server matters more than its answer: sign out here either way.
+        await post('/auth/logout').catch(() => undefined);
+        queryClient.clear();
+        signOut();
+    };
+};
+
+const sideLink = ({ isActive }: { isActive: boolean }) => cx(
+    'relative flex h-10 items-center gap-3 rounded-lg px-3 text-sm transition-colors [&>svg]:size-[18px] [&>svg]:shrink-0',
+    isActive
+        ? 'bg-subtle text-ink before:absolute before:inset-y-2.5 before:-left-3 before:w-[3px] before:rounded-r-full before:bg-accent [&>svg]:text-accent'
+        : 'text-muted hover:bg-subtle hover:text-ink',
+);
+
+/** The small square buttons at the sidebar's foot: the theme, signing out. */
+const footButton = 'grid size-9 shrink-0 place-items-center rounded-lg text-muted transition-colors hover:bg-subtle hover:text-ink [&>svg]:size-[18px]';
+
+/** Dark, light or as the system is: the chosen one's icon at the sidebar's foot, the three above it when opened. */
+const RailTheme = () => {
     const choice = useTheme();
     const [ open, setOpen ] = useState(false);
     const box = useRef<HTMLDivElement>(null);
-    const current = THEMES.find(entry => entry.value === choice) ?? THEMES[2]!;
+    const current = THEMES.find(entry => entry.value === choice) ?? THEMES[0]!;
 
-    // Open, it closes on Escape or a click anywhere else.
     useEffect(() => {
         if (!open)
             return;
@@ -62,61 +95,194 @@ const ThemeSwitch = () => {
     }, [ open ]);
 
     return (
-        <div ref={box} className="relative" onMouseEnter={() => setOpen(true)} onMouseLeave={() => setOpen(false)}>
+        <div ref={box} className="relative">
             <button
                 type="button"
-                onClick={() => setOpen(true)}
+                onClick={() => setOpen(!open)}
                 title={`Theme: ${current.label.toLowerCase()}`}
                 aria-label="Theme"
                 aria-expanded={open}
-                className={cx(footerButton, open && 'text-white')}
+                className={footButton}
             >
                 {current.icon}
             </button>
             {open && (
-                // Its bottom padding bridges the gap to the icon, so crossing it does not close it.
-                <div className="absolute right-0 bottom-full z-20 pb-1.5">
-                    <div role="radiogroup" aria-label="Theme options" className="flex items-center rounded-md bg-zinc-800 p-0.5 shadow-lg ring-1 ring-zinc-700">
-                        {THEMES.map(entry => (
-                            <button
-                                key={entry.value}
-                                type="button"
-                                role="radio"
-                                aria-checked={entry.value === choice}
-                                title={entry.label}
-                                aria-label={entry.label}
-                                onClick={() => {
-                                    setTheme(entry.value);
-                                    setOpen(false);
-                                }}
-                                className={cx(
-                                    'grid size-7 place-items-center rounded transition [&>svg]:size-3.5',
-                                    entry.value === choice ? 'bg-zinc-700 text-white' : 'text-zinc-400 hover:text-white',
-                                )}
-                            >
-                                {entry.icon}
-                            </button>
-                        ))}
-                    </div>
+                <div role="radiogroup" aria-label="Theme options" className="absolute right-0 bottom-full z-40 mb-2 flex gap-1 rounded-lg border border-line bg-surface p-1 shadow-xl">
+                    {THEMES.map(entry => (
+                        <button
+                            key={entry.value}
+                            type="button"
+                            role="radio"
+                            aria-checked={entry.value === choice}
+                            title={entry.label}
+                            aria-label={entry.label}
+                            onClick={() => {
+                                setTheme(entry.value);
+                                setOpen(false);
+                            }}
+                            className={cx('grid size-9 place-items-center rounded-md [&>svg]:size-4', entry.value === choice ? 'bg-subtle text-accent' : 'text-muted hover:text-ink')}
+                        >
+                            {entry.icon}
+                        </button>
+                    ))}
                 </div>
             )}
         </div>
     );
 };
 
-const Sidebar = () => {
+/** From a laptop up: the pages by name down the left, and at its foot your account, the theme and signing out. */
+const Rail = () => {
+    const nav = useNav();
     const player = useSession(state => state.session?.player);
-    const signOut = useSession(state => state.signOut);
+    const signOut = useSignOut();
+
+    return (
+        <nav aria-label="Main" className="sticky top-0 hidden h-dvh w-56 shrink-0 flex-col border-r border-line bg-chrome lg:flex">
+            <Link to="/" className="flex h-14 items-center gap-3 border-b border-line px-4">
+                <span className="grid size-8 place-items-center rounded-lg bg-accent font-mono text-sm font-bold text-on-accent">T</span>
+                <span className="font-mono text-xs font-medium tracking-[0.08em] text-ink uppercase">Turbo Admin</span>
+            </Link>
+            <div className="flex flex-1 flex-col gap-0.5 overflow-y-auto px-3 py-3">
+                {nav.map(item => (
+                    <NavLink key={item.to} to={item.to} end={item.end} className={sideLink}>
+                        {item.icon}
+                        {item.label}
+                    </NavLink>
+                ))}
+            </div>
+            <div className="flex items-center gap-1 border-t border-line px-3 py-3">
+                <NavLink
+                    to="/account"
+                    title="Your account"
+                    className={({ isActive }) => cx('flex h-9 min-w-0 flex-1 items-center gap-2 rounded-lg px-2 text-[13px] transition-colors', isActive ? 'bg-subtle text-ink' : 'text-muted hover:bg-subtle hover:text-ink')}
+                >
+                    <span className="grid size-6 shrink-0 place-items-center rounded-md bg-warn font-mono text-[10px] font-semibold text-[#0a0e13]">{player?.name.slice(0, 2).toUpperCase()}</span>
+                    <span className="truncate">{player?.name}</span>
+                </NavLink>
+                <RailTheme />
+                <button type="button" onClick={signOut} title="Sign out" aria-label="Sign out" className={cx(footButton, 'hover:text-bad')}>
+                    <LogOut />
+                </button>
+            </div>
+        </nav>
+    );
+};
+
+/** Where you are, as a path: each part but the last a link back up. */
+const Breadcrumb = () => {
+    const { pathname } = useLocation();
+    const parts = pathname.split('/').filter(Boolean);
+
+    return (
+        <div className="flex min-w-0 items-center gap-2 font-mono text-xs text-muted">
+            {parts.length === 0 && <span className="text-ink">dashboard</span>}
+            {parts.map((part, index) => {
+                const label = decodeURIComponent(part);
+                const last = index === parts.length - 1;
+
+                return (
+                    <span key={index} className="flex min-w-0 items-center gap-2">
+                        {index > 0 && <span aria-hidden>/</span>}
+                        {last
+                            ? <span className="truncate text-ink">{label}</span>
+                            : <Link to={`/${parts.slice(0, index + 1).join('/')}`} className="truncate hover:text-ink">{label}</Link>}
+                    </span>
+                );
+            })}
+        </div>
+    );
+};
+
+/**
+ * Jumping to a room from anywhere: its id opens it, anything else searches room names. Ctrl K (or
+ * Cmd K) puts the cursor in it.
+ */
+const JumpBox = () => {
+    const navigate = useNavigate();
+    const input = useRef<HTMLInputElement>(null);
+    const [ text, setText ] = useState('');
+
+    useEffect(() => {
+        const onKey = (event: KeyboardEvent) => {
+            if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 'k') {
+                event.preventDefault();
+                input.current?.focus();
+                input.current?.select();
+            }
+        };
+
+        window.addEventListener('keydown', onKey);
+
+        return () => window.removeEventListener('keydown', onKey);
+    }, []);
+
+    const handleKeyDown = (event: ReactKeyboardEvent<HTMLInputElement>) => {
+        if (event.key === 'Escape') {
+            input.current?.blur();
+
+            return;
+        }
+
+        const query = text.trim();
+
+        if (event.key !== 'Enter' || query === '')
+            return;
+
+        navigate(/^\d+$/.test(query) ? `/rooms/${query}` : `/rooms?${new URLSearchParams({ q: query, by: 'name', page: '1' })}`);
+        setText('');
+        input.current?.blur();
+    };
+
+    return (
+        <label className="flex h-9 w-full max-w-sm items-center gap-2 rounded-lg border border-line bg-surface px-2.5 text-muted focus-within:border-accent">
+            <Search className="size-4 shrink-0" />
+            <input
+                ref={input}
+                value={text}
+                onChange={event => setText(event.target.value)}
+                onKeyDown={handleKeyDown}
+                placeholder="Jump to a room by name or id"
+                aria-label="Jump to a room by name or id"
+                className="min-w-0 flex-1 bg-transparent text-[13px] text-ink outline-none placeholder:text-muted"
+            />
+            <kbd className="rounded border border-line px-1.5 font-mono text-[10px]">Ctrl K</kbd>
+        </label>
+    );
+};
+
+const TopBar = () => {
     const { data: me } = useMe();
-    const queryClient = useQueryClient();
+
+    return (
+        <div className="sticky top-0 z-30 hidden h-14 items-center gap-4 border-b border-line bg-chrome/95 px-6 backdrop-blur lg:flex">
+            <Breadcrumb />
+            <div className="ml-auto flex flex-1 justify-end">{me?.canViewRooms && <JumpBox />}</div>
+        </div>
+    );
+};
+
+const drawerLink = ({ isActive }: { isActive: boolean }) => cx(
+    'relative flex min-h-12 items-center gap-3 rounded-lg px-3 text-[15px] transition-colors [&>svg]:size-5 [&>svg]:shrink-0',
+    isActive
+        ? 'bg-subtle text-ink before:absolute before:inset-y-3 before:-left-3 before:w-[3px] before:rounded-r-full before:bg-accent [&>svg]:text-accent'
+        : 'text-muted hover:bg-subtle hover:text-ink',
+);
+
+/**
+ * On a phone and a tablet: the navigation as a drawer from the left, opened from the menu button
+ * in the page header. Every page by name, then your account, the theme and signing out. It closes
+ * when a page is picked, on a tap outside it, and on Escape; while closed, nothing in it can be
+ * tabbed to.
+ */
+const Drawer = () => {
+    const nav = useNav();
+    const choice = useTheme();
+    const signOut = useSignOut();
+    const player = useSession(state => state.session?.player);
     const open = useDrawer(state => state.open);
     const setOpen = useDrawer(state => state.setOpen);
-    const { pathname } = useLocation();
-
-    // On a phone the drawer closes once a page is picked, and on Escape.
-    useEffect(() => {
-        setOpen(false);
-    }, [ pathname, setOpen ]);
+    const close = () => setOpen(false);
 
     useEffect(() => {
         if (!open)
@@ -132,79 +298,71 @@ const Sidebar = () => {
         return () => window.removeEventListener('keydown', onKey);
     }, [ open, setOpen ]);
 
-    const handleSignOut = async () => {
-        // Ending the session on the server matters more than its answer: sign out here either way.
-        await post('/auth/logout').catch(() => undefined);
-        queryClient.clear();
-        signOut();
-    };
-
     return (
-        <>
-            {open && <div aria-hidden className="fixed inset-0 z-40 bg-zinc-950/50 lg:hidden" onClick={() => setOpen(false)} />}
+        <div className="lg:hidden">
+            <div
+                aria-hidden
+                onClick={close}
+                className={cx('fixed inset-0 z-40 bg-[rgb(5_8_12/0.6)] transition-opacity', open ? 'opacity-100' : 'pointer-events-none opacity-0')}
+            />
             <aside
+                aria-label="Main"
+                inert={!open}
                 className={cx(
-                    'fixed inset-y-0 left-0 z-50 flex w-72 max-w-[85vw] shrink-0 flex-col bg-zinc-900 text-zinc-300 shadow-2xl transition-transform duration-200 lg:sticky lg:top-0 lg:z-auto lg:h-dvh lg:w-60 lg:translate-x-0 lg:self-start lg:shadow-none dark:bg-[#131316]',
+                    'fixed inset-y-0 left-0 z-50 flex w-72 max-w-[85vw] flex-col border-r border-line bg-chrome shadow-2xl transition-transform duration-200',
                     open ? 'translate-x-0' : '-translate-x-full',
                 )}
             >
-                <div className="flex items-center justify-between gap-2 px-5 py-5">
-                    <NavLink to="/" className="flex items-center gap-2.5">
-                        <span className="grid size-8 place-items-center rounded-lg bg-indigo-500 text-white shadow-sm [&>svg]:size-4">
-                            <Zap />
-                        </span>
-                        <span className="leading-tight">
-                            <span className="block text-sm font-semibold text-white">Turbo</span>
-                            <span className="block text-xs text-zinc-400">Admin</span>
-                        </span>
-                    </NavLink>
-                    <button
-                        type="button"
-                        onClick={() => setOpen(false)}
-                        aria-label="Close menu"
-                        className="grid size-8 place-items-center rounded-md text-zinc-400 hover:bg-zinc-800 hover:text-white lg:hidden [&>svg]:size-4"
-                    >
+                <div className="flex items-center gap-3 px-4 pt-[calc(1rem+env(safe-area-inset-top))] pb-4">
+                    <span className="grid size-10 place-items-center rounded-lg bg-accent font-mono text-base font-bold text-on-accent">T</span>
+                    <span className="min-w-0 flex-1">
+                        <span className="block text-sm font-semibold">Turbo Admin</span>
+                        {player && <span className="block truncate font-mono text-[11px] text-muted">{player.name}</span>}
+                    </span>
+                    <button type="button" onClick={close} aria-label="Close menu" className="grid size-11 place-items-center rounded-lg text-muted hover:bg-subtle hover:text-ink [&>svg]:size-5">
                         <X />
                     </button>
                 </div>
-                <nav className="sidebar-scroll flex-1 space-y-0.5 overflow-y-auto px-3 pb-4">
-                    {NAV.filter(item => !('needs' in item) || me?.[item.needs]).map(item => (
-                        <NavLink
-                            key={item.to}
-                            to={item.to}
-                            end={item.end}
-                            className={({ isActive }) => cx(navRow, isActive ? navRowActive : navRowIdle)}
-                        >
+                <nav className="flex-1 overflow-y-auto px-3">
+                    {nav.map(item => (
+                        <NavLink key={item.to} to={item.to} end={item.end} onClick={close} className={drawerLink}>
                             {item.icon}
                             {item.label}
                         </NavLink>
                     ))}
                 </nav>
-                <div className="flex items-center gap-2 border-t border-zinc-800 px-4 py-3">
-                    <NavLink
-                        to="/account"
-                        title={`${player?.name ?? ''}: your account`}
-                        className={({ isActive }) => cx('flex min-w-0 flex-1 items-center gap-2 text-xs [&>svg]:size-3.5 [&>svg]:shrink-0', isActive ? 'text-white' : 'hover:text-white')}
-                    >
+                <div className="flex flex-col gap-1 border-t border-line px-3 pt-3 pb-[calc(0.75rem+env(safe-area-inset-bottom))]">
+                    <NavLink to="/account" onClick={close} className={drawerLink}>
                         <UserRound />
-                        <span className="truncate">{player?.name}</span>
+                        Your account
                     </NavLink>
-                    <ThemeSwitch />
-                    <button type="button" onClick={handleSignOut} title="Sign out" aria-label="Sign out" className={footerButton}>
+                    <div className="px-1 py-2">
+                        <Segmented label="Theme" value={choice} onChange={value => setTheme(value as ThemeChoice)} options={THEMES.map(x => ({ value: x.value, label: x.label }))} />
+                    </div>
+                    <button type="button" onClick={signOut} className="flex min-h-12 items-center gap-3 rounded-lg px-3 text-[15px] text-bad hover:bg-subtle [&>svg]:size-5">
                         <LogOut />
+                        Sign out
                     </button>
                 </div>
             </aside>
-        </>
+        </div>
     );
 };
 
-/** The frame every signed-in page sits in: the sidebar, and the page with its own header. */
-export const Shell = () => (
-    <div className="flex min-h-dvh">
-        <Sidebar />
-        <main className="flex min-w-0 flex-1 flex-col">
-            <Outlet />
-        </main>
-    </div>
-);
+/** The frame every signed-in page sits in, and the live stream that keeps them current. */
+export const Shell = () => {
+    useLiveUpdates();
+
+    return (
+        <div className="flex min-h-dvh">
+            <Rail />
+            <Drawer />
+            <div className="flex min-w-0 flex-1 flex-col">
+                <TopBar />
+                <main className="flex min-w-0 flex-1 flex-col pb-8 lg:pb-10">
+                    <Outlet />
+                </main>
+            </div>
+        </div>
+    );
+};

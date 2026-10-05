@@ -189,7 +189,7 @@ const HoldsCard = ({ player }: { player: PlayerPermissions }) => {
                 </ul>
             )}
             {player.unregistered.length > 0 && (
-                <p className="border-t border-line px-4 py-3 text-xs text-amber-700 dark:text-amber-400">
+                <p className="border-t border-line px-4 py-3 text-xs text-warn">
                     Set but not registered, so they do nothing: {player.unregistered.join(', ')}
                 </p>
             )}

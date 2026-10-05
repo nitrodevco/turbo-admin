@@ -3,7 +3,8 @@ import { type FormEvent, useId, useMemo, useState } from 'react';
 import { Link } from 'react-router';
 
 import { type MetaAssignment, type NodeAssignment, type Target, targetCalls, useCatalog, usePermissionChange } from '#/api/permissions';
-import { Button, EmptyState, ErrorNotice, Input, Panel, Select, Td, Th } from '#/components/ui';
+import { PhoneLabel, Row, RowList } from '#/components/RowList';
+import { Button, EmptyState, ErrorNotice, Input, Panel, Select } from '#/components/ui';
 
 import { Expiry, TimingFields, Verdict } from './common';
 
@@ -79,56 +80,44 @@ export const NodesCard = ({ target, nodes, canEdit }: { target: Target; nodes: N
             {nodes.length === 0
                 ? <EmptyState>No nodes are set here.</EmptyState>
                 : (
-                        <div className="overflow-x-auto">
-                            <table className="w-full text-sm">
-                                <thead>
-                                    <tr>
-                                        <Th>Node</Th>
-                                        <Th>Value</Th>
-                                        {canEdit && <Th className="w-0" />}
-                                    </tr>
-                                </thead>
-                                <tbody className="[&>tr:last-child>td]:border-b-0">
-                                    {nodes.map(assignment => (
-                                        <tr key={`${assignment.node}|${assignment.expiresAtUtc ?? ''}`} className="hover:bg-subtle/60">
-                                            <Td>
-                                                {assignment.node.endsWith('*')
-                                                    ? <code className="font-mono text-xs">{assignment.node}</code>
-                                                    : (
-                                                            <Link
-                                                                to={`/permissions/search?node=${encodeURIComponent(assignment.node)}`}
-                                                                className="font-mono text-xs hover:text-accent"
-                                                                title="Who else is given it"
-                                                            >
-                                                                {assignment.node}
-                                                            </Link>
-                                                        )}
-                                                {assignment.description && <div className="text-xs text-muted">{assignment.description}</div>}
-                                            </Td>
-                                            <Td className="whitespace-nowrap">
-                                                <span className="inline-flex flex-wrap items-center gap-1.5">
-                                                    <Verdict value={assignment.value} />
-                                                    <Expiry at={assignment.expiresAtUtc} />
-                                                </span>
-                                            </Td>
-                                            {canEdit && (
-                                                <Td>
-                                                    <Button
-                                                        variant="ghost"
-                                                        icon={<Trash2 />}
-                                                        aria-label={`Unset ${assignment.node}`}
-                                                        title="Unset"
-                                                        disabled={unset.isPending}
-                                                        onClick={() => handleRemove(assignment)}
-                                                        className="h-7 px-2"
-                                                    />
-                                                </Td>
-                                            )}
-                                        </tr>
-                                    ))}
-                                </tbody>
-                            </table>
-                        </div>
+                        <RowList
+                            columns={canEdit ? 'minmax(0,1fr) max-content max-content' : 'minmax(0,1fr) max-content'}
+                            headers={[ { label: 'Node' }, { label: 'Value' }, ...(canEdit ? [ {} ] : []) ]}
+                        >
+                            {nodes.map(assignment => (
+                                <Row key={`${assignment.node}|${assignment.expiresAtUtc ?? ''}`}>
+                                    <div className="wrap-anywhere">
+                                        {assignment.node.endsWith('*')
+                                            ? <code className="font-mono text-xs">{assignment.node}</code>
+                                            : (
+                                                    <Link
+                                                        to={`/permissions/search?node=${encodeURIComponent(assignment.node)}`}
+                                                        className="font-mono text-xs hover:text-accent"
+                                                        title="Who else is given it"
+                                                    >
+                                                        {assignment.node}
+                                                    </Link>
+                                                )}
+                                        {assignment.description && <div className="text-xs text-muted">{assignment.description}</div>}
+                                    </div>
+                                    <span className="inline-flex flex-wrap items-center gap-1.5">
+                                        <Verdict value={assignment.value} />
+                                        <Expiry at={assignment.expiresAtUtc} />
+                                    </span>
+                                    {canEdit && (
+                                        <Button
+                                            variant="ghost"
+                                            icon={<Trash2 />}
+                                            aria-label={`Unset ${assignment.node}`}
+                                            title="Unset"
+                                            disabled={unset.isPending}
+                                            onClick={() => handleRemove(assignment)}
+                                            className="ml-auto h-7 px-2"
+                                        />
+                                    )}
+                                </Row>
+                            ))}
+                        </RowList>
                     )}
             {canEdit && (
                 <form onSubmit={handleSubmit} className="flex flex-wrap items-center gap-2 border-t border-line p-4">
@@ -192,50 +181,39 @@ export const MetaCard = ({ target, meta, canEdit }: { target: Target; meta: Meta
             {meta.length === 0
                 ? <EmptyState>No meta is set here.</EmptyState>
                 : (
-                        <div className="overflow-x-auto">
-                            <table className="w-full text-sm">
-                                <thead>
-                                    <tr>
-                                        <Th>Key</Th>
-                                        <Th>Value</Th>
-                                        {canEdit && <Th className="w-0" />}
-                                    </tr>
-                                </thead>
-                                <tbody className="[&>tr:last-child>td]:border-b-0">
-                                    {meta.map(assignment => (
-                                        <tr key={`${assignment.key}|${assignment.expiresAtUtc ?? ''}`} className="hover:bg-subtle/60">
-                                            <Td>
-                                                <code className="font-mono text-xs">{assignment.key}</code>
-                                                {assignment.description && <div className="text-xs text-muted">{assignment.description}</div>}
-                                            </Td>
-                                            <Td>
-                                                <span className="inline-flex flex-wrap items-center gap-1.5">
-                                                    <code className="font-mono text-xs">{assignment.value}</code>
-                                                    <Expiry at={assignment.expiresAtUtc} />
-                                                </span>
-                                            </Td>
-                                            {canEdit && (
-                                                <Td>
-                                                    <Button
-                                                        variant="ghost"
-                                                        icon={<Trash2 />}
-                                                        aria-label={`Unset ${assignment.key}`}
-                                                        title="Unset"
-                                                        disabled={unset.isPending}
-                                                        onClick={() => {
-                                                            setMessage(null);
-                                                            set.reset();
-                                                            unset.mutate([ assignment.key, assignment.expiresAtUtc !== null ]);
-                                                        }}
-                                                        className="h-7 px-2"
-                                                    />
-                                                </Td>
-                                            )}
-                                        </tr>
-                                    ))}
-                                </tbody>
-                            </table>
-                        </div>
+                        <RowList
+                            columns={canEdit ? 'minmax(0,1fr) minmax(0,1fr) max-content' : 'minmax(0,1fr) minmax(0,1fr)'}
+                            headers={[ { label: 'Key' }, { label: 'Value' }, ...(canEdit ? [ {} ] : []) ]}
+                        >
+                            {meta.map(assignment => (
+                                <Row key={`${assignment.key}|${assignment.expiresAtUtc ?? ''}`}>
+                                    <div className="wrap-anywhere">
+                                        <code className="font-mono text-xs">{assignment.key}</code>
+                                        {assignment.description && <div className="text-xs text-muted">{assignment.description}</div>}
+                                    </div>
+                                    <span className="inline-flex flex-wrap items-center gap-1.5 wrap-anywhere">
+                                        <PhoneLabel>=</PhoneLabel>
+                                        <code className="font-mono text-xs">{assignment.value}</code>
+                                        <Expiry at={assignment.expiresAtUtc} />
+                                    </span>
+                                    {canEdit && (
+                                        <Button
+                                            variant="ghost"
+                                            icon={<Trash2 />}
+                                            aria-label={`Unset ${assignment.key}`}
+                                            title="Unset"
+                                            disabled={unset.isPending}
+                                            onClick={() => {
+                                                setMessage(null);
+                                                set.reset();
+                                                unset.mutate([ assignment.key, assignment.expiresAtUtc !== null ]);
+                                            }}
+                                            className="ml-auto h-7 px-2"
+                                        />
+                                    )}
+                                </Row>
+                            ))}
+                        </RowList>
                     )}
             {canEdit && (
                 <form onSubmit={handleSubmit} className="flex flex-wrap items-center gap-2 border-t border-line p-4">

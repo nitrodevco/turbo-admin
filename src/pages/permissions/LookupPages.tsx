@@ -4,7 +4,8 @@ import { Link, useSearchParams } from 'react-router';
 
 import { useCatalog, useHolders, useLog } from '#/api/permissions';
 import { ListToolbar } from '#/components/ListToolbar';
-import { Badge, Button, EmptyState, ErrorNotice, Input, Loading, PageBody, Panel, Td, Th } from '#/components/ui';
+import { Row, RowList } from '#/components/RowList';
+import { Badge, Button, EmptyState, ErrorNotice, Input, Loading, PageBody, Panel } from '#/components/ui';
 
 import { AuditTable, Expiry, PermissionsHeader, Verdict } from './common';
 import { targetLink } from './links';
@@ -65,36 +66,23 @@ export const SearchPage = () => {
                             {holders.data.length === 0
                                 ? <EmptyState>Nobody is given {node}, directly or by wildcard.</EmptyState>
                                 : (
-                                        <div className="overflow-x-auto">
-                                            <table className="w-full text-sm">
-                                                <thead>
-                                                    <tr>
-                                                        <Th>Given to</Th>
-                                                        <Th>As</Th>
-                                                        <Th>Value</Th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody className="[&>tr:last-child>td]:border-b-0">
-                                                    {holders.data.map(holder => (
-                                                        <tr key={`${holder.targetType}|${holder.targetId}|${holder.node}|${holder.expiresAtUtc ?? ''}`} className="hover:bg-subtle/60">
-                                                            <Td>
-                                                                <span className="mr-1.5 text-xs text-muted">{holder.targetType === 'Group' ? 'group' : 'player'}</span>
-                                                                <Link to={targetLink(holder.targetType, holder.targetId, holder.targetName)} className="font-medium hover:text-accent">
-                                                                    {holder.targetName}
-                                                                </Link>
-                                                            </Td>
-                                                            <Td><code className="font-mono text-xs">{holder.node}</code></Td>
-                                                            <Td>
-                                                                <span className="inline-flex flex-wrap items-center gap-1.5">
-                                                                    <Verdict value={holder.value} />
-                                                                    <Expiry at={holder.expiresAtUtc} />
-                                                                </span>
-                                                            </Td>
-                                                        </tr>
-                                                    ))}
-                                                </tbody>
-                                            </table>
-                                        </div>
+                                        <RowList columns="minmax(0,1fr) minmax(0,1fr) max-content" headers={[ { label: 'Given to' }, { label: 'As' }, { label: 'Value' } ]}>
+                                            {holders.data.map(holder => (
+                                                <Row key={`${holder.targetType}|${holder.targetId}|${holder.node}|${holder.expiresAtUtc ?? ''}`}>
+                                                    <span>
+                                                        <span className="mr-1.5 text-xs text-muted">{holder.targetType === 'Group' ? 'group' : 'player'}</span>
+                                                        <Link to={targetLink(holder.targetType, holder.targetId, holder.targetName)} className="font-medium hover:text-accent">
+                                                            {holder.targetName}
+                                                        </Link>
+                                                    </span>
+                                                    <code className="font-mono text-xs wrap-anywhere">{holder.node}</code>
+                                                    <span className="inline-flex flex-wrap items-center gap-1.5">
+                                                        <Verdict value={holder.value} />
+                                                        <Expiry at={holder.expiresAtUtc} />
+                                                    </span>
+                                                </Row>
+                                            ))}
+                                        </RowList>
                                     )}
                         </>
                     )}

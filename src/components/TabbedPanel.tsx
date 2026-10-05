@@ -19,7 +19,7 @@ export const TabbedPanel = ({ tabs, className }: { tabs: Tab[]; className?: stri
     const current = tabs.find(tab => tab.id === selected) ?? tabs[0];
 
     return (
-        <section className={cx('rounded-lg border border-line bg-surface shadow-sm', className)}>
+        <section className={cx('rounded-xl border border-line bg-surface', className)}>
             <Tabs
                 value={current?.id}
                 onChange={setSelected}

@@ -3,8 +3,9 @@ import type { ReactNode } from 'react';
 import { Link } from 'react-router';
 
 import type { AuditEntry } from '#/api/permissions';
+import { PhoneLabel, Row, RowList } from '#/components/RowList';
 import type { TabItem } from '#/components/Tabs';
-import { Badge, EmptyState, PageHeader, Select, Td, Th } from '#/components/ui';
+import { Badge, EmptyState, PageHeader, Select } from '#/components/ui';
 import { formatDateTime } from '#/pages/rooms/labels';
 
 import { DURATIONS, targetLink } from './links';
@@ -29,7 +30,6 @@ export const PermissionsHeader = ({ section, title = 'Permissions', description,
 }) => (
     <PageHeader
         title={title}
-        icon={<KeyRound />}
         description={description}
         back={back}
         tabs={{ items: SECTIONS, value: section }}
@@ -87,48 +87,40 @@ export const AuditTable = ({ entries, showTarget = true }: { entries: AuditEntry
     entries.length === 0
         ? <EmptyState>No changes recorded.</EmptyState>
         : (
-                <div className="overflow-x-auto">
-                    <table className="w-full text-sm">
-                        <thead>
-                            <tr>
-                                <Th>When</Th>
-                                {showTarget && <Th>About</Th>}
-                                <Th>Change</Th>
-                                <Th>By</Th>
-                            </tr>
-                        </thead>
-                        <tbody className="[&>tr:last-child>td]:border-b-0">
-                            {entries.map((entry, index) => (
-                                <tr key={index} className="hover:bg-subtle/60">
-                                    <Td className="whitespace-nowrap text-muted">{formatDateTime(entry.atUtc)}</Td>
-                                    {showTarget && (
-                                        <Td>
-                                            <span className="mr-1.5 text-xs text-muted">{entry.targetType === 'Group' ? 'group' : 'player'}</span>
-                                            <Link to={targetLink(entry.targetType, entry.targetId, entry.targetName)} className="font-medium hover:text-accent">
-                                                {entry.targetName}
-                                            </Link>
-                                        </Td>
-                                    )}
-                                    <Td>
-                                        <span className="text-muted">{ACTIONS[entry.action] ?? entry.action}</span>
-                                        {' '}
-                                        <code className="font-mono text-xs">{entry.subject}</code>
-                                        {entry.value !== null && (
-                                            <>
-                                                {' = '}
-                                                <code className="font-mono text-xs">{entry.value}</code>
-                                            </>
-                                        )}
-                                        {entry.expiresAtUtc && <span className="ml-2"><Expiry at={entry.expiresAtUtc} /></span>}
-                                    </Td>
-                                    <Td className="whitespace-nowrap">
-                                        {entry.actorId !== null
-                                            ? <Link to={`/permissions/players/${entry.actorId}`} className="hover:text-accent">{entry.actorName}</Link>
-                                            : <span className="text-muted">console</span>}
-                                    </Td>
-                                </tr>
-                            ))}
-                        </tbody>
-                    </table>
-                </div>
+                <RowList
+                    columns={showTarget ? 'max-content minmax(0,1fr) minmax(0,2fr) max-content' : 'max-content minmax(0,2fr) max-content'}
+                    headers={[ { label: 'When' }, ...(showTarget ? [ { label: 'About' } ] : []), { label: 'Change' }, { label: 'By' } ]}
+                >
+                    {entries.map((entry, index) => (
+                        <Row key={index}>
+                            <span className="text-xs whitespace-nowrap text-muted sm:text-sm">{formatDateTime(entry.atUtc)}</span>
+                            {showTarget && (
+                                <span>
+                                    <span className="mr-1.5 text-xs text-muted">{entry.targetType === 'Group' ? 'group' : 'player'}</span>
+                                    <Link to={targetLink(entry.targetType, entry.targetId, entry.targetName)} className="font-medium hover:text-accent">
+                                        {entry.targetName}
+                                    </Link>
+                                </span>
+                            )}
+                            <span className="basis-full wrap-anywhere sm:basis-auto">
+                                <span className="text-muted">{ACTIONS[entry.action] ?? entry.action}</span>
+                                {' '}
+                                <code className="font-mono text-xs">{entry.subject}</code>
+                                {entry.value !== null && (
+                                    <>
+                                        {' = '}
+                                        <code className="font-mono text-xs">{entry.value}</code>
+                                    </>
+                                )}
+                                {entry.expiresAtUtc && <span className="ml-2"><Expiry at={entry.expiresAtUtc} /></span>}
+                            </span>
+                            <span className="whitespace-nowrap">
+                                <PhoneLabel>by </PhoneLabel>
+                                {entry.actorId !== null
+                                    ? <Link to={`/permissions/players/${entry.actorId}`} className="hover:text-accent">{entry.actorName}</Link>
+                                    : <span className="text-muted">console</span>}
+                            </span>
+                        </Row>
+                    ))}
+                </RowList>
             );

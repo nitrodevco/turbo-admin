@@ -1,4 +1,4 @@
-import { Copy, KeyRound, ShieldCheck } from 'lucide-react';
+import { Copy, KeyRound } from 'lucide-react';
 import { type FormEvent, useState } from 'react';
 
 import { post } from '#/api/client';
@@ -73,7 +73,7 @@ export const StaffPage = () => {
 
     return (
         <>
-            <PageHeader title="Staff" icon={<ShieldCheck />} tab="Passkeys" description="Setup and reset links for other staff's passkeys" />
+            <PageHeader title="Staff passkeys" description="Setup and reset links for other staff's passkeys" />
             <PageBody className="grid max-w-2xl gap-5">
                 <Panel
                     title="Set up or reset a passkey"

@@ -1,9 +1,11 @@
-import { Clock, Gauge, House, MemoryStick, Users } from 'lucide-react';
 import { Link } from 'react-router';
 
+import { useLive } from '#/api/live';
 import { useDashboard, useMe } from '#/api/queries';
 import type { AvailabilityPhase } from '#/api/types';
-import { Badge, EmptyState, ErrorNotice, Loading, PageBody, PageHeader, Panel, Stat, Td, Th } from '#/components/ui';
+import { Badge, EmptyState, ErrorNotice, Label, LiveBadge, Loading, PageBody, PageHeader, Panel, Stat } from '#/components/ui';
+
+import { HotelControls } from './HotelControls';
 
 const AVAILABILITY: Record<string, { label: string; tone: 'green' | 'amber' | 'red' }> = {
     Open: { label: 'Open', tone: 'green' },
@@ -36,67 +38,61 @@ const AvailabilityBadge = ({ phase, atUtc }: { phase: AvailabilityPhase; atUtc: 
 export const DashboardPage = () => {
     const { data, error, isPending, dataUpdatedAt } = useDashboard();
     const canViewRooms = useMe().data?.canViewRooms ?? false;
+    const live = useLive(state => state.connected);
 
     return (
         <>
             <PageHeader
                 title="Dashboard"
-                icon={<Gauge />}
-                description={data ? `Turbo ${data.version}, updated ${new Date(dataUpdatedAt).toLocaleTimeString()}` : 'The hotel right now'}
+                description={data ? `Turbo ${data.version} · updated ${new Date(dataUpdatedAt).toLocaleTimeString()}` : 'The hotel right now'}
             >
+                <LiveBadge live={live}>{live ? 'LIVE' : 'EVERY 10S'}</LiveBadge>
                 {data && <AvailabilityBadge phase={data.availability} atUtc={data.availabilityAtUtc} />}
             </PageHeader>
-            <PageBody>
-                {error && <div className="mb-4"><ErrorNotice error={error} /></div>}
+            <PageBody className="flex flex-col gap-4 lg:gap-5">
+                {error && <ErrorNotice error={error} />}
                 {isPending && <Loading />}
                 {data && (
                     <>
-                        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
-                            <Stat label="Players online" value={data.playersOnline.toLocaleString()} icon={<Users />} tone="bg-violet-500" />
-                            <Stat label="Rooms loaded" value={data.roomsLoaded.toLocaleString()} icon={<House />} tone="bg-sky-500" />
-                            <Stat label="Uptime" value={formatUptime(data.startedAtUtc)} detail={`Turbo ${data.version}`} icon={<Clock />} tone="bg-emerald-500" />
+                        <section aria-label="At a glance" className="grid grid-cols-2 gap-3 xl:grid-cols-4">
+                            <Stat label="Players online" value={data.playersOnline.toLocaleString()} />
+                            <Stat label="Rooms loaded" value={data.roomsLoaded.toLocaleString()} />
+                            <Stat label="Uptime" value={formatUptime(data.startedAtUtc)} detail={`Turbo ${data.version}`} />
                             <Stat
                                 label="Memory"
                                 value={`${data.workingSetMb.toLocaleString()} MB`}
-                                detail={`${data.managedMb.toLocaleString()} MB managed, ${data.silosActive} of ${data.silosTotal} silos active`}
-                                icon={<MemoryStick />}
-                                tone="bg-amber-500"
+                                detail={`${data.managedMb.toLocaleString()} MB managed · ${data.silosActive}/${data.silosTotal} silos`}
                             />
-                        </div>
-                        <Panel title="Busiest rooms" description="Updates every 10 seconds" className="mt-5 overflow-hidden">
-                            {data.busiestRooms.length === 0
-                                ? <EmptyState>Nobody is in a room right now.</EmptyState>
-                                : (
-                                        <div className="overflow-x-auto">
-                                            <table className="w-full text-sm">
-                                                <thead>
-                                                    <tr>
-                                                        <Th>Room</Th>
-                                                        <Th>Owner</Th>
-                                                        <Th className="text-right">Players</Th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody className="[&>tr:last-child>td]:border-b-0">
+                        </section>
+                        <div className="flex flex-wrap items-start gap-4 lg:gap-5">
+                            <div className="min-w-0 flex-[999_1_480px]">
+                                <Panel title="Busiest rooms" actions={<Label>refreshes every 10 s</Label>}>
+                                    {data.busiestRooms.length === 0
+                                        ? <EmptyState>Nobody is in a room right now.</EmptyState>
+                                        : (
+                                                <ul>
                                                     {data.busiestRooms.map(room => (
-                                                        <tr key={room.id} className="hover:bg-subtle/60">
-                                                            <Td>
+                                                        <li key={room.id} className="flex min-h-14 items-center gap-3 border-t border-line px-4 py-2.5 first:border-t-0">
+                                                            <div className="min-w-0 flex-1">
                                                                 {canViewRooms
-                                                                    ? <Link to={`/rooms/${room.id}`} className="font-medium hover:text-accent">{room.name}</Link>
-                                                                    : <span className="font-medium">{room.name}</span>}
-                                                                <span className="ml-2 text-muted">#{room.id}</span>
-                                                            </Td>
-                                                            <Td className="text-muted">{room.ownerName}</Td>
-                                                            <Td className="text-right tabular-nums">
+                                                                    ? <Link to={`/rooms/${room.id}`} className="block truncate font-medium hover:text-accent">{room.name}</Link>
+                                                                    : <span className="block truncate font-medium">{room.name}</span>}
+                                                                <span className="block truncate font-mono text-[11px] text-muted">#{room.id} · {room.ownerName}</span>
+                                                            </div>
+                                                            <span className="shrink-0 font-mono text-sm tabular-nums">
                                                                 {room.population}
-                                                                <span className="text-muted"> / {room.playersMax}</span>
-                                                            </Td>
-                                                        </tr>
+                                                                <span className="text-muted">/{room.playersMax}</span>
+                                                            </span>
+                                                        </li>
                                                     ))}
-                                                </tbody>
-                                            </table>
-                                        </div>
-                                    )}
-                        </Panel>
+                                                </ul>
+                                            )}
+                                </Panel>
+                            </div>
+                            <div className="min-w-0 flex-[1_1_320px] max-lg:order-first">
+                                <HotelControls phase={data.availability} />
+                            </div>
+                        </div>
                     </>
                 )}
             </PageBody>

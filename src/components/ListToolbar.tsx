@@ -7,6 +7,13 @@ import { Pagination } from './Pagination';
 const lessMotion = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 /**
+ * What covers the top of the window, where the bar sticks below it: the shell's top bar from a
+ * laptop up (h-14). On a phone the page's own header is pinned there, so the bar scrolls with the
+ * list instead (`lg:sticky`).
+ */
+const coveredTop = () => (window.matchMedia('(min-width: 64rem)').matches ? 56 : 0);
+
+/**
  * A list's controls in one bar, as nitro-studio has them: its search and filters (`children`) and
  * its count and pages at the end. It heads the card the list is in (its first child; the card is
  * `overflow-clip`, never `overflow-hidden`, which would stop it sticking). The bar stays at the top
@@ -24,17 +31,18 @@ export const ListToolbar = ({ children, page, watch }: {
     const key = JSON.stringify(watch);
     const lastKey = useRef(key);
 
-    // Stuck once the place it would be has scrolled up past the top of the window.
+    // Stuck once the place it would be has scrolled up past where it sticks.
     useEffect(() => {
         const element = start.current;
 
         if (!element)
             return;
 
+        const covered = coveredTop();
         const observer = new IntersectionObserver(([ entry ]) => {
             if (entry)
-                setStuck(!entry.isIntersecting && entry.boundingClientRect.top < 0);
-        });
+                setStuck(covered > 0 && !entry.isIntersecting && entry.boundingClientRect.top < covered);
+        }, { rootMargin: `-${covered}px 0px 0px 0px` });
 
         observer.observe(element);
 
@@ -53,7 +61,7 @@ export const ListToolbar = ({ children, page, watch }: {
         if (!element)
             return;
 
-        const top = element.getBoundingClientRect().top + window.scrollY;
+        const top = element.getBoundingClientRect().top + window.scrollY - coveredTop();
 
         if (window.scrollY > top + 1)
             window.scrollTo({ top, behavior: lessMotion() ? 'auto' : 'smooth' });
@@ -65,8 +73,8 @@ export const ListToolbar = ({ children, page, watch }: {
             <div ref={start} aria-hidden className="h-0" />
             <div
                 className={cx(
-                    'sticky top-0 z-20 border-b border-line bg-surface px-3 py-2.5 transition-shadow sm:px-4',
-                    stuck && 'shadow-[0_6px_12px_-8px_rgb(0_0_0/0.25)]',
+                    'z-20 rounded-t-xl border-b border-line bg-surface px-3 py-2.5 transition-shadow sm:px-4 lg:sticky lg:top-14',
+                    stuck && 'rounded-none shadow-[0_6px_12px_-8px_rgb(0_0_0/0.4)]',
                 )}
             >
                 {/* One row: the controls wrap among themselves, the pages stay at its end. */}

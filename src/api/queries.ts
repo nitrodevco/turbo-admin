@@ -1,9 +1,10 @@
 import { keepPreviousData, useMutation, useQuery } from '@tanstack/react-query';
 
 import { api, post } from './client';
+import { liveInterval } from './live';
 import type { AccountResponse, CommandInfo, DashboardResponse, MeResponse, RoomDetailResponse, RoomListResponse, RoomSearchMode, RunCommandResponse } from './types';
 
-/** How often the dashboard refreshes while it is open. */
+/** How often the dashboard refreshes while it is open and the live stream is down. */
 const DASHBOARD_REFRESH_MS = 10_000;
 
 export const useMe = () => useQuery({
@@ -14,7 +15,7 @@ export const useMe = () => useQuery({
 export const useDashboard = () => useQuery({
     queryKey: [ 'dashboard' ],
     queryFn: () => api<DashboardResponse>('/dashboard'),
-    refetchInterval: DASHBOARD_REFRESH_MS,
+    refetchInterval: liveInterval(DASHBOARD_REFRESH_MS),
 });
 
 export const useCommands = () => useQuery({
@@ -39,9 +40,32 @@ export const useRoomSearch = (text: string, by: RoomSearchMode, page: number) =>
     placeholderData: keepPreviousData,
 });
 
-/** One room; refreshed while it is open, since who is inside changes. */
+/** One room; the live stream says when who is inside changes, and it is asked again besides. */
 export const useRoom = (id: number) => useQuery({
     queryKey: [ 'room', id ],
     queryFn: () => api<RoomDetailResponse>(`/rooms/${id}`),
-    refetchInterval: DASHBOARD_REFRESH_MS,
+    refetchInterval: liveInterval(DASHBOARD_REFRESH_MS),
 });
+
+/** What the signed-in staff member may do to the whole hotel: one flag per command. */
+export interface HotelAbilities {
+    alert: boolean;
+    maintenance: boolean;
+    shutdown: boolean;
+}
+
+export const useHotelAbilities = () => useQuery({
+    queryKey: [ 'hotel-abilities' ],
+    queryFn: () => api<HotelAbilities>('/hotel/abilities'),
+    staleTime: 60_000,
+});
+
+export interface HotelActionRequest {
+    action: 'alert' | 'maintenance' | 'maintenance-off' | 'shutdown' | 'shutdown-cancel';
+    minutes?: number;
+    /** The alert, or the reason given with a countdown. */
+    message?: string;
+}
+
+/** Runs an action on the whole hotel: its own command, as you. Answers as the console does. */
+export const actOnHotel = (request: HotelActionRequest) => post<RunCommandResponse>('/hotel/actions', request);

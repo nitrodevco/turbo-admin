@@ -1,4 +1,4 @@
-import { House, Search } from 'lucide-react';
+import { Search } from 'lucide-react';
 import { type FormEvent, useState } from 'react';
 import { Link, useSearchParams } from 'react-router';
 
@@ -44,7 +44,6 @@ export const RoomsPage = () => {
         <>
             <PageHeader
                 title="Rooms"
-                icon={<House />}
                 description={search.data
                     ? `${search.data.total.toLocaleString()} ${search.data.total === 1 ? 'room' : 'rooms'}${text ? ` matching "${text}"` : ', most recently active first'}`
                     : 'Every room, invisible ones too'}
@@ -87,37 +86,55 @@ export const RoomsPage = () => {
                             {search.data.rooms.length === 0
                                 ? <EmptyState>No room matches.</EmptyState>
                                 : (
-                                        <div className={cx('overflow-x-auto transition-opacity', search.isFetching && 'opacity-60')}>
-                                            <table className="w-full text-sm">
-                                                <thead>
-                                                    <tr>
-                                                        <Th>Room</Th>
-                                                        <Th>Owner</Th>
-                                                        <Th>Access</Th>
-                                                        <Th>Players</Th>
-                                                        <Th>Last active</Th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody className="[&>tr:last-child>td]:border-b-0">
-                                                    {search.data.rooms.map(room => (
-                                                        <tr key={room.id} className="hover:bg-subtle/60">
-                                                            <Td>
-                                                                <Link to={`/rooms/${room.id}`} className="font-medium hover:text-accent">{room.name}</Link>
-                                                                <span className="ml-2 text-muted">#{room.id}</span>
-                                                                {room.categoryName && <div className="text-xs text-muted">{room.categoryName}</div>}
-                                                            </Td>
-                                                            <Td className="text-muted">{room.ownerName}</Td>
-                                                            <Td>{doorModeLabel(room.doorMode)}</Td>
-                                                            <Td className="tabular-nums">
-                                                                {room.isLoaded
-                                                                    ? <>{room.population}<span className="text-muted"> / {room.playersMax}</span></>
-                                                                    : <span className="text-muted">not loaded</span>}
-                                                            </Td>
-                                                            <Td className="text-muted">{formatDateTime(room.lastActiveUtc)}</Td>
+                                        <div className={cx('transition-opacity', search.isFetching && 'opacity-60')}>
+                                            {/* A phone: one tappable row per room. */}
+                                            <ul className="sm:hidden">
+                                                {search.data.rooms.map(room => (
+                                                    <li key={room.id} className="border-t border-line first:border-t-0">
+                                                        <Link to={`/rooms/${room.id}`} className="flex min-h-16 items-center gap-3 px-4 py-2.5 active:bg-subtle">
+                                                            <div className="min-w-0 flex-1">
+                                                                <div className="truncate font-medium">{room.name}</div>
+                                                                <div className="truncate font-mono text-[11px] text-muted">#{room.id} · {room.ownerName} · {doorModeLabel(room.doorMode).toLowerCase()}</div>
+                                                            </div>
+                                                            {room.isLoaded
+                                                                ? <span className="shrink-0 font-mono text-sm text-good tabular-nums">{room.population}<span className="text-muted">/{room.playersMax}</span></span>
+                                                                : <span className="shrink-0 font-mono text-[11px] text-muted">OFF</span>}
+                                                        </Link>
+                                                    </li>
+                                                ))}
+                                            </ul>
+                                            <div className="hidden overflow-x-auto sm:block">
+                                                <table className="w-full text-sm">
+                                                    <thead>
+                                                        <tr>
+                                                            <Th>Room</Th>
+                                                            <Th>Owner</Th>
+                                                            <Th>Access</Th>
+                                                            <Th>Players</Th>
+                                                            <Th>Last active</Th>
                                                         </tr>
-                                                    ))}
-                                                </tbody>
-                                            </table>
+                                                    </thead>
+                                                    <tbody className="[&>tr:last-child>td]:border-b-0">
+                                                        {search.data.rooms.map(room => (
+                                                            <tr key={room.id} className="hover:bg-subtle/60">
+                                                                <Td>
+                                                                    <Link to={`/rooms/${room.id}`} className="font-medium hover:text-accent">{room.name}</Link>
+                                                                    <span className="ml-2 text-muted">#{room.id}</span>
+                                                                    {room.categoryName && <div className="text-xs text-muted">{room.categoryName}</div>}
+                                                                </Td>
+                                                                <Td className="text-muted">{room.ownerName}</Td>
+                                                                <Td>{doorModeLabel(room.doorMode)}</Td>
+                                                                <Td className="tabular-nums">
+                                                                    {room.isLoaded
+                                                                        ? <>{room.population}<span className="text-muted"> / {room.playersMax}</span></>
+                                                                        : <span className="text-muted">not loaded</span>}
+                                                                </Td>
+                                                                <Td className="text-muted">{formatDateTime(room.lastActiveUtc)}</Td>
+                                                            </tr>
+                                                        ))}
+                                                    </tbody>
+                                                </table>
+                                            </div>
                                         </div>
                                     )}
                         </>

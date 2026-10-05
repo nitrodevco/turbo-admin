@@ -12,7 +12,10 @@ import { GroupsPage } from '#/pages/permissions/GroupsPage';
 import { LogPage, NodesPage, SearchPage } from '#/pages/permissions/LookupPages';
 import { PlayerPage } from '#/pages/permissions/PlayerPage';
 import { PlayersPage } from '#/pages/permissions/PlayersPage';
+import { PlayerPage as PlayerProfilePage } from '#/pages/players/PlayerPage';
+import { PlayersPage as PlayerListPage } from '#/pages/players/PlayersPage';
 import { RoomPage } from '#/pages/rooms/RoomPage';
+import { RoomSettingsPage } from '#/pages/rooms/RoomSettingsPage';
 import { RoomsPage } from '#/pages/rooms/RoomsPage';
 import { StaffPage } from '#/pages/StaffPage';
 
@@ -24,6 +27,9 @@ export const App = () => (
             <Route index element={<DashboardPage />} />
             <Route path="rooms" element={<RoomsPage />} />
             <Route path="rooms/:id" element={<RoomPage />} />
+            <Route path="rooms/:id/settings" element={<RoomSettingsPage />} />
+            <Route path="players" element={<PlayerListPage />} />
+            <Route path="players/:id" element={<PlayerProfilePage />} />
             <Route path="console" element={<ConsolePage />} />
             <Route path="permissions" element={<Navigate to="/permissions/groups" replace />} />
             <Route path="permissions/groups" element={<GroupsPage />} />

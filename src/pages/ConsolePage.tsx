@@ -1,4 +1,3 @@
-import { SquareTerminal } from 'lucide-react';
 import { type FormEvent, type KeyboardEvent, useEffect, useMemo, useRef, useState } from 'react';
 
 import { useCommands, useRunCommand } from '#/api/queries';
@@ -14,22 +13,23 @@ interface Entry {
 }
 
 const OUTCOMES: Record<string, { label: string; tone: string }> = {
-    Completed: { label: 'Done', tone: 'text-emerald-600 dark:text-emerald-400' },
-    AwaitingConfirmation: { label: 'Needs confirming', tone: 'text-amber-600 dark:text-amber-400' },
-    Refused: { label: 'Not allowed', tone: 'text-red-600 dark:text-red-400' },
-    BindFailed: { label: 'Check the arguments', tone: 'text-red-600 dark:text-red-400' },
+    Completed: { label: 'Done', tone: 'text-good' },
+    AwaitingConfirmation: { label: 'Needs confirming', tone: 'text-warn' },
+    Refused: { label: 'Not allowed', tone: 'text-bad' },
+    Failed: { label: 'Did not go through', tone: 'text-bad' },
+    BindFailed: { label: 'Check the arguments', tone: 'text-bad' },
     NeedsRoom: { label: 'Room only', tone: 'text-muted' },
 };
 
 const outcomeOf = (entry: Entry) => {
     if (entry.error)
-        return { label: 'Failed', tone: 'text-red-600 dark:text-red-400' };
+        return { label: 'Failed', tone: 'text-bad' };
 
     if (!entry.response)
         return { label: 'Running...', tone: 'text-muted' };
 
     if (!entry.response.found)
-        return { label: 'Unknown command', tone: 'text-red-600 dark:text-red-400' };
+        return { label: 'Unknown command', tone: 'text-bad' };
 
     const outcome = entry.response.outcome ?? '';
 
@@ -165,7 +165,7 @@ export const ConsolePage = () => {
 
     return (
         <>
-            <PageHeader title="Console" icon={<SquareTerminal />} description="Operator commands, run as you, with your permissions" />
+            <PageHeader title="Console" description="Operator commands, run as you, with your permissions" />
             <PageBody className="grid gap-5 lg:grid-cols-[18rem_1fr]">
                 <div className="order-2 lg:order-1">
                     {commands.isPending && <Loading />}
@@ -203,7 +203,7 @@ export const ConsolePage = () => {
                                             </span>
                                             <span className={`font-sans text-xs ${outcome.tone}`}>{outcome.label}</span>
                                         </div>
-                                        {entry.error && <p className="mt-1 text-red-600 dark:text-red-400">{entry.error}</p>}
+                                        {entry.error && <p className="mt-1 text-bad">{entry.error}</p>}
                                         {entry.response?.lines.map((output, index) => (
                                             <p
                                                 key={index}
@@ -217,7 +217,7 @@ export const ConsolePage = () => {
                                                 type="button"
                                                 onClick={() => submit('confirm')}
                                                 disabled={run.isPending}
-                                                className="mt-2 rounded-md bg-amber-500 px-3 py-1 font-sans text-sm font-medium text-white shadow-sm hover:bg-amber-600 disabled:opacity-50"
+                                                className="mt-2 rounded-md bg-warn px-3 py-1 font-sans text-sm font-medium text-[#0a0e13] hover:opacity-90 disabled:opacity-50"
                                             >
                                                 Confirm
                                             </button>

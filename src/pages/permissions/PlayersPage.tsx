@@ -3,7 +3,8 @@ import { type FormEvent, useState } from 'react';
 import { Link, useNavigate } from 'react-router';
 
 import { findPlayer, useStaff } from '#/api/permissions';
-import { Badge, Button, EmptyState, ErrorNotice, Input, Loading, PageBody, Panel, Td, Th } from '#/components/ui';
+import { Row, RowList } from '#/components/RowList';
+import { Badge, Button, EmptyState, ErrorNotice, Input, Loading, PageBody, Panel } from '#/components/ui';
 
 import { Expiry, PermissionsHeader } from './common';
 
@@ -51,35 +52,21 @@ export const PlayersPage = () => {
                     {staff.data && (staff.data.length === 0
                         ? <EmptyState>Nobody is in a group besides default.</EmptyState>
                         : (
-                                <div className="overflow-x-auto">
-                                    <table className="w-full text-sm">
-                                        <thead>
-                                            <tr>
-                                                <Th>Player</Th>
-                                                <Th>Groups</Th>
-                                            </tr>
-                                        </thead>
-                                        <tbody className="[&>tr:last-child>td]:border-b-0">
-                                            {staff.data.map(member => (
-                                                <tr key={member.id} className="hover:bg-subtle/60">
-                                                    <Td>
-                                                        <Link to={`/permissions/players/${member.id}`} className="font-medium hover:text-accent">{member.name}</Link>
-                                                    </Td>
-                                                    <Td>
-                                                        <span className="flex flex-wrap gap-1.5">
-                                                            {member.groups.map(group => (
-                                                                <span key={`${group.name}|${group.expiresAtUtc ?? ''}`} className="inline-flex items-center gap-1">
-                                                                    <Badge tone="accent">{group.displayName}</Badge>
-                                                                    <Expiry at={group.expiresAtUtc} />
-                                                                </span>
-                                                            ))}
-                                                        </span>
-                                                    </Td>
-                                                </tr>
-                                            ))}
-                                        </tbody>
-                                    </table>
-                                </div>
+                                <RowList columns="minmax(0,14rem) minmax(0,1fr)" headers={[ { label: 'Player' }, { label: 'Groups' } ]}>
+                                    {staff.data.map(member => (
+                                        <Row key={member.id}>
+                                            <Link to={`/permissions/players/${member.id}`} className="font-medium hover:text-accent">{member.name}</Link>
+                                            <span className="flex flex-wrap gap-1.5">
+                                                {member.groups.map(group => (
+                                                    <span key={`${group.name}|${group.expiresAtUtc ?? ''}`} className="inline-flex items-center gap-1">
+                                                        <Badge tone="accent">{group.displayName}</Badge>
+                                                        <Expiry at={group.expiresAtUtc} />
+                                                    </span>
+                                                ))}
+                                            </span>
+                                        </Row>
+                                    ))}
+                                </RowList>
                             ))}
                 </Panel>
             </PageBody>

@@ -6,9 +6,17 @@ inside the Turbo server, which runs beside the Orleans silo and reaches the grai
 It has:
 
 - **Dashboard**: players online, rooms loaded, uptime, memory, silos, maintenance state, and the
-  busiest rooms. It refreshes every 10 seconds.
+  busiest rooms. It updates live as the hotel changes (falling back to every 10 seconds if the
+  live stream is down). With the hotel's commands, also send a hotel
+  alert and schedule or call off maintenance and shutdowns.
 - **Rooms**: find any room, invisible ones too, by name, owner or id, and see its settings, who's
-  in it right now, rights and bans. Only shown if you have `admin.rooms.view`.
+  in it right now, rights and bans. Only shown if you have `admin.rooms.view`. With the room
+  permissions the hotel asks for, also edit its settings, kick, mute and ban people, lift bans,
+  remove rights, make it a staff pick, mute it, clear it, unload it and send it an alert.
+- **Players**: find any player by name or id, the online ones alone if you like, and see whether
+  they're online and where, their balances, sanctions, rooms and profile. Only shown if you have
+  `admin.players.view`. With the matching command permissions, warn, ban, silence, trade lock,
+  disconnect them or change their balances, through the hotel's own commands.
 - **Permissions**: groups, any player's permissions and why they hold what they hold, who is
   given a node, and the permission log. Seeing it needs `admin.permissions.view`; changing it
   needs `permissions.manage`, and only for groups and players below your heaviest group, with

@@ -23,6 +23,8 @@ export interface MeResponse {
     canViewRooms: boolean;
     /** Holds `admin.permissions.view`: may see groups, players' permissions and the log. */
     canViewPermissions: boolean;
+    /** Holds `admin.players.view`: may find any player and see their profile, wallet, rooms and sanctions. */
+    canViewPlayers: boolean;
 }
 
 export interface DashboardRoom {
@@ -158,13 +160,72 @@ export interface RoomDetailResponse {
     whoCanBan: string;
     chatFloodProtection: string;
     hideWalls: boolean;
+    wallThickness: string;
+    floorThickness: string;
+    leaveOnDoorTile: boolean;
+    idleSleepEnabled: boolean;
+    idleSleepTimeoutSeconds: number;
+    idleAutokickEnabled: boolean;
+    idleAutokickTimeoutSeconds: number;
+    muteAllPets: boolean;
     staffPick: boolean;
     hiddenByBuildersClub: boolean;
     score: number;
     createdAtUtc: string;
     lastActiveUtc: string;
     isLoaded: boolean;
+    /** Null for a room that is not loaded: the panel never loads one to ask. */
+    isMuted: boolean | null;
     playersInside: RoomPlayerRef[];
     rightsHolders: RoomPlayerRef[];
     bans: RoomBanItem[];
+    can: RoomAbilities;
+}
+
+/** What the signed-in staff member may do to this room: the nodes the hotel asks for. */
+export interface RoomAbilities {
+    editSettings: boolean;
+    staffPick: boolean;
+    moderate: boolean;
+    manageRights: boolean;
+    kickAll: boolean;
+    muteRoom: boolean;
+    unload: boolean;
+    alert: boolean;
+}
+
+export interface RoomCategoryItem {
+    id: number;
+    name: string;
+    visible: boolean;
+    staffOnly: boolean;
+}
+
+/** Every setting of a room, as the settings form saves it. Enums by name. */
+export interface RoomSettingsRequest {
+    name: string;
+    description: string;
+    doorMode: string;
+    /** Empty keeps a password door's password. */
+    password: string;
+    maxPlayers: number;
+    categoryId: number | null;
+    tags: string[];
+    tradeMode: string;
+    allowPets: boolean;
+    allowPetsEat: boolean;
+    allowWalkThrough: boolean;
+    hideWalls: boolean;
+    wallThickness: string;
+    floorThickness: string;
+    whoCanMute: string;
+    whoCanKick: string;
+    whoCanBan: string;
+    chatFloodProtection: string;
+    leaveOnDoorTile: boolean;
+    idleSleepEnabled: boolean;
+    idleSleepTimeoutSeconds: number;
+    idleAutokickEnabled: boolean;
+    idleAutokickTimeoutSeconds: number;
+    muteAllPets: boolean;
 }

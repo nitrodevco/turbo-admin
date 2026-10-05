@@ -1,139 +1,312 @@
-import { House } from 'lucide-react';
-import type { ReactNode } from 'react';
-import { useParams } from 'react-router';
+import { Ban, DoorOpen, Ellipsis, Gavel, Megaphone, MicOff, Power, Trash2, UserX } from 'lucide-react';
+import { type FormEvent, useState } from 'react';
+import { Link, useParams } from 'react-router';
 
-import { useRoom } from '#/api/queries';
-import type { RoomPlayerRef } from '#/api/types';
+import { useMe, useRoom } from '#/api/queries';
+import { type RoomActionResponse, roomCalls, useRoomAction } from '#/api/rooms';
+import type { RoomDetailResponse, RoomPlayerRef } from '#/api/types';
+import { Sheet, SheetItem } from '#/components/Sheet';
 import { TabbedPanel } from '#/components/TabbedPanel';
-import { Badge, ErrorNotice, Loading, PageBody, PageHeader, Panel } from '#/components/ui';
+import { Avatar, Badge, Button, EmptyState, ErrorNotice, IconButton, Input, Kv, Label, Loading, PageBody, Panel, Segmented, Select, Stat, Switch, Textarea } from '#/components/ui';
 
 import { chatFloodLabel, doorModeLabel, formatDateTime, tradeModeLabel, whoLabel } from './labels';
+import { ActionOutcome, RoomHeader } from './RoomHeader';
 
-const yesNo = (value: boolean) => (value ? 'Yes' : 'No');
+const MUTE_MINUTES = [
+    { value: '5', label: '5 min' },
+    { value: '10', label: '10 min' },
+    { value: '30', label: '30 min' },
+    { value: '60', label: '1 hour' },
+];
 
-/** A label and its value, as one row of a settings list. */
-const Row = ({ label, children }: { label: string; children: ReactNode }) => (
-    <div className="flex justify-between gap-4 px-4 py-2 text-sm">
-        <dt className="text-muted">{label}</dt>
-        <dd className="text-right">{children}</dd>
-    </div>
-);
+const BAN_DURATIONS = [
+    { value: 'Hour', label: 'An hour' },
+    { value: 'Day', label: 'A day' },
+    { value: 'Permanent', label: 'For good' },
+];
 
-const PlayerList = ({ players, empty }: { players: RoomPlayerRef[]; empty: string }) =>
-    players.length === 0
-        ? <p className="px-4 py-3 text-sm text-muted">{empty}</p>
-        : (
-                <ul className="divide-y divide-line text-sm">
-                    {players.map(player => (
-                        <li key={player.id} className="flex justify-between px-4 py-2">
-                            <span>{player.name}</span>
-                            <span className="text-muted">#{player.id}</span>
-                        </li>
-                    ))}
-                </ul>
-            );
+/** Runs an action on the room, after a confirmation when it asks for one. */
+type Run = (action: () => Promise<RoomActionResponse>, confirm?: string) => void;
 
-/** One room as it stands: its settings, who is in it now, and (in one tabbed card) who holds rights or a ban. */
-export const RoomPage = () => {
-    const id = Number(useParams().id);
-    const { data: room, error, isPending } = useRoom(id);
+type Role = 'owner' | 'rights' | 'visitor';
+
+const roleOf = (room: RoomDetailResponse, player: RoomPlayerRef): Role =>
+    player.id === room.ownerId ? 'owner' : room.rightsHolders.some(x => x.id === player.id) ? 'rights' : 'visitor';
+
+/** Everything staff may do to one player in the room: in a sheet, on a phone and from the row's buttons alike. */
+const PersonSheet = ({ room, player, run, onClose }: { room: RoomDetailResponse; player: RoomPlayerRef | null; run: Run; onClose: () => void }) => {
+    const calls = roomCalls(room.id);
+    const [ minutes, setMinutes ] = useState('5');
+    const [ duration, setDuration ] = useState('Hour');
+
+    const act = (action: () => Promise<RoomActionResponse>, confirm?: string) => {
+        run(action, confirm);
+        onClose();
+    };
+
+    return (
+        <Sheet title={player ? `${player.name} · #${player.id}` : ''} open={player !== null} onClose={onClose}>
+            {player && (
+                <>
+                    <SheetItem icon={<UserX />} onClick={() => act(() => calls.kick(player.id), `Kick ${player.name} out of the room?`)}>Kick out of the room</SheetItem>
+                    <div className="flex flex-col gap-2 border-t border-line px-3 py-3">
+                        <Label>Mute</Label>
+                        <Segmented label="How long to mute" value={minutes} onChange={setMinutes} options={MUTE_MINUTES} />
+                        <Button variant="secondary" icon={<MicOff />} onClick={() => act(() => calls.mute(player.id, Number(minutes)))}>Mute {player.name}</Button>
+                    </div>
+                    <div className="flex flex-col gap-2 border-t border-line px-3 py-3">
+                        <Label>Ban from the room</Label>
+                        <Segmented label="How long to ban" value={duration} onChange={setDuration} options={BAN_DURATIONS} />
+                        <Button variant="danger" icon={<Ban />} onClick={() => act(() => calls.ban({ playerId: player.id }, duration), `Ban ${player.name} from the room?`)}>Ban {player.name}</Button>
+                    </div>
+                </>
+            )}
+        </Sheet>
+    );
+};
+
+/** A player in the room: who they are here, and the actions on them. */
+const InsideRow = ({ room, player, run, busy, onMore, linked }: { room: RoomDetailResponse; player: RoomPlayerRef; run: Run; busy: boolean; onMore: () => void; linked: boolean }) => {
+    const role = roleOf(room, player);
+    const calls = roomCalls(room.id);
+    const actionable = room.can.moderate && role !== 'owner';
+
+    return (
+        <li className="flex min-h-14 items-center gap-3 border-t border-line px-4 py-2 first:border-t-0">
+            <Avatar id={player.id} name={player.name} />
+            <div className="min-w-0 flex-1">
+                {linked
+                    ? <Link to={`/players/${player.id}`} className="block truncate text-sm font-medium hover:text-accent">{player.name}</Link>
+                    : <div className="truncate text-sm font-medium">{player.name}</div>}
+                <div className="font-mono text-[11px] text-muted">#{player.id}</div>
+            </div>
+            <Badge tone={role === 'owner' ? 'accent' : 'neutral'}>{role}</Badge>
+            {actionable && (
+                <>
+                    <div className="hidden gap-0.5 sm:flex">
+                        <IconButton label={`Mute ${player.name}`} icon={<MicOff />} disabled={busy} onClick={onMore} />
+                        <IconButton label={`Kick ${player.name}`} icon={<UserX />} disabled={busy} onClick={() => run(() => calls.kick(player.id), `Kick ${player.name} out of the room?`)} />
+                        <IconButton label={`Ban ${player.name}`} icon={<Ban />} tone="bad" disabled={busy} onClick={onMore} />
+                    </div>
+                    <IconButton label={`Actions for ${player.name}`} icon={<Ellipsis />} className="sm:hidden" onClick={onMore} />
+                </>
+            )}
+        </li>
+    );
+};
+
+/** The room as a whole: its switches, a pop-up for everyone in it, and what clears or closes it. */
+const RoomControls = ({ room, run, busy }: { room: RoomDetailResponse; run: Run; busy: boolean }) => {
+    const calls = roomCalls(room.id);
+    const [ alert, setAlert ] = useState('');
+    const { can } = room;
+
+    if (!can.staffPick && !can.muteRoom && !can.kickAll && !can.unload && !can.alert)
+        return null;
+
+    const handleAlert = (event: FormEvent) => {
+        event.preventDefault();
+        run(() => calls.alert(alert.trim()));
+        setAlert('');
+    };
+
+    return (
+        <Panel title="Room controls" description={room.isLoaded ? undefined : 'Actions on the people inside need the room loaded.'}>
+            {(can.muteRoom || can.staffPick) && (
+                <div className="divide-y divide-line px-4">
+                    {can.muteRoom && <Switch label="Mute everyone" checked={room.isMuted ?? false} disabled={busy || !room.isLoaded} onChange={checked => run(() => calls.setMuted(checked))} />}
+                    {can.staffPick && <Switch label="Staff pick" checked={room.staffPick} disabled={busy} onChange={checked => run(() => calls.setStaffPick(checked))} />}
+                </div>
+            )}
+            {can.alert && (
+                <form onSubmit={handleAlert} className="flex flex-col gap-2 border-t border-line px-4 py-3">
+                    <Label>Room alert</Label>
+                    <Textarea
+                        value={alert}
+                        onChange={event => setAlert(event.target.value)}
+                        placeholder="A pop-up for everyone in the room"
+                        aria-label="Room alert"
+                        rows={2}
+                        disabled={!room.isLoaded}
+                    />
+                    <Button type="submit" variant="secondary" icon={<Megaphone />} disabled={busy || !room.isLoaded || alert.trim() === ''}>Send alert</Button>
+                </form>
+            )}
+            {(can.kickAll || can.unload) && (
+                <div className="flex flex-col gap-2 border-t border-line px-4 py-3">
+                    <Label className="text-bad">Danger zone</Label>
+                    <div className="grid grid-cols-2 gap-2">
+                        {can.kickAll && (
+                            <Button variant="danger" icon={<DoorOpen />} disabled={busy || !room.isLoaded} onClick={() => run(calls.kickAll, 'Send everyone out of the room? Its owner and staff stay.')}>
+                                Kick everyone
+                            </Button>
+                        )}
+                        {can.unload && (
+                            <Button variant="danger" icon={<Power />} disabled={busy || !room.isLoaded} onClick={() => run(calls.unload, 'Send everyone out and unload the room?')}>
+                                Unload
+                            </Button>
+                        )}
+                    </div>
+                </div>
+            )}
+        </Panel>
+    );
+};
+
+const Rights = ({ room, run, busy }: { room: RoomDetailResponse; run: Run; busy: boolean }) => {
+    const calls = roomCalls(room.id);
+
+    if (room.rightsHolders.length === 0)
+        return <EmptyState>Nobody has rights besides the owner.</EmptyState>;
 
     return (
         <>
-            <PageHeader
-                title={room?.name ?? `Room #${id}`}
-                icon={<House />}
-                back={{ to: '/rooms', label: 'Rooms' }}
-                tab="Overview"
-                description={room && (
-                    <>
-                        Room #{room.id}, owned by <span className="text-ink">{room.ownerName}</span>
-                        {room.description && ` - ${room.description}`}
-                    </>
-                )}
-            >
-                {room && (
-                    <Badge tone={room.isLoaded ? 'green' : 'neutral'}>
-                        <span className="size-1.5 rounded-full bg-current" />
-                        {room.isLoaded ? `Loaded, ${room.playersInside.length} / ${room.playersMax} inside` : 'Not loaded'}
-                    </Badge>
-                )}
-            </PageHeader>
-            <PageBody>
+            <ul>
+                {room.rightsHolders.map(player => (
+                    <li key={player.id} className="flex min-h-14 items-center gap-3 border-t border-line px-4 py-2 first:border-t-0">
+                        <Avatar id={player.id} name={player.name} />
+                        <div className="min-w-0 flex-1 truncate text-sm">
+                            {player.name}
+                            <span className="ml-2 font-mono text-[11px] text-muted">#{player.id}</span>
+                        </div>
+                        {room.can.manageRights && <Button variant="secondary" icon={<Trash2 />} disabled={busy} onClick={() => run(() => calls.removeRights(player.id))}>Remove</Button>}
+                    </li>
+                ))}
+            </ul>
+            {room.can.manageRights && (
+                <div className="border-t border-line p-4">
+                    <Button variant="danger" disabled={busy} onClick={() => run(calls.removeAllRights, 'Take everyone\'s rights in this room away?')}>Remove everyone&apos;s rights</Button>
+                </div>
+            )}
+        </>
+    );
+};
+
+const Bans = ({ room, run, busy }: { room: RoomDetailResponse; run: Run; busy: boolean }) => {
+    const calls = roomCalls(room.id);
+    const [ name, setName ] = useState('');
+    const [ duration, setDuration ] = useState('Hour');
+
+    const handleBan = (event: FormEvent) => {
+        event.preventDefault();
+        run(() => calls.ban({ name: name.trim() }, duration), `Ban ${name.trim()} from the room?`);
+        setName('');
+    };
+
+    return (
+        <>
+            {room.bans.length === 0
+                ? <EmptyState>Nobody is banned.</EmptyState>
+                : (
+                        <ul>
+                            {room.bans.map(ban => (
+                                <li key={ban.playerId} className="flex min-h-14 items-center gap-3 border-t border-line px-4 py-2 first:border-t-0">
+                                    <Avatar id={ban.playerId} name={ban.name} />
+                                    <div className="min-w-0 flex-1">
+                                        <div className="truncate text-sm">{ban.name}</div>
+                                        <div className="font-mono text-[11px] text-warn">until {formatDateTime(ban.expiresAtUtc)}</div>
+                                    </div>
+                                    {room.can.moderate && <Button variant="secondary" disabled={busy} onClick={() => run(() => calls.unban(ban.playerId))}>Lift</Button>}
+                                </li>
+                            ))}
+                        </ul>
+                    )}
+            {room.can.moderate && (
+                <form onSubmit={handleBan} className="flex flex-wrap gap-2 border-t border-line p-4">
+                    <Input value={name} onChange={event => setName(event.target.value)} placeholder="Player name" aria-label="Player to ban" className="min-w-0 flex-[1_1_10rem]" />
+                    <Select value={duration} onChange={event => setDuration(event.target.value)} aria-label="How long" className="flex-[1_1_7rem]">
+                        {BAN_DURATIONS.map(x => <option key={x.value} value={x.value}>{x.label}</option>)}
+                    </Select>
+                    <Button type="submit" variant="secondary" icon={<Gavel />} disabled={busy || name.trim() === ''} className="flex-[1_1_6rem]">Ban</Button>
+                </form>
+            )}
+        </>
+    );
+};
+
+/**
+ * One room as it stands, and what staff may do to it: the numbers that matter, who is in it now
+ * (with kick, mute and ban), the room as a whole, who holds rights or a ban, and its settings at a
+ * glance. On a phone the room's controls come first, a thumb away.
+ */
+export const RoomPage = () => {
+    const id = Number(useParams().id);
+    const { data: room, error, isPending } = useRoom(id);
+    const action = useRoomAction(id);
+    const [ person, setPerson ] = useState<RoomPlayerRef | null>(null);
+    const canViewPlayers = useMe().data?.canViewPlayers ?? false;
+
+    const run: Run = (fn, confirm) => {
+        if (confirm && !window.confirm(confirm))
+            return;
+
+        action.mutate(fn);
+    };
+
+    return (
+        <>
+            <RoomHeader id={id} room={room} tab="overview" />
+            <PageBody className="flex flex-col gap-4 lg:gap-5 lg:pt-5">
                 {isPending && <Loading />}
                 {error && <ErrorNotice error={error} />}
+                <ActionOutcome message={action.data?.message} error={action.error} />
                 {room && (
-                    <div className="grid gap-5 lg:grid-cols-2">
-                        <div className="grid content-start gap-5">
-                            <Panel title="Access">
-                                <dl className="divide-y divide-line">
-                                    <Row label="Door">{doorModeLabel(room.doorMode)}</Row>
-                                    <Row label="Password">{room.hasPassword ? 'Set' : 'None'}</Row>
-                                    <Row label="Maximum players">{room.playersMax}</Row>
-                                    <Row label="Trading">{tradeModeLabel(room.tradeMode)}</Row>
-                                    <Row label="Pets allowed">{yesNo(room.allowPets)}</Row>
-                                    <Row label="Others may feed pets">{yesNo(room.allowPetsEat)}</Row>
-                                    <Row label="Walk through others">{yesNo(room.allowWalkThrough)}</Row>
-                                </dl>
-                            </Panel>
-                            <Panel title="Moderation">
-                                <dl className="divide-y divide-line">
-                                    <Row label="Who can mute">{whoLabel(room.whoCanMute)}</Row>
-                                    <Row label="Who can kick">{whoLabel(room.whoCanKick)}</Row>
-                                    <Row label="Who can ban">{whoLabel(room.whoCanBan)}</Row>
-                                    <Row label="Chat flood protection">{chatFloodLabel(room.chatFloodProtection)}</Row>
-                                </dl>
-                            </Panel>
-                            <Panel title="Listing">
-                                <dl className="divide-y divide-line">
-                                    <Row label="Category">{room.categoryName ?? 'None'}</Row>
-                                    <Row label="Tags">{room.tags.length > 0 ? room.tags.join(', ') : 'None'}</Row>
-                                    <Row label="Staff pick">{yesNo(room.staffPick)}</Row>
-                                    <Row label="Hidden by Builders Club">{yesNo(room.hiddenByBuildersClub)}</Row>
-                                    <Row label="Score">{room.score}</Row>
-                                    <Row label="Model">{room.model}</Row>
-                                    <Row label="Walls hidden">{yesNo(room.hideWalls)}</Row>
-                                    <Row label="Created">{formatDateTime(room.createdAtUtc)}</Row>
-                                    <Row label="Last active">{formatDateTime(room.lastActiveUtc)}</Row>
-                                </dl>
-                            </Panel>
-                        </div>
-                        <div className="grid content-start gap-5">
-                            <Panel title={`In the room now (${room.playersInside.length})`}>
-                                <PlayerList
-                                    players={room.playersInside}
-                                    empty={room.isLoaded ? 'Nobody is in the room.' : 'The room is not loaded, so nobody is in it.'}
-                                />
-                            </Panel>
-                            <TabbedPanel
-                                tabs={[
-                                    {
-                                        id: 'rights',
-                                        label: 'Rights',
-                                        count: room.rightsHolders.length,
-                                        content: <PlayerList players={room.rightsHolders} empty="Nobody has rights besides the owner." />,
-                                    },
-                                    {
-                                        id: 'bans',
-                                        label: 'Bans',
-                                        count: room.bans.length,
-                                        content: room.bans.length === 0
-                                            ? <p className="px-4 py-3 text-sm text-muted">Nobody is banned.</p>
-                                            : (
-                                                    <ul className="divide-y divide-line text-sm">
-                                                        {room.bans.map(ban => (
-                                                            <li key={ban.playerId} className="flex justify-between gap-4 px-4 py-2">
-                                                                <span>{ban.name}</span>
-                                                                <span className="text-muted">until {formatDateTime(ban.expiresAtUtc)}</span>
-                                                            </li>
-                                                        ))}
-                                                    </ul>
-                                                ),
-                                    },
-                                ]}
+                    <>
+                        <section aria-label="At a glance" className="grid grid-cols-2 gap-3 xl:grid-cols-4">
+                            <Stat
+                                label="Occupancy"
+                                value={(
+                                    <>
+                                        {room.playersInside.length}
+                                        <span className="text-base text-muted"> / {room.playersMax}</span>
+                                    </>
+                                )}
+                                meter={room.playersMax > 0 ? room.playersInside.length / room.playersMax : 0}
                             />
+                            <Stat label="Rights holders" value={room.rightsHolders.length} />
+                            <Stat label="Active bans" value={room.bans.length} tone={room.bans.length > 0 ? 'warn' : undefined} />
+                            <Stat label="Score" value={room.score} />
+                        </section>
+
+                        <div className="flex flex-wrap items-start gap-4 lg:gap-5">
+                            <div className="flex min-w-0 flex-[999_1_520px] flex-col gap-4 lg:gap-5">
+                                <Panel title={`In the room now (${room.playersInside.length})`} actions={room.isLoaded ? <Label>refreshes every 10 s</Label> : undefined}>
+                                    {room.playersInside.length === 0
+                                        ? <EmptyState>{room.isLoaded ? 'Nobody is in the room.' : 'The room is not loaded, so nobody is in it.'}</EmptyState>
+                                        : (
+                                                <ul>
+                                                    {room.playersInside.map(player => (
+                                                        <InsideRow key={player.id} room={room} player={player} run={run} busy={action.isPending} onMore={() => setPerson(player)} linked={canViewPlayers} />
+                                                    ))}
+                                                </ul>
+                                            )}
+                                </Panel>
+                                <TabbedPanel
+                                    tabs={[
+                                        { id: 'rights', label: 'Rights', count: room.rightsHolders.length, content: <Rights room={room} run={run} busy={action.isPending} /> },
+                                        { id: 'bans', label: 'Bans', count: room.bans.length, content: <Bans room={room} run={run} busy={action.isPending} /> },
+                                    ]}
+                                />
+                            </div>
+
+                            <div className="flex min-w-0 flex-[1_1_300px] flex-col gap-4 max-lg:order-first lg:gap-5">
+                                <RoomControls room={room} run={run} busy={action.isPending} />
+                                <Panel title="Settings at a glance" actions={room.can.editSettings ? <Link to={`/rooms/${id}/settings`} className="text-xs text-accent hover:underline">Edit</Link> : undefined}>
+                                    <dl>
+                                        <Kv label="Door">{doorModeLabel(room.doorMode).toLowerCase()}{room.hasPassword ? ' · set' : ''}</Kv>
+                                        <Kv label="Trading">{tradeModeLabel(room.tradeMode).toLowerCase()}</Kv>
+                                        <Kv label="Mute · kick · ban">{[ room.whoCanMute, room.whoCanKick, room.whoCanBan ].map(x => whoLabel(x).toLowerCase()).join(' · ')}</Kv>
+                                        <Kv label="Chat flood">{chatFloodLabel(room.chatFloodProtection).toLowerCase()}</Kv>
+                                        <Kv label="Category">{room.categoryName ?? 'none'}</Kv>
+                                        <Kv label="Tags">{room.tags.length > 0 ? room.tags.join(', ') : 'none'}</Kv>
+                                        <Kv label="Model">{room.model}</Kv>
+                                        <Kv label="Last active">{formatDateTime(room.lastActiveUtc)}</Kv>
+                                    </dl>
+                                </Panel>
+                            </div>
                         </div>
-                    </div>
+                        <PersonSheet room={room} player={person} run={run} onClose={() => setPerson(null)} />
+                    </>
                 )}
             </PageBody>
         </>

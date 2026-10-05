@@ -27,6 +27,22 @@ const CHAT_FLOOD: Record<string, string> = {
     Minimal: 'Relaxed',
 };
 
+const THICKNESS: Record<string, string> = {
+    Thinnest: 'Thinnest',
+    Thin: 'Thin',
+    Normal: 'Normal',
+    Thick: 'Thick',
+};
+
+/** A select's options, from one of the maps above: its value is the server's name for it. */
+const optionsOf = (labels: Record<string, string>) => Object.entries(labels).map(([ value, label ]) => ({ value, label }));
+
+export const DOOR_MODE_OPTIONS = optionsOf(DOOR_MODES);
+export const TRADE_MODE_OPTIONS = optionsOf(TRADE_MODES);
+export const WHO_OPTIONS = optionsOf(WHO);
+export const CHAT_FLOOD_OPTIONS = optionsOf(CHAT_FLOOD);
+export const THICKNESS_OPTIONS = optionsOf(THICKNESS);
+
 export const doorModeLabel = (mode: string) => DOOR_MODES[mode] ?? mode;
 export const tradeModeLabel = (mode: string) => TRADE_MODES[mode] ?? mode;
 export const whoLabel = (who: string) => WHO[who] ?? who;

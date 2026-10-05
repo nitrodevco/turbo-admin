@@ -10,7 +10,7 @@ import { cx } from '#/lib/cx';
  */
 let lastHadBack = false;
 
-const arrowClass = 'grid size-7 shrink-0 place-items-center overflow-hidden rounded-md text-muted [&>svg]:size-4 [&>svg]:shrink-0';
+const arrowClass = 'grid size-10 shrink-0 place-items-center overflow-hidden rounded-lg text-muted [&>svg]:size-5 [&>svg]:shrink-0';
 
 /**
  * The page header's back arrow. Arriving, it opens from nothing and pushes the page's icon over;

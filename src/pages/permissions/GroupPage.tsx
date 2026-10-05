@@ -49,7 +49,7 @@ const SettingsCard = ({ group }: { group: GroupResponse }) => {
                 <div className="flex flex-wrap items-center justify-between gap-2">
                     <Button type="submit" icon={<Save />} disabled={!dirty || update.isPending}>Save</Button>
                     {!group.isDefault && (
-                        <Button variant="ghost" icon={<Trash2 />} onClick={handleDelete} disabled={remove.isPending} className="text-red-600 hover:text-red-700 dark:text-red-400">
+                        <Button variant="ghost" icon={<Trash2 />} onClick={handleDelete} disabled={remove.isPending} className="text-bad hover:text-bad">
                             Delete group
                         </Button>
                     )}

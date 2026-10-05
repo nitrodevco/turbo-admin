@@ -1,63 +1,100 @@
 @import "tailwindcss";
 
-/* Dark mode is a class on <html> (`lib/theme.ts`), set from the viewer's choice or the system's. */
+/* Dark mode is a class on <html> (`lib/theme.ts`), set from the viewer's choice; dark unless chosen otherwise. */
 @custom-variant dark (&:where(.dark, .dark *));
 
 /*
- * The panel's palette, the same as nitro-studio's: zinc surfaces and one indigo accent. Components
- * use these tokens through Tailwind (`bg-surface`, `text-muted`, `border-line`), so the look is
- * changed here, for both themes (the dark values are under `.dark` below).
+ * The panel's palette: "Control Room". Slate surfaces, one teal accent, numbers and labels in
+ * IBM Plex Mono. Components use these tokens through Tailwind (`bg-surface`, `text-muted`,
+ * `border-line`, `text-good`), so the look is changed here, for both themes: light below, dark
+ * (the default) under `.dark`.
  */
 @theme {
-    --font-sans: "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
-    --font-mono: "JetBrains Mono", ui-monospace, "Cascadia Code", Consolas, monospace;
+    --font-sans: "IBM Plex Sans", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+    --font-mono: "IBM Plex Mono", ui-monospace, "Cascadia Code", Consolas, monospace;
 
-    --color-canvas: #f6f6f7;
+    /* Where the page sits, the cards on it, a raised or hovered area, and their borders. */
+    --color-canvas: #f3f5f8;
+    --color-chrome: #ffffff;
     --color-surface: #ffffff;
-    --color-subtle: #f4f4f5;
-    --color-line: #e4e4e7;
-    --color-ink: #18181b;
-    --color-muted: #71717a;
-    --color-accent: #4f46e5;
-    --color-accent-hover: #4338ca;
-    --color-accent-soft: #eef2ff;
+    --color-subtle: #eef1f5;
+    --color-line: #dce2e9;
+    --color-ink: #0e141b;
+    --color-muted: #566272;
+
+    /* The accent, its hover, a quiet fill of it, and text set on it. */
+    --color-accent: #0b7c74;
+    --color-accent-hover: #09665f;
+    --color-accent-soft: #e2f4f2;
+    --color-on-accent: #ffffff;
+
+    /* States: live and fine, needs attention, destructive or refused. Each with a fill and a line. */
+    --color-good: #157a45;
+    --color-good-soft: #e3f5ec;
+    --color-good-line: #b9e3cc;
+    --color-warn: #8a5600;
+    --color-warn-soft: #fff4dc;
+    --color-warn-line: #f1d9a6;
+    --color-bad: #b42318;
+    --color-bad-soft: #fdeeee;
+    --color-bad-line: #f3c9c9;
 
     --animate-rise: rise 0.28s ease-out both;
     --animate-back-in: back-in 0.25s ease-out both;
     --animate-back-out: back-out 0.2s ease-in both;
-}
-
-/*
- * The header's back arrow opening from nothing, pushing the page icon over, and closing again.
- * The negative margin takes back the row's gap (gap-3), so the icon starts exactly where it was.
- */
-@keyframes back-in {
-    from { width: 0; margin-right: -0.75rem; opacity: 0; transform: translateX(-0.5rem); }
-    to { width: 1.75rem; margin-right: 0; opacity: 1; transform: none; }
-}
-
-@keyframes back-out {
-    from { width: 1.75rem; margin-right: 0; opacity: 1; transform: none; }
-    to { width: 0; margin-right: -0.75rem; opacity: 0; transform: translateX(-0.5rem); }
+    --animate-sheet: sheet 0.22s ease-out both;
 }
 
 .dark {
     color-scheme: dark;
 
-    --color-canvas: #0e0e11;
-    --color-surface: #18181b;
-    --color-subtle: #222226;
-    --color-line: #2f2f35;
-    --color-ink: #e4e4e7;
-    --color-muted: #9d9da7;
-    --color-accent: #6366f1;
-    --color-accent-hover: #7c7ff4;
-    --color-accent-soft: #25234d;
+    --color-canvas: #0a0e13;
+    --color-chrome: #0d1218;
+    --color-surface: #11171f;
+    --color-subtle: #161e28;
+    --color-line: #1f2a37;
+    --color-ink: #e6edf3;
+    --color-muted: #8d9aab;
+
+    --color-accent: #4fd1c5;
+    --color-accent-hover: #7fe3da;
+    --color-accent-soft: #10302e;
+    --color-on-accent: #06201e;
+
+    --color-good: #5bd68a;
+    --color-good-soft: #0f2219;
+    --color-good-line: #1d4630;
+    --color-warn: #f2b55a;
+    --color-warn-soft: #2a2010;
+    --color-warn-line: #5a4320;
+    --color-bad: #ff8a8a;
+    --color-bad-soft: #1f1215;
+    --color-bad-line: #5a2a2e;
+}
+
+/*
+ * The header's back arrow opening from nothing, pushing the title over, and closing again.
+ * The negative margin takes back the row's gap (gap-3), so the title starts exactly where it was.
+ */
+@keyframes back-in {
+    from { width: 0; margin-right: -0.75rem; opacity: 0; transform: translateX(-0.5rem); }
+    to { width: 2.5rem; margin-right: 0; opacity: 1; transform: none; }
+}
+
+@keyframes back-out {
+    from { width: 2.5rem; margin-right: 0; opacity: 1; transform: none; }
+    to { width: 0; margin-right: -0.75rem; opacity: 0; transform: translateX(-0.5rem); }
 }
 
 @keyframes rise {
     from { opacity: 0; transform: translateY(6px); }
     to { opacity: 1; transform: none; }
+}
+
+/* A phone's sheet coming up from the bottom edge. */
+@keyframes sheet {
+    from { transform: translateY(100%); }
+    to { transform: none; }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -95,7 +132,7 @@ body {
 /* Drop-downs drawn as the other fields are, with a chevron in the muted text colour. */
 select:not([multiple]) {
     appearance: none;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2371717a' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23566272' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
     background-position: right 0.6rem center;
     background-repeat: no-repeat;
     background-size: 1rem;
@@ -103,7 +140,7 @@ select:not([multiple]) {
 }
 
 .dark select:not([multiple]) {
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%239d9da7' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%238d9aab' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
 }
 
 select option {
@@ -120,12 +157,6 @@ select option {
     display: none;
 }
 
-/* The sidebar's scrollbar: thin, in its own greys, and only while the pointer is over it. */
-.sidebar-scroll {
-    scrollbar-width: thin;
-    scrollbar-color: transparent transparent;
-}
-
-.sidebar-scroll:hover {
-    scrollbar-color: rgb(82 82 91) transparent;
+dialog::backdrop {
+    background: rgb(5 8 12 / 0.6);
 }

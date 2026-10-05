@@ -3,7 +3,8 @@ import { type FormEvent, useState } from 'react';
 import { Link, useNavigate } from 'react-router';
 
 import { groupCalls, useGroups, usePermissionChange } from '#/api/permissions';
-import { Badge, Button, EmptyState, ErrorNotice, Field, Loading, PageBody, Panel, Td, Th } from '#/components/ui';
+import { PhoneLabel, Row, RowList } from '#/components/RowList';
+import { Badge, Button, EmptyState, ErrorNotice, Field, Loading, PageBody, Panel } from '#/components/ui';
 
 import { PermissionsHeader } from './common';
 
@@ -73,36 +74,28 @@ export const GroupsPage = () => {
                             {data.groups.length === 0
                                 ? <EmptyState>There are no groups.</EmptyState>
                                 : (
-                                        <div className="overflow-x-auto">
-                                            <table className="w-full text-sm">
-                                                <thead>
-                                                    <tr>
-                                                        <Th>Group</Th>
-                                                        <Th className="text-right">Weight</Th>
-                                                        <Th>Inherits</Th>
-                                                        <Th className="text-right">Nodes</Th>
-                                                        <Th className="text-right">Meta</Th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody className="[&>tr:last-child>td]:border-b-0">
-                                                    {data.groups.map(group => (
-                                                        <tr key={group.id} className="hover:bg-subtle/60">
-                                                            <Td>
-                                                                <Link to={`/permissions/groups/${encodeURIComponent(group.name)}`} className="font-medium hover:text-accent">
-                                                                    {group.displayName}
-                                                                </Link>
-                                                                <span className="ml-2 font-mono text-xs text-muted">{group.name}</span>
-                                                                {data.canManage && !group.canEdit && <Badge className="ml-2">read-only</Badge>}
-                                                            </Td>
-                                                            <Td className="text-right tabular-nums">{group.weight}</Td>
-                                                            <Td className="text-muted">{group.parents.join(', ') || '-'}</Td>
-                                                            <Td className="text-right tabular-nums">{group.nodeCount}</Td>
-                                                            <Td className="text-right tabular-nums">{group.metaCount}</Td>
-                                                        </tr>
-                                                    ))}
-                                                </tbody>
-                                            </table>
-                                        </div>
+                                        <RowList
+                                            columns="minmax(0,1fr) 4rem minmax(0,1fr) 4rem 4rem"
+                                            headers={[ { label: 'Group' }, { label: 'Weight', className: 'text-right' }, { label: 'Inherits' }, { label: 'Nodes', className: 'text-right' }, { label: 'Meta', className: 'text-right' } ]}
+                                        >
+                                            {data.groups.map(group => (
+                                                <Row key={group.id} className="text-muted sm:text-ink">
+                                                    <span>
+                                                        <Link to={`/permissions/groups/${encodeURIComponent(group.name)}`} className="font-medium text-ink hover:text-accent">
+                                                            {group.displayName}
+                                                        </Link>
+                                                        <span className="ml-2 font-mono text-xs text-muted">{group.name}</span>
+                                                        {data.canManage && !group.canEdit && <Badge className="ml-2">read-only</Badge>}
+                                                    </span>
+                                                    <span className="text-xs tabular-nums sm:text-right sm:text-sm"><PhoneLabel>weight </PhoneLabel>{group.weight}</span>
+                                                    <span className="text-xs sm:text-sm sm:text-muted">
+                                                        {group.parents.length > 0 ? <><PhoneLabel>inherits </PhoneLabel>{group.parents.join(', ')}</> : <span className="max-sm:hidden">-</span>}
+                                                    </span>
+                                                    <span className="text-xs tabular-nums sm:text-right sm:text-sm">{group.nodeCount}<PhoneLabel> nodes</PhoneLabel></span>
+                                                    <span className="text-xs tabular-nums sm:text-right sm:text-sm">{group.metaCount}<PhoneLabel> meta</PhoneLabel></span>
+                                                </Row>
+                                            ))}
+                                        </RowList>
                                     )}
                         </Panel>
                         {data.canManage && data.yourWeight > 0 && <div><NewGroup maxWeight={data.yourWeight} /></div>}

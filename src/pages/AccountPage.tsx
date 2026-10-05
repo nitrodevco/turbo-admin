@@ -1,5 +1,4 @@
 import { useQueryClient } from '@tanstack/react-query';
-import { UserRound } from 'lucide-react';
 import { type FormEvent, useState } from 'react';
 
 import { post, remove } from '#/api/client';
@@ -115,7 +114,7 @@ export const AccountPage = () => {
 
     return (
         <>
-            <PageHeader title="Account" icon={<UserRound />} description={player ? `Signed in as ${player.name}` : undefined} />
+            <PageHeader title="Account" description={player ? `Signed in as ${player.name}` : undefined} />
             <PageBody>
                 {account.isPending && <Loading />}
                 {account.error && <ErrorNotice error={account.error} />}

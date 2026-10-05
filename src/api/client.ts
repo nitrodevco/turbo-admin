@@ -5,7 +5,7 @@ import { useSession } from '#/auth/session';
  * site proxies `/api` to Turbo) and how it runs in development (Vite proxies it the same way).
  * Set `VITE_API_URL` only when the API lives somewhere else.
  */
-const API_URL = (import.meta.env.VITE_API_URL ?? '').replace(/\/+$/, '');
+export const API_URL = (import.meta.env.VITE_API_URL ?? '').replace(/\/+$/, '');
 
 export class ApiError extends Error {
     readonly status: number;
