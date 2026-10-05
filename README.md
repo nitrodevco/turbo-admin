@@ -16,7 +16,17 @@ It has:
 - **Players**: find any player by name or id, the online ones alone if you like, and see whether
   they're online and where, their balances, sanctions, rooms and profile. Only shown if you have
   `admin.players.view`. With the matching command permissions, warn, ban, silence, trade lock,
-  disconnect them or change their balances, through the hotel's own commands.
+  disconnect them or change their balances, through the hotel's own commands. With
+  `admin.players.create`, create new players; with `admin.tickets.issue`, give a player a login
+  ticket (single-use or reusable, timed or never running out) for players you outrank.
+- **Catalog**: the page tree of the catalog and the Builders Club catalog, each page's offers and
+  settings, and with `catalog.manage` editing them (items, prices, club level, visibility, moving
+  and reordering pages), Habbo Club and Builders Club memberships for the club window, club gifts,
+  and limited series, and publishing, which reloads the catalog and tells everyone online to
+  refresh. Only shown if you have `admin.catalog.view`.
+- **Command log**: every logged command, who ran it, where from (in game, room chat, the panel,
+  the server console) and how it went, filtered by player, command, outcome or source. Only shown
+  if you have `admin.commandlog.view`.
 - **Permissions**: groups, any player's permissions and why they hold what they hold, who is
   given a node, and the permission log. Seeing it needs `admin.permissions.view`; changing it
   needs `permissions.manage`, and only for groups and players below your heaviest group, with

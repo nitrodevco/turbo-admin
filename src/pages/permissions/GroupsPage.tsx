@@ -5,6 +5,7 @@ import { Link, useNavigate } from 'react-router';
 import { groupCalls, useGroups, usePermissionChange } from '#/api/permissions';
 import { PhoneLabel, Row, RowList } from '#/components/RowList';
 import { Badge, Button, EmptyState, ErrorNotice, Field, Loading, PageBody, Panel } from '#/components/ui';
+import { cx } from '#/lib/cx';
 
 import { PermissionsHeader } from './common';
 
@@ -88,10 +89,10 @@ export const GroupsPage = () => {
                                                         {data.canManage && !group.canEdit && <Badge className="ml-2">read-only</Badge>}
                                                     </span>
                                                     <span className="text-xs tabular-nums sm:text-right sm:text-sm"><PhoneLabel>weight </PhoneLabel>{group.weight}</span>
-                                                    <span className="text-xs sm:text-sm sm:text-muted">
-                                                        {group.parents.length > 0 ? <><PhoneLabel>inherits </PhoneLabel>{group.parents.join(', ')}</> : <span className="max-sm:hidden">-</span>}
+                                                    <span className={cx('text-xs sm:text-sm sm:text-muted', group.parents.length === 0 && 'max-sm:hidden')}>
+                                                        {group.parents.length > 0 ? <><PhoneLabel>inherits </PhoneLabel>{group.parents.join(', ')}</> : '-'}
                                                     </span>
-                                                    <span className="text-xs tabular-nums sm:text-right sm:text-sm">{group.nodeCount}<PhoneLabel> nodes</PhoneLabel></span>
+                                                    <span className="text-xs tabular-nums sm:text-right sm:text-sm">{group.nodeCount}<PhoneLabel>{group.nodeCount === 1 ? ' node' : ' nodes'}</PhoneLabel></span>
                                                     <span className="text-xs tabular-nums sm:text-right sm:text-sm">{group.metaCount}<PhoneLabel> meta</PhoneLabel></span>
                                                 </Row>
                                             ))}

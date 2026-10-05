@@ -1,12 +1,14 @@
-import { KeyRound } from 'lucide-react';
+import { KeyRound, ScrollText } from 'lucide-react';
 import { Link, useParams } from 'react-router';
 
-import { type PlayerSanctionItem, usePlayer } from '#/api/players';
+import { type PlayerSanctionItem, usePlayer, usePlayerAbilities } from '#/api/players';
 import { useMe } from '#/api/queries';
 import { Avatar, Badge, EmptyState, ErrorNotice, Kv, Label, LiveBadge, Loading, PageBody, PageHeader, Panel, Stat } from '#/components/ui';
 import { fromNow } from '#/lib/time';
 import { formatDateTime } from '#/pages/rooms/labels';
 
+import { DiscordCard } from './DiscordCard';
+import { LoginTicketCard } from './LoginTicketCard';
 import { PlayerActions } from './PlayerActions';
 
 /** Whether a sanction still holds, and if not why not. */
@@ -25,6 +27,7 @@ export const PlayerPage = () => {
     const id = Number(useParams().id);
     const { data: player, error, isPending } = usePlayer(id);
     const me = useMe().data;
+    const abilities = usePlayerAbilities().data;
 
     return (
         <>
@@ -47,6 +50,15 @@ export const PlayerPage = () => {
                     >
                         <KeyRound />
                         Permissions
+                    </Link>
+                )}
+                {player && me?.canViewCommandLog && (
+                    <Link
+                        to={`/command-log?${new URLSearchParams({ player: String(player.id) })}`}
+                        className="inline-flex h-11 items-center gap-2 rounded-lg border border-line bg-subtle px-3.5 text-sm font-medium hover:border-muted/50 sm:h-9 [&>svg]:size-4"
+                    >
+                        <ScrollText />
+                        Commands
                     </Link>
                 )}
             </PageHeader>
@@ -122,6 +134,8 @@ export const PlayerPage = () => {
 
                             <div className="flex min-w-0 flex-[1_1_300px] flex-col gap-4 max-lg:order-first lg:gap-5">
                                 <PlayerActions key={player.id} player={player} />
+                                {abilities?.issueTickets && <LoginTicketCard key={`ticket-${player.id}`} playerId={player.id} playerName={player.name} />}
+                                {player.discord && <DiscordCard playerId={player.id} playerName={player.name} discord={player.discord} canManage={abilities?.manageAccounts ?? false} />}
                                 <Panel title="Profile">
                                     <div className="flex items-center gap-3 border-b border-line px-4 py-3">
                                         <Avatar id={player.id} name={player.name} className="size-12 text-sm sm:size-12" />

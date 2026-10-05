@@ -66,7 +66,7 @@ export const DashboardPage = () => {
                         </section>
                         <div className="flex flex-wrap items-start gap-4 lg:gap-5">
                             <div className="min-w-0 flex-[999_1_480px]">
-                                <Panel title="Busiest rooms" actions={<Label>refreshes every 10 s</Label>}>
+                                <Panel title="Busiest rooms" actions={live ? undefined : <Label>refreshes every 10 s</Label>}>
                                     {data.busiestRooms.length === 0
                                         ? <EmptyState>Nobody is in a room right now.</EmptyState>
                                         : (

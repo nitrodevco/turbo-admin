@@ -2,6 +2,7 @@ import { Ban, DoorOpen, Ellipsis, Gavel, Megaphone, MicOff, Power, Trash2, UserX
 import { type FormEvent, useState } from 'react';
 import { Link, useParams } from 'react-router';
 
+import { useLive } from '#/api/live';
 import { useMe, useRoom } from '#/api/queries';
 import { type RoomActionResponse, roomCalls, useRoomAction } from '#/api/rooms';
 import type { RoomDetailResponse, RoomPlayerRef } from '#/api/types';
@@ -235,6 +236,7 @@ export const RoomPage = () => {
     const action = useRoomAction(id);
     const [ person, setPerson ] = useState<RoomPlayerRef | null>(null);
     const canViewPlayers = useMe().data?.canViewPlayers ?? false;
+    const live = useLive(state => state.connected);
 
     const run: Run = (fn, confirm) => {
         if (confirm && !window.confirm(confirm))
@@ -270,7 +272,7 @@ export const RoomPage = () => {
 
                         <div className="flex flex-wrap items-start gap-4 lg:gap-5">
                             <div className="flex min-w-0 flex-[999_1_520px] flex-col gap-4 lg:gap-5">
-                                <Panel title={`In the room now (${room.playersInside.length})`} actions={room.isLoaded ? <Label>refreshes every 10 s</Label> : undefined}>
+                                <Panel title={`In the room now (${room.playersInside.length})`} actions={room.isLoaded && !live ? <Label>refreshes every 10 s</Label> : undefined}>
                                     {room.playersInside.length === 0
                                         ? <EmptyState>{room.isLoaded ? 'Nobody is in the room.' : 'The room is not loaded, so nobody is in it.'}</EmptyState>
                                         : (

@@ -25,6 +25,10 @@ export interface MeResponse {
     canViewPermissions: boolean;
     /** Holds `admin.players.view`: may find any player and see their profile, wallet, rooms and sanctions. */
     canViewPlayers: boolean;
+    /** Holds `admin.commandlog.view`: may read the command log. */
+    canViewCommandLog: boolean;
+    /** Holds `admin.catalog.view`: may see the catalog editor; changing it needs `catalog.manage`. */
+    canViewCatalog: boolean;
 }
 
 export interface DashboardRoom {

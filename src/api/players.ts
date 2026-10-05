@@ -1,10 +1,10 @@
 import { keepPreviousData, useQuery } from '@tanstack/react-query';
 
-import { api, post } from './client';
+import { api, post, remove } from './client';
 import { liveInterval } from './live';
 import type { RunCommandResponse } from './types';
 
-export type PlayerSearchMode = 'name' | 'id';
+export type PlayerSearchMode = 'name' | 'id' | 'discord';
 
 export interface PlayerListItem {
     id: number;
@@ -15,6 +15,8 @@ export interface PlayerListItem {
     lastLoginUtc: string | null;
     joinedUtc: string;
     roomsOwned: number;
+    /** Their Discord username, when they sign in to the public site with Discord. */
+    discordUsername: string | null;
 }
 
 export interface PlayerListResponse {
@@ -41,6 +43,14 @@ export interface PlayerSanctionItem {
     isActive: boolean;
 }
 
+export interface PlayerDiscordInfo {
+    id: string;
+    username: string;
+    linkedAtUtc: string;
+    /** Their sign-ins to the public site that have not ended. */
+    activeSignIns: number;
+}
+
 export interface PlayerDetailResponse {
     id: number;
     name: string;
@@ -57,6 +67,8 @@ export interface PlayerDetailResponse {
     roomsOwned: number;
     recentRooms: PlayerRoomRef[];
     sanctions: PlayerSanctionItem[];
+    /** The Discord account they sign in to the public site with; null when none. */
+    discord: PlayerDiscordInfo | null;
 }
 
 export const usePlayerSearch = (text: string, by: PlayerSearchMode, online: boolean, page: number) => useQuery({
@@ -83,7 +95,49 @@ export interface PlayerAbilities {
     warn: boolean;
     alert: boolean;
     give: boolean;
+    /** Holds `admin.players.create`. */
+    createPlayers: boolean;
+    /** Holds `admin.tickets.issue`; a ticket still needs the player to be one they can do everything of. */
+    issueTickets: boolean;
+    /** Holds `admin.accounts.manage`: unlink Discord and end public site sign-ins, for players they outrank. */
+    manageAccounts: boolean;
 }
+
+export interface NewPlayerRequest {
+    name: string;
+    motto: string;
+    gender: 'male' | 'female';
+    /** Empty for the gender's default. */
+    figure: string;
+}
+
+export const createPlayer = (request: NewPlayerRequest) => post<{ id: number; name: string }>('/players', request);
+
+export interface TicketStatus {
+    hasTicket: boolean;
+    expiresAtUtc: string | null;
+    reusable: boolean;
+    expired: boolean;
+}
+
+export interface IssuedTicket {
+    ticket: string;
+    expiresAtUtc: string | null;
+    reusable: boolean;
+    /** The client's login address with the ticket, when the hotel's is set. */
+    loginUrl: string | null;
+}
+
+export const useTicketStatus = (id: number, enabled: boolean) => useQuery({
+    queryKey: [ 'player', id, 'ticket' ],
+    queryFn: () => api<TicketStatus>(`/players/${id}/ticket`),
+    enabled,
+});
+
+export const issueTicket = (id: number, lifetimeMinutes: number | null, reusable: boolean) =>
+    post<IssuedTicket>(`/players/${id}/ticket`, { lifetimeMinutes, reusable });
+
+export const revokeTicket = (id: number) => remove<void>(`/players/${id}/ticket`);
 
 export const usePlayerAbilities = () => useQuery({
     queryKey: [ 'player-abilities' ],
@@ -102,3 +156,7 @@ export interface PlayerActionRequest {
 /** Runs an action on a player: the hotel's own command, as you. Answers as the console does. */
 export const actOnPlayer = (id: number, request: PlayerActionRequest) =>
     post<RunCommandResponse>(`/players/${id}/actions`, request);
+
+export const unlinkDiscord = (id: number) => remove<void>(`/players/${id}/discord`);
+
+export const endSiteSessions = (id: number) => remove<void>(`/players/${id}/site-sessions`);

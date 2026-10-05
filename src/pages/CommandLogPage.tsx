@@ -1,0 +1,220 @@
+import { Search, X } from 'lucide-react';
+import { type FormEvent, useId, useState } from 'react';
+import { Link, useSearchParams } from 'react-router';
+
+import { type CommandLogEntry, type CommandLogFilter, useCommandLog } from '#/api/commandLog';
+import { useCommands } from '#/api/queries';
+import { ListToolbar } from '#/components/ListToolbar';
+import { PhoneLabel, Row, RowList } from '#/components/RowList';
+import { Badge, type BadgeTone, Button, EmptyState, ErrorNotice, Input, Loading, PageBody, PageHeader, Panel, Select } from '#/components/ui';
+import { cx } from '#/lib/cx';
+import { fromNow } from '#/lib/time';
+import { formatDateTime } from '#/pages/rooms/labels';
+
+const OUTCOMES: Record<string, { label: string; tone: BadgeTone }> = {
+    completed: { label: 'done', tone: 'green' },
+    partial: { label: 'partly', tone: 'amber' },
+    confirm: { label: 'awaiting confirm', tone: 'amber' },
+    refused: { label: 'not allowed', tone: 'red' },
+    failed: { label: 'failed', tone: 'red' },
+    bind_failed: { label: 'bad arguments', tone: 'red' },
+    vetoed: { label: 'stopped by a plugin', tone: 'amber' },
+    canceled: { label: 'canceled', tone: 'neutral' },
+    flood: { label: 'too fast', tone: 'amber' },
+    room_level: { label: 'room level', tone: 'neutral' },
+    error: { label: 'error', tone: 'red' },
+};
+
+const SOURCES: { value: string; label: string }[] = [
+    { value: '', label: 'Anywhere' },
+    { value: 'player', label: 'In game' },
+    { value: 'chat', label: 'Room chat' },
+    { value: 'panel', label: 'Admin panel' },
+    { value: 'console', label: 'Server console' },
+];
+
+const SOURCE_LABELS: Record<string, string> = { player: 'in game', panel: 'panel', console: 'console' };
+
+const Outcome = ({ outcome }: { outcome: string }) => {
+    const known = OUTCOMES[outcome];
+
+    return <Badge tone={known?.tone ?? 'neutral'}>{known?.label ?? outcome}</Badge>;
+};
+
+/** Who ran it: a link to their page, or the console. */
+const Who = ({ entry }: { entry: CommandLogEntry }) => {
+    if (entry.playerId === 0)
+        return <span className="text-muted">console</span>;
+
+    return entry.playerName
+        ? <Link to={`/players/${entry.playerId}`} className="font-medium hover:text-accent">{entry.playerName}</Link>
+        : <span className="text-muted">player #{entry.playerId}</span>;
+};
+
+/** Where it was typed: a room, or where it came from when there was no room. */
+const Where = ({ entry }: { entry: CommandLogEntry }) => {
+    // The console says so under Who already.
+    if (entry.playerId === 0 && entry.roomId === 0)
+        return <span className="text-muted max-sm:hidden">-</span>;
+
+    if (entry.roomId === 0)
+        return <span className="text-muted">{SOURCE_LABELS[entry.source ?? ''] ?? '-'}</span>;
+
+    return (
+        <span className="min-w-0 truncate">
+            <PhoneLabel>in </PhoneLabel>
+            {entry.roomName
+                ? <Link to={`/rooms/${entry.roomId}`} className="hover:text-accent">{entry.roomName}</Link>
+                : <span className="text-muted">room #{entry.roomId}</span>}
+        </span>
+    );
+};
+
+const filterOf = (params: URLSearchParams): CommandLogFilter => ({
+    player: params.get('player') ?? '',
+    command: params.get('command') ?? '',
+    outcome: params.get('outcome') ?? '',
+    source: params.get('source') ?? '',
+});
+
+/**
+ * Every logged command, newest first: who ran it, where, with what, and how it went. Narrowed to
+ * one player, command, outcome or source; the filter lives in the address, so a player's page
+ * can link straight to their commands.
+ */
+export const CommandLogPage = () => {
+    const [ params, setParams ] = useSearchParams();
+    const filter = filterOf(params);
+    const page = Math.max(1, Number(params.get('page')) || 1);
+    const [ draft, setDraft ] = useState({ player: filter.player, command: filter.command });
+    const log = useCommandLog(filter, page);
+    const commands = useCommands();
+    const listId = useId();
+    const pageSize = log.data?.pageSize ?? 1;
+    const filtered = Object.values(filter).some(x => x !== '');
+
+    const go = (next: Partial<CommandLogFilter> & { page?: number }) => {
+        const merged = { ...filter, ...next };
+        const search = new URLSearchParams();
+
+        for (const [ key, value ] of Object.entries(merged))
+            if (key !== 'page' && value)
+                search.set(key, String(value));
+
+        if ((next.page ?? 1) > 1)
+            search.set('page', String(next.page));
+
+        setParams(search);
+    };
+
+    const handleSubmit = (event: FormEvent) => {
+        event.preventDefault();
+        go({ player: draft.player.trim(), command: draft.command.trim(), page: 1 });
+    };
+
+    const clear = () => {
+        setDraft({ player: '', command: '' });
+        setParams(new URLSearchParams());
+    };
+
+    return (
+        <>
+            <PageHeader
+                title="Command log"
+                description={log.data
+                    ? `${log.data.total.toLocaleString()} ${log.data.total === 1 ? 'command' : 'commands'}${filtered ? ' matching' : ' logged'}`
+                    : 'Who ran what, where, and how it went'}
+            />
+            <PageBody>
+                <Panel className="overflow-clip">
+                    <ListToolbar
+                        watch={[ filter.player, filter.command, filter.outcome, filter.source, page ]}
+                        page={{
+                            offset: (page - 1) * pageSize,
+                            limit: pageSize,
+                            total: log.data?.total,
+                            onChange: offset => go({ page: Math.floor(offset / pageSize) + 1 }),
+                        }}
+                    >
+                        <form onSubmit={handleSubmit} className="flex min-w-0 flex-1 flex-wrap items-center gap-2">
+                            <div className="relative min-w-40 flex-1 sm:max-w-56">
+                                <Search className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted" />
+                                <Input
+                                    type="search"
+                                    value={draft.player}
+                                    onChange={event => setDraft({ ...draft, player: event.target.value })}
+                                    placeholder="Player name or id"
+                                    aria-label="Player"
+                                    className="w-full pl-9"
+                                />
+                            </div>
+                            <Input
+                                type="search"
+                                value={draft.command}
+                                onChange={event => setDraft({ ...draft, command: event.target.value })}
+                                list={listId}
+                                placeholder="Command"
+                                aria-label="Command"
+                                spellCheck={false}
+                                autoComplete="off"
+                                className="w-36 flex-[1_1_8rem] font-mono sm:flex-none"
+                            />
+                            <datalist id={listId}>
+                                {commands.data?.map(x => <option key={x.name} value={x.name} />)}
+                            </datalist>
+                            <Select value={filter.outcome} onChange={event => go({ outcome: event.target.value, page: 1 })} aria-label="Outcome">
+                                <option value="">Any outcome</option>
+                                {Object.entries(OUTCOMES).map(([ value, x ]) => <option key={value} value={value}>{x.label}</option>)}
+                            </Select>
+                            <Select value={filter.source} onChange={event => go({ source: event.target.value, page: 1 })} aria-label="Where from">
+                                {SOURCES.map(x => <option key={x.value} value={x.value}>{x.label}</option>)}
+                            </Select>
+                            <Button type="submit">Search</Button>
+                            {filtered && <Button type="button" variant="ghost" icon={<X />} onClick={clear}>Clear</Button>}
+                        </form>
+                    </ListToolbar>
+
+                    {log.error && <div className="p-4"><ErrorNotice error={log.error} /></div>}
+                    {log.isPending && <Loading />}
+                    {log.data && (
+                        log.data.entries.length === 0
+                            ? <EmptyState>{filtered ? 'No logged command matches.' : 'Nothing has been logged yet.'}</EmptyState>
+                            : (
+                                    <div className={cx('transition-opacity', log.isFetching && 'opacity-60')}>
+                                        <RowList
+                                            columns="max-content minmax(0,10rem) minmax(0,10rem) minmax(0,1fr) max-content"
+                                            headers={[ { label: 'When' }, { label: 'Who' }, { label: 'Where' }, { label: 'Command' }, { label: 'Outcome' } ]}
+                                        >
+                                            {log.data.entries.map(entry => (
+                                                <Row key={entry.id}>
+                                                    <span className="text-xs whitespace-nowrap text-muted sm:text-sm" title={formatDateTime(entry.atUtc)}>
+                                                        {fromNow(entry.atUtc)}
+                                                    </span>
+                                                    <span className="truncate"><Who entry={entry} /></span>
+                                                    <Where entry={entry} />
+                                                    <span className="basis-full wrap-anywhere sm:basis-auto">
+                                                        <button
+                                                            type="button"
+                                                            onClick={() => {
+                                                                setDraft({ ...draft, command: entry.command });
+                                                                go({ command: entry.command, page: 1 });
+                                                            }}
+                                                            className="font-mono text-xs font-semibold hover:text-accent"
+                                                            title={`Only :${entry.command}`}
+                                                        >
+                                                            :{entry.command}
+                                                        </button>
+                                                        {entry.arguments && <span className="ml-1.5 font-mono text-xs text-muted">{entry.arguments}</span>}
+                                                    </span>
+                                                    <Outcome outcome={entry.outcome} />
+                                                </Row>
+                                            ))}
+                                        </RowList>
+                                    </div>
+                                )
+                    )}
+                </Panel>
+            </PageBody>
+        </>
+    );
+};

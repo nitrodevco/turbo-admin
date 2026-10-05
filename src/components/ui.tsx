@@ -109,7 +109,7 @@ export const Stat = ({ label, value, detail, meter, tone }: { label: string; val
     </div>
 );
 
-type BadgeTone = 'neutral' | 'accent' | 'green' | 'amber' | 'red';
+export type BadgeTone = 'neutral' | 'accent' | 'green' | 'amber' | 'red';
 
 const BADGE_TONES: Record<BadgeTone, string> = {
     neutral: 'border-line text-muted',

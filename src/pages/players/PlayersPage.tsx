@@ -1,16 +1,19 @@
-import { Search } from 'lucide-react';
+import { Search, UserPlus } from 'lucide-react';
 import { type FormEvent, useState } from 'react';
 import { Link, useSearchParams } from 'react-router';
 
-import { type PlayerListItem, type PlayerSearchMode, usePlayerSearch } from '#/api/players';
+import { type PlayerListItem, type PlayerSearchMode, usePlayerAbilities, usePlayerSearch } from '#/api/players';
 import { ListToolbar } from '#/components/ListToolbar';
-import { Avatar, Button, EmptyState, ErrorNotice, Input, LiveBadge, Loading, PageBody, PageHeader, Panel, Select, Switch, Td, Th } from '#/components/ui';
+import { Avatar, Badge, Button, EmptyState, ErrorNotice, Input, LiveBadge, Loading, PageBody, PageHeader, Panel, Select, Switch, Td, Th } from '#/components/ui';
 import { cx } from '#/lib/cx';
 import { fromNow } from '#/lib/time';
+
+import { NewPlayerPanel } from './NewPlayerPanel';
 
 const MODES: { value: PlayerSearchMode; label: string; placeholder: string }[] = [
     { value: 'name', label: 'Name', placeholder: 'Part of the player\'s name' },
     { value: 'id', label: 'Player id', placeholder: 'e.g. 1234' },
+    { value: 'discord', label: 'Discord', placeholder: 'Discord username or id' },
 ];
 
 const modeOf = (value: string | null): PlayerSearchMode =>
@@ -36,6 +39,8 @@ export const PlayersPage = () => {
     const [ draft, setDraft ] = useState(text);
     const [ draftBy, setDraftBy ] = useState(by);
     const search = usePlayerSearch(text, by, online, page);
+    const canCreate = usePlayerAbilities().data?.createPlayers ?? false;
+    const [ creating, setCreating ] = useState(false);
 
     const go = (next: { q?: string; by?: PlayerSearchMode; online?: boolean; page?: number }) =>
         setParams({ q: next.q ?? text, by: next.by ?? by, online: String(next.online ?? online), page: String(next.page ?? page) });
@@ -54,8 +59,11 @@ export const PlayersPage = () => {
                 description={search.data
                     ? `${search.data.total.toLocaleString()} ${search.data.total === 1 ? 'player' : 'players'}${text ? ` matching "${text}"` : ''} · ${search.data.onlineNow.toLocaleString()} online now`
                     : 'Everyone in the hotel'}
-            />
-            <PageBody>
+            >
+                {canCreate && !creating && <Button icon={<UserPlus />} onClick={() => setCreating(true)}>New player</Button>}
+            </PageHeader>
+            <PageBody className="flex flex-col gap-4 lg:gap-5">
+                {creating && <NewPlayerPanel onClose={() => setCreating(false)} />}
                 <Panel className="overflow-clip">
                     <ListToolbar
                         watch={[ text, by, online, page ]}
@@ -102,7 +110,7 @@ export const PlayersPage = () => {
                                                         <Avatar id={player.id} name={player.name} />
                                                         <div className="min-w-0 flex-1">
                                                             <div className="truncate font-medium">{player.name}</div>
-                                                            <div className="truncate font-mono text-[11px] text-muted">#{player.id}{player.motto ? ` · ${player.motto}` : ''}</div>
+                                                            <div className="truncate font-mono text-[11px] text-muted">#{player.id}{player.discordUsername ? ` · @${player.discordUsername}` : player.motto ? ` · ${player.motto}` : ''}</div>
                                                         </div>
                                                         <Seen player={player} />
                                                     </Link>
@@ -129,6 +137,7 @@ export const PlayersPage = () => {
                                                                         <span className="block font-medium hover:text-accent">
                                                                             {player.name}
                                                                             <span className="ml-2 font-mono text-[11px] font-normal text-muted">#{player.id}</span>
+                                                                            {player.discordUsername && <Badge tone="accent" className="ml-2">discord</Badge>}
                                                                         </span>
                                                                         {player.motto && <span className="block max-w-80 truncate text-xs text-muted">{player.motto}</span>}
                                                                     </span>
