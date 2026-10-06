@@ -1,13 +1,13 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { Megaphone, Power, Wrench } from 'lucide-react';
+import { Megaphone, MessageSquareText, Power, Wrench } from 'lucide-react';
 import { useState } from 'react';
 
 import { post } from '#/api/client';
-import { actOnHotel, type HotelActionRequest, useHotelAbilities } from '#/api/queries';
+import { actOnHotel, type HotelActionRequest, saveWelcomeMessage, useHotelAbilities, useWelcomeMessage, type WelcomeMessage } from '#/api/queries';
 import type { AvailabilityPhase, RunCommandResponse } from '#/api/types';
 import { CommandAnswer } from '#/components/CommandAnswer';
 import { type Tab, TabbedPanel } from '#/components/TabbedPanel';
-import { Button, ErrorNotice, Input, Label, Labeled, Segmented, Textarea } from '#/components/ui';
+import { Button, ErrorNotice, Input, Label, Labeled, Loading, Segmented, SuccessNotice, Textarea } from '#/components/ui';
 
 const MAINTENANCE_MINUTES = [
     { value: '0', label: 'Now' },
@@ -24,9 +24,67 @@ const SHUTDOWN_MINUTES = [
 ];
 
 /**
+ * The message every player is shown when they log in. Saved for every login from now on; saving
+ * it empty turns it off.
+ */
+const WelcomeMessageEditor = ({ saved }: { saved: WelcomeMessage }) => {
+    const queryClient = useQueryClient();
+    const [ draft, setDraft ] = useState(saved.message);
+
+    const save = useMutation({
+        mutationFn: (message: string) => saveWelcomeMessage(message),
+        onSuccess: (data) => {
+            queryClient.setQueryData([ 'welcome-message' ], data);
+            setDraft(data.message);
+        },
+    });
+
+    const changed = draft.trim() !== saved.message;
+
+    return (
+        <form
+            className="flex flex-col gap-2.5 p-4"
+            onSubmit={(event) => {
+                event.preventDefault();
+                save.mutate(draft);
+            }}
+        >
+            <Label>Shown to every player when they log in</Label>
+            <p className="text-xs text-muted">It opens as the message of the day. Leave it empty and no message is shown.</p>
+            <Textarea
+                value={draft}
+                onChange={event => setDraft(event.target.value)}
+                rows={4}
+                maxLength={saved.maxLength}
+                placeholder="No welcome message"
+                aria-label="Welcome message"
+            />
+            <div className="flex flex-wrap items-center gap-2">
+                <Button type="submit" variant="secondary" icon={<MessageSquareText />} disabled={save.isPending || !changed}>
+                    {draft.trim() === '' ? 'Turn off' : 'Save'}
+                </Button>
+                <span className="text-xs text-muted">{draft.length} / {saved.maxLength}</span>
+            </div>
+            {save.error && <ErrorNotice error={save.error} />}
+            {save.isSuccess && !changed && <SuccessNotice>{saved.message === '' ? 'No welcome message is shown now.' : 'Saved. Players see it at their next login.'}</SuccessNotice>}
+        </form>
+    );
+};
+
+const WelcomeMessageTab = () => {
+    const { data, error } = useWelcomeMessage();
+
+    if (error)
+        return <div className="p-4"><ErrorNotice error={error} /></div>;
+
+    return data ? <WelcomeMessageEditor saved={data} /> : <Loading />;
+};
+
+/**
  * The whole hotel's controls: a pop-up for everyone online, maintenance and shutdown, each with
  * its countdown and a way to call it off. Each is the hotel's own command, run as you: its node,
- * its confirmation and the command log, as typed in game. Only what you may do is shown.
+ * its confirmation and the command log, as typed in game. The welcome message shown at login is
+ * set here too. Only what you may do is shown.
  */
 export const HotelControls = ({ phase }: { phase: AvailabilityPhase }) => {
     const { data: can } = useHotelAbilities();
@@ -41,7 +99,7 @@ export const HotelControls = ({ phase }: { phase: AvailabilityPhase }) => {
         onSettled: () => void queryClient.invalidateQueries({ queryKey: [ 'dashboard' ] }),
     });
 
-    if (!can || (!can.alert && !can.maintenance && !can.shutdown))
+    if (!can || (!can.alert && !can.maintenance && !can.shutdown && !can.welcomeMessage))
         return null;
 
     const run = (request: HotelActionRequest, confirm?: string) => {
@@ -129,6 +187,9 @@ export const HotelControls = ({ phase }: { phase: AvailabilityPhase }) => {
                 </div>
             ),
         });
+
+    if (can.welcomeMessage)
+        tabs.push({ id: 'welcome', label: 'Welcome message', content: <WelcomeMessageTab /> });
 
     return (
         <div className="flex flex-col gap-3">

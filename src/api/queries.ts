@@ -1,6 +1,6 @@
 import { keepPreviousData, useMutation, useQuery } from '@tanstack/react-query';
 
-import { api, post } from './client';
+import { api, post, put } from './client';
 import { liveInterval } from './live';
 import type { AccountResponse, CommandInfo, DashboardResponse, MeResponse, RoomDetailResponse, RoomListResponse, RoomSearchMode, RunCommandResponse } from './types';
 
@@ -47,11 +47,12 @@ export const useRoom = (id: number) => useQuery({
     refetchInterval: liveInterval(DASHBOARD_REFRESH_MS),
 });
 
-/** What the signed-in staff member may do to the whole hotel: one flag per command. */
+/** What the signed-in staff member may do to the whole hotel: one flag per command, and the welcome message. */
 export interface HotelAbilities {
     alert: boolean;
     maintenance: boolean;
     shutdown: boolean;
+    welcomeMessage: boolean;
 }
 
 export const useHotelAbilities = () => useQuery({
@@ -69,3 +70,17 @@ export interface HotelActionRequest {
 
 /** Runs an action on the whole hotel: its own command, as you. Answers as the console does. */
 export const actOnHotel = (request: HotelActionRequest) => post<RunCommandResponse>('/hotel/actions', request);
+
+/** The message every player is shown when they log in; empty when there is none. */
+export interface WelcomeMessage {
+    message: string;
+    maxLength: number;
+}
+
+export const useWelcomeMessage = () => useQuery({
+    queryKey: [ 'welcome-message' ],
+    queryFn: () => api<WelcomeMessage>('/hotel/welcome-message'),
+});
+
+/** Saves the welcome message for every login from now on; an empty one turns it off. */
+export const saveWelcomeMessage = (message: string) => put<WelcomeMessage>('/hotel/welcome-message', { message });
