@@ -1,7 +1,8 @@
 import { ArrowDown, ArrowUp, FolderPlus, Save, Trash2 } from 'lucide-react';
 import { type FormEvent, useMemo, useState } from 'react';
 
-import { catalogCalls, type CatalogPageDetail, type CatalogPageInput, type CatalogTree, iconUrl, imageUrl, useCatalogEdit } from '#/api/catalog';
+import { catalogIconUrl, catalogImageUrl, useClientAssets } from '#/api/assets';
+import { catalogCalls, type CatalogPageDetail, type CatalogPageInput, type CatalogTree, useCatalogEdit } from '#/api/catalog';
 import { Button, ErrorNotice, Field, Input, Labeled, Select, Switch, Textarea } from '#/components/ui';
 
 import { ancestorsOf, childrenOf } from './tree';
@@ -36,7 +37,8 @@ export const PageSettings = ({ tree, page, canManage, onOpen }: { tree: CatalogT
     const isRoot = page.parentId === null;
     const siblings = page.parentId === null ? [] : (children.get(page.parentId) ?? []);
     const index = siblings.findIndex(x => x.id === page.id);
-    const icon = iconUrl(tree, draft.icon);
+    const assets = useClientAssets();
+    const icon = catalogIconUrl(assets, draft.icon);
 
     // Anywhere but under itself or what sits below it.
     const parents = useMemo(() => tree.pages
@@ -96,7 +98,7 @@ export const PageSettings = ({ tree, page, canManage, onOpen }: { tree: CatalogT
                 {linesOf(images).some(x => x.trim()) && (
                     <div className="flex flex-wrap gap-2 sm:col-span-2">
                         {linesOf(images).map((name, i) => {
-                            const url = imageUrl(tree, name);
+                            const url = catalogImageUrl(assets, name);
 
                             return url && <img key={i} src={url} alt={name} title={name} loading="lazy" className="max-h-24 rounded border border-line bg-canvas" />;
                         })}

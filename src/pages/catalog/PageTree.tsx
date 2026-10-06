@@ -1,14 +1,15 @@
 import { ChevronRight, EyeOff, Search } from 'lucide-react';
 import { useMemo, useState } from 'react';
 
-import { type CatalogPageNode, type CatalogTree, iconUrl } from '#/api/catalog';
+import { catalogIconUrl, useClientAssets } from '#/api/assets';
+import { type CatalogPageNode, type CatalogTree } from '#/api/catalog';
 import { Input } from '#/components/ui';
 import { cx } from '#/lib/cx';
 
 import { ancestorsOf, childrenOf } from './tree';
 
-export const PageIcon = ({ tree, icon, className }: { tree: CatalogTree; icon: number; className?: string }) => {
-    const url = iconUrl(tree, icon);
+export const PageIcon = ({ icon, className }: { icon: number; className?: string }) => {
+    const url = catalogIconUrl(useClientAssets(), icon);
 
     return (
         <span className={cx('grid size-5 shrink-0 place-items-center', className)}>
@@ -58,7 +59,7 @@ export const PageTree = ({ tree, selected, onSelect }: { tree: CatalogTree; sele
                         <ChevronRight className={cx('size-3.5 transition-transform', isOpen && 'rotate-90')} />
                     </button>
                     <button type="button" onClick={() => onSelect(page.id)} className="flex min-w-0 flex-1 items-center gap-2 text-left">
-                        <PageIcon tree={tree} icon={page.icon} />
+                        <PageIcon icon={page.icon} />
                         <span className={cx('min-w-0 flex-1 truncate', !page.visible && 'text-muted')}>
                             {page.localization}
                             {path && <span className="ml-1.5 text-xs text-muted">{path}</span>}

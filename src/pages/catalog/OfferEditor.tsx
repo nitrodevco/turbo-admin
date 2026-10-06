@@ -7,6 +7,7 @@ import { cx } from '#/lib/cx';
 
 import { lengthOf } from './labels';
 import { LimitedSection } from './LimitedSection';
+import { ProductIcon } from './ProductIcon';
 import { ancestorsOf } from './tree';
 
 const CLUB_LEVELS = [
@@ -67,6 +68,7 @@ const ItemPicker = ({ type, value, onPick }: { type: 'floor' | 'wall'; value: { 
                                         }}
                                         className={cx('flex min-h-11 w-full items-center gap-2 px-3 text-left text-sm hover:bg-subtle sm:min-h-8', item.id === value.id && 'text-accent')}
                                     >
+                                        <ProductIcon type={item.type} name={item.name} className="size-6 [&>img]:max-h-6 [&>img]:max-w-6" />
                                         <span className="min-w-0 flex-1 truncate font-mono">{item.name}</span>
                                         <span className="font-mono text-[11px] text-muted">#{item.id} · sprite {item.spriteId}</span>
                                     </button>

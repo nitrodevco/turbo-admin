@@ -37,8 +37,6 @@ export interface CatalogTree {
     unpublishedChanges: number;
     currencies: CatalogCurrency[];
     layouts: string[];
-    /** Where page icons and images load from; empty shows none. */
-    imageUrl: string;
     /** Only for the normal catalog. */
     club: CatalogClubSummary | null;
 }
@@ -210,11 +208,3 @@ export const useCatalogEdit = <A extends unknown[], R>(call: (...args: A) => Pro
         onSettled: () => void queryClient.invalidateQueries({ queryKey: [ 'catalog' ] }),
     });
 };
-
-/** An icon's address, as the client builds it; null when there is none to show. */
-export const iconUrl = (tree: CatalogTree | undefined, icon: number) =>
-    tree?.imageUrl && icon > 0 ? `${tree.imageUrl}icon_${icon}.png` : null;
-
-/** A page image's address: its name under the catalogue images. */
-export const imageUrl = (tree: CatalogTree | undefined, name: string) =>
-    tree?.imageUrl && name.trim() ? `${tree.imageUrl}${name.trim()}.png` : null;

@@ -11,6 +11,7 @@ import { lengthOf } from './labels';
 import { OfferEditor, type OfferStart } from './OfferEditor';
 import { PageSettings } from './PageSettings';
 import { PageIcon, PageTree } from './PageTree';
+import { ProductIcon } from './ProductIcon';
 import { ancestorsOf } from './tree';
 
 const KINDS: TabItem[] = [
@@ -75,6 +76,7 @@ const Offers = ({ tree, pageId, layout, offers, canManage }: { tree: CatalogTree
                                         aria-expanded={open === offer.id}
                                         className="flex min-h-14 w-full items-center gap-3 px-4 py-2.5 text-left hover:bg-subtle/60"
                                     >
+                                        {offer.products[0] && <ProductIcon type={offer.products[0].type} name={offer.products[0].definitionName ?? offer.products[0].extraParam} className={cx(!offer.visible && 'opacity-50')} />}
                                         <span className="min-w-0 flex-1">
                                             <span className={cx('block truncate font-mono text-sm', !offer.visible && 'text-muted')}>{givesOf(offer)}</span>
                                             <span className="block truncate text-xs text-muted">
@@ -217,7 +219,7 @@ export const CatalogPage = () => {
                                                 <div className="flex min-w-0 flex-col gap-4">
                                                     <div className="flex min-w-0 items-center gap-2">
                                                         <Button variant="ghost" icon={<ArrowLeft />} onClick={() => openPage(null)} className="lg:hidden">Pages</Button>
-                                                        {page.data && <PageIcon tree={data} icon={page.data.icon} />}
+                                                        {page.data && <PageIcon icon={page.data.icon} />}
                                                         <div className="min-w-0">
                                                             <div className="truncate text-xs text-muted">{path.join(' / ') || 'Top level'}</div>
                                                             <div className="truncate font-semibold">{page.data?.localization ?? '…'}</div>
