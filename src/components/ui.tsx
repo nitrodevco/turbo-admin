@@ -1,7 +1,10 @@
 import { CheckCircle2, Menu, XCircle } from 'lucide-react';
 import type { ButtonHTMLAttributes, InputHTMLAttributes, ReactNode, SelectHTMLAttributes, TextareaHTMLAttributes } from 'react';
 
+import { useMe } from '#/api/queries';
 import { useDrawer } from '#/layout/drawer';
+import { JumpBox } from '#/layout/JumpBox';
+import { useActiveNavItem } from '#/layout/nav';
 import { cx } from '#/lib/cx';
 
 import { BackArrow } from './BackArrow';
@@ -16,24 +19,26 @@ interface PageHeaderProps {
     description?: ReactNode;
     /** Where the arrow before the title goes, for a page under another (a room, under Rooms). */
     back?: { to: string; label: string };
-    /** The page's tabs, under the title. */
+    /** The page's tabs, along the header's bottom edge. */
     tabs?: { items: TabItem[]; value: string; onChange?: (value: string) => void };
     /** Buttons and badges beside the title. */
     children?: ReactNode;
 }
 
 /**
- * The top of every page. On a phone it is an app bar that stays at the top: the menu button that
- * opens the navigation, back, the title, and the page's actions. From a laptop up it is the page's
- * title block under the shell's top bar, the actions to the right of it, wrapping under it when
- * there is no room.
+ * The top of every page, in the bar along the top of the window as nitro-studio has it: the title
+ * and a line under it, the page's actions and the room jump box to the right, and along its bottom
+ * edge the page's tabs (or, with none, the page's name marked as a tab is, so every header is the
+ * same height). On a phone it stays at the top as an app bar, with the menu button that opens the
+ * navigation; from a laptop up it scrolls away with the page.
  */
 export const PageHeader = ({ title, description, back, tabs, children }: PageHeaderProps) => {
     const openDrawer = useDrawer(state => state.setOpen);
+    const canViewRooms = useMe().data?.canViewRooms ?? false;
 
     return (
-        <header className="sticky top-0 z-30 border-b border-line bg-chrome/95 backdrop-blur lg:static lg:z-auto lg:border-0 lg:bg-transparent lg:backdrop-blur-none">
-            <div className={cx(PAGE_WIDTH, 'flex min-h-14 flex-wrap items-center gap-x-3 gap-y-2 px-2 py-2 sm:px-4 lg:px-6 lg:pt-6 lg:pb-4')}>
+        <header className="sticky top-0 z-30 border-b border-line bg-chrome/95 backdrop-blur lg:static lg:z-auto lg:bg-chrome lg:backdrop-blur-none">
+            <div className={cx(PAGE_WIDTH, 'flex min-h-14 flex-wrap items-center gap-x-3 gap-y-2 px-2 py-2 sm:px-4 lg:min-h-17 lg:px-6')}>
                 <button
                     type="button"
                     onClick={() => openDrawer(true)}
@@ -43,24 +48,53 @@ export const PageHeader = ({ title, description, back, tabs, children }: PageHea
                     <Menu />
                 </button>
                 <BackArrow back={back} />
+                <HeaderIcon />
                 <div className="min-w-0 flex-[1_1_12rem]">
-                    <h1 className="truncate text-base font-semibold tracking-tight lg:text-2xl">{title}</h1>
-                    {description && <p className="truncate font-mono text-[11px] text-muted lg:mt-1 lg:font-sans lg:text-[13px]">{description}</p>}
+                    <h1 className="truncate text-base leading-7 font-semibold tracking-tight lg:text-lg">{title}</h1>
+                    {description && (
+                        <p className="truncate text-[13px] leading-5 text-muted" title={typeof description === 'string' ? description : undefined}>
+                            {description}
+                        </p>
+                    )}
                 </div>
                 {children && <div className="flex flex-wrap items-center gap-2">{children}</div>}
+                {canViewRooms && <div className="hidden w-64 shrink-0 lg:block xl:w-72"><JumpBox /></div>}
             </div>
-            {tabs && (
-                <div className={cx(PAGE_WIDTH, 'px-2 sm:px-4 lg:px-6')}>
-                    <Tabs value={tabs.value} tabs={tabs.items} onChange={tabs.onChange} rule={false} className="lg:shadow-[inset_0_-1px_0_var(--color-line)]" />
-                </div>
-            )}
+            {/* The tabs' row: its tabs' line sits on the header's own bottom rule. */}
+            <div className={cx(PAGE_WIDTH, 'flex h-10 items-end px-2 sm:px-4 lg:px-6', !tabs && 'max-lg:hidden')}>
+                {tabs
+                    ? <Tabs value={tabs.value} tabs={tabs.items} onChange={tabs.onChange} rule={false} className="-mb-px min-w-0" />
+                    : <HeaderPage title={title} />}
+            </div>
         </header>
+    );
+};
+
+/** The page's navigation entry's icon in a tile, before its title. Not on a phone, where the row is the title's. */
+const HeaderIcon = () => {
+    const entry = useActiveNavItem();
+
+    if (!entry)
+        return null;
+
+    return <span aria-hidden className="grid size-9 shrink-0 place-items-center rounded-xl bg-accent-soft text-accent max-sm:hidden [&>svg]:size-5">{entry.icon}</span>;
+};
+
+/** A page with no tabs, where its tabs would be: its name, marked as the chosen tab is. */
+const HeaderPage = ({ title }: { title: string }) => {
+    const entry = useActiveNavItem();
+
+    return (
+        <span className="-mb-px flex shrink-0 items-center gap-1.5 border-b-2 border-accent px-3 py-2 text-sm font-medium whitespace-nowrap text-accent [&>svg]:size-4">
+            {entry?.icon}
+            {title}
+        </span>
     );
 };
 
 /** The page under its header, to the same width. */
 export const PageBody = ({ children, className }: { children: ReactNode; className?: string }) => (
-    <div className={cx(PAGE_WIDTH, 'animate-rise px-3 py-4 sm:px-4 lg:px-6 lg:py-2', className)}>{children}</div>
+    <div className={cx(PAGE_WIDTH, 'animate-rise px-3 py-4 sm:px-4 lg:px-6 lg:py-6', className)}>{children}</div>
 );
 
 interface PanelProps {

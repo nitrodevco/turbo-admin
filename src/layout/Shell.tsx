@@ -1,52 +1,23 @@
 import { useQueryClient } from '@tanstack/react-query';
-import { Activity, Database, Gauge, House, KeyRound, LogOut, MessagesSquare, Monitor, Moon, ScrollText, Search, ShieldCheck, SquareTerminal, Store, Sun, UserRound, Users, X } from 'lucide-react';
-import { type KeyboardEvent as ReactKeyboardEvent, type ReactNode, useEffect, useRef, useState } from 'react';
-import { Link, NavLink, Outlet, useLocation, useNavigate } from 'react-router';
+import { LogOut, Monitor, Moon, Sun, UserRound, X } from 'lucide-react';
+import { type ReactNode, useEffect, useRef, useState } from 'react';
+import { Link, NavLink, Outlet } from 'react-router';
 
 import { post } from '#/api/client';
 import { useLiveUpdates } from '#/api/live';
-import { useMe } from '#/api/queries';
-import type { MeResponse } from '#/api/types';
 import { useSession } from '#/auth/session';
 import { Segmented } from '#/components/ui';
 import { cx } from '#/lib/cx';
 import { setTheme, type ThemeChoice, useTheme } from '#/lib/theme';
 
 import { useDrawer } from './drawer';
-
-interface NavItem {
-    to: string;
-    label: string;
-    icon: ReactNode;
-    end: boolean;
-    needs?: keyof Pick<MeResponse, 'canViewRooms' | 'canViewPlayers' | 'canViewPermissions' | 'canViewCommandLog' | 'canViewChatlog' | 'canViewCatalog' | 'canViewGamedata' | 'canResetPasskeys'>;
-}
-
-const NAV: NavItem[] = [
-    { to: '/', label: 'Dashboard', icon: <Gauge />, end: true },
-    { to: '/performance', label: 'Performance', icon: <Activity />, end: false },
-    { to: '/rooms', label: 'Rooms', icon: <House />, end: false, needs: 'canViewRooms' },
-    { to: '/players', label: 'Players', icon: <Users />, end: false, needs: 'canViewPlayers' },
-    { to: '/permissions', label: 'Permissions', icon: <KeyRound />, end: false, needs: 'canViewPermissions' },
-    { to: '/catalog', label: 'Catalog', icon: <Store />, end: false, needs: 'canViewCatalog' },
-    { to: '/gamedata', label: 'Gamedata', icon: <Database />, end: false, needs: 'canViewGamedata' },
-    { to: '/command-log', label: 'Command log', icon: <ScrollText />, end: false, needs: 'canViewCommandLog' },
-    { to: '/chatlog', label: 'Chat log', icon: <MessagesSquare />, end: false, needs: 'canViewChatlog' },
-    { to: '/console', label: 'Console', icon: <SquareTerminal />, end: false },
-    { to: '/staff', label: 'Staff', icon: <ShieldCheck />, end: false, needs: 'canResetPasskeys' },
-];
+import { useNav } from './nav';
 
 const THEMES: { value: ThemeChoice; label: string; icon: ReactNode }[] = [
     { value: 'dark', label: 'Dark', icon: <Moon /> },
     { value: 'light', label: 'Light', icon: <Sun /> },
     { value: 'system', label: 'System', icon: <Monitor /> },
 ];
-
-const useNav = () => {
-    const { data: me } = useMe();
-
-    return NAV.filter(item => !item.needs || me?.[item.needs]);
-};
 
 const useSignOut = () => {
     const signOut = useSession(state => state.signOut);
@@ -174,99 +145,6 @@ const Rail = () => {
     );
 };
 
-/** Where you are, as a path: each part but the last a link back up. */
-const Breadcrumb = () => {
-    const { pathname } = useLocation();
-    const parts = pathname.split('/').filter(Boolean);
-
-    return (
-        <div className="flex min-w-0 items-center gap-2 font-mono text-xs text-muted">
-            {parts.length === 0 && <span className="text-ink">dashboard</span>}
-            {parts.map((part, index) => {
-                const label = decodeURIComponent(part);
-                const last = index === parts.length - 1;
-
-                return (
-                    <span key={index} className="flex min-w-0 items-center gap-2">
-                        {index > 0 && <span aria-hidden>/</span>}
-                        {last
-                            ? <span className="truncate text-ink">{label}</span>
-                            : <Link to={`/${parts.slice(0, index + 1).join('/')}`} className="truncate hover:text-ink">{label}</Link>}
-                    </span>
-                );
-            })}
-        </div>
-    );
-};
-
-/**
- * Jumping to a room from anywhere: its id opens it, anything else searches room names. Ctrl K (or
- * Cmd K) puts the cursor in it.
- */
-const JumpBox = () => {
-    const navigate = useNavigate();
-    const input = useRef<HTMLInputElement>(null);
-    const [ text, setText ] = useState('');
-
-    useEffect(() => {
-        const onKey = (event: KeyboardEvent) => {
-            if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 'k') {
-                event.preventDefault();
-                input.current?.focus();
-                input.current?.select();
-            }
-        };
-
-        window.addEventListener('keydown', onKey);
-
-        return () => window.removeEventListener('keydown', onKey);
-    }, []);
-
-    const handleKeyDown = (event: ReactKeyboardEvent<HTMLInputElement>) => {
-        if (event.key === 'Escape') {
-            input.current?.blur();
-
-            return;
-        }
-
-        const query = text.trim();
-
-        if (event.key !== 'Enter' || query === '')
-            return;
-
-        navigate(/^\d+$/.test(query) ? `/rooms/${query}` : `/rooms?${new URLSearchParams({ q: query, by: 'name', page: '1' })}`);
-        setText('');
-        input.current?.blur();
-    };
-
-    return (
-        <label className="flex h-9 w-full max-w-sm items-center gap-2 rounded-lg border border-line bg-surface px-2.5 text-muted focus-within:border-accent">
-            <Search className="size-4 shrink-0" />
-            <input
-                ref={input}
-                value={text}
-                onChange={event => setText(event.target.value)}
-                onKeyDown={handleKeyDown}
-                placeholder="Jump to a room by name or id"
-                aria-label="Jump to a room by name or id"
-                className="min-w-0 flex-1 bg-transparent text-[13px] text-ink outline-none placeholder:text-muted"
-            />
-            <kbd className="rounded border border-line px-1.5 font-mono text-[10px]">Ctrl K</kbd>
-        </label>
-    );
-};
-
-const TopBar = () => {
-    const { data: me } = useMe();
-
-    return (
-        <div className="sticky top-0 z-30 hidden h-14 items-center gap-4 border-b border-line bg-chrome/95 px-6 backdrop-blur lg:flex">
-            <Breadcrumb />
-            <div className="ml-auto flex flex-1 justify-end">{me?.canViewRooms && <JumpBox />}</div>
-        </div>
-    );
-};
-
 const drawerLink = ({ isActive }: { isActive: boolean }) => cx(
     'relative flex min-h-12 items-center gap-3 rounded-lg px-3 text-[15px] transition-colors [&>svg]:size-5 [&>svg]:shrink-0',
     isActive
@@ -363,7 +241,6 @@ export const Shell = () => {
             <Rail />
             <Drawer />
             <div className="flex min-w-0 flex-1 flex-col">
-                <TopBar />
                 <main className="flex min-w-0 flex-1 flex-col pb-8 lg:pb-10">
                     <Outlet />
                 </main>

@@ -7,6 +7,7 @@ import { cx } from '#/lib/cx';
 
 import { lengthOf, membershipOfName } from './labels';
 import { LimitedSection } from './LimitedSection';
+import { ProductDataHint } from './ProductDataHint';
 import { ProductIcon } from './ProductIcon';
 import { ancestorsOf } from './tree';
 
@@ -240,7 +241,9 @@ export const OfferEditor = ({ tree, pageId, offer, canManage, start = 'item', on
                         disabled={!canManage}
                         className="font-mono"
                         aria-label="Name key"
+                        list="offer-name-key-products"
                     />
+                    {!membership && !gift && <ProductDataHint code={draft.localizationId} listId="offer-name-key-products" />}
                 </Labeled>
                 {!gift && (
                     <>

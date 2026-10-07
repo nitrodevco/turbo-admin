@@ -239,7 +239,7 @@ export const RoomSettingsPage = () => {
     return (
         <>
             <RoomHeader id={id} room={room} tab="settings" />
-            <PageBody className="flex flex-col gap-4 lg:pt-5">
+            <PageBody className="flex flex-col gap-4">
                 {isPending && <Loading />}
                 {error && <ErrorNotice error={error} />}
                 {room && !room.can.editSettings && (

@@ -12,7 +12,7 @@ export const CHANGE_KINDS: Record<number, string> = { 0: 'import', 1: 'edit', 2:
 export const IMPORT_ACTIONS: Record<number, string> = { 0: 'add', 1: 'update', 2: 'keep' };
 
 /** Which table a change touched: GamedataRecordType. */
-export const RECORD_TYPES: Record<number, string> = { 0: 'definition', 1: 'Habbo item' };
+export const RECORD_TYPES: Record<number, string> = { 0: 'definition', 1: 'Habbo item', 2: 'text', 3: 'Habbo text', 4: 'product', 5: 'Habbo product', 6: 'figure', 7: 'Habbo figure' };
 
 export interface HabboRelease {
     id: number;
@@ -33,11 +33,55 @@ export interface GamedataFile {
     builtAt: string;
 }
 
+export interface HabboTextVersion {
+    id: number;
+    domain: string;
+    hash: string;
+    textCount: number;
+    foundAt: string;
+    checkedAt: string;
+    /** Null until it is taken in. */
+    importedAt: string | null;
+}
+
+export interface HabboProductVersion {
+    id: number;
+    domain: string;
+    hash: string;
+    productCount: number;
+    foundAt: string;
+    checkedAt: string;
+    /** Null until it is taken in. */
+    importedAt: string | null;
+}
+
+export interface HabboFigureVersion {
+    id: number;
+    domain: string;
+    hash: string;
+    /** Its pieces of clothing. */
+    setCount: number;
+    colorCount: number;
+    foundAt: string;
+    checkedAt: string;
+    /** Null until it is taken in. */
+    importedAt: string | null;
+}
+
 export interface GamedataStatus {
     latestRelease: HabboRelease | null;
+    latestTexts: HabboTextVersion | null;
+    latestProducts: HabboProductVersion | null;
+    latestFigures: HabboFigureVersion | null;
     furnitureData: GamedataFile;
+    externalTexts: GamedataFile;
+    productData: GamedataFile;
+    figureData: GamedataFile;
     canManage: boolean;
 }
+
+/** The files the hotel builds, by the name their addresses give them. */
+export const FILES = { furnitureData: 'furnidata_json', productData: 'productdata_json', externalTexts: 'external_flash_texts', figureData: 'figuredata_json' } as const;
 
 export interface FurnitureFieldChange {
     field: string;
@@ -75,6 +119,8 @@ export const IMPORT_PHASES: Record<number, string> = { 0: 'reading furniture fil
 
 export interface ImportJob {
     releaseId: number;
+    /** What is taken in: furnidata_json or external_flash_texts. */
+    file: string;
     revision: string;
     phase: number;
     filesTotal: number;
@@ -150,7 +196,7 @@ export const useCheckHabbo = () => {
     const refresh = useRefresh();
 
     return useMutation({
-        mutationFn: () => post<{ release: HabboRelease; isNew: boolean }>('/gamedata/habbo/check'),
+        mutationFn: () => post<{ release: HabboRelease; isNew: boolean; texts: HabboTextVersion; textsAreNew: boolean; products: HabboProductVersion; productsAreNew: boolean; figures: HabboFigureVersion; figuresAreNew: boolean }>('/gamedata/habbo/check'),
         onSuccess: refresh,
     });
 };
@@ -193,7 +239,7 @@ export const useRebuild = () => {
     const refresh = useRefresh();
 
     return useMutation({
-        mutationFn: () => post<GamedataFile>('/gamedata/files/furnidata/build'),
+        mutationFn: (file: string) => post<GamedataFile>(`/gamedata/files/${file}/build`),
         onSuccess: refresh,
     });
 };
@@ -264,6 +310,313 @@ export const useRollback = () => {
 
     return useMutation({
         mutationFn: (id: number) => post<RollbackResult>(`/gamedata/history/${id}/rollback`),
+        onSuccess: refresh,
+    });
+};
+
+export interface TextImportItem {
+    key: string;
+    action: number;
+    /** The hotel's value; null when it has none. */
+    current: string | null;
+    incoming: string;
+}
+
+export interface TextImportPreview {
+    version: HabboTextVersion;
+    added: number;
+    updated: number;
+    kept: number;
+    unchanged: number;
+    items: TextImportItem[];
+    truncated: boolean;
+}
+
+export interface TextEntry {
+    key: string;
+    /** As the file writes it: a line break is \n. */
+    value: string;
+    /** Habbo's as last taken in; null for the hotel's own. */
+    habbo: string | null;
+}
+
+export interface TextSearchResult {
+    items: TextEntry[];
+    total: number;
+    pageSize: number;
+}
+
+export const useTextImportPreview = (enabled: boolean) => useQuery({
+    queryKey: [ 'gamedata', 'texts', 'import' ],
+    queryFn: () => api<TextImportPreview>('/gamedata/texts/import'),
+    enabled,
+});
+
+/** Starts taking a version of Habbo's texts in, in the background. */
+export const useTextImport = () => {
+    const queryClient = useQueryClient();
+
+    return useMutation({
+        mutationFn: (versionId: number) => post<{ job: ImportJob }>(`/gamedata/texts/import/${versionId}`),
+        onSuccess: data => queryClient.setQueryData([ 'gamedata-import-job' ], data),
+    });
+};
+
+export const useTextSearch = (text: string, page: number) => useQuery({
+    queryKey: [ 'gamedata', 'texts', 'search', text, page ],
+    queryFn: () => api<TextSearchResult>(`/gamedata/texts?${new URLSearchParams({ q: text, page: String(page) })}`),
+    placeholderData: keepPreviousData,
+});
+
+export const useSaveText = () => {
+    const refresh = useRefresh();
+
+    return useMutation({
+        mutationFn: (text: { key: string; value: string }) => put<TextEntry>('/gamedata/texts', text),
+        onSuccess: refresh,
+    });
+};
+
+export const useDeleteText = () => {
+    const refresh = useRefresh();
+
+    return useMutation({
+        mutationFn: (key: string) => api<void>(`/gamedata/texts?${new URLSearchParams({ key })}`, { method: 'DELETE' }),
+        onSuccess: refresh,
+    });
+};
+
+export interface ProductImportItem {
+    code: string;
+    action: number;
+    fields: FurnitureFieldChange[];
+}
+
+export interface ProductImportPreview {
+    version: HabboProductVersion;
+    added: number;
+    updated: number;
+    kept: number;
+    unchanged: number;
+    items: ProductImportItem[];
+    truncated: boolean;
+}
+
+/** A product: the name and description the client shows for an offer whose name key is its code. */
+export interface ProductEntry {
+    code: string;
+    name: string | null;
+    description: string | null;
+    /** False for the hotel's own. */
+    fromHabbo: boolean;
+    habboName: string | null;
+    habboDescription: string | null;
+}
+
+export interface ProductSearchResult {
+    items: ProductEntry[];
+    total: number;
+    pageSize: number;
+}
+
+export const useProductImportPreview = (enabled: boolean) => useQuery({
+    queryKey: [ 'gamedata', 'products', 'import' ],
+    queryFn: () => api<ProductImportPreview>('/gamedata/products/import'),
+    enabled,
+});
+
+/** Starts taking a version of Habbo's product data in, in the background. */
+export const useProductImport = () => {
+    const queryClient = useQueryClient();
+
+    return useMutation({
+        mutationFn: (versionId: number) => post<{ job: ImportJob }>(`/gamedata/products/import/${versionId}`),
+        onSuccess: data => queryClient.setQueryData([ 'gamedata-import-job' ], data),
+    });
+};
+
+export const useProductSearch = (text: string, page: number) => useQuery({
+    queryKey: [ 'gamedata', 'products', 'search', text, page ],
+    queryFn: () => api<ProductSearchResult>(`/gamedata/products?${new URLSearchParams({ q: text, page: String(page) })}`),
+    placeholderData: keepPreviousData,
+});
+
+/**
+ * The products of these codes: what the catalog shows for its offers' name keys. Readable by
+ * whoever sees the catalog, as well as the gamedata.
+ */
+export const useProductLookup = (codes: string[]) => useQuery({
+    queryKey: [ 'gamedata', 'products', 'lookup', codes ],
+    queryFn: () => api<ProductEntry[]>(`/product-data?${new URLSearchParams({ codes: codes.join(',') })}`),
+    enabled: codes.some(code => code.trim().length > 0),
+    placeholderData: keepPreviousData,
+});
+
+/** Products whose code, name or description holds the words: names to pick an offer's name key from. */
+export const useProductSuggestions = (text: string) => useQuery({
+    queryKey: [ 'gamedata', 'products', 'suggest', text ],
+    queryFn: () => api<ProductEntry[]>(`/product-data?${new URLSearchParams({ q: text })}`),
+    enabled: text.trim().length >= 2,
+    placeholderData: keepPreviousData,
+    staleTime: 30_000,
+});
+
+export const useSaveProduct = () => {
+    const refresh = useRefresh();
+
+    return useMutation({
+        mutationFn: (product: { code: string; name: string | null; description: string | null }) => put<ProductEntry>('/gamedata/products', product),
+        onSuccess: refresh,
+    });
+};
+
+export const useDeleteProduct = () => {
+    const refresh = useRefresh();
+
+    return useMutation({
+        mutationFn: (code: string) => api<void>(`/gamedata/products?${new URLSearchParams({ code })}`, { method: 'DELETE' }),
+        onSuccess: refresh,
+    });
+};
+
+/** What a figure record is: FigureRecordKind. */
+export const FIGURE_KINDS = { color: 0, setType: 1, set: 2 } as const;
+
+export type FigureKind = typeof FIGURE_KINDS[keyof typeof FIGURE_KINDS];
+
+export interface FigureImportItem {
+    kind: FigureKind;
+    key: string;
+    action: number;
+    fields: FurnitureFieldChange[];
+}
+
+export interface FigureImportPreview {
+    version: HabboFigureVersion;
+    added: number;
+    updated: number;
+    kept: number;
+    unchanged: number;
+    items: FigureImportItem[];
+    truncated: boolean;
+}
+
+/** A colour, a kind of clothing or a piece of clothing; its fields as JSON, by Habbo's names for them. */
+export interface FigureEntry {
+    kind: FigureKind;
+    key: string;
+    /** A piece's kind of clothing, a colour's palette, a kind's own type. */
+    group: string;
+    data: string;
+    /** False for the hotel's own. */
+    fromHabbo: boolean;
+    habboData: string | null;
+}
+
+export interface FigureSearchResult {
+    items: FigureEntry[];
+    total: number;
+    pageSize: number;
+}
+
+export const useFigureImportPreview = (enabled: boolean) => useQuery({
+    queryKey: [ 'gamedata', 'figures', 'import' ],
+    queryFn: () => api<FigureImportPreview>('/gamedata/figures/import'),
+    enabled,
+});
+
+/** Starts taking a version of Habbo's figure data in, in the background. */
+export const useFigureImport = () => {
+    const queryClient = useQueryClient();
+
+    return useMutation({
+        mutationFn: (versionId: number) => post<{ job: ImportJob }>(`/gamedata/figures/import/${versionId}`),
+        onSuccess: data => queryClient.setQueryData([ 'gamedata-import-job' ], data),
+    });
+};
+
+/**
+ * Records of a kind, under a group, holding the words and every field in `has` - each a field as
+ * the record's JSON writes it (`"gender":"M"`), or several split by `|`, any of which will do.
+ */
+export const useFigureSearch = (kind: FigureKind, group: string, text: string, page: number, has: string[] = []) => useQuery({
+    queryKey: [ 'gamedata', 'figures', 'search', kind, group, text, page, has ],
+    queryFn: () => {
+        const params = new URLSearchParams({ kind: String(kind), group, q: text, page: String(page) });
+
+        for (const field of has)
+            params.append('has', field);
+
+        return api<FigureSearchResult>(`/gamedata/figures?${params}`);
+    },
+    placeholderData: keepPreviousData,
+});
+
+/** A kind of clothing, and how many pieces it has. */
+export interface FigureKindEntry {
+    entry: FigureEntry;
+    pieces: number;
+}
+
+/** The kinds of clothing in Habbo's order, and the id a new piece takes. */
+export const useFigureKinds = () => useQuery({
+    queryKey: [ 'gamedata', 'figures', 'kinds' ],
+    queryFn: () => api<{ kinds: FigureKindEntry[]; nextSetId: number }>('/gamedata/figures/kinds'),
+});
+
+export const useSaveFigure = () => {
+    const refresh = useRefresh();
+
+    return useMutation({
+        mutationFn: (record: { kind: FigureKind; data: string }) => put<FigureEntry>('/gamedata/figures', record),
+        onSuccess: refresh,
+    });
+};
+
+export const useDeleteFigure = () => {
+    const refresh = useRefresh();
+
+    return useMutation({
+        mutationFn: (record: { kind: FigureKind; key: string }) => api<void>(`/gamedata/figures?${new URLSearchParams({ kind: String(record.kind), key: record.key })}`, { method: 'DELETE' }),
+        onSuccess: refresh,
+    });
+};
+
+/** The pieces of clothing for sale a player owns. */
+export const useOwnedClothing = (playerId: number | null) => useQuery({
+    queryKey: [ 'gamedata', 'figures', 'owned', playerId ],
+    queryFn: () => api<{ setIds: number[] }>(`/gamedata/figures/owned/${playerId}`),
+    enabled: playerId !== null && playerId > 0,
+});
+
+export const useGrantClothing = () => {
+    const refresh = useRefresh();
+
+    return useMutation({
+        mutationFn: ({ playerId, setIds, revoke }: { playerId: number; setIds: number[]; revoke: boolean }) =>
+            post<{ changed: number }>(`/gamedata/figures/owned/${playerId}${revoke ? '/revoke' : ''}`, { setIds }),
+        onSuccess: refresh,
+    });
+};
+
+/** A palette: its colours by order, and the kinds of clothing coloured from it. */
+export interface FigurePalette {
+    id: number;
+    usedBy: string[];
+    colors: FigureEntry[];
+}
+
+export const usePalettes = () => useQuery({
+    queryKey: [ 'gamedata', 'figures', 'palettes' ],
+    queryFn: () => api<FigurePalette[]>('/gamedata/figures/palettes'),
+});
+
+/** Records of one kind set and removed together, as one change set in the history. */
+export const useSaveFigureBatch = () => {
+    const refresh = useRefresh();
+
+    return useMutation({
+        mutationFn: (batch: { kind: FigureKind; save: string[]; delete: string[]; summary: string }) => put<{ changed: number }>('/gamedata/figures/batch', batch),
         onSuccess: refresh,
     });
 };

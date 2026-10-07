@@ -290,7 +290,7 @@ export const RoomPage = () => {
                     </Link>
                 )}
             </RoomHeader>
-            <PageBody className="flex flex-col gap-4 lg:gap-5 lg:pt-5">
+            <PageBody className="flex flex-col gap-4 lg:gap-5">
                 {isPending && <Loading />}
                 {error && <ErrorNotice error={error} />}
                 <ActionOutcome message={action.data?.message} error={action.error} />

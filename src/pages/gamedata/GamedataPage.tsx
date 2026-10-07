@@ -3,15 +3,19 @@ import { useSearchParams } from 'react-router';
 import { useGamedataStatus } from '#/api/gamedata';
 import { ErrorNotice, Loading, PageBody, PageHeader } from '#/components/ui';
 
+import { FiguresTab } from './FiguresTab';
 import { FurnitureTab } from './FurnitureTab';
 import { HistoryTab } from './HistoryTab';
-import { ImportTab } from './ImportTab';
 import { OverviewTab } from './OverviewTab';
+import { ProductsTab } from './ProductsTab';
+import { TextsTab } from './TextsTab';
 
 const TABS = [
     { value: 'overview', label: 'Overview' },
-    { value: 'import', label: 'Habbo update' },
     { value: 'furniture', label: 'Furniture' },
+    { value: 'products', label: 'Products' },
+    { value: 'texts', label: 'Texts' },
+    { value: 'figures', label: 'Figures' },
     { value: 'history', label: 'History' },
 ];
 
@@ -30,15 +34,17 @@ export const GamedataPage = () => {
         <>
             <PageHeader
                 title="Gamedata"
-                description="FurnitureData built from the furniture definitions, its offers stamped from the catalog"
+                description="FurnitureData, product data, the external texts and the figure data, built from the database"
                 tabs={{ items: TABS, value: tab, onChange: value => setParams({ tab: value }, { replace: true }) }}
             />
-            <PageBody className="flex flex-col gap-4">
+            <PageBody className="flex flex-col gap-4 lg:gap-5">
                 {error && <ErrorNotice error={error} />}
                 {!status && !error && <Loading />}
                 {status && tab === 'overview' && <OverviewTab status={status} />}
-                {status && tab === 'import' && <ImportTab status={status} />}
-                {status && tab === 'furniture' && <FurnitureTab canManage={status.canManage} />}
+                {status && tab === 'furniture' && <FurnitureTab status={status} />}
+                {status && tab === 'products' && <ProductsTab status={status} />}
+                {status && tab === 'texts' && <TextsTab status={status} />}
+                {status && tab === 'figures' && <FiguresTab status={status} />}
                 {status && tab === 'history' && <HistoryTab canManage={status.canManage} />}
             </PageBody>
         </>

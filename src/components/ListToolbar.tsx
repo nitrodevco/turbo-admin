@@ -7,11 +7,11 @@ import { Pagination } from './Pagination';
 const lessMotion = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 /**
- * What covers the top of the window, where the bar sticks below it: the shell's top bar from a
- * laptop up (h-14). On a phone the page's own header is pinned there, so the bar scrolls with the
+ * Whether the bar sticks: from a laptop up, at the top of the window once the page's header has
+ * scrolled away. On a phone the page's own header is pinned there, so the bar scrolls with the
  * list instead (`lg:sticky`).
  */
-const coveredTop = () => (window.matchMedia('(min-width: 64rem)').matches ? 56 : 0);
+const sticks = () => window.matchMedia('(min-width: 64rem)').matches;
 
 /**
  * A list's controls in one bar, as nitro-studio has them: its search and filters (`children`) and
@@ -38,11 +38,10 @@ export const ListToolbar = ({ children, page, watch }: {
         if (!element)
             return;
 
-        const covered = coveredTop();
         const observer = new IntersectionObserver(([ entry ]) => {
             if (entry)
-                setStuck(covered > 0 && !entry.isIntersecting && entry.boundingClientRect.top < covered);
-        }, { rootMargin: `-${covered}px 0px 0px 0px` });
+                setStuck(sticks() && !entry.isIntersecting && entry.boundingClientRect.top < 0);
+        });
 
         observer.observe(element);
 
@@ -61,7 +60,7 @@ export const ListToolbar = ({ children, page, watch }: {
         if (!element)
             return;
 
-        const top = element.getBoundingClientRect().top + window.scrollY - coveredTop();
+        const top = element.getBoundingClientRect().top + window.scrollY;
 
         if (window.scrollY > top + 1)
             window.scrollTo({ top, behavior: lessMotion() ? 'auto' : 'smooth' });
@@ -73,7 +72,7 @@ export const ListToolbar = ({ children, page, watch }: {
             <div ref={start} aria-hidden className="h-0" />
             <div
                 className={cx(
-                    'z-20 rounded-t-xl border-b border-line bg-surface px-3 py-2.5 transition-shadow sm:px-4 lg:sticky lg:top-14',
+                    'z-20 rounded-t-xl border-b border-line bg-surface px-3 py-2.5 transition-shadow sm:px-4 lg:sticky lg:top-0',
                     stuck && 'rounded-none shadow-[0_6px_12px_-8px_rgb(0_0_0/0.4)]',
                 )}
             >

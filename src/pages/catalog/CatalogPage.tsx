@@ -206,7 +206,7 @@ export const CatalogPage = () => {
                         ? <EmptyState>This catalog has no pages.</EmptyState>
                         : (
                                 <div className="grid items-start gap-4 lg:grid-cols-[20rem_minmax(0,1fr)] lg:gap-5">
-                                    <Panel title="Pages" className={cx('lg:sticky lg:top-[4.5rem] lg:max-h-[calc(100dvh-6rem)] lg:overflow-y-auto', selected !== null && 'max-lg:hidden')}>
+                                    <Panel title="Pages" className={cx('lg:sticky lg:top-6 lg:max-h-[calc(100dvh-3rem)] lg:overflow-y-auto', selected !== null && 'max-lg:hidden')}>
                                         <div className="p-2">
                                             <PageTree tree={data} selected={selected} onSelect={openPage} />
                                         </div>

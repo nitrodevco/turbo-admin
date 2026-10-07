@@ -73,7 +73,7 @@ export const PlayerPage = () => {
                     </Link>
                 )}
             </PageHeader>
-            <PageBody className="flex flex-col gap-4 lg:gap-5 lg:pt-1">
+            <PageBody className="flex flex-col gap-4 lg:gap-5">
                 {isPending && <Loading />}
                 {error && <ErrorNotice error={error} />}
                 {player && (
