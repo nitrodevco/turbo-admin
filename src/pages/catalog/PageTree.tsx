@@ -1,4 +1,4 @@
-import { ChevronRight, EyeOff, Search } from 'lucide-react';
+import { ChevronRight, EyeOff, Hammer, Search } from 'lucide-react';
 import { useMemo, useState } from 'react';
 
 import { catalogIconUrl, useClientAssets } from '#/api/assets';
@@ -6,6 +6,7 @@ import { type CatalogPageNode, type CatalogTree } from '#/api/catalog';
 import { Input } from '#/components/ui';
 import { cx } from '#/lib/cx';
 
+import { DISPLAY_LABELS, inBuildersClub } from './labels';
 import { ancestorsOf, childrenOf } from './tree';
 
 export const PageIcon = ({ icon, className }: { icon: number; className?: string }) => {
@@ -19,8 +20,9 @@ export const PageIcon = ({ icon, className }: { icon: number; className?: string
 };
 
 /**
- * The catalog's pages as the client's navigator shows them, the root's children at the top. Each
- * opens and closes; a search shows every page whose title or name matches, with where it sits.
+ * The catalog's pages as the client's navigator shows them, the root's children at the top, marked
+ * where they are hidden or shown in the Builders Club catalog. Each opens and closes; a search
+ * shows every page whose title or name matches, with where it sits.
  */
 export const PageTree = ({ tree, selected, onSelect }: { tree: CatalogTree; selected: number | null; onSelect: (id: number) => void }) => {
     const children = useMemo(() => childrenOf(tree), [ tree ]);
@@ -60,11 +62,12 @@ export const PageTree = ({ tree, selected, onSelect }: { tree: CatalogTree; sele
                     </button>
                     <button type="button" onClick={() => onSelect(page.id)} className="flex min-w-0 flex-1 items-center gap-2 text-left">
                         <PageIcon icon={page.icon} />
-                        <span className={cx('min-w-0 flex-1 truncate', !page.visible && 'text-muted')}>
+                        <span className={cx('min-w-0 flex-1 truncate', (page.display === 'invisible' || page.display === 'bc_only') && 'text-muted')}>
                             {page.localization}
                             {path && <span className="ml-1.5 text-xs text-muted">{path}</span>}
                         </span>
-                        {!page.visible && <EyeOff className="size-3.5 shrink-0 text-muted" aria-label="hidden" />}
+                        {page.display === 'invisible' && <EyeOff className="size-3.5 shrink-0 text-muted" aria-label="hidden" />}
+                        {inBuildersClub(page.display) && <span title={DISPLAY_LABELS[page.display]}><Hammer className="size-3.5 shrink-0 text-muted" aria-label={DISPLAY_LABELS[page.display]} /></span>}
                         {page.offerCount > 0 && <span className="font-mono text-[11px] text-muted tabular-nums">{page.offerCount}</span>}
                     </button>
                 </div>

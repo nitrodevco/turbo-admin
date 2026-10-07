@@ -120,7 +120,7 @@ const inputOf = (offer: CatalogOffer | null, pageId: number, start: OfferStart):
  * One offer, new or saved: what it gives (an item picked by class name, a badge code, or days of
  * Habbo Club or Builders Club, and how many), its name key, its price in credits and in an
  * activity-point currency, who may buy it, whether it can be gifted or bought in bulk, whether it
- * shows, and the page it is on. In the normal catalog it can be a club gift members claim, and an
+ * shows, and the page it is on. On a page of the normal catalog it can be a club gift members claim, and an
  * item can be sold as a limited series. An offer that gives something else (a pet, a bot, several
  * things) keeps that as it is.
  */
@@ -130,7 +130,8 @@ export const OfferEditor = ({ tree, pageId, offer, canManage, start = 'item', on
     const save = useCatalogEdit(offer ? (input: CatalogOfferInput) => catalogCalls.updateOffer(offer.id, input) : catalogCalls.createOffer);
     const remove = useCatalogEdit(catalogCalls.deleteOffer);
     const product = draft.product;
-    const normal = tree.catalogType === 'Normal';
+    // Club gifts, memberships and limited series are sold from the normal catalog, which shows every page but a Builders Club only one.
+    const normal = tree.pages.find(x => x.id === draft.pageId)?.display !== 'bc_only';
     const limited = offer?.products.find(x => x.limited !== null)?.limited ?? null;
     const membership = product?.type === 'club' || (product === null && offer?.products.some(x => x.subscriptionType !== null));
     const gift = draft.clubGiftDaysRequired !== null;

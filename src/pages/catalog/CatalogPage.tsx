@@ -1,23 +1,17 @@
-import { ArrowLeft, ChevronDown, EyeOff, Hammer, Plus, Send, Store } from 'lucide-react';
+import { ArrowLeft, ChevronDown, EyeOff, Plus, Send } from 'lucide-react';
 import { useState } from 'react';
 import { useSearchParams } from 'react-router';
 
-import { catalogCalls, type CatalogKind, type CatalogOffer, type CatalogTree, CLUB_BUY, CLUB_GIFTS, CLUB_GIFTS_PAGE_NAME, CLUB_PAGE_NAME, useCatalogEdit, useCatalogPage, useCatalogTree } from '#/api/catalog';
-import type { TabItem } from '#/components/Tabs';
+import { catalogCalls, type CatalogOffer, type CatalogTree, CLUB_BUY, CLUB_GIFTS, CLUB_GIFTS_PAGE_NAME, CLUB_PAGE_NAME, useCatalogEdit, useCatalogPage, useCatalogTree } from '#/api/catalog';
 import { Badge, Button, EmptyState, ErrorNotice, Loading, PageBody, PageHeader, Panel, SuccessNotice, WarningNotice } from '#/components/ui';
 import { cx } from '#/lib/cx';
 
-import { lengthOf, membershipOfName } from './labels';
+import { DISPLAY_LABELS, lengthOf, membershipOfName } from './labels';
 import { OfferEditor, type OfferStart } from './OfferEditor';
 import { PageSettings } from './PageSettings';
 import { PageIcon, PageTree } from './PageTree';
 import { ProductIcon } from './ProductIcon';
 import { ancestorsOf } from './tree';
-
-const KINDS: TabItem[] = [
-    { value: 'normal', label: 'Catalog', icon: <Store />, to: '/catalog' },
-    { value: 'builders', label: 'Builders Club', icon: <Hammer />, to: '/catalog?type=builders' },
-];
 
 const CLUB = [ '', 'club', 'VIP' ];
 
@@ -145,14 +139,13 @@ const ClubShopNotices = ({ tree, busy, onAdd }: { tree: CatalogTree; busy: boole
 /**
  * The catalog editor: the page tree, and the page picked in it with its offers and its settings.
  * Edits are saved as they are made and go in front of players when published, which reloads the
- * catalog and tells everyone online to refresh it. Which catalog and page are open live in the
- * address, so a page can be linked to.
+ * catalog and tells everyone online to refresh it. Both catalogs are cut from the one tree, by
+ * where each page is shown. The open page lives in the address, so it can be linked to.
  */
 export const CatalogPage = () => {
     const [ params, setParams ] = useSearchParams();
-    const kind: CatalogKind = params.get('type') === 'builders' ? 'builders' : 'normal';
     const selected = Number(params.get('page')) || null;
-    const tree = useCatalogTree(kind);
+    const tree = useCatalogTree();
     const page = useCatalogPage(selected);
     const publish = useCatalogEdit(catalogCalls.publish);
     const addPage = useCatalogEdit(catalogCalls.createPage);
@@ -160,9 +153,6 @@ export const CatalogPage = () => {
 
     const openPage = (id: number | null) => {
         const next = new URLSearchParams();
-
-        if (kind === 'builders')
-            next.set('type', 'builders');
 
         if (id && id !== data?.rootId)
             next.set('page', String(id));
@@ -179,7 +169,6 @@ export const CatalogPage = () => {
             <PageHeader
                 title="Catalog"
                 description={data ? `${data.pages.length.toLocaleString()} pages${unpublished > 0 ? ` · ${unpublished} ${unpublished === 1 ? 'change' : 'changes'} not published` : ''}` : 'Pages, offers and prices'}
-                tabs={{ items: KINDS, value: kind }}
             >
                 {data?.canManage && (
                     <Button
@@ -206,7 +195,7 @@ export const CatalogPage = () => {
                         tree={data}
                         busy={addPage.isPending}
                         onAdd={(title, name, layout) => addPage.mutate(
-                            [ { parentId: data.rootId, localization: title, name, icon: 0, layout, imageData: [], textData: [], visible: true } ],
+                            [ { parentId: data.rootId, localization: title, name, icon: 0, layout, imageData: [], textData: [], display: 'regular' } ],
                             { onSuccess: saved => openPage(saved.id) },
                         )}
                     />
@@ -219,7 +208,7 @@ export const CatalogPage = () => {
                                 <div className="grid items-start gap-4 lg:grid-cols-[20rem_minmax(0,1fr)] lg:gap-5">
                                     <Panel title="Pages" className={cx('lg:sticky lg:top-[4.5rem] lg:max-h-[calc(100dvh-6rem)] lg:overflow-y-auto', selected !== null && 'max-lg:hidden')}>
                                         <div className="p-2">
-                                            <PageTree key={kind} tree={data} selected={selected} onSelect={openPage} />
+                                            <PageTree tree={data} selected={selected} onSelect={openPage} />
                                         </div>
                                     </Panel>
 
@@ -234,7 +223,7 @@ export const CatalogPage = () => {
                                                             <div className="truncate text-xs text-muted">{path.join(' / ') || 'Top level'}</div>
                                                             <div className="truncate font-semibold">{page.data?.localization ?? '…'}</div>
                                                         </div>
-                                                        {page.data && !page.data.visible && <Badge className="ml-auto">hidden</Badge>}
+                                                        {page.data && page.data.display !== 'regular' && <Badge className="ml-auto">{DISPLAY_LABELS[page.data.display]}</Badge>}
                                                     </div>
                                                     {page.error && <ErrorNotice error={page.error} />}
                                                     {page.isPending && <Loading />}

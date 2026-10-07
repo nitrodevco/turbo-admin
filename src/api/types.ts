@@ -31,6 +31,7 @@ export interface MeResponse {
     canViewCatalog: boolean;
     /** Holds `admin.chatlog.view`: may read the room chat log, whispers included. */
     canViewChatlog: boolean;
+    canViewGamedata: boolean;
 }
 
 export interface DashboardRoom {

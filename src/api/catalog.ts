@@ -2,7 +2,12 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 import { api, post, put, remove } from './client';
 
-export type CatalogKind = 'normal' | 'builders';
+/**
+ * Which catalogs show a page. Both catalogs are cut from the one tree: a page shown in one brings
+ * the pages above it along, so the client can reach it. `invisible` stays in the normal catalog,
+ * hidden, for links that open it by name.
+ */
+export type PageDisplay = 'regular' | 'bc_only' | 'both' | 'invisible';
 
 export interface CatalogPageNode {
     id: number;
@@ -10,7 +15,7 @@ export interface CatalogPageNode {
     localization: string;
     name: string | null;
     icon: number;
-    visible: boolean;
+    display: PageDisplay;
     sortOrder: number;
     offerCount: number;
 }
@@ -21,7 +26,7 @@ export interface CatalogCurrency {
     activityPointType: number;
 }
 
-/** The normal catalog's club shop: what the club window sells, and the shown pages that open it. */
+/** The club shop: what the club window sells, and the shown pages that open it. */
 export interface CatalogClubSummary {
     memberships: number;
     gifts: number;
@@ -30,15 +35,13 @@ export interface CatalogClubSummary {
 }
 
 export interface CatalogTree {
-    catalogType: string;
     rootId: number;
     pages: CatalogPageNode[];
     canManage: boolean;
     unpublishedChanges: number;
     currencies: CatalogCurrency[];
     layouts: string[];
-    /** Only for the normal catalog. */
-    club: CatalogClubSummary | null;
+    club: CatalogClubSummary;
 }
 
 export type Membership = 'HabboClub' | 'BuildersClub';
@@ -107,14 +110,13 @@ export interface CatalogOffer {
 export interface CatalogPageDetail {
     id: number;
     parentId: number | null;
-    catalogType: string;
     localization: string;
     name: string | null;
     icon: number;
     layout: string;
     imageData: string[];
     textData: string[];
-    visible: boolean;
+    display: PageDisplay;
     offers: CatalogOffer[];
 }
 
@@ -133,7 +135,7 @@ export interface CatalogPageInput {
     layout: string;
     imageData: string[];
     textData: string[];
-    visible: boolean;
+    display: PageDisplay;
 }
 
 export interface CatalogOfferInput {
@@ -174,9 +176,9 @@ export interface PublishResult {
     playersTold: number;
 }
 
-export const useCatalogTree = (kind: CatalogKind) => useQuery({
-    queryKey: [ 'catalog', 'tree', kind ],
-    queryFn: () => api<CatalogTree>(`/catalog?type=${kind}`),
+export const useCatalogTree = () => useQuery({
+    queryKey: [ 'catalog', 'tree' ],
+    queryFn: () => api<CatalogTree>('/catalog'),
 });
 
 export const useCatalogPage = (id: number | null) => useQuery({

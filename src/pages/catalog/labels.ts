@@ -1,4 +1,17 @@
+import type { PageDisplay } from '#/api/catalog';
+
 const DAYS_PER_MONTH = 31;
+
+/** Where a page is shown, in words. */
+export const DISPLAY_LABELS: Record<PageDisplay, string> = {
+    regular: 'Catalog only',
+    bc_only: 'Builders Club only',
+    both: 'Catalog and Builders Club',
+    invisible: 'Hidden',
+};
+
+/** Whether the Builders Club catalog shows the page. */
+export const inBuildersClub = (display: PageDisplay) => display === 'bc_only' || display === 'both';
 
 /** A membership's length in words: months, or months and days. */
 export const lengthOf = (days: number) => {

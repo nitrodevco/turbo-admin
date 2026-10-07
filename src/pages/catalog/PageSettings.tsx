@@ -2,9 +2,10 @@ import { ArrowDown, ArrowUp, FolderPlus, Save, Trash2 } from 'lucide-react';
 import { type FormEvent, useId, useMemo, useState } from 'react';
 
 import { catalogIconUrl, catalogImageUrl, useClientAssets } from '#/api/assets';
-import { catalogCalls, type CatalogPageDetail, type CatalogPageInput, type CatalogTree, useCatalogEdit } from '#/api/catalog';
-import { Button, ErrorNotice, Field, Input, Labeled, Select, Switch, Textarea } from '#/components/ui';
+import { catalogCalls, type CatalogPageDetail, type CatalogPageInput, type CatalogTree, type PageDisplay, useCatalogEdit } from '#/api/catalog';
+import { Button, ErrorNotice, Field, Input, Labeled, Select, Textarea } from '#/components/ui';
 
+import { DISPLAY_LABELS, inBuildersClub } from './labels';
 import { LINK_KEYS, linkKeyNote } from './linkKeys';
 import { ancestorsOf, childrenOf } from './tree';
 
@@ -17,12 +18,14 @@ const inputOf = (page: CatalogPageDetail): CatalogPageInput => ({
     layout: page.layout,
     imageData: page.imageData,
     textData: page.textData,
-    visible: page.visible,
+    display: page.display,
 });
+
+const DISPLAYS: PageDisplay[] = [ 'regular', 'bc_only', 'both', 'invisible' ];
 
 /**
  * One page's settings: its title, its name (the key the client opens it by), its icon, its layout
- * and the layout's images and texts in order, and whether it shows. Below them, where it sits:
+ * and the layout's images and texts in order, and which catalogs show it. Below them, where it sits:
  * up and down among its siblings, or under another page; a page under it; and deleting it, which
  * only an empty page allows.
  */
@@ -37,6 +40,8 @@ export const PageSettings = ({ tree, page, canManage, onOpen }: { tree: CatalogT
     const remove = useCatalogEdit(catalogCalls.deletePage);
     const children = useMemo(() => childrenOf(tree), [ tree ]);
     const isRoot = page.parentId === null;
+    // The Builders Club catalog has no tabs, so a tab is not shown there; the pages under it are.
+    const isTab = page.parentId === tree.rootId;
     const siblings = page.parentId === null ? [] : (children.get(page.parentId) ?? []);
     const index = siblings.findIndex(x => x.id === page.id);
     const assets = useClientAssets();
@@ -113,8 +118,21 @@ export const PageSettings = ({ tree, page, canManage, onOpen }: { tree: CatalogT
                         })}
                     </div>
                 )}
-                <div className="flex flex-wrap items-center justify-between gap-3 sm:col-span-2">
-                    <Switch label="Shown in the catalog" checked={draft.visible} onChange={value => set('visible', value)} disabled={!canManage} />
+                <Labeled
+                    label="Shown in"
+                    hint={isTab
+                        ? 'A tab: the Builders Club catalog has no tabs, so show the pages under it there instead.'
+                        : inBuildersClub(draft.display)
+                            ? 'The pages above it are shown in the Builders Club catalog too, to lead to it, without their own offers.'
+                            : draft.display === 'invisible'
+                                ? 'In no navigation; links that open it by name still find it in the catalog.'
+                                : undefined}
+                >
+                    <Select value={draft.display} onChange={event => set('display', event.target.value as PageDisplay)} disabled={!canManage} aria-label="Shown in">
+                        {DISPLAYS.map(x => <option key={x} value={x} disabled={isTab && inBuildersClub(x) && x !== page.display}>{DISPLAY_LABELS[x]}</option>)}
+                    </Select>
+                </Labeled>
+                <div className="flex flex-wrap items-end justify-end gap-3">
                     {canManage && <Button type="submit" icon={<Save />} disabled={save.isPending}>Save page</Button>}
                 </div>
             </form>
@@ -146,7 +164,7 @@ export const PageSettings = ({ tree, page, canManage, onOpen }: { tree: CatalogT
                             variant="secondary"
                             icon={<FolderPlus />}
                             disabled={create.isPending}
-                            onClick={() => create.mutate([ { parentId: page.id, localization: 'New page', name: null, icon: 0, layout: 'default_3x3', imageData: [], textData: [], visible: false } ], {
+                            onClick={() => create.mutate([ { parentId: page.id, localization: 'New page', name: null, icon: 0, layout: 'default_3x3', imageData: [], textData: [], display: 'invisible' } ], {
                                 onSuccess: saved => onOpen(saved.id),
                             })}
                         >
