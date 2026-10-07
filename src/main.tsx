@@ -13,11 +13,13 @@ import { createRoot } from 'react-dom/client';
 import { BrowserRouter } from 'react-router';
 
 import { ApiError } from '#/api/client';
+import { stopPhoneZoom } from '#/lib/noZoom';
 import { startTheme } from '#/lib/theme';
 
 import { App } from './App';
 
 startTheme();
+stopPhoneZoom();
 
 const queryClient = new QueryClient({
     defaultOptions: {

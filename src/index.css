@@ -167,3 +167,20 @@ select option {
 dialog::backdrop {
     background: rgb(5 8 12 / 0.6);
 }
+
+/*
+ * No zooming on phones. Double-tap zoom is off here; pinch is stopped in `lib/noZoom.ts`. iOS zooms
+ * into any field whose text is under 16px when it is focused, so on phone widths every field is
+ * 16px. This sits outside the layers so it wins over a field's own text size.
+ */
+html {
+    touch-action: manipulation;
+}
+
+@media (max-width: 639.98px) {
+    input,
+    select,
+    textarea {
+        font-size: 16px;
+    }
+}
