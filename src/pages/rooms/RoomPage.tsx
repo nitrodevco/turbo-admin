@@ -1,14 +1,15 @@
-import { Ban, DoorOpen, Ellipsis, Gavel, Megaphone, MicOff, Power, Trash2, UserX } from 'lucide-react';
+import { Ban, DoorOpen, Ellipsis, Gavel, Megaphone, MessagesSquare, MicOff, Power, Trash2, UserX } from 'lucide-react';
 import { type FormEvent, useState } from 'react';
 import { Link, useParams } from 'react-router';
 
 import { useLive } from '#/api/live';
 import { useMe, useRoom } from '#/api/queries';
-import { type RoomActionResponse, roomCalls, useRoomAction } from '#/api/rooms';
+import { type RoomActionResponse, roomCalls, useRoomAction, useRoomVisitors } from '#/api/rooms';
 import type { RoomDetailResponse, RoomPlayerRef } from '#/api/types';
 import { Sheet, SheetItem } from '#/components/Sheet';
 import { TabbedPanel } from '#/components/TabbedPanel';
 import { Avatar, Badge, Button, EmptyState, ErrorNotice, IconButton, Input, Kv, Label, Loading, PageBody, Panel, Segmented, Select, Stat, Switch, Textarea } from '#/components/ui';
+import { fromNow } from '#/lib/time';
 
 import { chatFloodLabel, doorModeLabel, formatDateTime, tradeModeLabel, whoLabel } from './labels';
 import { ActionOutcome, RoomHeader } from './RoomHeader';
@@ -183,6 +184,36 @@ const Rights = ({ room, run, busy }: { room: RoomDetailResponse; run: Run; busy:
     );
 };
 
+/** Who went into the room lately, newest first; asked for only when the tab is opened. */
+const Visitors = ({ roomId, linked }: { roomId: number; linked: boolean }) => {
+    const { data: visits, error, isPending } = useRoomVisitors(roomId);
+
+    if (isPending)
+        return <Loading />;
+
+    if (error)
+        return <div className="p-4"><ErrorNotice error={error} /></div>;
+
+    if (visits.length === 0)
+        return <EmptyState>Nobody has gone into the room lately.</EmptyState>;
+
+    return (
+        <ul>
+            {visits.map((visit, index) => (
+                <li key={index} className="flex min-h-14 items-center gap-3 border-t border-line px-4 py-2 first:border-t-0">
+                    <Avatar id={visit.playerId} name={visit.playerName || `#${visit.playerId}`} />
+                    <div className="min-w-0 flex-1 truncate text-sm">
+                        {linked
+                            ? <Link to={`/players/${visit.playerId}`} className="font-medium hover:underline">{visit.playerName || `#${visit.playerId}`}</Link>
+                            : <span className="font-medium">{visit.playerName || `#${visit.playerId}`}</span>}
+                    </div>
+                    <span className="font-mono text-[11px] text-muted" title={formatDateTime(visit.enteredUtc)}>{fromNow(visit.enteredUtc)}</span>
+                </li>
+            ))}
+        </ul>
+    );
+};
+
 const Bans = ({ room, run, busy }: { room: RoomDetailResponse; run: Run; busy: boolean }) => {
     const calls = roomCalls(room.id);
     const [ name, setName ] = useState('');
@@ -227,15 +258,16 @@ const Bans = ({ room, run, busy }: { room: RoomDetailResponse; run: Run; busy: b
 
 /**
  * One room as it stands, and what staff may do to it: the numbers that matter, who is in it now
- * (with kick, mute and ban), the room as a whole, who holds rights or a ban, and its settings at a
- * glance. On a phone the room's controls come first, a thumb away.
+ * (with kick, mute and ban), the room as a whole, who holds rights or a ban, who visited lately,
+ * and its settings at a glance. On a phone the room's controls come first, a thumb away.
  */
 export const RoomPage = () => {
     const id = Number(useParams().id);
     const { data: room, error, isPending } = useRoom(id);
     const action = useRoomAction(id);
     const [ person, setPerson ] = useState<RoomPlayerRef | null>(null);
-    const canViewPlayers = useMe().data?.canViewPlayers ?? false;
+    const me = useMe().data;
+    const canViewPlayers = me?.canViewPlayers ?? false;
     const live = useLive(state => state.connected);
 
     const run: Run = (fn, confirm) => {
@@ -247,7 +279,17 @@ export const RoomPage = () => {
 
     return (
         <>
-            <RoomHeader id={id} room={room} tab="overview" />
+            <RoomHeader id={id} room={room} tab="overview">
+                {me?.canViewChatlog && (
+                    <Link
+                        to={`/chatlog?${new URLSearchParams({ room: String(id) })}`}
+                        className="inline-flex h-11 items-center gap-2 rounded-lg border border-line bg-subtle px-3.5 text-sm font-medium hover:border-muted/50 sm:h-9 [&>svg]:size-4"
+                    >
+                        <MessagesSquare />
+                        Chat
+                    </Link>
+                )}
+            </RoomHeader>
             <PageBody className="flex flex-col gap-4 lg:gap-5 lg:pt-5">
                 {isPending && <Loading />}
                 {error && <ErrorNotice error={error} />}
@@ -287,6 +329,7 @@ export const RoomPage = () => {
                                     tabs={[
                                         { id: 'rights', label: 'Rights', count: room.rightsHolders.length, content: <Rights room={room} run={run} busy={action.isPending} /> },
                                         { id: 'bans', label: 'Bans', count: room.bans.length, content: <Bans room={room} run={run} busy={action.isPending} /> },
+                                        { id: 'visitors', label: 'Visitors', content: <Visitors roomId={room.id} linked={canViewPlayers} /> },
                                     ]}
                                 />
                             </div>

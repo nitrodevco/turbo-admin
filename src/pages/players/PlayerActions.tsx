@@ -1,5 +1,5 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { Ban, Coins, Gavel, MessageSquareWarning, MicOff, Repeat2, Unplug } from 'lucide-react';
+import { Award, Ban, Coins, Gavel, MessageSquareWarning, MicOff, PackagePlus, Repeat2, Unplug } from 'lucide-react';
 import { type FormEvent, type ReactNode, useState } from 'react';
 
 import { post } from '#/api/client';
@@ -40,7 +40,8 @@ const Block = ({ title, children }: { title: string; children: ReactNode }) => (
 
 /**
  * What staff may do to a player from their page: send them a message, ban, silence or trade lock
- * them (and lift each), disconnect them, and change their balances. Each is the hotel's own
+ * them (and lift each), disconnect them, change their balances, and give or take badges and give
+ * furniture. Each is the hotel's own
  * command, run as the staff member, so the same permissions and the command log apply, and a
  * player who outranks them is refused by the command itself. Only what they may do is shown.
  */
@@ -55,6 +56,9 @@ export const PlayerActions = ({ player }: { player: PlayerDetailResponse }) => {
     const [ lockFor, setLockFor ] = useState('7d');
     const [ currency, setCurrency ] = useState(player.currencies[0]?.name ?? 'credits');
     const [ amount, setAmount ] = useState('');
+    const [ badge, setBadge ] = useState('');
+    const [ furni, setFurni ] = useState('');
+    const [ furniCount, setFurniCount ] = useState('1');
 
     const act = useMutation({
         mutationFn: (run: () => Promise<RunCommandResponse>) => run(),
@@ -189,6 +193,60 @@ export const PlayerActions = ({ player }: { player: PlayerDetailResponse }) => {
                         </Button>
                     </Block>
                 </form>
+            ),
+        });
+
+    if (can.giveBadge || can.takeBadge || can.giveItem)
+        tabs.push({
+            id: 'items',
+            label: 'Items',
+            content: (
+                <>
+                    {(can.giveBadge || can.takeBadge) && (
+                        <form
+                            onSubmit={(event) => {
+                                event.preventDefault();
+
+                                if (can.giveBadge)
+                                    run({ action: 'givebadge', badge: badge.trim() });
+                            }}
+                        >
+                            <Block title="Badge">
+                                <Input value={badge} onChange={event => setBadge(event.target.value)} placeholder="Badge code, like ADM or ACH_Login1" aria-label="Badge code" className="font-mono" />
+                                <div className="flex flex-wrap gap-2">
+                                    {can.giveBadge && <Button type="submit" variant="secondary" icon={<Award />} disabled={act.isPending || badge.trim() === ''}>Give</Button>}
+                                    {can.takeBadge && (
+                                        <Button
+                                            variant="ghost"
+                                            disabled={act.isPending || badge.trim() === ''}
+                                            onClick={() => run({ action: 'takebadge', badge: badge.trim() }, `Take the badge ${badge.trim()} from ${player.name}?`)}
+                                        >
+                                            Take
+                                        </Button>
+                                    )}
+                                </div>
+                            </Block>
+                        </form>
+                    )}
+                    {can.giveItem && (
+                        <form
+                            onSubmit={(event) => {
+                                event.preventDefault();
+                                run({ action: 'giveitem', furni: furni.trim(), amount: Number(furniCount) });
+                            }}
+                        >
+                            <Block title="Furniture">
+                                <div className="flex flex-wrap gap-2">
+                                    <Input value={furni} onChange={event => setFurni(event.target.value)} placeholder="Class name, like throne" aria-label="Furniture class name" className="flex-[3_1_10rem] font-mono" />
+                                    <Input type="number" min={1} value={furniCount} onChange={event => setFurniCount(event.target.value)} aria-label="How many" className="flex-[1_1_4rem] font-mono" />
+                                </div>
+                                <Button type="submit" variant="secondary" icon={<PackagePlus />} disabled={act.isPending || furni.trim() === '' || !(Number(furniCount) >= 1)} className="self-start">
+                                    Put in inventory
+                                </Button>
+                            </Block>
+                        </form>
+                    )}
+                </>
             ),
         });
 

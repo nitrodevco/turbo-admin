@@ -12,11 +12,15 @@ It has:
 - **Rooms**: find any room, invisible ones too, by name, owner or id, and see its settings, who's
   in it right now, rights and bans. Only shown if you have `admin.rooms.view`. With the room
   permissions the hotel asks for, also edit its settings, kick, mute and ban people, lift bans,
-  remove rights, make it a staff pick, mute it, clear it, unload it and send it an alert.
+  remove rights, make it a staff pick, mute it, clear it, unload it and send it an alert. Its
+  Visitors tab lists who went into it lately.
 - **Players**: find any player by name or id, the online ones alone if you like, and see whether
-  they're online and where, their balances, sanctions, rooms and profile. Only shown if you have
-  `admin.players.view`. With the matching command permissions, warn, ban, silence, trade lock,
-  disconnect them or change their balances, through the hotel's own commands. With
+  they're online and where, their balances, sanctions, rooms and profile, their badges (worn ones
+  first), their furniture by kind (in their inventory and placed in rooms), how many pets and bots
+  they have, and the rooms they went into lately. Only shown if you have `admin.players.view`.
+  With the matching command permissions, warn, ban, silence, trade lock, disconnect them, change
+  their balances, give or take badges and put furniture in their inventory, through the hotel's
+  own commands. With
   `admin.players.create`, create new players; with `admin.tickets.issue`, give a player a login
   ticket (single-use or reusable, timed or never running out) for players you outrank.
 - **Catalog**: the page tree of the catalog and the Builders Club catalog, each page's offers and
@@ -27,6 +31,9 @@ It has:
 - **Command log**: every logged command, who ran it, where from (in game, room chat, the panel,
   the server console) and how it went, filtered by player, command, outcome or source. Only shown
   if you have `admin.commandlog.view`.
+- **Chat log**: what players said in rooms, whispers included, filtered by player, room or words,
+  and any line in context with what was said around it. Only shown if you have
+  `admin.chatlog.view`.
 - **Permissions**: groups, any player's permissions and why they hold what they hold, who is
   given a node, and the permission log. Seeing it needs `admin.permissions.view`; changing it
   needs `permissions.manage`, and only for groups and players below your heaviest group, with

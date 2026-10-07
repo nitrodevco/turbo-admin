@@ -29,6 +29,8 @@ export interface MeResponse {
     canViewCommandLog: boolean;
     /** Holds `admin.catalog.view`: may see the catalog editor; changing it needs `catalog.manage`. */
     canViewCatalog: boolean;
+    /** Holds `admin.chatlog.view`: may read the room chat log, whispers included. */
+    canViewChatlog: boolean;
 }
 
 export interface DashboardRoom {

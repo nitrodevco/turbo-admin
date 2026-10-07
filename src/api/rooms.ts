@@ -1,6 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 import { api, post, put, remove } from './client';
+import type { RoomVisitItem } from './players';
 import type { RoomCategoryItem, RoomSettingsRequest } from './types';
 
 export interface RoomActionResponse {
@@ -11,6 +12,12 @@ export const useRoomCategories = () => useQuery({
     queryKey: [ 'room-categories' ],
     queryFn: () => api<RoomCategoryItem[]>('/rooms/categories'),
     staleTime: 5 * 60_000,
+});
+
+/** The players who went into a room, newest first. */
+export const useRoomVisitors = (id: number) => useQuery({
+    queryKey: [ 'room', id, 'visitors' ],
+    queryFn: () => api<RoomVisitItem[]>(`/rooms/${id}/visitors`),
 });
 
 const room = (id: number) => `/rooms/${id}`;

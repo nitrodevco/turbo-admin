@@ -1,4 +1,4 @@
-import { KeyRound, ScrollText } from 'lucide-react';
+import { KeyRound, MessagesSquare, ScrollText } from 'lucide-react';
 import { Link, useParams } from 'react-router';
 
 import { type PlayerSanctionItem, usePlayer, usePlayerAbilities } from '#/api/players';
@@ -8,6 +8,7 @@ import { fromNow } from '#/lib/time';
 import { formatDateTime } from '#/pages/rooms/labels';
 
 import { DiscordCard } from './DiscordCard';
+import { InventoryPanel } from './InventoryPanel';
 import { LoginTicketCard } from './LoginTicketCard';
 import { PlayerActions } from './PlayerActions';
 
@@ -21,7 +22,8 @@ const SanctionState = ({ sanction }: { sanction: PlayerSanctionItem }) =>
 
 /**
  * One player as staff look them up: whether they are online and where, their balances, profile,
- * the rooms they own and their sanctions, with a way to their permissions. Read-only.
+ * the rooms they own, their sanctions, what they own and where they've been, with a way to their
+ * permissions.
  */
 export const PlayerPage = () => {
     const id = Number(useParams().id);
@@ -59,6 +61,15 @@ export const PlayerPage = () => {
                     >
                         <ScrollText />
                         Commands
+                    </Link>
+                )}
+                {player && me?.canViewChatlog && (
+                    <Link
+                        to={`/chatlog?${new URLSearchParams({ player: String(player.id) })}`}
+                        className="inline-flex h-11 items-center gap-2 rounded-lg border border-line bg-subtle px-3.5 text-sm font-medium hover:border-muted/50 sm:h-9 [&>svg]:size-4"
+                    >
+                        <MessagesSquare />
+                        Chat
                     </Link>
                 )}
             </PageHeader>
@@ -130,6 +141,8 @@ export const PlayerPage = () => {
                                                 </ul>
                                             )}
                                 </Panel>
+
+                                <InventoryPanel player={player} />
                             </div>
 
                             <div className="flex min-w-0 flex-[1_1_300px] flex-col gap-4 max-lg:order-first lg:gap-5">

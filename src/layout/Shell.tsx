@@ -1,5 +1,5 @@
 import { useQueryClient } from '@tanstack/react-query';
-import { Gauge, House, KeyRound, LogOut, Monitor, Moon, ScrollText, Search, ShieldCheck, SquareTerminal, Store, Sun, UserRound, Users, X } from 'lucide-react';
+import { Gauge, House, KeyRound, LogOut, MessagesSquare, Monitor, Moon, ScrollText, Search, ShieldCheck, SquareTerminal, Store, Sun, UserRound, Users, X } from 'lucide-react';
 import { type KeyboardEvent as ReactKeyboardEvent, type ReactNode, useEffect, useRef, useState } from 'react';
 import { Link, NavLink, Outlet, useLocation, useNavigate } from 'react-router';
 
@@ -19,7 +19,7 @@ interface NavItem {
     label: string;
     icon: ReactNode;
     end: boolean;
-    needs?: keyof Pick<MeResponse, 'canViewRooms' | 'canViewPlayers' | 'canViewPermissions' | 'canViewCommandLog' | 'canViewCatalog' | 'canResetPasskeys'>;
+    needs?: keyof Pick<MeResponse, 'canViewRooms' | 'canViewPlayers' | 'canViewPermissions' | 'canViewCommandLog' | 'canViewChatlog' | 'canViewCatalog' | 'canResetPasskeys'>;
 }
 
 const NAV: NavItem[] = [
@@ -29,6 +29,7 @@ const NAV: NavItem[] = [
     { to: '/permissions', label: 'Permissions', icon: <KeyRound />, end: false, needs: 'canViewPermissions' },
     { to: '/catalog', label: 'Catalog', icon: <Store />, end: false, needs: 'canViewCatalog' },
     { to: '/command-log', label: 'Command log', icon: <ScrollText />, end: false, needs: 'canViewCommandLog' },
+    { to: '/chatlog', label: 'Chat log', icon: <MessagesSquare />, end: false, needs: 'canViewChatlog' },
     { to: '/console', label: 'Console', icon: <SquareTerminal />, end: false },
     { to: '/staff', label: 'Staff', icon: <ShieldCheck />, end: false, needs: 'canResetPasskeys' },
 ];

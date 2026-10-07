@@ -85,6 +85,52 @@ export const usePlayer = (id: number) => useQuery({
     refetchInterval: liveInterval(15_000),
 });
 
+/** A badge a player owns; `slot` is where they wear it, null when they don't. */
+export interface PlayerBadgeItem {
+    code: string;
+    slot: number | null;
+}
+
+/** One kind of furniture a player owns, by its class name, and where those pieces are. */
+export interface PlayerFurnitureItem {
+    definitionId: number;
+    name: string;
+    /** `floor` or `wall`. */
+    type: string;
+    inInventory: number;
+    inRooms: number;
+}
+
+export interface PlayerInventoryResponse {
+    badges: PlayerBadgeItem[];
+    furniture: PlayerFurnitureItem[];
+    furnitureInInventory: number;
+    furnitureInRooms: number;
+    pets: number;
+    bots: number;
+}
+
+/** A player going into a room, and when; from the entry log the navigator's history keeps. */
+export interface RoomVisitItem {
+    playerId: number;
+    playerName: string;
+    roomId: number;
+    roomName: string;
+    enteredUtc: string;
+}
+
+/** What a player owns. Under the player's key, so acting on them refreshes it too. */
+export const usePlayerInventory = (id: number) => useQuery({
+    queryKey: [ 'player', id, 'inventory' ],
+    queryFn: () => api<PlayerInventoryResponse>(`/players/${id}/inventory`),
+});
+
+/** The rooms a player went into, newest first. */
+export const usePlayerVisits = (id: number) => useQuery({
+    queryKey: [ 'player', id, 'visits' ],
+    queryFn: () => api<RoomVisitItem[]>(`/players/${id}/visits`),
+});
+
 /** What the signed-in staff member may do to players: one flag per command. */
 export interface PlayerAbilities {
     ban: boolean;
@@ -95,6 +141,9 @@ export interface PlayerAbilities {
     warn: boolean;
     alert: boolean;
     give: boolean;
+    giveBadge: boolean;
+    takeBadge: boolean;
+    giveItem: boolean;
     /** Holds `admin.players.create`. */
     createPlayers: boolean;
     /** Holds `admin.tickets.issue`; a ticket still needs the player to be one they can do everything of. */
@@ -146,11 +195,16 @@ export const usePlayerAbilities = () => useQuery({
 });
 
 export interface PlayerActionRequest {
-    action: 'ban' | 'unban' | 'silence' | 'unsilence' | 'tradelock' | 'untradelock' | 'disconnect' | 'warn' | 'alert' | 'give';
+    action: 'ban' | 'unban' | 'silence' | 'unsilence' | 'tradelock' | 'untradelock' | 'disconnect' | 'warn' | 'alert' | 'give' | 'givebadge' | 'takebadge' | 'giveitem';
     duration?: string;
     reason?: string;
     currency?: string;
+    /** The amount to give, or for `giveitem` how many. */
     amount?: number;
+    /** The badge code, for `givebadge` and `takebadge`. */
+    badge?: string;
+    /** The furniture's class name, for `giveitem`. */
+    furni?: string;
 }
 
 /** Runs an action on a player: the hotel's own command, as you. Answers as the console does. */
