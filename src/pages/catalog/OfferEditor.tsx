@@ -2,10 +2,10 @@ import { Save, Search, Trash2 } from 'lucide-react';
 import { type FormEvent, useMemo, useState } from 'react';
 
 import { catalogCalls, type CatalogFurniture, type CatalogOffer, type CatalogOfferInput, type CatalogTree, type EditableKind, type Membership, useCatalogEdit, useFurnitureSearch } from '#/api/catalog';
-import { Button, ErrorNotice, Input, Labeled, Segmented, Select, Switch } from '#/components/ui';
+import { Button, ErrorNotice, Input, Labeled, Segmented, Select, Switch, WarningNotice } from '#/components/ui';
 import { cx } from '#/lib/cx';
 
-import { lengthOf } from './labels';
+import { lengthOf, membershipOfName } from './labels';
 import { LimitedSection } from './LimitedSection';
 import { ProductIcon } from './ProductIcon';
 import { ancestorsOf } from './tree';
@@ -134,6 +134,9 @@ export const OfferEditor = ({ tree, pageId, offer, canManage, start = 'item', on
     const limited = offer?.products.find(x => x.limited !== null)?.limited ?? null;
     const membership = product?.type === 'club' || (product === null && offer?.products.some(x => x.subscriptionType !== null));
     const gift = draft.clubGiftDaysRequired !== null;
+    // A length name key that says another length than the membership gives: the client sells it by its days.
+    const named = product?.type === 'club' ? membershipOfName(draft.localizationId) : null;
+    const misnamed = named !== null && product !== null && (named.days !== product.subscriptionDays || named.subscription !== (product.subscription ?? 'HabboClub'));
     const canBeLimited = normal && offer !== null && !gift && offer.products.length === 1 && [ 'floor', 'wall' ].includes(offer.products[0]?.type ?? '');
 
     const pages = useMemo(() => tree.pages
@@ -195,7 +198,7 @@ export const OfferEditor = ({ tree, pageId, offer, canManage, start = 'item', on
                                         <p className="text-xs text-muted">
                                             {product.subscription === 'BuildersClub'
                                                 ? 'Builders Club days, bought from a Builders Club page.'
-                                                : 'Habbo Club days. The club window (a page with the club_buy layout) lists every shown membership, wherever it is.'}
+                                                : 'Habbo Club days. The club window (the page with the link key hc_membership) lists every shown membership, wherever it is.'}
                                         </p>
                                     </div>
                                 )}
@@ -221,7 +224,22 @@ export const OfferEditor = ({ tree, pageId, offer, canManage, start = 'item', on
 
             <div className="grid gap-3 sm:grid-cols-3">
                 <Labeled label="Name key" hint={membership ? 'Empty: named by its length, e.g. habbo_club_3_months.' : gift ? 'Members claim the gift by it, so no two gifts share one.' : 'Empty: the item\'s class name.'}>
-                    <Input value={draft.localizationId} onChange={event => set('localizationId', event.target.value)} maxLength={512} disabled={!canManage} className="font-mono" aria-label="Name key" />
+                    <Input
+                        value={draft.localizationId}
+                        onChange={(event) => {
+                            const name = event.target.value;
+                            const said = membershipOfName(name);
+
+                            // A membership named by its length gives that length, as the server names them.
+                            setDraft(draft.product?.type === 'club' && said
+                                ? { ...draft, localizationId: name, product: { ...draft.product, subscription: said.subscription, subscriptionDays: said.days } }
+                                : { ...draft, localizationId: name });
+                        }}
+                        maxLength={512}
+                        disabled={!canManage}
+                        className="font-mono"
+                        aria-label="Name key"
+                    />
                 </Labeled>
                 {!gift && (
                     <>
@@ -246,6 +264,26 @@ export const OfferEditor = ({ tree, pageId, offer, canManage, start = 'item', on
                     </>
                 )}
             </div>
+
+            {misnamed && product && (
+                <WarningNotice>
+                    <span className="flex flex-wrap items-center gap-x-3 gap-y-2">
+                        <span>
+                            The name key says {lengthOf(named.days)}, but the membership gives {lengthOf(product.subscriptionDays)}. The client sells it by its days.
+                        </span>
+                        {canManage && (
+                            <Button
+                                type="button"
+                                variant="secondary"
+                                onClick={() => set('product', { ...product, subscription: named.subscription, subscriptionDays: named.days })}
+                                className="h-8 sm:h-8"
+                            >
+                                Make it {lengthOf(named.days)}
+                            </Button>
+                        )}
+                    </span>
+                </WarningNotice>
+            )}
 
             <div className="flex flex-wrap items-end gap-x-6 gap-y-3">
                 {!membership && !gift && (

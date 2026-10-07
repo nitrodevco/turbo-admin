@@ -28,6 +28,10 @@
     --color-accent-soft: #e2f4f2;
     --color-on-accent: #ffffff;
 
+    /* Chart series, in this order; checked for colour-blind separation against the surface. */
+    --color-series-1: #008f85;
+    --color-series-2: #7048e8;
+
     /* States: live and fine, needs attention, destructive or refused. Each with a fill and a line. */
     --color-good: #157a45;
     --color-good-soft: #e3f5ec;
@@ -60,6 +64,9 @@
     --color-accent-hover: #7fe3da;
     --color-accent-soft: #10302e;
     --color-on-accent: #06201e;
+
+    --color-series-1: #14a397;
+    --color-series-2: #8b6ff0;
 
     --color-good: #5bd68a;
     --color-good-soft: #0f2219;

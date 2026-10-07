@@ -2,12 +2,12 @@ import { ArrowLeft, ChevronDown, EyeOff, Hammer, Plus, Send, Store } from 'lucid
 import { useState } from 'react';
 import { useSearchParams } from 'react-router';
 
-import { catalogCalls, type CatalogKind, type CatalogOffer, type CatalogTree, CLUB_BUY, CLUB_GIFTS, useCatalogEdit, useCatalogPage, useCatalogTree } from '#/api/catalog';
+import { catalogCalls, type CatalogKind, type CatalogOffer, type CatalogTree, CLUB_BUY, CLUB_GIFTS, CLUB_GIFTS_PAGE_NAME, CLUB_PAGE_NAME, useCatalogEdit, useCatalogPage, useCatalogTree } from '#/api/catalog';
 import type { TabItem } from '#/components/Tabs';
 import { Badge, Button, EmptyState, ErrorNotice, Loading, PageBody, PageHeader, Panel, SuccessNotice, WarningNotice } from '#/components/ui';
 import { cx } from '#/lib/cx';
 
-import { lengthOf } from './labels';
+import { lengthOf, membershipOfName } from './labels';
 import { OfferEditor, type OfferStart } from './OfferEditor';
 import { PageSettings } from './PageSettings';
 import { PageIcon, PageTree } from './PageTree';
@@ -29,6 +29,14 @@ const givesOf = (offer: CatalogOffer) =>
 
         return `${x.quantity > 1 ? `${x.quantity} × ` : ''}${x.definitionName ?? x.extraParam ?? x.type}`;
     }).join(', ') || 'nothing';
+
+/** The length a membership's name key says when its days give another; null when they agree. */
+const misnamedLength = (offer: CatalogOffer) => {
+    const named = membershipOfName(offer.localizationId ?? '');
+    const product = offer.products.find(x => x.subscriptionType);
+
+    return named && product && (named.days !== product.subscriptionDays || named.subscription !== product.subscriptionType) ? lengthOf(named.days) : null;
+};
 
 /** What a new offer starts as on a page of this layout. */
 const startOf = (layout: string): OfferStart => (layout === CLUB_BUY ? 'membership' : layout === CLUB_GIFTS ? 'gift' : 'item');
@@ -88,6 +96,7 @@ const Offers = ({ tree, pageId, layout, offers, canManage }: { tree: CatalogTree
                                             {!offer.visible && <Badge><EyeOff className="size-3" />hidden</Badge>}
                                             {offer.isClubGift && <Badge tone="accent">gift{offer.clubGiftDaysRequired ? ` · ${offer.clubGiftDaysRequired}d` : ''}</Badge>}
                                             {offer.products.some(x => x.subscriptionType) && <Badge tone="green">membership</Badge>}
+                                            {misnamedLength(offer) && <Badge tone="amber">name says {misnamedLength(offer)}</Badge>}
                                             {offer.clubLevel > 0 && <Badge tone="accent">{CLUB[offer.clubLevel] ?? 'club'}</Badge>}
                                             {offer.products.map(x => x.limited && <Badge key={x.id} tone="amber">limited {x.limited.remaining}/{x.limited.total}</Badge>)}
                                             <span className="font-mono text-xs whitespace-nowrap max-sm:hidden">{priceOf(offer, tree)}</span>
@@ -104,8 +113,9 @@ const Offers = ({ tree, pageId, layout, offers, canManage }: { tree: CatalogTree
 };
 
 /**
- * What is missing for players to reach the club shop: memberships on offer with no shown page of
- * the club window's layout, or club gifts with no shown page that lists them; and adding one.
+ * What is missing for players to reach the club shop: memberships on offer with no shown page the
+ * client's club buttons open (link key hc_membership), or club gifts with no shown club_gifts page
+ * to list them; and adding one, with the layout that shows them.
  */
 const ClubShopNotices = ({ tree, busy, onAdd }: { tree: CatalogTree; busy: boolean; onAdd: (title: string, name: string, layout: string) => void }) => {
     const club = tree.club!;
@@ -115,16 +125,16 @@ const ClubShopNotices = ({ tree, busy, onAdd }: { tree: CatalogTree; busy: boole
             {club.memberships > 0 && club.clubBuyPageId === null && (
                 <WarningNotice>
                     <span className="flex flex-wrap items-center gap-x-3 gap-y-2">
-                        <span>{club.memberships} {club.memberships === 1 ? 'membership is' : 'memberships are'} on offer, but no shown page uses the club_buy layout, so players can't open the club window.</span>
-                        {tree.canManage && <Button variant="secondary" disabled={busy} onClick={() => onAdd('Habbo Club', 'habbo_club', CLUB_BUY)} className="h-8 sm:h-8">Add a Habbo Club page</Button>}
+                        <span>{club.memberships} {club.memberships === 1 ? 'membership is' : 'memberships are'} on offer, but no shown page has the link key {CLUB_PAGE_NAME}, which the client's club buttons open, so players can't reach the club window.</span>
+                        {tree.canManage && <Button variant="secondary" disabled={busy} onClick={() => onAdd('Habbo Club', CLUB_PAGE_NAME, CLUB_BUY)} className="h-8 sm:h-8">Add a Habbo Club page</Button>}
                     </span>
                 </WarningNotice>
             )}
             {club.gifts > 0 && club.clubGiftsPageId === null && (
                 <WarningNotice>
                     <span className="flex flex-wrap items-center gap-x-3 gap-y-2">
-                        <span>{club.gifts} club {club.gifts === 1 ? 'gift is' : 'gifts are'} on offer, but no shown page uses the club_gifts layout to list them.</span>
-                        {tree.canManage && <Button variant="secondary" disabled={busy} onClick={() => onAdd('Club Gifts', 'club_gifts', CLUB_GIFTS)} className="h-8 sm:h-8">Add a club gifts page</Button>}
+                        <span>{club.gifts} club {club.gifts === 1 ? 'gift is' : 'gifts are'} on offer, but no shown page has the link key {CLUB_GIFTS_PAGE_NAME}, which the client opens to list them.</span>
+                        {tree.canManage && <Button variant="secondary" disabled={busy} onClick={() => onAdd('Club Gifts', CLUB_GIFTS_PAGE_NAME, CLUB_GIFTS)} className="h-8 sm:h-8">Add a club gifts page</Button>}
                     </span>
                 </WarningNotice>
             )}

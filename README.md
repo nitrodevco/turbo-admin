@@ -9,6 +9,9 @@ It has:
   busiest rooms. It updates live as the hotel changes (falling back to every 10 seconds if the
   live stream is down). With the hotel's commands, also send a hotel
   alert and schedule or call off maintenance and shutdowns.
+- **Performance**: how the server has been running over the last hour, six hours or day: CPU,
+  memory, players, rooms, room entry time, room updates reaching players, the thread pool queue
+  and garbage collection pauses as charts (each also as a table), and every timed room operation.
 - **Rooms**: find any room, invisible ones too, by name, owner or id, and see its settings, who's
   in it right now, rights and bans. Only shown if you have `admin.rooms.view`. With the room
   permissions the hotel asks for, also edit its settings, kick, mute and ban people, lift bans,

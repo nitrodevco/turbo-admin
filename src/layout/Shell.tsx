@@ -1,5 +1,5 @@
 import { useQueryClient } from '@tanstack/react-query';
-import { Gauge, House, KeyRound, LogOut, MessagesSquare, Monitor, Moon, ScrollText, Search, ShieldCheck, SquareTerminal, Store, Sun, UserRound, Users, X } from 'lucide-react';
+import { Activity, Gauge, House, KeyRound, LogOut, MessagesSquare, Monitor, Moon, ScrollText, Search, ShieldCheck, SquareTerminal, Store, Sun, UserRound, Users, X } from 'lucide-react';
 import { type KeyboardEvent as ReactKeyboardEvent, type ReactNode, useEffect, useRef, useState } from 'react';
 import { Link, NavLink, Outlet, useLocation, useNavigate } from 'react-router';
 
@@ -24,6 +24,7 @@ interface NavItem {
 
 const NAV: NavItem[] = [
     { to: '/', label: 'Dashboard', icon: <Gauge />, end: true },
+    { to: '/performance', label: 'Performance', icon: <Activity />, end: false },
     { to: '/rooms', label: 'Rooms', icon: <House />, end: false, needs: 'canViewRooms' },
     { to: '/players', label: 'Players', icon: <Users />, end: false, needs: 'canViewPlayers' },
     { to: '/permissions', label: 'Permissions', icon: <KeyRound />, end: false, needs: 'canViewPermissions' },

@@ -49,6 +49,12 @@ export const CLUB_BUY = 'club_buy';
 /** The layout whose page lists the club gifts. */
 export const CLUB_GIFTS = 'club_gifts';
 
+/** The name the client opens the club shop by, from the toolbar, the club centre and elsewhere. */
+export const CLUB_PAGE_NAME = 'hc_membership';
+
+/** The name the client opens the club gifts by. */
+export const CLUB_GIFTS_PAGE_NAME = 'club_gifts';
+
 export interface CatalogLimited {
     id: number;
     total: number;

@@ -1,8 +1,10 @@
+import { lazy, Suspense } from 'react';
 import { Navigate, Route, Routes } from 'react-router';
 
 import { LoginPage } from '#/auth/LoginPage';
 import { RequireSession } from '#/auth/RequireSession';
 import { SetupPage } from '#/auth/SetupPage';
+import { Loading } from '#/components/ui';
 import { Shell } from '#/layout/Shell';
 import { AccountPage } from '#/pages/AccountPage';
 import { CatalogPage } from '#/pages/catalog/CatalogPage';
@@ -22,12 +24,16 @@ import { RoomSettingsPage } from '#/pages/rooms/RoomSettingsPage';
 import { RoomsPage } from '#/pages/rooms/RoomsPage';
 import { StaffPage } from '#/pages/StaffPage';
 
+// Its charts are a large library that no other page needs, so it loads when opened.
+const PerformancePage = lazy(() => import('#/pages/PerformancePage').then(x => ({ default: x.PerformancePage })));
+
 export const App = () => (
     <Routes>
         <Route path="/login" element={<LoginPage />} />
         <Route path="/setup" element={<SetupPage />} />
         <Route element={<RequireSession><Shell /></RequireSession>}>
             <Route index element={<DashboardPage />} />
+            <Route path="performance" element={<Suspense fallback={<Loading />}><PerformancePage /></Suspense>} />
             <Route path="rooms" element={<RoomsPage />} />
             <Route path="rooms/:id" element={<RoomPage />} />
             <Route path="rooms/:id/settings" element={<RoomSettingsPage />} />

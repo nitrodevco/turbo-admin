@@ -1,10 +1,11 @@
 import { ArrowDown, ArrowUp, FolderPlus, Save, Trash2 } from 'lucide-react';
-import { type FormEvent, useMemo, useState } from 'react';
+import { type FormEvent, useId, useMemo, useState } from 'react';
 
 import { catalogIconUrl, catalogImageUrl, useClientAssets } from '#/api/assets';
 import { catalogCalls, type CatalogPageDetail, type CatalogPageInput, type CatalogTree, useCatalogEdit } from '#/api/catalog';
 import { Button, ErrorNotice, Field, Input, Labeled, Select, Switch, Textarea } from '#/components/ui';
 
+import { LINK_KEYS, linkKeyNote } from './linkKeys';
 import { ancestorsOf, childrenOf } from './tree';
 
 const linesOf = (text: string) => text.split('\n').map(x => x.trimEnd());
@@ -28,6 +29,7 @@ const inputOf = (page: CatalogPageDetail): CatalogPageInput => ({
 export const PageSettings = ({ tree, page, canManage, onOpen }: { tree: CatalogTree; page: CatalogPageDetail; canManage: boolean; onOpen: (id: number | null) => void }) => {
     const [ draft, setDraft ] = useState(() => inputOf(page));
     const [ images, setImages ] = useState(() => page.imageData.join('\n'));
+    const linkKeysId = useId();
     const [ texts, setTexts ] = useState(() => page.textData.join('\n'));
     const save = useCatalogEdit(catalogCalls.updatePage);
     const create = useCatalogEdit(catalogCalls.createPage);
@@ -60,15 +62,22 @@ export const PageSettings = ({ tree, page, canManage, onOpen }: { tree: CatalogT
             <form onSubmit={handleSubmit} className="grid gap-3 p-4 sm:grid-cols-2">
                 <Field label="Title" name="page-title" value={draft.localization} onChange={event => set('localization', event.target.value)} maxLength={50} required disabled={!canManage} />
                 <Field
-                    label="Name"
+                    label="Link key"
                     name="page-name"
                     value={draft.name ?? ''}
                     onChange={event => set('name', event.target.value || null)}
                     maxLength={50}
-                    hint="The key the client opens it by, e.g. from a link."
+                    list={linkKeysId}
+                    autoComplete="off"
+                    spellCheck={false}
+                    placeholder="Pick one the client uses, or type your own"
+                    hint={linkKeyNote(draft.name) ?? 'The name the client opens it by. Pick one the client\'s buttons use, or type your own for links.'}
                     disabled={!canManage}
                     className="font-mono"
                 />
+                <datalist id={linkKeysId}>
+                    {LINK_KEYS.map(x => <option key={x.key} value={x.key}>{x.note}</option>)}
+                </datalist>
                 <Labeled label="Icon" hint="The number of an icon_<n>.png; 0 for none.">
                     <div className="flex items-center gap-2">
                         <Input type="number" min={0} value={draft.icon} onChange={event => set('icon', Math.max(0, Number(event.target.value) || 0))} disabled={!canManage} className="w-28 font-mono" aria-label="Icon" />
@@ -80,7 +89,7 @@ export const PageSettings = ({ tree, page, canManage, onOpen }: { tree: CatalogT
                 <Labeled
                     label="Layout"
                     hint={draft.layout === 'club_buy'
-                        ? 'The club window: lists every shown Habbo Club membership.'
+                        ? 'The club window: lists every shown Habbo Club membership. The client\'s club buttons open the page with the link key hc_membership.'
                         : draft.layout === 'club_gifts'
                             ? 'Lists the club gifts members claim.'
                             : undefined}
