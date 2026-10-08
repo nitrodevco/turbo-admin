@@ -44,6 +44,7 @@ export const OverviewTab = ({ status }: { status: GamedataStatus }) => {
         { what: 'Product data', file: status.productData, setting: 'productdata.url' },
         { what: 'External texts', file: status.externalTexts, setting: 'gamedata.urls.externalTexts' },
         { what: 'Figure data', file: status.figureData, setting: 'figuredata.url' },
+        { what: 'External variables', file: status.externalVariables, setting: 'nitro.config.url' },
     ];
 
     return (

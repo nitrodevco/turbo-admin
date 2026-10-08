@@ -16,6 +16,8 @@ export interface ClientAssets {
     furniIcon: string;
     /** `badge.asset.url`: `%badgename%` is the badge code. */
     badge: string;
+    /** `image.library.url`: a featured item's promo image is its path under this. */
+    imageLibrary: string;
 }
 
 /** The addresses change only when the client is redeployed, so they are asked for once a session. */
@@ -56,3 +58,7 @@ export const furniIconUrl = (assets: ClientAssets | undefined, className: string
 /** A badge's image, by its code. */
 export const badgeUrl = (assets: ClientAssets | undefined, code: string | null) =>
     code?.trim() ? fill(assets?.badge, { badgename: code.trim() }) : null;
+
+/** A catalog featured item's promo image: its path under the client's image library. */
+export const promoImageUrl = (assets: ClientAssets | undefined, path: string) =>
+    path.trim() && assets?.imageLibrary ? `${assets.imageLibrary}${path.trim().replace(/^\/+/, '')}` : null;

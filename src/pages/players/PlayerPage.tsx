@@ -4,6 +4,7 @@ import { Link, useParams } from 'react-router';
 import { type PlayerSanctionItem, usePlayer, usePlayerAbilities } from '#/api/players';
 import { useMe } from '#/api/queries';
 import { Avatar, Badge, EmptyState, ErrorNotice, Kv, Label, LiveBadge, Loading, PageBody, PageHeader, Panel, Stat } from '#/components/ui';
+import { useRememberRecent } from '#/lib/recent';
 import { fromNow } from '#/lib/time';
 import { formatDateTime } from '#/pages/rooms/labels';
 
@@ -30,6 +31,8 @@ export const PlayerPage = () => {
     const { data: player, error, isPending } = usePlayer(id);
     const me = useMe().data;
     const abilities = usePlayerAbilities().data;
+
+    useRememberRecent('player', id, player?.name);
 
     return (
         <>

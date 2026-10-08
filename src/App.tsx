@@ -8,6 +8,7 @@ import { Loading } from '#/components/ui';
 import { Shell } from '#/layout/Shell';
 import { AccountPage } from '#/pages/AccountPage';
 import { CatalogPage } from '#/pages/catalog/CatalogPage';
+import { SongsPage } from '#/pages/catalog/SongsPage';
 import { ChatlogPage } from '#/pages/ChatlogPage';
 import { CommandLogPage } from '#/pages/CommandLogPage';
 import { ConsolePage } from '#/pages/ConsolePage';
@@ -41,6 +42,7 @@ export const App = () => (
             <Route path="players" element={<PlayerListPage />} />
             <Route path="players/:id" element={<PlayerProfilePage />} />
             <Route path="catalog" element={<CatalogPage />} />
+            <Route path="catalog/songs" element={<SongsPage />} />
             <Route path="gamedata" element={<GamedataPage />} />
             <Route path="command-log" element={<CommandLogPage />} />
             <Route path="chatlog" element={<ChatlogPage />} />

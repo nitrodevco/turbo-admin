@@ -26,11 +26,13 @@ It has:
   own commands. With
   `admin.players.create`, create new players; with `admin.tickets.issue`, give a player a login
   ticket (single-use or reusable, timed or never running out) for players you outrank.
-- **Catalog**: the page tree of the catalog and the Builders Club catalog, each page's offers and
-  settings, and with `catalog.manage` editing them (items, prices, club level, visibility, moving
-  and reordering pages), Habbo Club and Builders Club memberships for the club window, club gifts,
-  and limited series, and publishing, which reloads the catalog and tells everyone online to
-  refresh. Only shown if you have `admin.catalog.view`.
+- **Catalog**: the page tree, each page drawn as the client draws it, and an editor beside it.
+  With `catalog.manage`: drag pages about the tree and offers about their page or onto another
+  page; pick icons and layouts by sight; fill a layout's pictures and words by name; build offers
+  of any items, badges, effects, pets, bots or memberships, alone or bundled; prices, club level,
+  visibility, club gifts and limited series; the front page's featured items; and publishing,
+  which reloads the catalog and tells everyone online to refresh. Only shown if you have
+  `admin.catalog.view`.
 - **Command log**: every logged command, who ran it, where from (in game, room chat, the panel,
   the server console) and how it went, filtered by player, command, outcome or source. Only shown
   if you have `admin.commandlog.view`.

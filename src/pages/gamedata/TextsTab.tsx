@@ -1,5 +1,6 @@
 import { Plus, Save, Search, Trash2, X } from 'lucide-react';
 import { useState } from 'react';
+import { useSearchParams } from 'react-router';
 
 import { FILES, type GamedataStatus, type TextEntry, useDeleteText, useSaveText, useTextImport, useTextImportPreview, useTextSearch } from '#/api/gamedata';
 import { ListToolbar } from '#/components/ListToolbar';
@@ -97,9 +98,11 @@ const TextEditor = ({ text, canManage, onDone }: { text: TextEntry | null; canMa
  * when Habbo changes it; one removed here stays removed unless Habbo changes it.
  */
 export const TextsTab = ({ status }: { status: GamedataStatus }) => {
-    const [ text, setText ] = useState('');
+    const [ params ] = useSearchParams();
+    // Opened from the search: what it found, and the one picked there open.
+    const [ text, setText ] = useState(() => params.get('q') ?? '');
     const [ page, setPage ] = useState(0);
-    const [ open, setOpen ] = useState<string | null>(null);
+    const [ open, setOpen ] = useState<string | null>(() => params.get('open'));
     const { data: found, isFetching, error } = useTextSearch(text, page);
     const size = found?.pageSize ?? 1;
 

@@ -1,4 +1,5 @@
 import { type FormEvent, type KeyboardEvent, useEffect, useMemo, useRef, useState } from 'react';
+import { useSearchParams } from 'react-router';
 
 import { useCommands, useRunCommand } from '#/api/queries';
 import type { CommandInfo, RunCommandResponse } from '#/api/types';
@@ -101,6 +102,30 @@ export const ConsolePage = () => {
     const nextId = useRef(0);
     const input = useRef<HTMLInputElement>(null);
     const bottom = useRef<HTMLDivElement>(null);
+    const [ params, setParams ] = useSearchParams();
+    const wanted = params.get('command');
+
+    const [ taken, setTaken ] = useState<string | null>(null);
+
+    // A command picked in the search (`?command=`): typed in, ready for its arguments.
+    if (wanted !== taken && (!wanted || commands.data)) {
+        setTaken(wanted);
+
+        const command = wanted ? commands.data?.find(x => x.name === wanted) : undefined;
+
+        if (command) {
+            setPicked(command);
+            setLine(`${command.name} `);
+        }
+    }
+
+    useEffect(() => {
+        if (!taken)
+            return;
+
+        input.current?.focus();
+        setParams({}, { replace: true });
+    }, [ taken, setParams ]);
 
     // A block, not an expression: newer browsers return a Promise from scrollIntoView, and an
     // effect may only return a clean-up function.

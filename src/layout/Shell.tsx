@@ -1,5 +1,5 @@
 import { useQueryClient } from '@tanstack/react-query';
-import { LogOut, Monitor, Moon, Sun, UserRound, X } from 'lucide-react';
+import { Keyboard, LogOut, Monitor, Moon, Sun, UserRound, X } from 'lucide-react';
 import { type ReactNode, useEffect, useRef, useState } from 'react';
 import { Link, NavLink, Outlet } from 'react-router';
 
@@ -10,8 +10,11 @@ import { Segmented } from '#/components/ui';
 import { cx } from '#/lib/cx';
 import { setTheme, type ThemeChoice, useTheme } from '#/lib/theme';
 
+import { CommandPalette } from './CommandPalette';
 import { useDrawer } from './drawer';
 import { useNav } from './nav';
+import { useShortcutsSheet } from './palette';
+import { Shortcuts } from './Shortcuts';
 
 const THEMES: { value: ThemeChoice; label: string; icon: ReactNode }[] = [
     { value: 'dark', label: 'Dark', icon: <Moon /> },
@@ -107,15 +110,16 @@ const RailTheme = () => {
     );
 };
 
-/** From a laptop up: the pages by name down the left, and at its foot your account, the theme and signing out. */
+/** From a laptop up: the pages by name down the left, and at its foot your account, the shortcuts, the theme and signing out. */
 const Rail = () => {
     const nav = useNav();
     const player = useSession(state => state.session?.player);
     const signOut = useSignOut();
+    const showShortcuts = useShortcutsSheet(state => state.setOpen);
 
     return (
         <nav aria-label="Main" className="sticky top-0 hidden h-dvh w-56 shrink-0 flex-col border-r border-line bg-chrome lg:flex">
-            <Link to="/" className="flex h-14 items-center gap-3 border-b border-line px-4">
+            <Link to="/" className="flex h-17 shrink-0 items-center gap-3 px-4">
                 <span className="grid size-8 place-items-center rounded-lg bg-accent font-mono text-sm font-bold text-on-accent">T</span>
                 <span className="font-mono text-xs font-medium tracking-[0.08em] text-ink uppercase">Turbo Admin</span>
             </Link>
@@ -136,6 +140,9 @@ const Rail = () => {
                     <span className="grid size-6 shrink-0 place-items-center rounded-md bg-warn font-mono text-[10px] font-semibold text-[#0a0e13]">{player?.name.slice(0, 2).toUpperCase()}</span>
                     <span className="truncate">{player?.name}</span>
                 </NavLink>
+                <button type="button" onClick={() => showShortcuts(true)} title="Keyboard shortcuts (?)" aria-label="Keyboard shortcuts" className={footButton}>
+                    <Keyboard />
+                </button>
                 <RailTheme />
                 <button type="button" onClick={signOut} title="Sign out" aria-label="Sign out" className={cx(footButton, 'hover:text-bad')}>
                     <LogOut />
@@ -240,6 +247,8 @@ export const Shell = () => {
         <div className="flex min-h-dvh">
             <Rail />
             <Drawer />
+            <CommandPalette />
+            <Shortcuts />
             <div className="flex min-w-0 flex-1 flex-col">
                 <main className="flex min-w-0 flex-1 flex-col pb-8 lg:pb-10">
                     <Outlet />

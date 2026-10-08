@@ -4,6 +4,7 @@ import type { ReactNode } from 'react';
 import type { RoomDetailResponse } from '#/api/types';
 import type { TabItem } from '#/components/Tabs';
 import { ErrorNotice, LiveBadge, PageHeader, SuccessNotice } from '#/components/ui';
+import { useRememberRecent } from '#/lib/recent';
 
 import { doorModeLabel } from './labels';
 
@@ -12,6 +13,8 @@ import { doorModeLabel } from './labels';
  * tabs. Settings is a tab only for staff who may change them.
  */
 export const RoomHeader = ({ id, room, tab, children }: { id: number; room: RoomDetailResponse | undefined; tab: 'overview' | 'settings'; children?: ReactNode }) => {
+    useRememberRecent('room', id, room?.name);
+
     const tabs: TabItem[] = [
         { value: 'overview', label: 'Overview', icon: <House />, to: `/rooms/${id}` },
         ...(room?.can.editSettings ? [ { value: 'settings', label: 'Settings', icon: <Settings />, to: `/rooms/${id}/settings` } ] : []),

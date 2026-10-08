@@ -148,13 +148,15 @@ export interface CatalogOfferInput {
     canBundle: boolean;
     clubLevel: number;
     visible: boolean;
-    /** Null leaves what an existing offer gives as it is. */
+    /** Null leaves what an existing offer gives as it is; `products` replaces it when given. */
     product: CatalogProductInput | null;
+    /** Everything the offer gives, in order: replaces what it gave. */
+    products?: CatalogProductInput[];
     /** Set: a club gift, claimed by members with this many days of club used up. */
     clubGiftDaysRequired: number | null;
 }
 
-export type EditableKind = 'floor' | 'wall' | 'badge' | 'club';
+export type EditableKind = 'floor' | 'wall' | 'badge' | 'effect' | 'robot' | 'pet' | 'club';
 
 export interface CatalogProductInput {
     type: EditableKind;
@@ -169,6 +171,30 @@ interface Saved {
     id: number;
     unpublishedChanges: number;
 }
+
+/** Where a featured item takes the player: a page by its link key, an offer, or a product code. */
+export type FeaturedLinkType = 'page' | 'offer' | 'product';
+
+export interface CatalogFeaturedItem {
+    id: number;
+    position: number;
+    title: string;
+    image: string;
+    type: FeaturedLinkType;
+    value: string;
+    expiresAtUtc: string | null;
+}
+
+export interface CatalogFeaturedInput {
+    title: string;
+    image: string;
+    type: FeaturedLinkType;
+    value: string;
+    expiresAtUtc: string | null;
+}
+
+/** The client shows four: the first big, the others in a list beside it. */
+export const FEATURED_MAX = 4;
 
 export interface PublishResult {
     pages: number;
@@ -194,6 +220,76 @@ export const useFurnitureSearch = (text: string) => useQuery({
     staleTime: 5 * 60_000,
 });
 
+/** The page builders: each makes a layout's offers (or pages) from the hotel's own data. */
+export type BuilderKind = 'trophies' | 'pets' | 'colours' | 'furniLine' | 'petCustomization' | 'effects' | 'soldLimited' | 'spaces' | 'posters' | 'badgeDisplays' | 'songDiscs';
+
+export interface BuildRequest {
+    builder: BuilderKind;
+    base: string | null;
+    line: string | null;
+    prefix: string | null;
+    petType: number | null;
+}
+
+export interface BuildProduct {
+    type: ProductKind;
+    definitionId: number | null;
+    definitionName: string | null;
+    extraParam: string | null;
+    quantity: number;
+}
+
+export interface BuildItem {
+    key: string;
+    title: string;
+    localizationId: string;
+    products: BuildProduct[];
+    pageTitle: string | null;
+    offerId: number | null;
+    alreadyOffered: boolean;
+    note: string | null;
+}
+
+export interface BuildPlan {
+    builder: BuilderKind;
+    layout: string;
+    createsPages: boolean;
+    items: BuildItem[];
+    warnings: string[];
+}
+
+export interface BuildApply extends BuildRequest {
+    keys: string[];
+    costCredits: number;
+    costCurrency: number;
+    currencyTypeId: number | null;
+    clubLevel: number;
+    canGift: boolean;
+    visible: boolean;
+    setLayout: boolean;
+    display: PageDisplay | null;
+}
+
+export interface BuildResult {
+    offersCreated: number;
+    pagesCreated: number;
+    offersMoved: number;
+    unpublishedChanges: number;
+    failures: { key: string; error: string }[];
+}
+
+export const useFurniLines = (enabled: boolean) => useQuery({
+    queryKey: [ 'catalog', 'furni-lines' ],
+    queryFn: () => api<{ lines: { line: string; count: number }[] }>('/catalog/builders/furni-lines'),
+    enabled,
+    staleTime: 10 * 60_000,
+});
+
+export const useCatalogFeatured = () => useQuery({
+    queryKey: [ 'catalog', 'featured' ],
+    queryFn: () => api<{ items: CatalogFeaturedItem[] }>('/catalog/featured'),
+});
+
 export const catalogCalls = {
     createPage: (input: CatalogPageInput) => post<Saved>('/catalog/pages', input),
     updatePage: (id: number, input: CatalogPageInput) => put<Saved>(`/catalog/pages/${id}`, input),
@@ -201,10 +297,14 @@ export const catalogCalls = {
     deletePage: (id: number) => remove<Saved>(`/catalog/pages/${id}`),
     createOffer: (input: CatalogOfferInput) => post<Saved>('/catalog/offers', input),
     updateOffer: (id: number, input: CatalogOfferInput) => put<Saved>(`/catalog/offers/${id}`, input),
+    moveOffer: (id: number, pageId: number, index: number) => post<Saved>(`/catalog/offers/${id}/move`, { pageId, index }),
     deleteOffer: (id: number) => remove<Saved>(`/catalog/offers/${id}`),
+    saveFeatured: (items: CatalogFeaturedInput[]) => put<Saved>('/catalog/featured', { items }),
     saveLimited: (offerId: number, input: CatalogLimitedInput) => put<Saved>(`/catalog/offers/${offerId}/limited`, input),
     removeLimited: (offerId: number) => remove<Saved>(`/catalog/offers/${offerId}/limited`),
     publish: () => post<PublishResult>('/catalog/publish'),
+    previewBuild: (pageId: number, request: BuildRequest) => post<BuildPlan>(`/catalog/pages/${pageId}/build/preview`, request),
+    applyBuild: (pageId: number, request: BuildApply) => post<BuildResult>(`/catalog/pages/${pageId}/build`, request),
 };
 
 /** A catalog edit; the tree and pages are read again once it lands, saved or not. */

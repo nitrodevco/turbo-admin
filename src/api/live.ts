@@ -18,6 +18,8 @@ interface LiveChanges {
     rooms: number[];
     players: number[];
     permissions: number[];
+    /** Something new for the bell: a ban, or maintenance or a shutdown coming, starting or called off. */
+    notifications: boolean;
 }
 
 /** Whether the live stream is up, so pages can ask less often while it is. */
@@ -36,6 +38,9 @@ const showsAny = (ids: Set<number>, field: 'rooms' | 'players') => (query: Query
 const apply = (queryClient: QueryClient, changes: LiveChanges) => {
     if (changes.dashboard)
         void queryClient.invalidateQueries({ queryKey: [ 'dashboard' ] });
+
+    if (changes.notifications)
+        void queryClient.invalidateQueries({ queryKey: [ 'notifications' ] });
 
     const rooms = new Set(changes.rooms);
     const players = new Set(changes.players);
@@ -61,7 +66,7 @@ const apply = (queryClient: QueryClient, changes: LiveChanges) => {
 
 /** Everything a page may be showing that changes on its own, asked again after time away. */
 const catchUp = (queryClient: QueryClient) => {
-    for (const key of [ 'dashboard', 'room', 'rooms', 'player', 'players', 'permissions' ])
+    for (const key of [ 'dashboard', 'room', 'rooms', 'player', 'players', 'permissions', 'notifications' ])
         void queryClient.invalidateQueries({ queryKey: [ key ] });
 };
 

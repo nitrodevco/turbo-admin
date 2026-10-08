@@ -1,13 +1,14 @@
 import { CheckCircle2, Menu, XCircle } from 'lucide-react';
 import type { ButtonHTMLAttributes, InputHTMLAttributes, ReactNode, SelectHTMLAttributes, TextareaHTMLAttributes } from 'react';
 
-import { useMe } from '#/api/queries';
+import { SearchButton } from '#/layout/CommandPalette';
 import { useDrawer } from '#/layout/drawer';
-import { JumpBox } from '#/layout/JumpBox';
 import { useActiveNavItem } from '#/layout/nav';
+import { NotificationsBell } from '#/layout/NotificationsBell';
 import { cx } from '#/lib/cx';
 
 import { BackArrow } from './BackArrow';
+import { HeaderActions } from './HeaderActions';
 import { type TabItem, Tabs } from './Tabs';
 
 /** The width every page's content keeps to, header and body alike. */
@@ -27,18 +28,18 @@ interface PageHeaderProps {
 
 /**
  * The top of every page, in the bar along the top of the window as nitro-studio has it: the title
- * and a line under it, the page's actions and the room jump box to the right, and along its bottom
- * edge the page's tabs (or, with none, the page's name marked as a tab is, so every header is the
- * same height). On a phone it stays at the top as an app bar, with the menu button that opens the
- * navigation; from a laptop up it scrolls away with the page.
+ * and a line under it; the page's actions, the bell and the search to the right (actions that do
+ * not fit go under "More"); and along its bottom edge the page's tabs (or, with none, the page's
+ * name marked as a tab is, so every header is the same height). On a phone it stays at the top as
+ * an app bar, with the menu button that opens the navigation; from a laptop up it scrolls away
+ * with the page.
  */
 export const PageHeader = ({ title, description, back, tabs, children }: PageHeaderProps) => {
     const openDrawer = useDrawer(state => state.setOpen);
-    const canViewRooms = useMe().data?.canViewRooms ?? false;
 
     return (
         <header className="sticky top-0 z-30 border-b border-line bg-chrome/95 backdrop-blur lg:static lg:z-auto lg:bg-chrome lg:backdrop-blur-none">
-            <div className={cx(PAGE_WIDTH, 'flex min-h-14 flex-wrap items-center gap-x-3 gap-y-2 px-2 py-2 sm:px-4 lg:min-h-17 lg:px-6')}>
+            <div className={cx(PAGE_WIDTH, 'flex min-h-14 items-center gap-x-3 px-2 py-2 sm:px-4 lg:min-h-17 lg:px-6')}>
                 <button
                     type="button"
                     onClick={() => openDrawer(true)}
@@ -49,7 +50,7 @@ export const PageHeader = ({ title, description, back, tabs, children }: PageHea
                 </button>
                 <BackArrow back={back} />
                 <HeaderIcon />
-                <div className="min-w-0 flex-[1_1_12rem]">
+                <div data-title className="min-w-0 flex-1">
                     <h1 className="truncate text-base leading-7 font-semibold tracking-tight lg:text-lg">{title}</h1>
                     {description && (
                         <p className="truncate text-[13px] leading-5 text-muted" title={typeof description === 'string' ? description : undefined}>
@@ -57,8 +58,9 @@ export const PageHeader = ({ title, description, back, tabs, children }: PageHea
                         </p>
                     )}
                 </div>
-                {children && <div className="flex flex-wrap items-center gap-2">{children}</div>}
-                {canViewRooms && <div className="hidden w-64 shrink-0 lg:block xl:w-72"><JumpBox /></div>}
+                {children && <HeaderActions>{children}</HeaderActions>}
+                <NotificationsBell />
+                <SearchButton />
             </div>
             {/* The tabs' row: its tabs' line sits on the header's own bottom rule. */}
             <div className={cx(PAGE_WIDTH, 'flex h-10 items-end px-2 sm:px-4 lg:px-6', !tabs && 'max-lg:hidden')}>

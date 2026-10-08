@@ -12,7 +12,7 @@ export const CHANGE_KINDS: Record<number, string> = { 0: 'import', 1: 'edit', 2:
 export const IMPORT_ACTIONS: Record<number, string> = { 0: 'add', 1: 'update', 2: 'keep' };
 
 /** Which table a change touched: GamedataRecordType. */
-export const RECORD_TYPES: Record<number, string> = { 0: 'definition', 1: 'Habbo item', 2: 'text', 3: 'Habbo text', 4: 'product', 5: 'Habbo product', 6: 'figure', 7: 'Habbo figure' };
+export const RECORD_TYPES: Record<number, string> = { 0: 'definition', 1: 'Habbo item', 2: 'text', 3: 'Habbo text', 4: 'product', 5: 'Habbo product', 6: 'figure', 7: 'Habbo figure', 8: 'variable' };
 
 export interface HabboRelease {
     id: number;
@@ -77,11 +77,12 @@ export interface GamedataStatus {
     externalTexts: GamedataFile;
     productData: GamedataFile;
     figureData: GamedataFile;
+    externalVariables: GamedataFile;
     canManage: boolean;
 }
 
 /** The files the hotel builds, by the name their addresses give them. */
-export const FILES = { furnitureData: 'furnidata_json', productData: 'productdata_json', externalTexts: 'external_flash_texts', figureData: 'figuredata_json' } as const;
+export const FILES = { furnitureData: 'furnidata_json', productData: 'productdata_json', externalTexts: 'external_flash_texts', figureData: 'figuredata_json', externalVariables: 'external_variables' } as const;
 
 export interface FurnitureFieldChange {
     field: string;
@@ -382,6 +383,78 @@ export const useDeleteText = () => {
 
     return useMutation({
         mutationFn: (key: string) => api<void>(`/gamedata/texts?${new URLSearchParams({ key })}`, { method: 'DELETE' }),
+        onSuccess: refresh,
+    });
+};
+
+/** One of the client's external variables: its value as JSON (`"text"`, `true`, `120`, `[1, 2]`). */
+export interface VariableEntry {
+    key: string;
+    value: string;
+}
+
+export interface VariableSearchResult {
+    items: VariableEntry[];
+    total: number;
+    pageSize: number;
+    /** The hotel's own gamedata addresses, by hash, which it writes itself; empty without a public address. */
+    stamped: VariableEntry[];
+}
+
+export interface VariableImportItem {
+    key: string;
+    /** Add (0) or update (1), as IMPORT_ACTIONS names them. */
+    action: number;
+    /** The hotel's value as JSON; null for one being added. */
+    current: string | null;
+    incoming: string;
+}
+
+export interface VariableImportPreview {
+    added: number;
+    updated: number;
+    unchanged: number;
+    /** Keys left out: the hotel's own gamedata addresses, and keys too long to keep. */
+    skipped: string[];
+    items: VariableImportItem[];
+    truncated: boolean;
+}
+
+export const useVariableSearch = (text: string, page: number) => useQuery({
+    queryKey: [ 'gamedata', 'variables', 'search', text, page ],
+    queryFn: () => api<VariableSearchResult>(`/gamedata/variables?${new URLSearchParams({ q: text, page: String(page) })}`),
+    placeholderData: keepPreviousData,
+});
+
+export const useSaveVariable = () => {
+    const refresh = useRefresh();
+
+    return useMutation({
+        mutationFn: (variable: VariableEntry) => put<VariableEntry>('/gamedata/variables', variable),
+        onSuccess: refresh,
+    });
+};
+
+export const useDeleteVariable = () => {
+    const refresh = useRefresh();
+
+    return useMutation({
+        mutationFn: (key: string) => api<void>(`/gamedata/variables?${new URLSearchParams({ key })}`, { method: 'DELETE' }),
+        onSuccess: refresh,
+    });
+};
+
+/** What importing a client config (a JSON object, as nitro-config.json) would do. */
+export const useVariableImportPreview = () => useMutation({
+    mutationFn: (json: string) => post<VariableImportPreview>('/gamedata/variables/import/preview', { json }),
+});
+
+/** Takes a client config's variables in: added and changed, the hotel's others kept. */
+export const useVariableImport = () => {
+    const refresh = useRefresh();
+
+    return useMutation({
+        mutationFn: (json: string) => post<{ changeSet: ChangeSet | null }>('/gamedata/variables/import', { json }),
         onSuccess: refresh,
     });
 };

@@ -1,5 +1,6 @@
 import { Save, Search, Undo2 } from 'lucide-react';
 import { type ReactNode, useState } from 'react';
+import { useSearchParams } from 'react-router';
 
 import { FILES, FURNITURE_KINDS, type FurnitureDefinition, type GamedataStatus, useFurnitureDefinition, useFurnitureSearch, useImport, useImportPreview, useUpdateDefinition } from '#/api/gamedata';
 import { Badge, Button, EmptyState, ErrorNotice, Input, Labeled, Loading, Panel, SuccessNotice, Switch, WarningNotice } from '#/components/ui';
@@ -225,8 +226,10 @@ const HabboFurniture = ({ status }: { status: GamedataStatus }) => {
  * take in, any definition to find and change, and Habbo's values to put back across them all.
  */
 export const FurnitureTab = ({ status }: { status: GamedataStatus }) => {
-    const [ text, setText ] = useState('');
-    const [ selected, setSelected ] = useState<number | null>(null);
+    const [ params ] = useSearchParams();
+    // Opened from the search: what it found, and the piece picked there.
+    const [ text, setText ] = useState(() => params.get('q') ?? '');
+    const [ selected, setSelected ] = useState<number | null>(() => Number(params.get('id')) || null);
     const [ bulk, setBulk ] = useState(false);
     const { data: results, isFetching } = useFurnitureSearch(text);
     const { data: definition, error } = useFurnitureDefinition(selected);
@@ -235,7 +238,7 @@ export const FurnitureTab = ({ status }: { status: GamedataStatus }) => {
         <>
             <HabboFurniture status={status} />
             <div className="grid items-start gap-4 lg:grid-cols-[20rem_1fr]">
-                <Panel className="overflow-clip lg:sticky lg:top-16">
+                <Panel className="overflow-clip lg:sticky lg:top-6">
                     <div className="border-b border-line p-3">
                         <div className="relative">
                             <Search className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted" />
