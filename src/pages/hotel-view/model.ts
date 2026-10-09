@@ -32,10 +32,10 @@ export const WIDGET_TYPES = [
     { value: 'communitygoalvsmodevote', label: 'Community goal, versus vote', drawn: true },
     { value: 'catalogpromo', label: 'Catalogue promo', drawn: false },
     { value: 'catalogpromosmall', label: 'Catalogue promo, small', drawn: false },
-    { value: 'expiringcatalogpage', label: 'Expiring catalogue page', drawn: false },
-    { value: 'expiringcatalogpagesmall', label: 'Expiring catalogue page, small', drawn: false },
+    { value: 'expiringcatalogpage', label: 'Expiring catalogue page', drawn: true },
+    { value: 'expiringcatalogpagesmall', label: 'Expiring catalogue page, small', drawn: true },
     { value: 'dailyquest', label: 'Daily quest', drawn: false },
-    { value: 'nextlimitedrarecountdown', label: 'Next limited rare countdown', drawn: false },
+    { value: 'nextlimitedrarecountdown', label: 'Next limited rare countdown', drawn: true },
     { value: 'achievementcompetition_hall_of_fame', label: 'Competition hall of fame', drawn: false },
     { value: 'achievementcompetition_prizes', label: 'Competition prizes', drawn: false },
     { value: 'habbomoderationpromo', label: 'Moderation promo', drawn: false },
@@ -49,6 +49,13 @@ export const WIDGET_TYPES = [
 export const widgetLabel = (type: string) => WIDGET_TYPES.find(x => x.value === type)?.label ?? type;
 
 export const isDrawn = (type: string) => WIDGET_TYPES.some(x => x.value === type && x.drawn);
+
+/**
+ * The bottom slot (`landing.view.dynamic.slot.6.widget`): the default layout's placeholder near the
+ * foot of the window, which takes only the layout's fixed widgets. Of those, Nitro draws these.
+ */
+export const BOTTOM_SLOT = 6;
+export const BOTTOM_SLOT_WIDGETS = [ 'expiringcatalogpage', 'expiringcatalogpagesmall', 'communitygoal', 'nextlimitedrarecountdown' ] as const;
 
 /** Slots 3 and 5 are the right pane; the rest are as wide as the left. */
 export const isWideSlot = (slot: number) => slot !== 3 && slot !== 5;
@@ -73,8 +80,72 @@ export const COMMON = {
     bonusRareImage: `${PREFIX}bonus.rare.image.uri`,
 } as const;
 
+/**
+ * What the fixed widgets read besides their slot: the next limited rare's switch (named outside
+ * `landing.view.`), the community goal's catalogue button, and the catalogue promo's and room
+ * hopper's targets and pictures, as Flash's widgets read them.
+ */
+export const WIDGET_SETTINGS = {
+    nextLimitedRareDisabled: 'next.limited.rare.countdown.widget.disabled',
+    communityInteractive: `${PREFIX}community.interactive`,
+    communityCatalogTarget: `${PREFIX}community.catalog.target`,
+    catalogPromoTarget: `${PREFIX}catalog.promo.target`,
+    catalogPromoImage: `${PREFIX}catalog.promo.image.uri`,
+    roomHopperNetwork: `${PREFIX}roomhopper.network.id`,
+    roomHopperImage: `${PREFIX}roomhopper.image.uri`,
+} as const;
+
+/** The catalogue promo's texts (`CatalogPromoWidget`), the same for every hotel's one promo. */
+export const CATALOG_PROMO_TEXTS = [
+    { key: 'landing.view.catalog.promo.title', label: 'Title' },
+    { key: 'landing.view.catalog.promo.caption', label: 'Caption' },
+    { key: 'landing.view.catalog.promo.info', label: 'Info' },
+    { key: 'landing.view.catalog.promo.picture.text', label: 'Picture text' },
+    { key: 'landing.view.catalog.open.page', label: 'Button' },
+] as const;
+
+/** An expiring page's texts: by the page's name. */
+export const pageExpiryTextKey = (page: string, name: 'header' | 'desc') => `${PREFIX}pageexpiry.page.${page}.${name}`;
+
+// --- Moving background objects -----------------------------------------------------------------
+
+/** `MovingBackgroundObjects.MAX_OBJECTS`. */
+export const MAX_MOVING_OBJECTS = 20;
+
+/** A moving object's variable: `landing.view.bgobject.<n>`, or a background set's `landing.view.<code>.bgobject.<n>`. */
+export const bgObjectKey = (code: string, n: number) => `${PREFIX}${code ? `${code}.` : ''}bgobject.${n}`;
+
+/**
+ * The kinds of moving object and their fields after `<image>;<type>`, as nitro-next's
+ * `movingBackgroundObjects.ts` reads them. A random walk's image is under the image library itself;
+ * the rest are under its `reception/`.
+ */
+export const MOVING_TYPES = [
+    { value: 'line', label: 'Line', fields: [ 'Start x', 'Start y (from the bottom)', 'Speed x (px/ms)', 'Speed y (px/ms)' ] },
+    { value: 'randomwalk', label: 'Random walk', fields: [ 'Start x', 'Start y', 'Speed x (px/s)', 'Speed y (px/s)', 'Jitter x', 'Jitter y', 'Every (ms)' ] },
+    { value: 'spiral', label: 'Spiral', fields: [ 'Start radius', 'Start angle', 'Radius speed', 'Angle speed', 'Centre x', 'Centre y' ] },
+    { value: 'animated', label: 'Animation', fields: [ 'Frames', 'Frames a second', 'X', 'Y', 'Plays when these objects start over (ids, comma-separated)' ] },
+] as const;
+
+export interface MovingObject {
+    image: string;
+    type: string;
+    args: string[];
+}
+
+export const parseMovingObject = (value: string): MovingObject => {
+    const [ image = '', type = '', ...args ] = value.split(';');
+
+    return { image, type, args };
+};
+
+export const formatMovingObject = (object: MovingObject) => [ object.image.trim(), object.type, ...object.args.map(x => x.trim()) ].join(';');
+
+/** Where the client loads a moving object's picture from, under the image library. */
+export const movingObjectPath = (object: MovingObject) => (object.type === 'animated' ? `reception/${object.image}1.png` : object.type === 'randomwalk' ? `${object.image}.png` : `reception/${object.image}.png`);
+
 /** A promo code may be any word the variables can follow; these are taken by the hotel view's own keys. */
-const RESERVED_CODES = new Set([ 'dynamic', 'common', 'bonus', 'bgtiming', ...BACKGROUND_LAYERS.map(x => x.name) ]);
+const RESERVED_CODES = new Set([ 'dynamic', 'common', 'bonus', 'bgtiming', 'bgobject', 'catalog', 'community', 'roomhopper', 'pageexpiry', ...BACKGROUND_LAYERS.map(x => x.name) ]);
 
 export const codeProblem = (code: string, taken: string[]) => {
     if (!code) return 'A promo needs a code.';
@@ -104,7 +175,7 @@ export const promoCodes = (keys: string[], scheduled: string[]) => {
 export const backgroundCodes = (keys: string[], scheduled: string[]) => {
     const codes = new Set(scheduled.filter(Boolean));
     const layers = BACKGROUND_LAYERS.map(x => x.name).join('|');
-    const pattern = new RegExp(`^landing\\.view\\.([^.]+)\\.(${layers})\\.(uri|visible)$`);
+    const pattern = new RegExp(`^landing\\.view\\.([^.]+)\\.((${layers})\\.(uri|visible)|bgobject\\.\\d+)$`);
 
     for (const key of keys) {
         const match = pattern.exec(key);

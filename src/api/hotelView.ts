@@ -243,3 +243,38 @@ export const useRecordBonusRarePurchase = () => {
         onSuccess: refresh,
     });
 };
+
+/** A catalogue page the expiring page widget counts down to. */
+export interface ExpiringPage {
+    id: number;
+    pageId: number;
+    /** What the client opens it by, and finds its texts and teaser by. */
+    pageName: string;
+    /** UTC. */
+    expiresAt: string;
+    image: string;
+}
+
+export const useExpiringPages = () => useQuery({
+    queryKey: [ 'hotel-view', 'expiring-pages' ],
+    queryFn: () => api<{ pages: ExpiringPage[] }>('/hotel-view/expiring-pages'),
+});
+
+/** Sets a page's expiry, adding one or moving the one it has. */
+export const useSaveExpiringPage = () => {
+    const refresh = useRefreshReception();
+
+    return useMutation({
+        mutationFn: ({ pageId, expiresAt, image }: { pageId: number; expiresAt: string; image: string }) => put<ExpiringPage>(`/hotel-view/expiring-pages/${pageId}`, { expiresAt, image }),
+        onSuccess: refresh,
+    });
+};
+
+export const useDeleteExpiringPage = () => {
+    const refresh = useRefreshReception();
+
+    return useMutation({
+        mutationFn: (pageId: number) => api<void>(`/hotel-view/expiring-pages/${pageId}`, { method: 'DELETE' }),
+        onSuccess: refresh,
+    });
+};

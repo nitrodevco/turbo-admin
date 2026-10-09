@@ -4,6 +4,7 @@ import type { HotelViewDraft } from './draft';
 import { useResolveImage } from './hooks';
 import { COMMON, toColorInput } from './model';
 import { Changed, ImageField } from './parts';
+import { WidgetSettings } from './WidgetSettings';
 
 const ETCHING_POSITIONS = [ 'bottom', 'top', 'left', 'right', 'top-left', 'top-right', 'bottom-left', 'bottom-right' ];
 
@@ -68,6 +69,7 @@ export const LookTab = ({ draft, disabled }: { draft: HotelViewDraft; disabled?:
                     <ImageField label="Picture" value={draft.text(COMMON.bonusRareImage)} onChange={value => draft.setText(COMMON.bonusRareImage, value)} resolve={resolve} changed={draft.changed(COMMON.bonusRareImage)} disabled={disabled} />
                 </div>
             </Panel>
+            <WidgetSettings draft={draft} disabled={disabled} />
         </div>
     );
 };

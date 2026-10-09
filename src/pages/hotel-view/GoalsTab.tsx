@@ -2,12 +2,13 @@ import { Plus, Save, Trash2, X } from 'lucide-react';
 import { useState } from 'react';
 import { Link } from 'react-router';
 
-import { useCatalogTree } from '#/api/catalog';
+import { promoImageUrl, useClientAssets } from '#/api/assets';
 import { type CommunityGoal, GOAL_MODES, useCommunityGoals, useDeleteCommunityGoal, useGoalStanding, useHotelViewTexts, useSaveCommunityGoal, useSaveHotelView } from '#/api/hotelView';
 import { Badge, Button, EmptyState, ErrorNotice, Input, Labeled, Loading, Panel, Select, SuccessNotice } from '#/components/ui';
 import { cx } from '#/lib/cx';
 
 import { inputToIso, isoTime, isoToInput } from './model';
+import { PageField } from './parts';
 
 type GoalDraft = Omit<CommunityGoal, 'id'>;
 
@@ -37,27 +38,6 @@ const phase = (goal: CommunityGoal, now: number) => {
     const ends = isoTime(goal.endsAt) ?? 0;
 
     return now < starts ? 'upcoming' : now < ends ? 'running' : 'over';
-};
-
-/** A catalog page to pick, by name, from the catalog's tree; typed by id without access to it. */
-const PageField = ({ label, hint, value, onChange }: { label: string; hint: string; value: number | null; onChange: (id: number | null) => void }) => {
-    const { data: tree } = useCatalogTree();
-
-    if (!tree)
-        return (
-            <Labeled label={`${label} (page id)`} hint={hint}>
-                <Input value={value ?? ''} onChange={event => onChange(event.target.value ? Number(event.target.value) : null)} inputMode="numeric" />
-            </Labeled>
-        );
-
-    return (
-        <Labeled label={label} hint={hint}>
-            <Select value={value ?? ''} onChange={event => onChange(event.target.value ? Number(event.target.value) : null)}>
-                <option value="">None</option>
-                {tree.pages.filter(x => x.id !== tree.rootId).map(page => <option key={page.id} value={page.id}>{page.localization}{page.name ? ` (${page.name})` : ''}</option>)}
-            </Select>
-        </Labeled>
-    );
 };
 
 /** The words the goal's widget shows, saved to the external texts. */
@@ -96,6 +76,32 @@ const GoalTextsEditor = ({ code, mode, disabled }: { code: string; mode: number;
                 </div>
             )}
             {save.error && <ErrorNotice error={save.error} />}
+        </div>
+    );
+};
+
+/** The meter's art for each level, the image library's `reception/meter_level_<n>_<goal>.png`. */
+const MeterArt = ({ code }: { code: string }) => {
+    const assets = useClientAssets();
+
+    return (
+        <div className="flex flex-col gap-2">
+            <h3 className="text-sm font-semibold">Meter art</h3>
+            <p className="text-xs text-muted">The image library's reception/meter_level_0_{code}.png to meter_level_3_{code}.png: each level's picture, shown as it is reached.</p>
+            <div className="flex flex-wrap gap-3">
+                {[ 0, 1, 2, 3 ].map((level) => {
+                    const url = promoImageUrl(assets, `reception/meter_level_${level}_${code}.png`);
+
+                    return (
+                        <figure key={level} className="flex flex-col items-center gap-1">
+                            <span className="grid size-20 place-items-center rounded-lg border border-line bg-[#aae0f0]">
+                                {url && <img src={url} alt="" className="max-h-full max-w-full" onError={event => (event.currentTarget.style.display = 'none')} />}
+                            </span>
+                            <figcaption className="text-xs text-muted">Level {level}</figcaption>
+                        </figure>
+                    );
+                })}
+            </div>
         </div>
     );
 };
@@ -210,6 +216,7 @@ const GoalEditor = ({ goal, now, onDone, disabled }: { goal: CommunityGoal | nul
                 {(save.error || remove.error) && <ErrorNotice error={save.error ?? remove.error} />}
             </form>
             {goal && draft.code === goal.code && <GoalTextsEditor code={goal.code} mode={draft.mode} disabled={disabled} />}
+            {goal && <MeterArt code={goal.code} />}
             {goal && <Standing goal={goal} />}
         </div>
     );

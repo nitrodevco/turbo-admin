@@ -6,7 +6,7 @@ import { cx } from '#/lib/cx';
 import type { HotelViewDraft } from './draft';
 import { slotShows, usePaneWidths, useResolveImage, useWidgetText } from './hooks';
 import {
-    BACKGROUND_LAYERS, BG_TIMING, COMMON, currentCode, type GenericElement, isDrawn, isWideSlot, layerKey, parseConf, parseLayout, parseSchedule, readValue, resolveLayout, slotKey, widgetLabel,
+    BACKGROUND_LAYERS, BG_TIMING, BOTTOM_SLOT, COMMON, currentCode, type GenericElement, isDrawn, isWideSlot, layerKey, parseConf, parseLayout, parseSchedule, readValue, resolveLayout, slotKey, widgetLabel,
 } from './model';
 
 /** The window the preview draws the reception in: a laptop's, as the client lays it out. */
@@ -18,6 +18,9 @@ const GRID_Y = 4;
 const TOP_GAP = 10;
 const COLUMN_GAP = 60;
 const ROW_GAP = 50;
+/** `widget_placeholder_bottom_slot`'s place in the 1172x822 layout: 120 in, 252 up from the bottom. */
+const BOTTOM_SLOT_X = 120;
+const BOTTOM_SLOT_FROM_BOTTOM = 252;
 
 /** One element of a promo's column, as the client draws it, near enough to judge by. */
 const Element = ({ element, draft, text }: { element: GenericElement; draft: HotelViewDraft; text: CSSProperties }) => {
@@ -202,6 +205,11 @@ export const ReceptionPreview = ({ draft, now, backgroundCode, onSlot }: { draft
                 </div>
                 {layer('background_hotel_top') && <div className="absolute top-0 left-0 bg-repeat-y" style={{ width: 123, height: Math.max(0, VIEW_HEIGHT - 821), backgroundImage: `url("${layer('background_hotel_top')}")`, backgroundPosition: 'left bottom' }} />}
                 {layer('background_left') && <img src={layer('background_left')} alt="" className="absolute max-w-none" style={{ left: 0, bottom: 38 }} />}
+                {draft.text(slotKey(BOTTOM_SLOT, 'widget')) && (
+                    <div className="absolute" style={{ left: BOTTOM_SLOT_X, top: Math.max(0, VIEW_HEIGHT - BOTTOM_SLOT_FROM_BOTTOM) }}>
+                        {slot(BOTTOM_SLOT)}
+                    </div>
+                )}
                 {assets?.imageLibrary && <img src={`${assets.imageLibrary}reception/reception_logo_drape.png`} alt="" className="absolute max-w-none" style={{ left: 100, top: 0 }} />}
                 <div className="absolute bottom-0 left-0 bg-[#333333]" style={{ width: VIEW_WIDTH, height: 50 }} />
             </div>

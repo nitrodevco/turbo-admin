@@ -3,7 +3,7 @@ import { useCallback, useMemo, useState } from 'react';
 import type { VariableEntry } from '#/api/gamedata';
 import { useHotelViewTexts } from '#/api/hotelView';
 
-import { elementTextKeys, parseConf, readValue } from './model';
+import { CATALOG_PROMO_TEXTS, elementTextKeys, parseConf, readValue } from './model';
 
 /**
  * The hotel view being edited: the server's variables and texts with the panel's changes laid
@@ -73,10 +73,10 @@ export const useHotelViewDraft = (server: VariableEntry[]): HotelViewDraft => {
     }, [ server, variables ]);
 
     // The texts the widgets show: every element's of every column (a schedule's entries are no
-    // element), and the slots' headings.
-    const textKeys = useMemo(() => [ ...new Set(keys.flatMap(key => (key.endsWith('.conf')
+    // element), the slots' headings, and the catalogue promo's own.
+    const textKeys = useMemo(() => [ ...new Set([ ...keys.flatMap(key => (key.endsWith('.conf')
         ? parseConf(readValue(json(key))).flatMap(elementTextKeys)
-        : key.endsWith('.title') ? [ readValue(json(key)) ] : []))) ].filter(Boolean).sort(), [ keys, json ]);
+        : key.endsWith('.title') ? [ readValue(json(key)) ] : [])), ...CATALOG_PROMO_TEXTS.map(x => x.key) ]) ].filter(Boolean).sort(), [ keys, json ]);
     const { data: serverTexts } = useHotelViewTexts(textKeys);
     const textByKey = useMemo(() => new Map((serverTexts?.texts ?? []).map(x => [ x.key, x.value ])), [ serverTexts ]);
 

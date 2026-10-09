@@ -1,6 +1,7 @@
 import { CalendarClock, ImageOff, Plus, Trash2 } from 'lucide-react';
 import { type ReactNode, useId, useState } from 'react';
 
+import { useCatalogTree } from '#/api/catalog';
 import { Badge, Button, IconButton, Input, Labeled, Select } from '#/components/ui';
 import { cx } from '#/lib/cx';
 
@@ -160,5 +161,26 @@ export const TextKeyField = ({ label, textKey, onKeyChange, draft, disabled }: {
                 </div>
             </Labeled>
         </div>
+    );
+};
+
+/** A catalog page to pick, by name, from the catalog's tree; typed by id without access to it. */
+export const PageField = ({ label, hint, value, onChange }: { label: string; hint: string; value: number | null; onChange: (id: number | null) => void }) => {
+    const { data: tree } = useCatalogTree();
+
+    if (!tree)
+        return (
+            <Labeled label={`${label} (page id)`} hint={hint}>
+                <Input value={value ?? ''} onChange={event => onChange(event.target.value ? Number(event.target.value) : null)} inputMode="numeric" />
+            </Labeled>
+        );
+
+    return (
+        <Labeled label={label} hint={hint}>
+            <Select value={value ?? ''} onChange={event => onChange(event.target.value ? Number(event.target.value) : null)}>
+                <option value="">None</option>
+                {tree.pages.filter(x => x.id !== tree.rootId).map(page => <option key={page.id} value={page.id}>{page.localization}{page.name ? ` (${page.name})` : ''}</option>)}
+            </Select>
+        </Labeled>
     );
 };

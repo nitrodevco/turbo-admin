@@ -5,7 +5,8 @@ import { Button, Input, Labeled, Panel, Select, Switch } from '#/components/ui';
 
 import type { HotelViewDraft } from './draft';
 import { useResolveImage } from './hooks';
-import { BACKGROUND_LAYERS, BG_TIMING, codeProblem, formatSchedule, layerKey, parseSchedule } from './model';
+import { BACKGROUND_LAYERS, BG_TIMING, bgObjectKey, codeProblem, formatSchedule, layerKey, MAX_MOVING_OBJECTS, parseSchedule } from './model';
+import { MovingObjects } from './MovingObjects';
 import { ImageField, ScheduleEditor } from './parts';
 import { ReceptionPreview } from './Preview';
 
@@ -28,6 +29,7 @@ export const BackgroundsTab = ({ draft, codes, now, disabled }: { draft: HotelVi
 
         draft.setMany({
             ...Object.fromEntries(BACKGROUND_LAYERS.flatMap(({ name }) => [ [ layerKey(code, name, 'uri'), null ], [ layerKey(code, name, 'visible'), null ] ])),
+            ...Object.fromEntries(Array.from({ length: MAX_MOVING_OBJECTS }, (_, i) => [ bgObjectKey(code, i + 1), null ])),
             [BG_TIMING]: schedule ? JSON.stringify(schedule) : null,
         });
         setSet('');
@@ -96,6 +98,7 @@ export const BackgroundsTab = ({ draft, codes, now, disabled }: { draft: HotelVi
                     })}
                 </ul>
             </Panel>
+            <MovingObjects code={chosen} draft={draft} disabled={disabled} />
             <Panel title="Preview" description={chosen ? `With the set ${chosen}.` : 'With the default set.'}>
                 <div className="p-3">
                     <ReceptionPreview draft={draft} now={now} backgroundCode={chosen} />

@@ -12,10 +12,11 @@ import { ArticlesTab } from './ArticlesTab';
 import { BackgroundsTab } from './BackgroundsTab';
 import { BonusRareTab } from './BonusRareTab';
 import { useHotelViewDraft } from './draft';
+import { ExpiringPagesTab } from './ExpiringPagesTab';
 import { GoalsTab } from './GoalsTab';
 import { slotShows } from './hooks';
 import { LookTab } from './LookTab';
-import { backgroundCodes, BG_TIMING, currentCode, fromLocalInput, nowAt, parseSchedule, parseTime, promoCodes, slotKey, SLOTS, toLocalInput, widgetLabel } from './model';
+import { backgroundCodes, BG_TIMING, BOTTOM_SLOT, currentCode, fromLocalInput, nowAt, parseSchedule, parseTime, promoCodes, slotKey, SLOTS, toLocalInput, widgetLabel } from './model';
 import { ReceptionPreview } from './Preview';
 import { PromosTab } from './PromosTab';
 import { SlotsTab } from './SlotsTab';
@@ -27,8 +28,9 @@ const TABS = [
     { value: 'articles', label: 'Articles' },
     { value: 'goals', label: 'Community goals' },
     { value: 'bonus', label: 'Bonus rare' },
+    { value: 'expiring', label: 'Expiring pages' },
     { value: 'backgrounds', label: 'Backgrounds' },
-    { value: 'look', label: 'Look' },
+    { value: 'look', label: 'Look and widgets' },
     { value: 'all', label: 'All variables' },
 ];
 
@@ -58,7 +60,7 @@ const ShowingNow = ({ draft, now, onSlot }: { draft: ReturnType<typeof useHotelV
                 <span className="text-muted">Backgrounds</span>
                 <span className="font-mono text-xs">{background || 'default'}</span>
             </li>
-            {SLOTS.map((slot) => {
+            {[ ...SLOTS, BOTTOM_SLOT ].map((slot) => {
                 const shows = slotShows(draft, slot, now);
                 const container = draft.text(slotKey(slot, 'widget')) === 'widgetcontainer';
 
@@ -83,7 +85,7 @@ const HotelViewEditor = ({ variables, canManage }: { variables: VariableEntry[];
     const [ params, setParams ] = useSearchParams();
     const tab = TABS.some(x => x.value === params.get('tab')) ? params.get('tab')! : 'preview';
     const slotParam = Number(params.get('slot'));
-    const focus = SLOTS.includes(slotParam as 1) ? slotParam : null;
+    const focus = SLOTS.includes(slotParam as 1) || slotParam === BOTTOM_SLOT ? slotParam : null;
     const promo = params.get('promo');
     const draft = useHotelViewDraft(variables);
     const save = useSaveHotelView();
@@ -155,7 +157,7 @@ const HotelViewEditor = ({ variables, canManage }: { variables: VariableEntry[];
                                 label="Slot"
                                 value={focus === null ? 'all' : String(focus)}
                                 onChange={value => go(value === 'all' ? { tab: 'slots' } : { tab: 'slots', slot: value })}
-                                options={[ { value: 'all', label: 'All' }, ...SLOTS.map(x => ({ value: String(x), label: String(x) })) ]}
+                                options={[ { value: 'all', label: 'All' }, ...[ ...SLOTS, BOTTOM_SLOT ].map(x => ({ value: String(x), label: String(x) })) ]}
                             />
                         </div>
                         <SlotsTab draft={draft} codes={promos} now={now} focus={focus} onOpenPromo={code => go({ tab: 'promos', promo: code })} disabled={disabled} />
@@ -175,6 +177,7 @@ const HotelViewEditor = ({ variables, canManage }: { variables: VariableEntry[];
                 {tab === 'articles' && <ArticlesTab now={now} disabled={disabled} />}
                 {tab === 'goals' && <GoalsTab now={now} disabled={disabled} />}
                 {tab === 'bonus' && <BonusRareTab now={now} disabled={disabled} />}
+                {tab === 'expiring' && <ExpiringPagesTab now={now} disabled={disabled} />}
                 {tab === 'backgrounds' && <BackgroundsTab draft={draft} codes={backgrounds} now={now} disabled={disabled} />}
                 {tab === 'look' && <LookTab draft={draft} disabled={disabled} />}
                 {tab === 'all' && <AllTab draft={draft} disabled={disabled} />}

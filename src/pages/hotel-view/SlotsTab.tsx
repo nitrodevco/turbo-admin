@@ -2,7 +2,7 @@ import { Input, Labeled, Panel, Select, Switch } from '#/components/ui';
 
 import type { HotelViewDraft } from './draft';
 import { GenericEditor } from './GenericEditor';
-import { isWideSlot, slotKey, WIDGET_TYPES, widgetLabel } from './model';
+import { BOTTOM_SLOT, BOTTOM_SLOT_WIDGETS, isWideSlot, slotKey, WIDGET_TYPES, widgetLabel } from './model';
 import { Changed, ScheduleEditor } from './parts';
 import { SlotPreview } from './Preview';
 
@@ -82,6 +82,38 @@ const SlotEditor = ({ slot, draft, codes, now, onOpenPromo, disabled }: {
 };
 
 /** The five widget slots of the reception. */
+/**
+ * The bottom slot: the default layout's placeholder near the window's foot, beside the avatar. It
+ * takes only the layout's fixed widgets - the expiring catalogue page, the community goal and the
+ * next limited rare - never a promo or a schedule.
+ */
+const BottomSlotEditor = ({ draft, now, disabled }: { draft: HotelViewDraft; now: number; disabled?: boolean }) => {
+    const key = slotKey(BOTTOM_SLOT, 'widget');
+    const type = draft.text(key);
+
+    return (
+        <Panel
+            title={<span className="flex items-center gap-2">Slot {BOTTOM_SLOT} <span className="font-normal text-muted">at the bottom, beside the avatar</span> <Changed on={draft.changed(key)} /></span>}
+            description="Only the layout's fixed widgets go here."
+        >
+            <div className="flex flex-col gap-4 p-4">
+                <Labeled label="Holds" className="sm:max-w-96">
+                    <Select value={type} onChange={event => draft.setText(key, event.target.value)} disabled={disabled}>
+                        <option value="">Nothing</option>
+                        {BOTTOM_SLOT_WIDGETS.map(x => <option key={x} value={x}>{widgetLabel(x)}</option>)}
+                        {type && !(BOTTOM_SLOT_WIDGETS as readonly string[]).includes(type) && <option value={type}>{widgetLabel(type)} (not drawn here)</option>}
+                    </Select>
+                </Labeled>
+                {type && (
+                    <div className="max-w-full overflow-auto rounded-lg border border-line bg-[#aae0f0] p-3">
+                        <SlotPreview draft={draft} slot={BOTTOM_SLOT} now={now} />
+                    </div>
+                )}
+            </div>
+        </Panel>
+    );
+};
+
 export const SlotsTab = ({ draft, codes, now, focus, onOpenPromo, disabled }: {
     draft: HotelViewDraft;
     codes: string[];
@@ -94,5 +126,6 @@ export const SlotsTab = ({ draft, codes, now, focus, onOpenPromo, disabled }: {
         {[ 1, 2, 3, 4, 5 ].filter(slot => focus === null || slot === focus).map(slot => (
             <SlotEditor key={slot} slot={slot} draft={draft} codes={codes} now={now} onOpenPromo={onOpenPromo} disabled={disabled} />
         ))}
+        {(focus === null || focus === BOTTOM_SLOT) && <BottomSlotEditor draft={draft} now={now} disabled={disabled} />}
     </div>
 );
