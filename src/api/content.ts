@@ -151,3 +151,66 @@ export const useSaveText = () => {
         onSuccess: () => void queryClient.invalidateQueries({ queryKey: [ 'gamedata' ] }),
     });
 };
+
+export interface NavigatorFlatCategory {
+    id: number;
+    name: string;
+    visible: boolean;
+    staffOnly: boolean;
+    minRank: number;
+    requiredNode: string | null;
+    orderNum: number;
+    automatic: boolean;
+    automaticCategory: string | null;
+    globalCategory: string | null;
+    rooms: number;
+}
+
+export interface NavigatorEventCategory {
+    id: number;
+    name: string;
+    visible: boolean;
+    events: number;
+}
+
+export interface NavigatorTab {
+    id: number;
+    searchCode: string;
+    visible: boolean;
+    orderNum: number;
+}
+
+export interface NavigatorContent {
+    flatCategories: NavigatorFlatCategory[];
+    eventCategories: NavigatorEventCategory[];
+    contexts: NavigatorTab[];
+}
+
+/** Which of the navigator's lists an edit is to: room categories, event categories or tabs. */
+export type NavigatorList = 'categories' | 'event-categories' | 'tabs';
+
+export const useNavigatorContent = () => useQuery({
+    queryKey: [ 'content', 'navigator' ],
+    queryFn: () => api<NavigatorContent>('/content/navigator'),
+});
+
+/** Adds (no id) or changes a row of one of the navigator's lists; a field left out keeps what it was. */
+export const useSaveNavigator = () => {
+    const refresh = useRefreshContent();
+
+    return useMutation({
+        mutationFn: ({ list, id, body }: { list: NavigatorList; id: number | null; body: Record<string, unknown> }) => (id === null
+            ? post<{ id: number }>(`/content/navigator/${list}`, body)
+            : put<{ id: number }>(`/content/navigator/${list}/${id}`, body)),
+        onSuccess: refresh,
+    });
+};
+
+export const useDeleteNavigator = () => {
+    const refresh = useRefreshContent();
+
+    return useMutation({
+        mutationFn: ({ list, id }: { list: NavigatorList; id: number }) => api<void>(`/content/navigator/${list}/${id}`, { method: 'DELETE' }),
+        onSuccess: refresh,
+    });
+};

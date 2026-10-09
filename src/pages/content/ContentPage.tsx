@@ -5,10 +5,12 @@ import { PageBody, PageHeader } from '#/components/ui';
 
 import { AchievementsTab } from './AchievementsTab';
 import { BadgesTab } from './BadgesTab';
+import { NavigatorTab } from './NavigatorTab';
 
 const TABS = [
     { value: 'achievements', label: 'Achievements' },
     { value: 'badges', label: 'Badges' },
+    { value: 'navigator', label: 'Navigator' },
 ];
 
 /**
@@ -25,12 +27,13 @@ export const ContentPage = () => {
         <>
             <PageHeader
                 title="Content"
-                description="Achievements and badges"
+                description="Achievements, badges and the navigator"
                 tabs={{ items: TABS, value: tab, onChange: value => setParams({ tab: value }, { replace: true }) }}
             />
             <PageBody className="flex flex-col gap-4 lg:gap-5">
                 {tab === 'achievements' && <AchievementsTab />}
                 {tab === 'badges' && <BadgesTab canManage={canManage} />}
+                {tab === 'navigator' && <NavigatorTab canManage={canManage} />}
             </PageBody>
         </>
     );
