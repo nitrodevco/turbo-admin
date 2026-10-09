@@ -3,14 +3,17 @@ import { ArrowLeft, Check, Coins, Hammer, Wand2 } from 'lucide-react';
 import { useMemo, useState } from 'react';
 
 import { type BuildPlan, type BuildRequest, catalogCalls, type CatalogPageDetail, type CatalogTree, type PageDisplay, useCatalogEdit, useFurniLines } from '#/api/catalog';
-import { Button, ErrorNotice, Input, Labeled, Select, Switch, WarningNotice } from '#/components/ui';
+import { Button, ErrorNotice, Input, Labeled, Segmented, Select, Switch, WarningNotice } from '#/components/ui';
 import { cx } from '#/lib/cx';
 
 import { buildersFor, type BuilderSpec } from './builders';
 import { toast } from './feedback';
+import { PageSelect } from './fields';
+import { IconPicker } from './IconPicker';
 import { DISPLAY_LABELS } from './labels';
 import { layoutOf } from './layouts';
 import { Modal } from './Modal';
+import { PageIcon } from './PageTree';
 import { ProductIcon } from './ProductIcon';
 
 const blankRequest = (spec: BuilderSpec): BuildRequest => ({ builder: spec.kind, base: null, line: null, prefix: null, petType: null });
@@ -61,10 +64,16 @@ const ready = (spec: BuilderSpec, request: BuildRequest) =>
 
 interface PageBuilderProps {
     tree: CatalogTree;
-    page: CatalogPageDetail;
+    /** The page open in the editor, to build onto; null builds onto a new page only. */
+    page: CatalogPageDetail | null;
     open: boolean;
     onClose: () => void;
+    /** Built onto a new page: its id, to open it. */
+    onBuiltPage: (id: number) => void;
 }
+
+/** Where the build goes: onto the open page, or onto a new page made for it. */
+type Target = 'this' | 'new';
 
 /**
  * Building a page the way its layout wants it, from the hotel's own data: pick a builder (those
@@ -73,13 +82,24 @@ interface PageBuilderProps {
  * server plans again and makes only what was picked, through the usual checks; what it refuses is
  * listed.
  */
-export const PageBuilder = ({ tree, page, open, onClose }: PageBuilderProps) => {
-    const specs = useMemo(() => buildersFor(page.layout), [ page.layout ]);
+export const PageBuilder = ({ tree, page, open, onClose, onBuiltPage }: PageBuilderProps) => {
+    const [ target, setTarget ] = useState<Target>(page ? 'this' : 'new');
+    // A new page goes beside the open one, else among the tabs' first.
+    const [ parentId, setParentId ] = useState<number | null>(() => page?.parentId ?? (tree.pages.find(x => x.parentId === tree.rootId)?.id ?? tree.rootId));
+    const [ newTitle, setNewTitle ] = useState('');
+    const [ titleTouched, setTitleTouched ] = useState(false);
+    const [ newIcon, setNewIcon ] = useState<number | null>(null);
+    const [ iconOpen, setIconOpen ] = useState(false);
+    const onPage = target === 'this' && page ? page : null;
+    const layout = onPage?.layout ?? '';
+    const buildOn = onPage?.id ?? parentId;
+    const parentTitle = tree.pages.find(x => x.id === parentId)?.localization ?? 'the top level';
+    const specs = useMemo(() => buildersFor(layout), [ layout ]);
     const [ spec, setSpec ] = useState<BuilderSpec | null>(null);
     const [ request, setRequest ] = useState<BuildRequest | null>(null);
     const [ picked, setPicked ] = useState<Set<string>>(() => new Set());
     const [ price, setPrice ] = useState({ costCredits: 3, costCurrency: 0, currencyTypeId: null as number | null, clubLevel: 0, canGift: true, visible: true, setLayout: true, display: 'invisible' as PageDisplay });
-    const plan = useMutation({ mutationFn: (args: BuildRequest) => catalogCalls.previewBuild(page.id, args) });
+    const plan = useMutation({ mutationFn: (args: BuildRequest) => catalogCalls.previewBuild(buildOn!, args) });
     const build = useCatalogEdit(catalogCalls.applyBuild);
     const data: BuildPlan | undefined = plan.data;
 
@@ -95,8 +115,16 @@ export const PageBuilder = ({ tree, page, open, onClose }: PageBuilderProps) => 
         onClose();
     };
 
+    const typeTitle = (value: string) => {
+        setNewTitle(value);
+        setTitleTouched(true);
+    };
+
     const choose = (next: BuilderSpec) => {
         const fresh = blankRequest(next);
+
+        if (target === 'new' && !titleTouched)
+            setNewTitle(next.title);
 
         setSpec(next);
         setRequest(fresh);
@@ -123,12 +151,17 @@ export const PageBuilder = ({ tree, page, open, onClose }: PageBuilderProps) => 
         if (!request || !data)
             return;
 
-        build.mutate([ page.id, {
+        if (!buildOn || (!onPage && !newTitle.trim()))
+            return;
+
+        build.mutate([ buildOn, {
             ...request,
             keys: data.items.filter(x => picked.has(x.key)).map(x => x.key),
             ...price,
-            setLayout: price.setLayout && !data.createsPages && data.layout !== page.layout,
-            display: data.createsPages ? price.display : null,
+            setLayout: !!onPage && price.setLayout && !data.createsPages && data.layout !== onPage.layout,
+            display: data.createsPages || !onPage ? price.display : null,
+            newPageTitle: onPage ? null : newTitle.trim(),
+            newPageIcon: onPage ? null : newIcon,
         } ], {
             onSuccess: (result) => {
                 const parts = [
@@ -139,6 +172,9 @@ export const PageBuilder = ({ tree, page, open, onClose }: PageBuilderProps) => 
 
                 toast(`Built ${parts.join(', ') || 'nothing'}. Publish to put it live.`);
 
+                if (!onPage && result.pageId)
+                    onBuiltPage(result.pageId);
+
                 if (result.failures.length === 0)
                     close();
             },
@@ -146,13 +182,52 @@ export const PageBuilder = ({ tree, page, open, onClose }: PageBuilderProps) => 
     };
 
     const moving = data?.builder === 'soldLimited';
-    const changesLayout = data && !data.createsPages && data.layout !== page.layout;
+    const changesLayout = onPage && data && !data.createsPages && data.layout !== onPage.layout;
 
     return (
-        <Modal title={spec ? <span className="flex items-center gap-2"><button type="button" onClick={reset} aria-label="Back to the builders" className="grid size-7 place-items-center rounded-lg text-muted hover:bg-subtle hover:text-ink"><ArrowLeft className="size-4" /></button>Build: {spec.title}</span> : 'Build this page'} open={open} onClose={close} className="sm:max-w-3xl">
+        <Modal title={spec ? <span className="flex items-center gap-2"><button type="button" onClick={reset} aria-label="Back to the builders" className="grid size-7 place-items-center rounded-lg text-muted hover:bg-subtle hover:text-ink"><ArrowLeft className="size-4" /></button>Build: {spec.title}</span> : 'Build'} open={open} onClose={close} className="sm:max-w-3xl">
             {!spec && (
                 <div className="flex flex-col gap-3 p-4">
-                    <p className="text-sm text-muted">Fill <span className="font-medium text-ink">{page.localization}</span> ({layoutOf(page.layout).title}) from the hotel's own furniture, pets and effects, the way its layout reads them. You look over everything before it's made.</p>
+                    <div className="flex flex-col gap-3 rounded-xl border border-line bg-subtle/40 p-3">
+                        <Segmented
+                            label="Build onto"
+                            value={target}
+                            onChange={(value) => {
+                                setTarget(value as Target);
+                                plan.reset();
+                            }}
+                            options={[
+                                ...(page ? [ { value: 'this', label: `This page: ${page.localization}` } ] : []),
+                                { value: 'new', label: 'A new page' },
+                            ]}
+                        />
+                        {target === 'new' && (
+                            <div className="grid gap-3 sm:grid-cols-[auto_minmax(0,1fr)_minmax(0,1fr)]">
+                                <Labeled label="Icon">
+                                    <button type="button" onClick={() => setIconOpen(true)} title="Pick its icon" className="grid size-11 place-items-center rounded-lg border border-line bg-canvas hover:border-accent sm:size-9">
+                                        {newIcon ? <PageIcon icon={newIcon} /> : <span className="text-[10px] text-muted">icon</span>}
+                                    </button>
+                                </Labeled>
+                                <Labeled label="Title" hint="The builder's name until you type one.">
+                                    <Input value={newTitle} maxLength={50} onChange={event => typeTitle(event.target.value)} placeholder="New page" />
+                                </Labeled>
+                                <Labeled label="Under">
+                                    <PageSelect tree={tree} value={parentId} onChange={setParentId} placeholder="The top level (a tab)" />
+                                </Labeled>
+                                <Labeled label="Shown in" className="sm:col-span-3">
+                                    <Select value={price.display} onChange={event => setPrice({ ...price, display: event.target.value as PageDisplay })}>
+                                        {([ 'invisible', 'regular', 'both', 'bc_only' ] as PageDisplay[]).map(x => <option key={x} value={x}>{DISPLAY_LABELS[x]}</option>)}
+                                    </Select>
+                                </Labeled>
+                            </div>
+                        )}
+                    </div>
+                    <p className="text-sm text-muted">
+                        {onPage
+                            ? <>Fill <span className="font-medium text-ink">{onPage.localization}</span> ({layoutOf(onPage.layout).title}) from the hotel's own furniture, pets and effects, the way its layout reads them.</>
+                            : <>Make a page under <span className="font-medium text-ink">{parentTitle}</span> with the builder's layout, filled from the hotel's own furniture, pets and effects.</>}
+                        {' '}You look over everything before it's made.
+                    </p>
                     <ul className="grid gap-2 sm:grid-cols-2">
                         {specs.map(x => (
                             <li key={x.kind}>
@@ -164,7 +239,7 @@ export const PageBuilder = ({ tree, page, open, onClose }: PageBuilderProps) => 
                                     <span className="flex items-center gap-2">
                                         <Wand2 className="size-4 text-accent" />
                                         <span className="flex-1 text-sm font-semibold">{x.title}</span>
-                                        {x.layouts.includes(page.layout) && <span className="rounded-full bg-accent-soft px-2 py-0.5 text-[10px] font-semibold text-accent">for this layout</span>}
+                                        {onPage && x.layouts.includes(onPage.layout) && <span className="rounded-full bg-accent-soft px-2 py-0.5 text-[10px] font-semibold text-accent">for this layout</span>}
                                     </span>
                                     <span className="text-xs leading-snug text-muted">{x.blurb}</span>
                                     <span className="mt-auto pt-1 font-mono text-[11px] text-muted">{x.layouts[0]}</span>
@@ -259,13 +334,13 @@ export const PageBuilder = ({ tree, page, open, onClose }: PageBuilderProps) => 
                                     {changesLayout && (
                                         <Switch
                                             label={`Make this page ${layoutOf(data.layout).title}`}
-                                            hint={`Its layout is ${page.layout}; what this builds is read by ${data.layout}.`}
+                                            hint={`Its layout is ${onPage.layout}; what this builds is read by ${data.layout}.`}
                                             checked={price.setLayout}
                                             onChange={value => setPrice({ ...price, setLayout: value })}
                                             className="sm:col-span-2"
                                         />
                                     )}
-                                    {data.createsPages && (
+                                    {data.createsPages && onPage && (
                                         <Labeled label="The new pages are shown in" hint="Hidden lets you look them over before players do.">
                                             <Select value={price.display} onChange={event => setPrice({ ...price, display: event.target.value as PageDisplay })}>
                                                 {([ 'invisible', 'regular', 'both', 'bc_only' ] as PageDisplay[]).map(x => <option key={x} value={x}>{DISPLAY_LABELS[x]}</option>)}
@@ -289,10 +364,10 @@ export const PageBuilder = ({ tree, page, open, onClose }: PageBuilderProps) => 
                                 <div className="flex items-center gap-2">
                                     <span className="mr-auto text-xs text-muted">
                                         {data.createsPages
-                                            ? `${picked.size} new page${picked.size === 1 ? '' : 's'} under ${page.localization}, each with its offer.`
+                                            ? `${picked.size} new page${picked.size === 1 ? '' : 's'} under ${onPage?.localization ?? newTitle.trim()}, each with its offer.`
                                             : moving
                                                 ? `${picked.size} offer${picked.size === 1 ? '' : 's'} move here.`
-                                                : `${picked.size} new offer${picked.size === 1 ? '' : 's'} on ${page.localization}.`}
+                                                : `${picked.size} new offer${picked.size === 1 ? '' : 's'} on ${onPage ? onPage.localization : `a new page, ${newTitle.trim() || '…'}, under ${parentTitle}`}.`}
                                     </span>
                                     <Button icon={build.isSuccess && build.data.failures.length === 0 ? <Check /> : <Hammer />} disabled={picked.size === 0 || build.isPending} onClick={apply}>
                                         {build.isPending ? 'Building…' : 'Build'}
@@ -303,6 +378,7 @@ export const PageBuilder = ({ tree, page, open, onClose }: PageBuilderProps) => 
                     )}
                 </div>
             )}
+            <IconPicker value={newIcon ?? 0} open={iconOpen} onPick={setNewIcon} onClose={() => setIconOpen(false)} />
         </Modal>
     );
 };

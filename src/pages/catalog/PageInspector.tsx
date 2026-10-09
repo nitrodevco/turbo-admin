@@ -122,180 +122,188 @@ export const PageInspector = ({ tree, page, draft, onDraft, focus, onOpen }: Pag
 
     return (
         <form onSubmit={submit} className="flex flex-col">
-            <Section title="Page">
-                <div className="flex items-end gap-2">
-                    <button
-                        type="button"
-                        onClick={() => setIconOpen(true)}
-                        disabled={!canManage}
-                        title="Change the icon"
-                        className="grid size-11 shrink-0 place-items-center rounded-xl border border-line bg-canvas transition hover:scale-105 hover:border-accent disabled:pointer-events-none sm:size-9"
-                    >
-                        {draft.icon > 0 ? <PageIcon icon={draft.icon} /> : <span className="text-[10px] text-muted">icon</span>}
-                    </button>
-                    <div className="min-w-0 flex-1">
-                        <Field label="Title" name="page-title" value={draft.localization} onChange={event => set('localization', event.target.value)} maxLength={50} required disabled={!canManage} />
-                    </div>
-                </div>
-                <Field
-                    label="Link key"
-                    name="page-name"
-                    value={draft.name ?? ''}
-                    onChange={event => set('name', event.target.value || null)}
-                    maxLength={50}
-                    list={linkKeysId}
-                    autoComplete="off"
-                    spellCheck={false}
-                    placeholder="Pick one the client uses, or type your own"
-                    hint={linkKeyNote(draft.name) ?? 'The name the client opens it by. Pick one the client\'s buttons use, or type your own for links.'}
-                    disabled={!canManage}
-                    className="font-mono"
-                />
-                <datalist id={linkKeysId}>
-                    {LINK_KEYS.map(x => <option key={x.key} value={x.key}>{x.note}</option>)}
-                </datalist>
-            </Section>
-
-            <Section title="Shown in">
-                <div role="radiogroup" aria-label="Shown in" className="grid grid-cols-2 gap-1.5">
-                    {DISPLAYS.map((x) => {
-                        const blocked = isTab && inBuildersClub(x.value) && x.value !== page.display;
-
-                        return (
+            <div className="grid md:grid-cols-2 md:divide-x md:divide-line">
+                <div className="flex min-w-0 flex-col">
+                    <Section title="Page">
+                        <div className="flex items-end gap-2">
                             <button
-                                key={x.value}
                                 type="button"
-                                role="radio"
-                                aria-checked={draft.display === x.value}
-                                disabled={!canManage || blocked}
-                                title={blocked ? 'A tab can\'t be in the Builders Club catalog, which has no tabs.' : x.hint}
-                                onClick={() => set('display', x.value)}
-                                className={cx(
-                                    'flex items-center gap-2 rounded-lg border px-2.5 py-2 text-left text-xs transition [&>svg]:size-4 [&>svg]:shrink-0',
-                                    draft.display === x.value ? 'border-accent bg-accent-soft text-accent' : 'border-line text-muted hover:border-muted/50 hover:text-ink',
-                                    'disabled:opacity-40',
-                                )}
+                                onClick={() => setIconOpen(true)}
+                                disabled={!canManage}
+                                title="Change the icon"
+                                className="grid size-11 shrink-0 place-items-center rounded-xl border border-line bg-canvas transition hover:scale-105 hover:border-accent disabled:pointer-events-none sm:size-9"
                             >
-                                {x.icon}
-                                {DISPLAY_LABELS[x.value]}
+                                {draft.icon > 0 ? <PageIcon icon={draft.icon} /> : <span className="text-[10px] text-muted">icon</span>}
                             </button>
-                        );
-                    })}
-                </div>
-                {inBuildersClub(draft.display) && !isTab && <p className="text-xs text-muted">The pages above it are shown in the Builders Club catalog too, to lead to it, without their own offers.</p>}
-            </Section>
-
-            <Section title="Layout">
-                <button
-                    type="button"
-                    onClick={() => setLayoutOpen(true)}
-                    disabled={!canManage}
-                    className="flex items-start gap-3 rounded-xl border border-line bg-canvas p-3 text-left transition hover:border-accent hover:shadow-sm disabled:pointer-events-none"
-                >
-                    <span className="grid size-9 shrink-0 place-items-center rounded-lg bg-accent-soft text-accent"><LayoutTemplate className="size-5" /></span>
-                    <span className="min-w-0 flex-1">
-                        <span className="block text-sm font-semibold">{spec.title}</span>
-                        <span className="block text-xs text-muted">{spec.blurb}</span>
-                        <span className="mt-1 block font-mono text-[11px] text-muted">{draft.layout}{!isKnownLayout(draft.layout) && ' · unknown to the client'}</span>
-                    </span>
-                    {canManage && <span className="text-xs font-medium text-accent">Change</span>}
-                </button>
-            </Section>
-
-            {spec.images.length > 0 && (
-                <Section title="Pictures">
-                    {spec.images.map(slot => (
-                        <ImageField
-                            key={slot.index}
-                            id={`slot-image-${slot.index}`}
-                            label={slot.label}
-                            hint={slot.hint}
-                            value={draft.imageData[slot.index] ?? ''}
-                            onChange={value => set('imageData', withSlot(draft.imageData, slot.index, value))}
-                            disabled={!canManage}
-                            highlight={highlight('image', slot.index)}
-                        />
-                    ))}
-                </Section>
-            )}
-
-            {spec.texts.length > 0 && (
-                <Section title="Words">
-                    {spec.texts.map(slot => (
-                        <div key={slot.index} className={cx('rounded-lg p-1 transition-colors', highlight('text', slot.index) && 'bg-accent-soft ring-2 ring-accent')}>
-                            <Labeled label={slot.label} hint={slot.hint}>
-                                {slot.long
-                                    ? <Textarea id={`slot-text-${slot.index}`} value={draft.textData[slot.index] ?? ''} onChange={event => set('textData', withSlot(draft.textData, slot.index, event.target.value))} rows={3} maxLength={2000} disabled={!canManage} />
-                                    : <Input id={`slot-text-${slot.index}`} value={draft.textData[slot.index] ?? ''} onChange={event => set('textData', withSlot(draft.textData, slot.index, event.target.value))} maxLength={2000} disabled={!canManage} />}
-                            </Labeled>
+                            <div className="min-w-0 flex-1">
+                                <Field label="Title" name="page-title" value={draft.localization} onChange={event => set('localization', event.target.value)} maxLength={50} required disabled={!canManage} />
+                            </div>
                         </div>
-                    ))}
-                    <p className="text-[11px] text-muted">The client reads simple HTML in these: &lt;b&gt;, &lt;i&gt;, &lt;br&gt; and &lt;a href&gt;.</p>
-                </Section>
-            )}
+                        <Field
+                            label="Link key"
+                            name="page-name"
+                            value={draft.name ?? ''}
+                            onChange={event => set('name', event.target.value || null)}
+                            maxLength={50}
+                            list={linkKeysId}
+                            autoComplete="off"
+                            spellCheck={false}
+                            placeholder="Pick one the client uses, or type your own"
+                            hint={linkKeyNote(draft.name) ?? 'The name the client opens it by. Pick one the client\'s buttons use, or type your own for links.'}
+                            disabled={!canManage}
+                            className="font-mono"
+                        />
+                        <datalist id={linkKeysId}>
+                            {LINK_KEYS.map(x => <option key={x.key} value={x.key}>{x.note}</option>)}
+                        </datalist>
+                    </Section>
 
-            {(leftoverImages.length > 0 || leftoverTexts.length > 0) && (
-                <Section title="Not shown by this layout">
-                    <p className="text-xs text-muted">The page keeps these from before, but this layout has nowhere to show them.</p>
-                    <ul className="flex flex-col gap-1">
-                        {[ ...leftoverImages.map(x => ({ ...x, list: 'imageData' as const })), ...leftoverTexts.map(x => ({ ...x, list: 'textData' as const })) ].map(x => (
-                            <li key={`${x.list}${x.index}`} className="flex items-center gap-2 rounded-lg bg-subtle px-2 py-1 text-xs">
-                                <span className="shrink-0 text-muted">{x.list === 'imageData' ? 'Picture' : 'Text'} {x.index + 1}</span>
-                                <span className="min-w-0 flex-1 truncate font-mono">{x.value}</span>
-                                {canManage && (
-                                    <button type="button" onClick={() => set(x.list, withSlot(draft[x.list], x.index, ''))} aria-label="Clear it" className="grid size-6 place-items-center rounded text-muted hover:text-bad">
-                                        <X className="size-3.5" />
+                    <Section title="Shown in">
+                        <div role="radiogroup" aria-label="Shown in" className="grid grid-cols-2 gap-1.5">
+                            {DISPLAYS.map((x) => {
+                                const blocked = isTab && inBuildersClub(x.value) && x.value !== page.display;
+
+                                return (
+                                    <button
+                                        key={x.value}
+                                        type="button"
+                                        role="radio"
+                                        aria-checked={draft.display === x.value}
+                                        disabled={!canManage || blocked}
+                                        title={blocked ? 'A tab can\'t be in the Builders Club catalog, which has no tabs.' : x.hint}
+                                        onClick={() => set('display', x.value)}
+                                        className={cx(
+                                            'flex items-center gap-2 rounded-lg border px-2.5 py-2 text-left text-xs transition [&>svg]:size-4 [&>svg]:shrink-0',
+                                            draft.display === x.value ? 'border-accent bg-accent-soft text-accent' : 'border-line text-muted hover:border-muted/50 hover:text-ink',
+                                            'disabled:opacity-40',
+                                        )}
+                                    >
+                                        {x.icon}
+                                        {DISPLAY_LABELS[x.value]}
                                     </button>
-                                )}
-                            </li>
-                        ))}
-                    </ul>
-                </Section>
-            )}
-
-            {canManage && (
-                <Section title="More">
-                    <div className="flex flex-wrap gap-2">
-                        <Button
-                            variant="secondary"
-                            icon={<FolderPlus />}
-                            disabled={create.isPending}
-                            onClick={() => create.mutate([ { parentId: page.id, localization: 'New page', name: null, icon: 0, layout: 'default_3x3', imageData: [], textData: [], display: 'invisible' } ], {
-                                onSuccess: (saved) => {
-                                    toast('Added a hidden page, ready to set up.');
-                                    onOpen(saved.id);
-                                },
+                                );
                             })}
+                        </div>
+                        {inBuildersClub(draft.display) && !isTab && <p className="text-xs text-muted">The pages above it are shown in the Builders Club catalog too, to lead to it, without their own offers.</p>}
+                    </Section>
+
+                    <Section title="Layout">
+                        <button
+                            type="button"
+                            onClick={() => setLayoutOpen(true)}
+                            disabled={!canManage}
+                            className="flex items-start gap-3 rounded-xl border border-line bg-canvas p-3 text-left transition hover:border-accent hover:shadow-sm disabled:pointer-events-none"
                         >
-                            Add a page under it
-                        </Button>
-                        {!isRoot && (
-                            <Button
-                                variant="danger"
-                                icon={<Trash2 />}
-                                disabled={remove.isPending || page.offers.length > 0}
-                                title={page.offers.length > 0 ? 'Move or delete its offers first.' : undefined}
-                                onClick={() => window.confirm(`Delete the page "${page.localization}"?`) && remove.mutate([ page.id ], {
-                                    onSuccess: () => {
-                                        toast(`Deleted ${page.localization}.`);
-                                        onOpen(page.parentId);
-                                    },
-                                })}
-                            >
-                                Delete page
-                            </Button>
-                        )}
-                    </div>
-                    <p className="text-xs text-muted">A new page starts hidden, so it can be set up before anyone sees it. Drag a page in the tree to move it.</p>
-                </Section>
-            )}
+                            <span className="grid size-9 shrink-0 place-items-center rounded-lg bg-accent-soft text-accent"><LayoutTemplate className="size-5" /></span>
+                            <span className="min-w-0 flex-1">
+                                <span className="block text-sm font-semibold">{spec.title}</span>
+                                <span className="block text-xs text-muted">{spec.blurb}</span>
+                                <span className="mt-1 block font-mono text-[11px] text-muted">{draft.layout}{!isKnownLayout(draft.layout) && ' · unknown to the client'}</span>
+                            </span>
+                            {canManage && <span className="text-xs font-medium text-accent">Change</span>}
+                        </button>
+                    </Section>
+
+                    {canManage && (
+                        <Section title="More">
+                            <div className="flex flex-wrap gap-2">
+                                <Button
+                                    variant="secondary"
+                                    icon={<FolderPlus />}
+                                    disabled={create.isPending}
+                                    onClick={() => create.mutate([ { parentId: page.id, localization: 'New page', name: null, icon: 0, layout: 'default_3x3', imageData: [], textData: [], display: 'invisible' } ], {
+                                        onSuccess: (saved) => {
+                                            toast('Added a hidden page, ready to set up.');
+                                            onOpen(saved.id);
+                                        },
+                                    })}
+                                >
+                                    Add a page under it
+                                </Button>
+                                {!isRoot && (
+                                    <Button
+                                        variant="danger"
+                                        icon={<Trash2 />}
+                                        disabled={remove.isPending || page.offers.length > 0}
+                                        title={page.offers.length > 0 ? 'Move or delete its offers first.' : undefined}
+                                        onClick={() => window.confirm(`Delete the page "${page.localization}"?`) && remove.mutate([ page.id ], {
+                                            onSuccess: () => {
+                                                toast(`Deleted ${page.localization}.`);
+                                                onOpen(page.parentId);
+                                            },
+                                        })}
+                                    >
+                                        Delete page
+                                    </Button>
+                                )}
+                            </div>
+                            <p className="text-xs text-muted">A new page starts hidden, so it can be set up before anyone sees it. Drag a page in the tree to move it.</p>
+                        </Section>
+                    )}
+                </div>
+                <div className="flex min-w-0 flex-col max-md:border-t max-md:border-line">
+
+                    {spec.images.length > 0 && (
+                        <Section title="Pictures">
+                            {spec.images.map(slot => (
+                                <ImageField
+                                    key={slot.index}
+                                    id={`slot-image-${slot.index}`}
+                                    label={slot.label}
+                                    hint={slot.hint}
+                                    value={draft.imageData[slot.index] ?? ''}
+                                    onChange={value => set('imageData', withSlot(draft.imageData, slot.index, value))}
+                                    disabled={!canManage}
+                                    highlight={highlight('image', slot.index)}
+                                />
+                            ))}
+                        </Section>
+                    )}
+
+                    {spec.texts.length > 0 && (
+                        <Section title="Words">
+                            {spec.texts.map(slot => (
+                                <div key={slot.index} className={cx('rounded-lg p-1 transition-colors', highlight('text', slot.index) && 'bg-accent-soft ring-2 ring-accent')}>
+                                    <Labeled label={slot.label} hint={slot.hint}>
+                                        {slot.long
+                                            ? <Textarea id={`slot-text-${slot.index}`} value={draft.textData[slot.index] ?? ''} onChange={event => set('textData', withSlot(draft.textData, slot.index, event.target.value))} rows={3} maxLength={2000} disabled={!canManage} />
+                                            : <Input id={`slot-text-${slot.index}`} value={draft.textData[slot.index] ?? ''} onChange={event => set('textData', withSlot(draft.textData, slot.index, event.target.value))} maxLength={2000} disabled={!canManage} />}
+                                    </Labeled>
+                                </div>
+                            ))}
+                            <p className="text-[11px] text-muted">The client reads simple HTML in these: &lt;b&gt;, &lt;i&gt;, &lt;br&gt; and &lt;a href&gt;.</p>
+                        </Section>
+                    )}
+
+                    {(leftoverImages.length > 0 || leftoverTexts.length > 0) && (
+                        <Section title="Not shown by this layout">
+                            <p className="text-xs text-muted">The page keeps these from before, but this layout has nowhere to show them.</p>
+                            <ul className="flex flex-col gap-1">
+                                {[ ...leftoverImages.map(x => ({ ...x, list: 'imageData' as const })), ...leftoverTexts.map(x => ({ ...x, list: 'textData' as const })) ].map(x => (
+                                    <li key={`${x.list}${x.index}`} className="flex items-center gap-2 rounded-lg bg-subtle px-2 py-1 text-xs">
+                                        <span className="shrink-0 text-muted">{x.list === 'imageData' ? 'Picture' : 'Text'} {x.index + 1}</span>
+                                        <span className="min-w-0 flex-1 truncate font-mono">{x.value}</span>
+                                        {canManage && (
+                                            <button type="button" onClick={() => set(x.list, withSlot(draft[x.list], x.index, ''))} aria-label="Clear it" className="grid size-6 place-items-center rounded text-muted hover:text-bad">
+                                                <X className="size-3.5" />
+                                            </button>
+                                        )}
+                                    </li>
+                                ))}
+                            </ul>
+                        </Section>
+                    )}
+
+                    {spec.images.length === 0 && spec.texts.length === 0 && <p className="px-4 py-4 text-sm text-muted">This layout takes no pictures or words.</p>}
+                </div>
+            </div>
 
             {(save.error ?? create.error ?? remove.error) && <div className="px-4 pb-4"><ErrorNotice error={save.error ?? create.error ?? remove.error} /></div>}
 
             {canManage && dirty && (
                 <div className="sticky bottom-0 z-10 flex items-center gap-2 border-t border-accent/40 bg-surface/95 px-4 py-3 backdrop-blur">
                     <span className="mr-auto text-xs text-muted">Unsaved changes</span>
-                    <Button variant="ghost" icon={<RotateCcw />} onClick={() => onDraft(pageDraftOf(page))}>Undo</Button>
+                    <Button variant="ghost" icon={<RotateCcw />} onClick={() => onDraft(pageDraftOf(page))} title="Put the fields back as saved">Reset</Button>
                     <Button type="submit" icon={<Save />} disabled={save.isPending}>Save page</Button>
                 </div>
             )}

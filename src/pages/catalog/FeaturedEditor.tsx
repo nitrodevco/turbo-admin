@@ -5,11 +5,12 @@ import { GripVertical, Plus, RotateCcw, Save, Sparkles, Trash2 } from 'lucide-re
 import { useState } from 'react';
 
 import { promoImageUrl, useClientAssets } from '#/api/assets';
-import { catalogCalls, type CatalogFeaturedInput, type CatalogFeaturedItem, type CatalogTree, FEATURED_MAX, type FeaturedLinkType, useCatalogEdit } from '#/api/catalog';
+import { catalogCalls, type CatalogFeaturedInput, type CatalogFeaturedItem, type CatalogOffer, type CatalogTree, FEATURED_MAX, type FeaturedLinkType, useCatalogEdit } from '#/api/catalog';
 import { Button, ErrorNotice, Input, Labeled, Segmented, Select } from '#/components/ui';
 import { cx } from '#/lib/cx';
 
 import { toast } from './feedback';
+import { givesOf } from './offers';
 
 interface ItemDraft extends CatalogFeaturedInput {
     key: number;
@@ -38,7 +39,7 @@ const toLocal = (utc: string | null) => {
 
 const SLOT_NAMES = [ 'Big, on the left', 'Second', 'Third', 'Fourth' ];
 
-const ItemCard = ({ item, index, tree, onChange, onRemove, disabled }: { item: ItemDraft; index: number; tree: CatalogTree; onChange: (item: ItemDraft) => void; onRemove: () => void; disabled: boolean }) => {
+const ItemCard = ({ item, index, tree, offers, onChange, onRemove, disabled }: { item: ItemDraft; index: number; tree: CatalogTree; offers: CatalogOffer[]; onChange: (item: ItemDraft) => void; onRemove: () => void; disabled: boolean }) => {
     const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: item.key, disabled });
     const url = promoImageUrl(useClientAssets(), item.image);
     const set = <K extends keyof ItemDraft>(key: K, value: ItemDraft[K]) => onChange({ ...item, [key]: value });
@@ -80,7 +81,25 @@ const ItemCard = ({ item, index, tree, onChange, onRemove, disabled }: { item: I
                     </Select>
                 )}
                 {item.type === 'offer' && (
-                    <Input type="number" min={1} value={item.value} onChange={event => set('value', event.target.value)} placeholder="Offer id" aria-label="Offer id" disabled={disabled} className="w-40 font-mono" />
+                    <div className="flex gap-2">
+                        {offers.length > 0 && (
+                            <Select
+                                value={offers.some(x => String(x.id) === item.value) ? item.value : ''}
+                                onChange={(event) => {
+                                    const picked = offers.find(x => String(x.id) === event.target.value);
+
+                                    onChange({ ...item, value: event.target.value, title: item.title || (picked ? givesOf(picked).slice(0, 100) : '') });
+                                }}
+                                disabled={disabled}
+                                aria-label="An offer on this page"
+                                className="min-w-0 flex-1"
+                            >
+                                <option value="">An offer on this page…</option>
+                                {offers.map(x => <option key={x.id} value={x.id}>{givesOf(x)} (#{x.id})</option>)}
+                            </Select>
+                        )}
+                        <Input type="number" min={1} value={item.value} onChange={event => set('value', event.target.value)} placeholder="Offer id" aria-label="Offer id" disabled={disabled} className="w-28 shrink-0 font-mono" />
+                    </div>
                 )}
                 {item.type === 'product' && (
                     <>
@@ -101,7 +120,7 @@ const ItemCard = ({ item, index, tree, onChange, onRemove, disabled }: { item: I
  * each a promo image and a title that opens a page, an offer or a product, until a time or for
  * good. Dragged into order; saved together; live on the next publish, on every front page.
  */
-export const FeaturedEditor = ({ tree, items }: { tree: CatalogTree; items: CatalogFeaturedItem[] }) => {
+export const FeaturedEditor = ({ tree, items, offers = [] }: { tree: CatalogTree; items: CatalogFeaturedItem[]; offers?: CatalogOffer[] }) => {
     const [ drafts, setDrafts ] = useState(() => draftsOf(items));
     const save = useCatalogEdit(catalogCalls.saveFeatured);
     const sensors = useSensors(useSensor(PointerSensor), useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates }));
@@ -125,13 +144,14 @@ export const FeaturedEditor = ({ tree, items }: { tree: CatalogTree; items: Cata
                 <p className="text-xs text-muted">Shown on every front page (frontpage4), in this order. They go live when you publish.</p>
                 <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={onDragEnd}>
                     <SortableContext items={drafts.map(x => x.key)} strategy={verticalListSortingStrategy}>
-                        <ul className="flex flex-col gap-3">
+                        <ul className="grid gap-3 lg:grid-cols-2">
                             {drafts.map((item, i) => (
                                 <ItemCard
                                     key={item.key}
                                     item={item}
                                     index={i}
                                     tree={tree}
+                                    offers={offers}
                                     disabled={disabled}
                                     onChange={next => setDrafts(drafts.map(x => (x.key === item.key ? next : x)))}
                                     onRemove={() => setDrafts(drafts.filter(x => x.key !== item.key))}
@@ -156,7 +176,7 @@ export const FeaturedEditor = ({ tree, items }: { tree: CatalogTree; items: Cata
             {!disabled && dirty && (
                 <div className="sticky bottom-0 z-10 flex items-center gap-2 border-t border-accent/40 bg-surface/95 px-4 py-3 backdrop-blur">
                     <span className="mr-auto text-xs text-muted">Unsaved changes</span>
-                    <Button variant="ghost" icon={<RotateCcw />} onClick={() => setDrafts(draftsOf(items))}>Undo</Button>
+                    <Button variant="ghost" icon={<RotateCcw />} onClick={() => setDrafts(draftsOf(items))} title="Put the items back as saved">Reset</Button>
                     <Button icon={<Save />} disabled={save.isPending} onClick={() => save.mutate([ strip(drafts) ], { onSuccess: () => toast('Featured items saved. Publish to put them live.') })}>Save</Button>
                 </div>
             )}

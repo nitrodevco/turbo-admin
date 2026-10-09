@@ -15,6 +15,7 @@ export interface CatalogPageNode {
     localization: string;
     name: string | null;
     icon: number;
+    layout: string;
     display: PageDisplay;
     sortOrder: number;
     offerCount: number;
@@ -268,6 +269,9 @@ export interface BuildApply extends BuildRequest {
     visible: boolean;
     setLayout: boolean;
     display: PageDisplay | null;
+    /** Set: build onto a new page of this title, made under the page in the address. */
+    newPageTitle?: string | null;
+    newPageIcon?: number | null;
 }
 
 export interface BuildResult {
@@ -276,6 +280,8 @@ export interface BuildResult {
     offersMoved: number;
     unpublishedChanges: number;
     failures: { key: string; error: string }[];
+    /** The page it built onto: the new one, when it made one. */
+    pageId: number | null;
 }
 
 export const useFurniLines = (enabled: boolean) => useQuery({
@@ -283,6 +289,166 @@ export const useFurniLines = (enabled: boolean) => useQuery({
     queryFn: () => api<{ lines: { line: string; count: number }[] }>('/catalog/builders/furni-lines'),
     enabled,
     staleTime: 10 * 60_000,
+});
+
+/** One step of the editor's history: what was done, by whom, when, and how many edits it took. */
+export interface CatalogHistoryItem {
+    label: string;
+    editorId: number;
+    atUtc: string;
+    edits: number;
+}
+
+/** What can be undone (newest first) and redone (next first) since the last publish. */
+export interface CatalogHistory {
+    undo: CatalogHistoryItem[];
+    redo: CatalogHistoryItem[];
+    /** Older steps were let go: throwing everything away no longer reaches the published catalog. */
+    truncated: boolean;
+    unpublishedChanges: number;
+}
+
+/** A floor or wall item, as the audits list it. */
+export interface AuditFurni {
+    id: number;
+    name: string;
+    publicName: string | null;
+    spriteId: number;
+    type: 'floor' | 'wall';
+    line: string | null;
+    category: string | null;
+}
+
+export interface AuditFacet {
+    value: string;
+    count: number;
+}
+
+/** `missing`: in no offer; `hidden`: only in offers or on pages players can't see. */
+export type UnofferedScope = 'missing' | 'hidden';
+
+export interface UnofferedQuery {
+    scope: UnofferedScope;
+    q: string;
+    line: string;
+    category: string;
+    page: number;
+    size: number;
+}
+
+export interface UnofferedResult {
+    total: number;
+    items: AuditFurni[];
+    lines: AuditFacet[];
+    categories: AuditFacet[];
+}
+
+export interface DuplicateOffer {
+    offerId: number;
+    pageId: number;
+    pageTitle: string;
+    pagePath: string;
+    costCredits: number;
+    costCurrency: number;
+    currencyTypeId: number | null;
+    visible: boolean;
+    /** Visible, and on a page players can reach. */
+    shown: boolean;
+}
+
+export interface Duplicate {
+    furni: AuditFurni;
+    extraParam: string | null;
+    offers: DuplicateOffer[];
+}
+
+export interface AddFurniInput {
+    definitionIds: number[];
+    costCredits: number;
+    costCurrency: number;
+    currencyTypeId: number | null;
+    clubLevel: number;
+    canGift: boolean;
+    visible: boolean;
+}
+
+export interface BulkResult {
+    done: number;
+    unpublishedChanges: number;
+    failures: { key: string; error: string }[];
+}
+
+/** The tabs a generated catalog can have. */
+export type GenerateSection = 'front' | 'club' | 'furni' | 'wired' | 'pets' | 'extras' | 'rares' | 'groups' | 'builders';
+
+export type GenerateMode = 'replace' | 'alongside';
+
+export interface GeneratePageEdit {
+    key: string;
+    title: string | null;
+    icon: number | null;
+    skip: boolean;
+}
+
+export interface GenerateRequest {
+    mode: GenerateMode;
+    sections: GenerateSection[];
+    reuseOffers: boolean;
+    maxPerPage: number;
+    costCredits: number;
+    costCurrency: number;
+    currencyTypeId: number | null;
+    edits: GeneratePageEdit[];
+}
+
+export interface GeneratedPage {
+    key: string;
+    section: GenerateSection;
+    title: string;
+    name: string | null;
+    icon: number;
+    layout: string;
+    display: PageDisplay;
+    newOffers: number;
+    movedOffers: number;
+    children: GeneratedPage[];
+}
+
+export interface GeneratePlan {
+    tabs: GeneratedPage[];
+    warnings: string[];
+    pages: number;
+    newOffers: number;
+    movedOffers: number;
+    archivedTabs: number;
+}
+
+export interface GenerateResult {
+    pages: number;
+    offersCreated: number;
+    offersMoved: number;
+    pagesMoved: number;
+    unpublishedChanges: number;
+}
+
+/** The layout of the page the catalogue opens on. */
+export const FRONT_PAGE_LAYOUT = 'frontpage4';
+
+export const useCatalogHistory = (enabled: boolean) => useQuery({
+    queryKey: [ 'catalog', 'history' ],
+    queryFn: () => api<CatalogHistory>('/catalog/history'),
+    enabled,
+});
+
+export const useUnoffered = (query: UnofferedQuery) => useQuery({
+    queryKey: [ 'catalog', 'audit', 'unoffered', query ],
+    queryFn: () => api<UnofferedResult>(`/catalog/audit/unoffered?${new URLSearchParams({ scope: query.scope, q: query.q, line: query.line, category: query.category, page: String(query.page), size: String(query.size) })}`),
+    placeholderData: previous => previous,
+});
+
+export const useDuplicates = () => useQuery({
+    queryKey: [ 'catalog', 'audit', 'duplicates' ],
+    queryFn: () => api<{ total: number; items: Duplicate[] }>('/catalog/audit/duplicates'),
 });
 
 export const useCatalogFeatured = () => useQuery({
@@ -305,6 +471,14 @@ export const catalogCalls = {
     publish: () => post<PublishResult>('/catalog/publish'),
     previewBuild: (pageId: number, request: BuildRequest) => post<BuildPlan>(`/catalog/pages/${pageId}/build/preview`, request),
     applyBuild: (pageId: number, request: BuildApply) => post<BuildResult>(`/catalog/pages/${pageId}/build`, request),
+    addFurni: (pageId: number, input: AddFurniInput) => post<BulkResult>(`/catalog/pages/${pageId}/furni`, input),
+    deleteOffers: (offerIds: number[]) => post<BulkResult>('/catalog/offers/delete', { offerIds }),
+    createFrontPage: () => post<Saved>('/catalog/frontpage'),
+    undo: () => post<CatalogHistory>('/catalog/undo'),
+    redo: () => post<CatalogHistory>('/catalog/redo'),
+    discard: () => post<CatalogHistory>('/catalog/discard'),
+    previewGenerate: (request: GenerateRequest) => post<GeneratePlan>('/catalog/generate/preview', request),
+    generate: (request: GenerateRequest) => post<GenerateResult>('/catalog/generate', request),
 };
 
 /** A catalog edit; the tree and pages are read again once it lands, saved or not. */

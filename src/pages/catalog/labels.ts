@@ -1,4 +1,4 @@
-import type { PageDisplay } from '#/api/catalog';
+import type { CatalogHistoryItem, PageDisplay } from '#/api/catalog';
 
 const DAYS_PER_MONTH = 31;
 
@@ -51,3 +51,6 @@ export const membershipOfName = (name: string): { subscription: 'HabboClub' | 'B
         days: match[3]!.startsWith('month') ? count * DAYS_PER_MONTH : count,
     };
 };
+
+/** A step's label as a sentence: the server writes them as the log does, lower case. */
+export const stepLabel = (item: CatalogHistoryItem) => item.label.charAt(0).toUpperCase() + item.label.slice(1);

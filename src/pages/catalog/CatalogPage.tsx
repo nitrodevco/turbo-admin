@@ -14,13 +14,15 @@ import {
     useSensors,
 } from '@dnd-kit/core';
 import { arrayMove, sortableKeyboardCoordinates } from '@dnd-kit/sortable';
-import { useQueryClient } from '@tanstack/react-query';
-import { ArrowLeft, Disc3, FileText, FolderPlus, Package, Send, Sparkles, Wand2 } from 'lucide-react';
-import { useMemo, useRef, useState } from 'react';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { ArrowLeft, Copy, Disc3, Eye, LayoutGrid, PackagePlus, PackageSearch, Settings2, Sparkles, Wand2 } from 'lucide-react';
+import { useEffect, useMemo, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
 import { Link, useSearchParams } from 'react-router';
 
 import {
     catalogCalls,
+    type CatalogHistory,
     type CatalogPageDetail,
     type CatalogTree,
     CLUB_BUY,
@@ -29,16 +31,23 @@ import {
     CLUB_PAGE_NAME,
     useCatalogEdit,
     useCatalogFeatured,
+    useCatalogHistory,
     useCatalogPage,
     useCatalogTree,
 } from '#/api/catalog';
-import { Badge, Button, EmptyState, ErrorNotice, Loading, PageBody, PageHeader, Panel, WarningNotice } from '#/components/ui';
+import { Badge, Button, EmptyState, ErrorNotice, Loading, PageHeader, WarningNotice } from '#/components/ui';
 import { cx } from '#/lib/cx';
 
+import { CatalogHome } from './CatalogHome';
+import { ChangesBar } from './ChangesBar';
+import { Duplicates } from './Duplicates';
 import { FeaturedEditor } from './FeaturedEditor';
 import { celebrate, toast, toastError } from './feedback';
-import { DISPLAY_LABELS } from './labels';
-import { layoutOf } from './layouts';
+import { GenerateCatalog } from './GenerateCatalog';
+import { DISPLAY_LABELS, stepLabel } from './labels';
+import { layoutOf, showsOffers } from './layouts';
+import { MissingFurni } from './MissingFurni';
+import { Modal } from './Modal';
 import { OfferInspector, type OfferStart } from './OfferInspector';
 import { offerKey } from './offers';
 import { OfferFace } from './OfferTile';
@@ -46,7 +55,7 @@ import { PageBuilder } from './PageBuilder';
 import { type PageDraft, pageDraftOf } from './pageDraft';
 import { PageInspector } from './PageInspector';
 import { PagePreview, type SlotRef } from './PagePreview';
-import { PageRowBody, PageTree } from './PageTree';
+import { PageIcon, PageRowBody, PageTree } from './PageTree';
 import { Toasts } from './Toasts';
 import { ancestorsOf, childrenOf } from './tree';
 import { flatten, movePageIn, project } from './treeDrag';
@@ -57,8 +66,17 @@ const startOf = (layout: string): OfferStart => (layout === CLUB_BUY ? 'membersh
 /** What is being dragged: a page from the tree, or an offer from the page. */
 type Dragging = { kind: 'page'; id: number } | { kind: 'offer'; id: number };
 
+/** The editor's views, along the header. */
+type View = 'editor' | 'missing' | 'duplicates' | 'generate';
+
+const VIEWS: View[] = [ 'editor', 'missing', 'duplicates', 'generate' ];
+
 const idOf = (dragId: string | number) => Number(String(dragId).split(':')[1]);
 const kindOf = (dragId: string | number) => String(dragId).split(':')[0];
+
+/** Whether a key press is meant for a field, which keeps its own undo. */
+const inField = (target: EventTarget | null) =>
+    target instanceof HTMLElement && (target.isContentEditable || [ 'INPUT', 'TEXTAREA', 'SELECT' ].includes(target.tagName));
 
 /**
  * Who a dragged thing can land on: a page only among the pages; an offer on a page in the tree when
@@ -109,40 +127,59 @@ const ClubShopNotices = ({ tree, busy, onAdd }: { tree: CatalogTree; busy: boole
     );
 };
 
-type InspectorTab = 'page' | 'offer' | 'featured';
+/** What the open page shows: itself as the client draws it, its settings, or the front page's featured items. */
+type PageTab = 'preview' | 'settings' | 'featured';
 
 /**
- * The catalog editor: the page tree on the left, the picked page in the middle drawn as the client
- * draws it, and on the right what is being edited - the page, an offer, or the front page's featured
- * items. Pages are dragged about the tree; offers about their page, or onto another page in the
- * tree. Edits are stored as they are saved and go in front of players when published, which
- * reloads the catalog and tells everyone online to refresh it. Both catalogs are cut from the one
- * tree, by where each page is shown. The open page and offer live in the address, so they can be
- * linked to.
+ * The catalog editor. Its views: the editor itself - the page tree on the left, the picked page in
+ * the middle drawn as the client draws it, and on the right what is being edited (the page, an
+ * offer, or the front page's featured items); the furni the catalog doesn't sell; the furni it
+ * sells twice; and generating a whole catalog. Edits are saved as they are made, can be undone
+ * and redone (Ctrl+Z, Ctrl+Shift+Z) or thrown away together, and go in front of players when
+ * published. The view, the open page and offer live in the address, so they can be linked to.
  */
 export const CatalogPage = () => {
     const [ params, setParams ] = useSearchParams();
+    const viewParam = params.get('view') as View | null;
+    const view: View = viewParam && VIEWS.includes(viewParam) ? viewParam : 'editor';
     const selected = Number(params.get('page')) || null;
     const offerParam = params.get('offer');
     const selectedOffer: number | 'new' | null = offerParam === 'new' ? 'new' : Number(offerParam) || null;
     const tree = useCatalogTree();
-    const page = useCatalogPage(selected);
+    const data = tree.data;
+    const page = useCatalogPage(view === 'editor' ? selected : null);
     const featured = useCatalogFeatured();
+    const history = useCatalogHistory(!!data?.canManage);
     const publish = useCatalogEdit(catalogCalls.publish);
+    const discard = useCatalogEdit(catalogCalls.discard);
     const addPage = useCatalogEdit(catalogCalls.createPage);
+    const frontPage = useCatalogEdit(catalogCalls.createFrontPage);
     const movePage = useCatalogEdit(catalogCalls.movePage);
     const moveOffer = useCatalogEdit(catalogCalls.moveOffer);
     const queryClient = useQueryClient();
-    const data = tree.data;
     const publishButton = useRef<HTMLDivElement>(null);
 
+    // Undoing or redoing several steps is one call after another, newest first.
+    const step = useMutation({
+        mutationFn: async ({ undo, steps }: { undo: boolean; steps: number }) => {
+            let last: CatalogHistory | null = null;
+
+            for (let i = 0; i < steps; i++)
+                last = await (undo ? catalogCalls.undo() : catalogCalls.redo());
+
+            return last;
+        },
+        onSettled: () => void queryClient.invalidateQueries({ queryKey: [ 'catalog' ] }),
+    });
+
     const [ open, setOpen ] = useState<Set<number>>(() => new Set(selected && data ? ancestorsOf(data, selected).map(x => x.id) : []));
-    const [ tab, setTab ] = useState<InspectorTab>(selectedOffer ? 'offer' : 'page');
+    const [ tab, setTab ] = useState<PageTab>('preview');
     const [ focus, setFocus ] = useState<(SlotRef & { at: number }) | null>(null);
     const [ dragging, setDragging ] = useState<Dragging | null>(null);
     const [ overPage, setOverPage ] = useState<number | null>(null);
     const [ offsetX, setOffsetX ] = useState(0);
     const [ building, setBuilding ] = useState(false);
+    const [ addingFurni, setAddingFurni ] = useState(false);
 
     // The page's edit, kept until it is saved or the page changes underneath it.
     const savedKey = page.data ? JSON.stringify(pageDraftOf(page.data)) + page.data.id : '';
@@ -157,6 +194,17 @@ export const CatalogPage = () => {
         useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates, keyboardCodes: { start: [ 'Space' ], cancel: [ 'Escape' ], end: [ 'Space', 'Enter' ] } }),
     );
 
+    const setView = (next: View) => {
+        const search = new URLSearchParams(params);
+
+        if (next === 'editor')
+            search.delete('view');
+        else
+            search.set('view', next);
+
+        setParams(search);
+    };
+
     // Opening a page opens the pages above it in the tree, so it is in sight.
     const openPage = (id: number | null, offer?: number | 'new') => {
         const next = new URLSearchParams();
@@ -168,7 +216,7 @@ export const CatalogPage = () => {
             next.set('offer', String(offer));
 
         setParams(next);
-        setTab(offer ? 'offer' : 'page');
+        setTab('preview');
         publish.reset();
 
         if (id && data)
@@ -184,8 +232,45 @@ export const CatalogPage = () => {
             next.delete('offer');
 
         setParams(next, { replace: true });
-        setTab(id ? 'offer' : 'page');
     };
+
+    const undoRedo = (undo: boolean, steps: number) => {
+        const list = undo ? history.data?.undo : history.data?.redo;
+        const first = list?.[0];
+
+        if (!first || step.isPending)
+            return;
+
+        step.mutate({ undo, steps }, {
+            onSuccess: () => toast(steps === 1 ? `${undo ? 'Undid' : 'Redid'}: ${stepLabel(first)}.` : `${undo ? 'Undid' : 'Redid'} ${steps} steps.`),
+            onError: toastError,
+        });
+    };
+
+    // Ctrl+Z undoes and Ctrl+Shift+Z (or Ctrl+Y) redoes, wherever the focus is but in a field.
+    useEffect(() => {
+        const onKey = (event: KeyboardEvent) => {
+            if (!(event.ctrlKey || event.metaKey) || inField(event.target) || !data?.canManage)
+                return;
+
+            const key = event.key.toLowerCase();
+
+            if (key === 'z' || key === 'y') {
+                event.preventDefault();
+                undoRedo(key === 'z' && !event.shiftKey, 1);
+            }
+        };
+
+        window.addEventListener('keydown', onKey);
+
+        return () => window.removeEventListener('keydown', onKey);
+    });
+
+    // An undo can take away the open page: then nothing is open.
+    useEffect(() => {
+        if (data && selected && !data.pages.some(x => x.id === selected))
+            setParams(new URLSearchParams(), { replace: true });
+    }, [ data, selected, setParams ]);
 
     const rows = useMemo(() => (data ? flatten(data, open, dragging?.kind === 'page' ? dragging.id : undefined) : []), [ data, open, dragging ]);
     const projection = data && dragging?.kind === 'page' && overPage ? project(rows, dragging.id, overPage, offsetX, data.rootId) : null;
@@ -217,11 +302,11 @@ export const CatalogPage = () => {
             return;
 
         if (was.kind === 'page' && landing) {
-            const page = data.pages.find(x => x.id === was.id);
+            const moving = data.pages.find(x => x.id === was.id);
             const siblings = (childrenOf(data).get(landing.parentId) ?? []).filter(x => x.id !== was.id);
-            const unchanged = page?.parentId === landing.parentId && (childrenOf(data).get(landing.parentId) ?? []).findIndex(x => x.id === was.id) === landing.index;
+            const unchanged = moving?.parentId === landing.parentId && (childrenOf(data).get(landing.parentId) ?? []).findIndex(x => x.id === was.id) === landing.index;
 
-            if (unchanged || !page)
+            if (unchanged || !moving)
                 return;
 
             const parent = landing.parentId === data.rootId ? 'the top level' : data.pages.find(x => x.id === landing.parentId)?.localization;
@@ -232,7 +317,7 @@ export const CatalogPage = () => {
                 setOpen(current => new Set(current).add(landing.parentId));
 
             movePage.mutate([ was.id, landing.parentId, Math.min(landing.index, siblings.length) ], {
-                onSuccess: () => toast(`Moved ${page.localization} into ${parent}.`),
+                onSuccess: () => toast(`Moved ${moving.localization} into ${parent}.`),
                 onError: toastError,
             });
 
@@ -291,12 +376,54 @@ export const CatalogPage = () => {
         },
     );
 
-    const unpublished = data?.unpublishedChanges ?? 0;
+    const openFromModal = (id: number) => {
+        setAddingFurni(false);
+        openPage(id);
+    };
+
+    const createFrontPage = () => frontPage.mutate([], {
+        onSuccess: (saved) => {
+            toast('Made the front page, first among the tabs. Pick its featured items.');
+            openPage(saved.id);
+            setTab('featured');
+        },
+        onError: toastError,
+    });
+
+    const unpublished = history.data?.unpublishedChanges ?? data?.unpublishedChanges ?? 0;
+    const busy = step.isPending || publish.isPending || discard.isPending;
+
+    const doPublish = () => {
+        if (!window.confirm('Publish the catalog? Everyone online gets the new catalog at once.'))
+            return;
+
+        publish.mutate([], {
+            onSuccess: (result) => {
+                celebrate(publishButton.current);
+                toast(`Live! ${result.offers.toLocaleString()} offers on ${result.pages.toLocaleString()} pages; ${result.playersTold} ${result.playersTold === 1 ? 'player' : 'players'} told to refresh.`);
+            },
+            onError: toastError,
+        });
+    };
+
+    const doDiscard = () => {
+        const steps = history.data?.undo.length ?? 0;
+
+        if (!window.confirm(`Throw away ${steps} ${steps === 1 ? 'change' : 'changes'}? The saved catalog goes back to the one players have. You can redo them afterwards.`))
+            return;
+
+        discard.mutate([], {
+            onSuccess: () => toast('Thrown away: the catalog is the one players have.'),
+            onError: toastError,
+        });
+    };
+
     const path = data && selected ? ancestorsOf(data, selected).map(x => x.localization).reverse() : [];
     const spec = draft ? layoutOf(draft.layout) : null;
     const isFeatured = spec?.kind === 'featured';
     const offer = page.data && typeof selectedOffer === 'number' ? page.data.offers.find(x => x.id === selectedOffer) ?? null : null;
-    const shownTab: InspectorTab = tab === 'offer' && !selectedOffer ? 'page' : tab === 'featured' && !isFeatured ? 'page' : tab;
+    const shownTab: PageTab = tab === 'featured' && !isFeatured ? 'preview' : tab;
+    const pageDirty = !!draft && !!page.data && JSON.stringify(draft) !== JSON.stringify(pageDraftOf(page.data));
     const draggedPage = dragging?.kind === 'page' ? data?.pages.find(x => x.id === dragging.id) : undefined;
     const draggedOffer = dragging?.kind === 'offer' ? page.data?.offers.find(x => x.id === dragging.id) : undefined;
 
@@ -304,34 +431,40 @@ export const CatalogPage = () => {
         <>
             <PageHeader
                 title="Catalog"
-                description={data ? `${data.pages.length.toLocaleString()} pages${unpublished > 0 ? ` · ${unpublished} ${unpublished === 1 ? 'change' : 'changes'} waiting to go live` : ' · everything is live'}` : 'Pages, offers and prices'}
+                description={data ? `${(data.pages.length - 1).toLocaleString()} pages · ${unpublished > 0 ? `${unpublished} ${unpublished === 1 ? 'change' : 'changes'} waiting to go live` : 'everything is live'}` : 'Pages, offers and prices'}
+                tabs={{
+                    value: view,
+                    onChange: value => setView(value as View),
+                    items: [
+                        { value: 'editor', label: 'Editor', icon: <LayoutGrid /> },
+                        { value: 'missing', label: 'Missing furni', icon: <PackageSearch /> },
+                        { value: 'duplicates', label: 'Duplicates', icon: <Copy /> },
+                        { value: 'generate', label: 'Generate', icon: <Wand2 /> },
+                    ],
+                }}
             >
                 <Link to="/catalog/songs" className="inline-flex h-11 items-center gap-2 rounded-lg border border-line bg-subtle px-3.5 text-sm font-medium hover:border-muted/50 sm:h-9 [&>svg]:size-4">
                     <Disc3 />
                     Songs
                 </Link>
-                {data?.canManage && (
-                    <div ref={publishButton}>
-                        <Button
-                            icon={<Send />}
-                            variant={unpublished > 0 ? 'primary' : 'secondary'}
-                            disabled={publish.isPending}
-                            onClick={() => window.confirm('Publish the catalog? Everyone online gets the new catalog at once.') && publish.mutate([], {
-                                onSuccess: (result) => {
-                                    celebrate(publishButton.current);
-                                    toast(`Live! ${result.offers.toLocaleString()} offers on ${result.pages.toLocaleString()} pages; ${result.playersTold} ${result.playersTold === 1 ? 'player' : 'players'} told to refresh.`);
-                                },
-                                onError: toastError,
-                            })}
-                        >
-                            Publish{unpublished > 0 ? ` (${unpublished})` : ''}
-                        </Button>
-                    </div>
-                )}
             </PageHeader>
-            <PageBody className="flex flex-col gap-4">
+            {/* The usual page body's width, without its rising entrance: a transformed parent would move the drag overlay. */}
+            <div className="mx-auto flex w-full max-w-[1240px] flex-col gap-3 px-3 py-4 sm:px-4 lg:px-6 lg:py-6">
                 {tree.error && <ErrorNotice error={tree.error} />}
                 {tree.isPending && <Loading />}
+                {data?.canManage && (
+                    <ChangesBar
+                        history={history.data}
+                        unpublished={unpublished}
+                        busy={busy}
+                        onUndo={steps => undoRedo(true, steps)}
+                        onRedo={steps => undoRedo(false, steps)}
+                        onDiscard={doDiscard}
+                        onPublish={doPublish}
+                        onBuild={() => setBuilding(true)}
+                        publishRef={publishButton}
+                    />
+                )}
                 {data && (
                     <ClubShopNotices
                         tree={data}
@@ -342,95 +475,83 @@ export const CatalogPage = () => {
                         )}
                     />
                 )}
-                {data && (
+
+                {data && view === 'missing' && <MissingFurni tree={data} pageId={selected} onOpenPage={id => openPage(id)} />}
+                {data && view === 'duplicates' && <Duplicates tree={data} onOpen={(pageId, offerId) => openPage(pageId, offerId)} />}
+                {data && view === 'generate' && <GenerateCatalog tree={data} onDone={() => openPage(null)} />}
+
+                {data && view === 'editor' && (
                     data.rootId === 0
                         ? <EmptyState>This catalog has no pages.</EmptyState>
                         : (
                                 <DndContext sensors={sensors} collisionDetection={collision} onDragStart={onDragStart} onDragMove={onDragMove} onDragEnd={onDragEnd} onDragCancel={endDrag}>
-                                    <div className="grid items-start gap-4 lg:grid-cols-[17rem_minmax(0,1fr)] xl:grid-cols-[17rem_minmax(0,1fr)_25rem]">
-                                        <Panel
-                                            title="Pages"
-                                            actions={data.canManage && (
-                                                <button type="button" onClick={() => addUnder(data.rootId)} title="Add a page at the top level" aria-label="Add a page at the top level" className="grid size-8 place-items-center rounded-lg text-muted hover:bg-subtle hover:text-accent">
-                                                    <FolderPlus className="size-4" />
-                                                </button>
+                                    <div className="grid items-start gap-3 lg:grid-cols-[17rem_minmax(0,1fr)]">
+                                        <aside
+                                            aria-label="Pages"
+                                            className={cx(
+                                                'flex flex-col overflow-hidden rounded-xl border border-line bg-surface lg:sticky lg:top-6 lg:max-h-[calc(100dvh-3rem)]',
+                                                selected !== null && 'max-lg:hidden',
                                             )}
-                                            className={cx('lg:sticky lg:top-6 lg:max-h-[calc(100dvh-3rem)] lg:overflow-y-auto', selected !== null && 'max-lg:hidden')}
                                         >
-                                            <div className="p-2">
-                                                <PageTree
-                                                    tree={data}
-                                                    rows={rows}
-                                                    open={open}
-                                                    selected={selected}
-                                                    projection={projection}
-                                                    onToggle={id => setOpen((current) => {
-                                                        const next = new Set(current);
+                                            <PageTree
+                                                tree={data}
+                                                rows={rows}
+                                                open={open}
+                                                selected={selected}
+                                                projection={projection}
+                                                onToggle={id => setOpen((current) => {
+                                                    const next = new Set(current);
 
-                                                        if (!next.delete(id))
-                                                            next.add(id);
+                                                    if (!next.delete(id))
+                                                        next.add(id);
 
-                                                        return next;
-                                                    })}
-                                                    onSelect={id => openPage(id)}
-                                                    onAddUnder={addUnder}
-                                                />
-                                            </div>
-                                            {data.canManage && <p className="border-t border-line px-3 py-2 text-[11px] text-muted">Drag by the grip to move a page; sideways to nest it. Drop an offer on a page to move it there.</p>}
-                                        </Panel>
+                                                    return next;
+                                                })}
+                                                onSetOpen={setOpen}
+                                                onSelect={id => openPage(id)}
+                                                onAddUnder={addUnder}
+                                            />
+                                        </aside>
 
                                         {selected === null
                                             ? (
-                                                    <div className="flex flex-col items-center gap-3 rounded-2xl border border-dashed border-line px-6 py-16 text-center text-muted max-lg:hidden xl:col-span-2">
-                                                        <Sparkles className="size-8 text-accent" />
-                                                        <p className="text-sm">Pick a page to see it as players do, and to change it.</p>
+                                                    <div className="min-w-0 max-lg:hidden">
+                                                        <CatalogHome tree={data} busy={frontPage.isPending} onOpenPage={id => openPage(id)} onView={setView} onCreateFrontPage={createFrontPage} />
                                                     </div>
                                                 )
                                             : (
-                                                    <>
-                                                        <div className="flex min-w-0 flex-col gap-3">
-                                                            <div className="flex min-w-0 items-center gap-2">
+                                                    <div className="flex min-w-0 flex-col gap-3">
+                                                        <div className="overflow-hidden rounded-xl border border-line bg-surface">
+                                                            <div className="flex min-w-0 items-center gap-2 px-2 py-2">
                                                                 <Button variant="ghost" icon={<ArrowLeft />} onClick={() => openPage(null)} className="lg:hidden">Pages</Button>
-                                                                <div className="min-w-0">
-                                                                    <div className="truncate text-xs text-muted">{path.join(' / ') || 'Top level'}</div>
+                                                                {draft && <PageIcon icon={draft.icon} className="ml-1 size-7 max-lg:hidden" />}
+                                                                <div className="min-w-0 flex-1">
+                                                                    <nav aria-label="Where it is" className="flex min-w-0 items-center gap-1 truncate text-xs text-muted">
+                                                                        {path.length === 0 && <span>Tab</span>}
+                                                                        {ancestorsOf(data, selected).reverse().map((x, i) => (
+                                                                            <span key={x.id} className="flex min-w-0 items-center gap-1">
+                                                                                {i > 0 && <span aria-hidden>/</span>}
+                                                                                <button type="button" onClick={() => openPage(x.id)} className="truncate hover:text-accent hover:underline">{x.localization}</button>
+                                                                            </span>
+                                                                        ))}
+                                                                    </nav>
                                                                     <div className="truncate font-semibold">{draft?.localization ?? '…'}</div>
                                                                 </div>
-                                                                <span className="ml-auto flex shrink-0 items-center gap-2">
-                                                                    {draft && draft.display !== 'regular' && <Badge>{DISPLAY_LABELS[draft.display]}</Badge>}
-                                                                    {data.canManage && page.data && <Button variant="secondary" icon={<Wand2 />} onClick={() => setBuilding(true)} title="Fill this page from the hotel's furniture, pets and effects">Build</Button>}
+                                                                <span className="ml-auto flex shrink-0 items-center gap-1.5">
+                                                                    {draft && draft.display !== 'regular' && <Badge className="max-sm:hidden">{DISPLAY_LABELS[draft.display]}</Badge>}
+                                                                    {data.canManage && page.data && spec && showsOffers(spec) && (
+                                                                        <Button variant="secondary" icon={<PackagePlus />} onClick={() => setAddingFurni(true)} title="Put furni the catalog doesn't sell yet on this page">
+                                                                            <span className="max-sm:hidden">Add furni</span>
+                                                                        </Button>
+                                                                    )}
                                                                 </span>
                                                             </div>
-                                                            {page.error && <ErrorNotice error={page.error} />}
-                                                            {page.isPending && <Loading />}
                                                             {page.data && draft && (
-                                                                <PagePreview
-                                                                    tree={data}
-                                                                    page={page.data}
-                                                                    draft={draft}
-                                                                    featured={featured.data?.items ?? []}
-                                                                    selectedOffer={selectedOffer}
-                                                                    onSelectOffer={id => selectOffer(selectedOffer === id ? null : id)}
-                                                                    onAddOffer={() => selectOffer('new')}
-                                                                    onEditSlot={(slot) => {
-                                                                        const at = Date.now();
-
-                                                                        setTab('page');
-                                                                        setFocus({ ...slot, at });
-                                                                        // The field stays lit a moment, to be found.
-                                                                        setTimeout(() => setFocus(current => (current?.at === at ? null : current)), 2500);
-                                                                    }}
-                                                                    onEditFeatured={() => setTab('featured')}
-                                                                />
-                                                            )}
-                                                        </div>
-
-                                                        {page.data && draft && (
-                                                            <Panel className="overflow-clip lg:col-start-2 xl:sticky xl:top-6 xl:col-start-auto xl:max-h-[calc(100dvh-3rem)] xl:overflow-y-auto">
-                                                                <div role="tablist" aria-label="Editing" className="flex gap-1 border-b border-line p-1.5">
+                                                                <div role="tablist" aria-label="The page" className="flex gap-1 border-t border-line px-2">
                                                                     {[
-                                                                        { value: 'page' as const, label: 'Page', icon: <FileText />, shown: true },
-                                                                        { value: 'offer' as const, label: selectedOffer === 'new' ? 'New offer' : 'Offer', icon: <Package />, shown: selectedOffer !== null },
-                                                                        { value: 'featured' as const, label: 'Featured', icon: <Sparkles />, shown: isFeatured },
+                                                                        { value: 'preview' as const, label: 'Page', icon: <Eye />, shown: true },
+                                                                        { value: 'settings' as const, label: 'Settings', icon: <Settings2 />, shown: true },
+                                                                        { value: 'featured' as const, label: 'Featured items', icon: <Sparkles />, shown: isFeatured },
                                                                     ].filter(x => x.shown).map(x => (
                                                                         <button
                                                                             key={x.value}
@@ -439,55 +560,112 @@ export const CatalogPage = () => {
                                                                             aria-selected={shownTab === x.value}
                                                                             onClick={() => setTab(x.value)}
                                                                             className={cx(
-                                                                                'flex h-9 flex-1 items-center justify-center gap-1.5 rounded-lg text-[13px] font-medium transition-colors [&>svg]:size-4',
-                                                                                shownTab === x.value ? 'bg-accent-soft text-accent' : 'text-muted hover:bg-subtle hover:text-ink',
+                                                                                '-mb-px flex h-10 items-center gap-1.5 border-b-2 px-3 text-[13px] font-medium transition-colors [&>svg]:size-4',
+                                                                                shownTab === x.value ? 'border-accent text-accent' : 'border-transparent text-muted hover:text-ink',
                                                                             )}
                                                                         >
                                                                             {x.icon}
                                                                             {x.label}
+                                                                            {x.value === 'settings' && pageDirty && <span className="size-1.5 rounded-full bg-accent" title="Unsaved changes" />}
                                                                         </button>
                                                                     ))}
                                                                 </div>
-                                                                {shownTab === 'page' && (
-                                                                    <PageInspector tree={data} page={page.data} draft={draft} onDraft={setDraft} focus={focus} onOpen={openPage} />
-                                                                )}
-                                                                {shownTab === 'offer' && selectedOffer !== null && (selectedOffer === 'new' || offer) && (
-                                                                    <OfferInspector
-                                                                        key={selectedOffer === 'new' ? `new:${page.data.id}` : offerKey(offer)}
-                                                                        tree={data}
-                                                                        pageId={page.data.id}
-                                                                        offer={offer}
-                                                                        start={startOf(page.data.layout)}
-                                                                        onDone={() => selectOffer(null)}
-                                                                        onCreated={id => selectOffer(id)}
-                                                                    />
-                                                                )}
-                                                                {shownTab === 'featured' && featured.data && (
-                                                                    <FeaturedEditor key={JSON.stringify(featured.data.items)} tree={data} items={featured.data.items} />
-                                                                )}
-                                                                {shownTab === 'featured' && featured.error && <div className="p-4"><ErrorNotice error={featured.error} /></div>}
-                                                            </Panel>
+                                                            )}
+                                                        </div>
+                                                        {page.error && <ErrorNotice error={page.error} />}
+                                                        {page.isPending && <Loading />}
+                                                        {page.data && draft && shownTab === 'preview' && (
+                                                            <PagePreview
+                                                                tree={data}
+                                                                page={page.data}
+                                                                draft={draft}
+                                                                featured={featured.data?.items ?? []}
+                                                                selectedOffer={selectedOffer}
+                                                                onSelectOffer={id => selectOffer(selectedOffer === id ? null : id)}
+                                                                onAddOffer={() => selectOffer('new')}
+                                                                onEditSlot={(slot) => {
+                                                                    const at = Date.now();
+
+                                                                    setTab('settings');
+                                                                    setFocus({ ...slot, at });
+                                                                    // The field stays lit a moment, to be found.
+                                                                    setTimeout(() => setFocus(current => (current?.at === at ? null : current)), 2500);
+                                                                }}
+                                                                onEditFeatured={() => setTab('featured')}
+                                                            />
                                                         )}
-                                                    </>
+                                                        {page.data && draft && shownTab === 'settings' && (
+                                                            <div className="overflow-clip rounded-xl border border-line bg-surface">
+                                                                <PageInspector tree={data} page={page.data} draft={draft} onDraft={setDraft} focus={focus} onOpen={openPage} />
+                                                            </div>
+                                                        )}
+                                                        {page.data && shownTab === 'featured' && (
+                                                            <div className="overflow-clip rounded-xl border border-line bg-surface">
+                                                                {featured.data && <FeaturedEditor key={JSON.stringify(featured.data.items)} tree={data} items={featured.data.items} offers={page.data.offers} />}
+                                                                {featured.error && <div className="p-4"><ErrorNotice error={featured.error} /></div>}
+                                                            </div>
+                                                        )}
+                                                    </div>
                                                 )}
                                     </div>
-                                    <DragOverlay dropAnimation={{ duration: 180, easing: 'cubic-bezier(0.2, 0.8, 0.3, 1)' }}>
-                                        {draggedPage && (
-                                            <div className="flex h-9 w-64 rotate-1 items-center gap-2 rounded-lg border border-accent bg-surface px-3 text-sm shadow-xl">
-                                                <PageRowBody page={draggedPage} />
-                                            </div>
-                                        )}
-                                        {draggedOffer && data && (
-                                            <div className="flex w-24 -rotate-3 flex-col items-center gap-1 rounded-xl border border-accent bg-surface p-1.5 shadow-2xl">
-                                                <OfferFace offer={draggedOffer} tree={data} />
-                                            </div>
-                                        )}
-                                    </DragOverlay>
+                                    {/* On the body, so the overlay sits under the pointer whatever is transformed around the editor. */}
+                                    {createPortal(
+                                        <DragOverlay dropAnimation={{ duration: 180, easing: 'cubic-bezier(0.2, 0.8, 0.3, 1)' }} zIndex={60}>
+                                            {draggedPage && (
+                                                <div className="flex h-10 w-72 items-center gap-2 rounded-lg border border-accent bg-surface px-3 text-[13px] shadow-2xl ring-4 ring-accent-soft">
+                                                    <PageRowBody page={draggedPage} />
+                                                </div>
+                                            )}
+                                            {draggedOffer && (
+                                                <div className="flex w-24 -rotate-2 flex-col items-center gap-1 rounded-xl border border-accent bg-surface p-1.5 shadow-2xl ring-4 ring-accent-soft">
+                                                    <OfferFace offer={draggedOffer} tree={data} />
+                                                </div>
+                                            )}
+                                        </DragOverlay>,
+                                        document.body,
+                                    )}
                                 </DndContext>
                             )
                 )}
-            </PageBody>
-            {data && page.data && <PageBuilder key={page.data.id} tree={data} page={page.data} open={building} onClose={() => setBuilding(false)} />}
+            </div>
+            {data && page.data && (
+                <Modal
+                    title={selectedOffer === 'new' ? `New offer on ${page.data.localization}` : offer ? `Offer ${offer.id}` : 'Offer'}
+                    open={view === 'editor' && (selectedOffer === 'new' || offer !== null)}
+                    onClose={() => selectOffer(null)}
+                    className="sm:max-w-2xl"
+                >
+                    {(selectedOffer === 'new' || offer) && (
+                        <OfferInspector
+                            key={selectedOffer === 'new' ? `new:${page.data.id}` : offerKey(offer)}
+                            tree={data}
+                            pageId={page.data.id}
+                            offer={offer}
+                            start={startOf(page.data.layout)}
+                            featured={featured.data?.items ?? null}
+                            onDone={() => selectOffer(null)}
+                            onCreated={id => selectOffer(id)}
+                        />
+                    )}
+                </Modal>
+            )}
+            {data && building && (
+                <PageBuilder
+                    key={page.data?.id ?? 'new'}
+                    tree={data}
+                    page={view === 'editor' ? page.data ?? null : null}
+                    open
+                    onClose={() => setBuilding(false)}
+                    onBuiltPage={id => openPage(id)}
+                />
+            )}
+            {data && page.data && (
+                <Modal title={`Add furni to ${page.data.localization}`} open={addingFurni} onClose={() => setAddingFurni(false)} className="sm:max-w-6xl">
+                    <div className="p-4">
+                        <MissingFurni key={page.data.id} tree={data} pageId={page.data.id} onAdded={() => setAddingFurni(false)} onOpenPage={openFromModal} />
+                    </div>
+                </Modal>
+            )}
             <Toasts />
         </>
     );

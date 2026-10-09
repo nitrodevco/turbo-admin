@@ -14,7 +14,7 @@ export interface FlatRow {
 export const pageDragId = (id: number) => `page:${id}`;
 
 /** How far a level is indented, which is also how far a drag must go sideways to change level. */
-export const INDENT = 14;
+export const INDENT = 16;
 
 /** The rows the tree draws: the root's children, and the children of every open page under them. */
 export const flatten = (tree: CatalogTree, open: Set<number>, skipUnder?: number): FlatRow[] => {

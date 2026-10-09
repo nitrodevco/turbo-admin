@@ -1,7 +1,7 @@
-import { Coins, Copy, Crown, RotateCcw, Save, Trash2, X } from 'lucide-react';
+import { Coins, Copy, Crown, RotateCcw, Save, Star, Trash2, X } from 'lucide-react';
 import { type FormEvent, type ReactNode, useEffect, useMemo, useState } from 'react';
 
-import { catalogCalls, type CatalogOffer, type CatalogOfferInput, type CatalogProductInput, type CatalogTree, type EditableKind, useCatalogEdit } from '#/api/catalog';
+import { catalogCalls, type CatalogFeaturedItem, type CatalogOffer, type CatalogOfferInput, type CatalogProductInput, type CatalogTree, type EditableKind, FEATURED_MAX, useCatalogEdit } from '#/api/catalog';
 import { Button, ErrorNotice, Input, Labeled, Select, Switch, WarningNotice } from '#/components/ui';
 import { cx } from '#/lib/cx';
 
@@ -95,6 +95,8 @@ interface OfferInspectorProps {
     pageId: number;
     offer: CatalogOffer | null;
     start: OfferStart;
+    /** The front page's featured items, to put this offer among them; null while they load. */
+    featured: CatalogFeaturedItem[] | null;
     onDone: () => void;
     onCreated: (id: number) => void;
 }
@@ -106,13 +108,15 @@ interface OfferInspectorProps {
  * gift members claim or a limited series; and the page it is on. Duplicating makes a copy beside
  * it, to start a similar one from.
  */
-export const OfferInspector = ({ tree, pageId, offer, start, onDone, onCreated }: OfferInspectorProps) => {
+export const OfferInspector = ({ tree, pageId, offer, start, featured, onDone, onCreated }: OfferInspectorProps) => {
     const canManage = tree.canManage;
     const original = useMemo(() => (offer ? draftOf(offer, pageId, start) : null), [ offer, pageId, start ]);
     const [ draft, setDraft ] = useState(() => original ?? draftOf(null, pageId, start));
     const save = useCatalogEdit(offer ? (input: CatalogOfferInput) => catalogCalls.updateOffer(offer.id, input) : catalogCalls.createOffer);
     const duplicate = useCatalogEdit(catalogCalls.createOffer);
     const remove = useCatalogEdit(catalogCalls.deleteOffer);
+    const feature = useCatalogEdit(catalogCalls.saveFeatured);
+    const isFeatured = !!offer && !!featured?.some(x => x.type === 'offer' && x.value === String(offer.id));
     const page = tree.pages.find(x => x.id === draft.pageId);
     // Club gifts, memberships and limited series are sold from the normal catalog, which shows every page but a Builders Club only one.
     const normal = page?.display !== 'bc_only';
@@ -314,7 +318,7 @@ export const OfferInspector = ({ tree, pageId, offer, start, onDone, onCreated }
                 </Group>
             )}
 
-            {(save.error ?? remove.error ?? duplicate.error) && <div className="px-4 pb-3"><ErrorNotice error={save.error ?? remove.error ?? duplicate.error} /></div>}
+            {(save.error ?? remove.error ?? duplicate.error ?? feature.error) && <div className="px-4 pb-3"><ErrorNotice error={save.error ?? remove.error ?? duplicate.error ?? feature.error} /></div>}
 
             {canManage && (
                 <div className="sticky bottom-0 z-10 flex flex-wrap items-center gap-2 border-t border-line bg-surface/95 px-4 py-3 backdrop-blur">
@@ -334,6 +338,22 @@ export const OfferInspector = ({ tree, pageId, offer, start, onDone, onCreated }
                             >
                                 Duplicate
                             </Button>
+                            {featured && (
+                                <Button
+                                    variant="ghost"
+                                    icon={<Star />}
+                                    disabled={feature.isPending || isFeatured || featured.length >= FEATURED_MAX}
+                                    title={isFeatured ? 'It is one of the front page\'s featured items' : featured.length >= FEATURED_MAX ? `The front page shows ${FEATURED_MAX} featured items; take one off first` : 'Put it among the front page\'s featured items'}
+                                    onClick={() => feature.mutate([ [
+                                        ...featured.map(({ title, image, type, value, expiresAtUtc }) => ({ title, image, type, value, expiresAtUtc })),
+                                        { title: (givesOf(offer) || offer.localizationId).slice(0, 100), image: '', type: 'offer' as const, value: String(offer.id), expiresAtUtc: null },
+                                    ] ], {
+                                        onSuccess: () => toast('Featured on the front page. Give it a promo image there.'),
+                                    })}
+                                >
+                                    {isFeatured ? 'Featured' : 'Feature'}
+                                </Button>
+                            )}
                             <Button
                                 variant="ghost"
                                 icon={<Trash2 />}
@@ -351,7 +371,7 @@ export const OfferInspector = ({ tree, pageId, offer, start, onDone, onCreated }
                         </>
                     )}
                     <span className="ml-auto" />
-                    {offer && dirty && <Button variant="ghost" icon={<RotateCcw />} onClick={() => original && setDraft(original)}>Undo</Button>}
+                    {offer && dirty && <Button variant="ghost" icon={<RotateCcw />} onClick={() => original && setDraft(original)} title="Put the fields back as saved">Reset</Button>}
                     <Button type="submit" icon={<Save />} disabled={save.isPending || !dirty}>{offer ? 'Save offer' : 'Add offer'}</Button>
                 </div>
             )}

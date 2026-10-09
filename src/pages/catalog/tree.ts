@@ -1,5 +1,7 @@
 import type { CatalogPageNode, CatalogTree } from '#/api/catalog';
 
+import { layoutOf, showsOffers } from './layouts';
+
 /** The children of every page, in the order the client shows them. */
 export const childrenOf = (tree: CatalogTree) => {
     const map = new Map<number, CatalogPageNode[]>();
@@ -25,4 +27,21 @@ export const ancestorsOf = (tree: CatalogTree, id: number) => {
         if (byId.get(at)) path.push(byId.get(at)!);
 
     return path;
+};
+
+/** The pages in tree order, each with how deep it is, for a drop-down. */
+export const pagesInOrder = (tree: CatalogTree) => {
+    const children = childrenOf(tree);
+    const list: { id: number; title: string; depth: number; sells: boolean }[] = [];
+
+    const walk = (parentId: number, depth: number) => {
+        for (const page of children.get(parentId) ?? []) {
+            list.push({ id: page.id, title: page.localization, depth, sells: showsOffers(layoutOf(page.layout)) });
+            walk(page.id, depth + 1);
+        }
+    };
+
+    walk(tree.rootId, 0);
+
+    return list;
 };
