@@ -14,6 +14,7 @@ import { CommandLogPage } from '#/pages/CommandLogPage';
 import { ConsolePage } from '#/pages/ConsolePage';
 import { DashboardPage } from '#/pages/DashboardPage';
 import { GamedataPage } from '#/pages/gamedata/GamedataPage';
+import { HotelViewPage } from '#/pages/hotel-view/HotelViewPage';
 import { GroupPage } from '#/pages/permissions/GroupPage';
 import { GroupsPage } from '#/pages/permissions/GroupsPage';
 import { LogPage, NodesPage, SearchPage } from '#/pages/permissions/LookupPages';
@@ -45,6 +46,7 @@ export const App = () => (
             <Route path="catalog" element={<CatalogPage />} />
             <Route path="catalog/songs" element={<SongsPage />} />
             <Route path="gamedata" element={<GamedataPage />} />
+            <Route path="hotel-view" element={<HotelViewPage />} />
             <Route path="settings" element={<SettingsPage />} />
             <Route path="command-log" element={<CommandLogPage />} />
             <Route path="chatlog" element={<ChatlogPage />} />
