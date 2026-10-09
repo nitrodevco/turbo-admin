@@ -1,4 +1,4 @@
-import { Activity, Database, Gauge, House, KeyRound, Landmark, MessagesSquare, Puzzle, ScrollText, ShieldCheck, SlidersHorizontal, SquareTerminal, Store, UserRound, Users } from 'lucide-react';
+import { Activity, Database, Gauge, House, KeyRound, Landmark, MessagesSquare, Puzzle, ScrollText, ShieldCheck, SlidersHorizontal, SquareTerminal, Store, Ticket, UserRound, Users } from 'lucide-react';
 import type { ReactNode } from 'react';
 import { useLocation } from 'react-router';
 
@@ -22,6 +22,7 @@ const NAV: NavItem[] = [
     { to: '/players', label: 'Players', icon: <Users />, end: false, key: 'p', needs: 'canViewPlayers' },
     { to: '/permissions', label: 'Permissions', icon: <KeyRound />, end: false, key: 'k', needs: 'canViewPermissions' },
     { to: '/catalog', label: 'Catalog', icon: <Store />, end: false, key: 'c', needs: 'canViewCatalog' },
+    { to: '/vouchers', label: 'Vouchers', icon: <Ticket />, end: false, key: 'u', needs: 'canViewCatalog' },
     { to: '/gamedata', label: 'Gamedata', icon: <Database />, end: false, key: 'g', needs: 'canViewGamedata' },
     { to: '/hotel-view', label: 'Hotel view', icon: <Landmark />, end: false, key: 'v', needs: 'canViewGamedata' },
     { to: '/content', label: 'Content', icon: <Puzzle />, end: false, key: 't', needs: 'canViewContent' },

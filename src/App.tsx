@@ -9,6 +9,7 @@ import { Shell } from '#/layout/Shell';
 import { AccountPage } from '#/pages/AccountPage';
 import { CatalogPage } from '#/pages/catalog/CatalogPage';
 import { SongsPage } from '#/pages/catalog/SongsPage';
+import { VouchersPage } from '#/pages/catalog/VouchersPage';
 import { ChatlogPage } from '#/pages/ChatlogPage';
 import { CommandLogPage } from '#/pages/CommandLogPage';
 import { ConsolePage } from '#/pages/ConsolePage';
@@ -46,6 +47,7 @@ export const App = () => (
             <Route path="players/:id" element={<PlayerProfilePage />} />
             <Route path="catalog" element={<CatalogPage />} />
             <Route path="catalog/songs" element={<SongsPage />} />
+            <Route path="vouchers" element={<VouchersPage />} />
             <Route path="gamedata" element={<GamedataPage />} />
             <Route path="hotel-view" element={<HotelViewPage />} />
             <Route path="content" element={<ContentPage />} />
