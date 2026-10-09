@@ -8,6 +8,7 @@ import { useHotelView, useSaveHotelView } from '#/api/hotelView';
 import { Badge, Button, ErrorNotice, Input, Loading, PageBody, PageHeader, Panel, Segmented, SuccessNotice } from '#/components/ui';
 
 import { AllTab } from './AllTab';
+import { ArticlesTab } from './ArticlesTab';
 import { BackgroundsTab } from './BackgroundsTab';
 import { useHotelViewDraft } from './draft';
 import { slotShows } from './hooks';
@@ -21,6 +22,7 @@ const TABS = [
     { value: 'preview', label: 'Preview' },
     { value: 'slots', label: 'Slots' },
     { value: 'promos', label: 'Promos' },
+    { value: 'articles', label: 'Articles' },
     { value: 'backgrounds', label: 'Backgrounds' },
     { value: 'look', label: 'Look' },
     { value: 'all', label: 'All variables' },
@@ -166,6 +168,7 @@ const HotelViewEditor = ({ variables, canManage }: { variables: VariableEntry[];
                         disabled={disabled}
                     />
                 )}
+                {tab === 'articles' && <ArticlesTab now={now} disabled={disabled} />}
                 {tab === 'backgrounds' && <BackgroundsTab draft={draft} codes={backgrounds} now={now} disabled={disabled} />}
                 {tab === 'look' && <LookTab draft={draft} disabled={disabled} />}
                 {tab === 'all' && <AllTab draft={draft} disabled={disabled} />}

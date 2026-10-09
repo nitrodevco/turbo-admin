@@ -11,9 +11,10 @@ import { currentCode, formatSchedule, fromLocalInput, parseSchedule, parseTime, 
 export const Changed = ({ on }: { on: boolean }) => (on ? <span title="Not saved yet" className="inline-block size-1.5 shrink-0 rounded-full bg-accent" /> : null);
 
 /** A picture's address, with the picture beside it as the client would load it. */
-export const ImageField = ({ label, hint, value, onChange, resolve, changed, disabled }: {
+export const ImageField = ({ label, hint, value, onChange, resolve, changed, disabled, placeholder }: {
     label: string;
     hint?: ReactNode;
+    placeholder?: string;
     value: string;
     onChange: (value: string) => void;
     resolve: (uri: string) => string;
@@ -35,7 +36,7 @@ export const ImageField = ({ label, hint, value, onChange, resolve, changed, dis
                     <Input
                         value={value}
                         onChange={event => onChange(event.target.value)}
-                        placeholder="${image.library.url}reception/background.png"
+                        placeholder={placeholder ?? '${image.library.url}reception/background.png'}
                         className="w-full font-mono text-xs"
                         disabled={disabled}
                         spellCheck={false}

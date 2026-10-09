@@ -45,3 +45,66 @@ export const useSaveHotelView = () => {
         },
     });
 };
+
+/** Where an article's button goes: PromoArticleLinkType. */
+export const ARTICLE_LINK_TYPES: Record<number, string> = { 0: 'Web page', 1: 'Client link', 2: 'No button' };
+
+export interface PromoArticle {
+    id: number;
+    title: string;
+    bodyText: string;
+    buttonText: string;
+    linkType: number;
+    linkContent: string;
+    /** The picture's path under the client's image library. */
+    imageUrl: string;
+    sortOrder: number;
+    visible: boolean;
+    /** UTC; null for at once. */
+    startsAt: string | null;
+    /** UTC; null for never. */
+    endsAt: string | null;
+}
+
+export type PromoArticleDraft = Omit<PromoArticle, 'id' | 'sortOrder'>;
+
+const useRefreshReception = () => {
+    const queryClient = useQueryClient();
+
+    return () => void queryClient.invalidateQueries({ queryKey: [ 'hotel-view' ] });
+};
+
+export const usePromoArticles = () => useQuery({
+    queryKey: [ 'hotel-view', 'articles' ],
+    queryFn: () => api<{ articles: PromoArticle[] }>('/hotel-view/articles'),
+});
+
+/** Adds an article (no id) at the end, or changes one. */
+export const useSavePromoArticle = () => {
+    const refresh = useRefreshReception();
+
+    return useMutation({
+        mutationFn: ({ id, ...article }: PromoArticleDraft & { id: number | null }) => (id === null
+            ? post<PromoArticle>('/hotel-view/articles', article)
+            : put<PromoArticle>(`/hotel-view/articles/${id}`, article)),
+        onSuccess: refresh,
+    });
+};
+
+export const useDeletePromoArticle = () => {
+    const refresh = useRefreshReception();
+
+    return useMutation({
+        mutationFn: (id: number) => api<void>(`/hotel-view/articles/${id}`, { method: 'DELETE' }),
+        onSuccess: refresh,
+    });
+};
+
+export const useReorderPromoArticles = () => {
+    const refresh = useRefreshReception();
+
+    return useMutation({
+        mutationFn: (ids: number[]) => put<void>('/hotel-view/articles/order', { ids }),
+        onSuccess: refresh,
+    });
+};
