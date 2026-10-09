@@ -12,6 +12,7 @@ import { SongsPage } from '#/pages/catalog/SongsPage';
 import { ChatlogPage } from '#/pages/ChatlogPage';
 import { CommandLogPage } from '#/pages/CommandLogPage';
 import { ConsolePage } from '#/pages/ConsolePage';
+import { ContentPage } from '#/pages/content/ContentPage';
 import { DashboardPage } from '#/pages/DashboardPage';
 import { GamedataPage } from '#/pages/gamedata/GamedataPage';
 import { HotelViewPage } from '#/pages/hotel-view/HotelViewPage';
@@ -47,6 +48,7 @@ export const App = () => (
             <Route path="catalog/songs" element={<SongsPage />} />
             <Route path="gamedata" element={<GamedataPage />} />
             <Route path="hotel-view" element={<HotelViewPage />} />
+            <Route path="content" element={<ContentPage />} />
             <Route path="settings" element={<SettingsPage />} />
             <Route path="command-log" element={<CommandLogPage />} />
             <Route path="chatlog" element={<ChatlogPage />} />

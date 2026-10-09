@@ -34,6 +34,8 @@ export interface MeResponse {
     canViewGamedata: boolean;
     /** Holds `admin.settings.view`: may see the server's settings; changing them needs `settings.manage`. */
     canViewSettings: boolean;
+    /** Holds `admin.content.view`: may see the game's content; changing it needs `content.manage`. */
+    canViewContent: boolean;
 }
 
 export interface DashboardRoom {
