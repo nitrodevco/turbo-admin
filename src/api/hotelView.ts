@@ -176,3 +176,70 @@ export const useDeleteCommunityGoal = () => {
         onSuccess: refresh,
     });
 };
+
+/** What brings a player closer to the bonus rare: BonusRareSource. */
+export const BONUS_SOURCES: Record<number, string> = { 0: 'Credits bought', 1: 'Credits spent in the catalogue' };
+
+/** What became of bought credits recorded: BonusRarePurchaseResult. */
+export const PURCHASE_RESULTS: Record<number, string> = { 0: 'Recorded', 1: 'That receipt was recorded before: it counts once', 2: 'No running campaign counts bought credits', 3: 'Refused: no credits, no reference or no such player' };
+
+export interface BonusRareCampaign {
+    id: number;
+    code: string;
+    furnitureName: string;
+    productCode: string;
+    creditsRequired: number;
+    source: number;
+    /** UTC. */
+    startsAt: string;
+    /** UTC; null for never. */
+    endsAt: string | null;
+}
+
+export interface BonusRareStanding {
+    code: string;
+    playersInProgress: number;
+    rewardsGiven: number;
+}
+
+export const useBonusRareCampaigns = () => useQuery({
+    queryKey: [ 'hotel-view', 'bonus-rare' ],
+    queryFn: () => api<{ campaigns: BonusRareCampaign[] }>('/hotel-view/bonus-rare'),
+});
+
+export const useBonusRareStanding = (code: string | null) => useQuery({
+    queryKey: [ 'hotel-view', 'bonus-rare', 'standing', code ],
+    queryFn: () => api<BonusRareStanding>(`/hotel-view/bonus-rare/standing?${new URLSearchParams({ code: code ?? '' })}`),
+    enabled: code !== null,
+});
+
+/** Adds a campaign (no id) or changes one. */
+export const useSaveBonusRareCampaign = () => {
+    const refresh = useRefreshReception();
+
+    return useMutation({
+        mutationFn: ({ id, ...campaign }: Omit<BonusRareCampaign, 'id'> & { id: number | null }) => (id === null
+            ? post<BonusRareCampaign>('/hotel-view/bonus-rare', campaign)
+            : put<BonusRareCampaign>(`/hotel-view/bonus-rare/${id}`, campaign)),
+        onSuccess: refresh,
+    });
+};
+
+export const useDeleteBonusRareCampaign = () => {
+    const refresh = useRefreshReception();
+
+    return useMutation({
+        mutationFn: (id: number) => api<void>(`/hotel-view/bonus-rare/${id}`, { method: 'DELETE' }),
+        onSuccess: refresh,
+    });
+};
+
+/** Records credits a player bought, under the purchase's reference, for the bonus rare. */
+export const useRecordBonusRarePurchase = () => {
+    const refresh = useRefreshReception();
+
+    return useMutation({
+        mutationFn: (purchase: { playerId: number; credits: number; reference: string }) => post<{ result: number }>('/hotel-view/bonus-rare/purchases', purchase),
+        onSuccess: refresh,
+    });
+};

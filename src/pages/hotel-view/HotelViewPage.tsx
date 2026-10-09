@@ -10,6 +10,7 @@ import { Badge, Button, ErrorNotice, Input, Loading, PageBody, PageHeader, Panel
 import { AllTab } from './AllTab';
 import { ArticlesTab } from './ArticlesTab';
 import { BackgroundsTab } from './BackgroundsTab';
+import { BonusRareTab } from './BonusRareTab';
 import { useHotelViewDraft } from './draft';
 import { GoalsTab } from './GoalsTab';
 import { slotShows } from './hooks';
@@ -25,6 +26,7 @@ const TABS = [
     { value: 'promos', label: 'Promos' },
     { value: 'articles', label: 'Articles' },
     { value: 'goals', label: 'Community goals' },
+    { value: 'bonus', label: 'Bonus rare' },
     { value: 'backgrounds', label: 'Backgrounds' },
     { value: 'look', label: 'Look' },
     { value: 'all', label: 'All variables' },
@@ -172,6 +174,7 @@ const HotelViewEditor = ({ variables, canManage }: { variables: VariableEntry[];
                 )}
                 {tab === 'articles' && <ArticlesTab now={now} disabled={disabled} />}
                 {tab === 'goals' && <GoalsTab now={now} disabled={disabled} />}
+                {tab === 'bonus' && <BonusRareTab now={now} disabled={disabled} />}
                 {tab === 'backgrounds' && <BackgroundsTab draft={draft} codes={backgrounds} now={now} disabled={disabled} />}
                 {tab === 'look' && <LookTab draft={draft} disabled={disabled} />}
                 {tab === 'all' && <AllTab draft={draft} disabled={disabled} />}
