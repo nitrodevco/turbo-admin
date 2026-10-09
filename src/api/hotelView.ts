@@ -108,3 +108,71 @@ export const useReorderPromoArticles = () => {
         onSuccess: refresh,
     });
 };
+
+/** How a community goal is played: CommunityGoalMode. */
+export const GOAL_MODES: Record<number, string> = { 0: 'One meter', 1: 'Two sides', 2: 'Two sides, with a vote' };
+
+export interface CommunityGoal {
+    id: number;
+    code: string;
+    mode: number;
+    /** UTC. */
+    startsAt: string;
+    /** UTC. */
+    endsAt: string;
+    levelScores: number[];
+    rewardRanks: number[];
+    sideOnePageId: number | null;
+    sideTwoPageId: number | null;
+}
+
+export interface GoalContributor {
+    playerId: number;
+    name: string;
+    figure: string;
+    rank: number;
+    score: number;
+}
+
+export interface GoalStanding {
+    goalId: number;
+    sideOne: number;
+    sideTwo: number;
+    contributors: number;
+    votesOne: number;
+    votesTwo: number;
+    top: GoalContributor[];
+}
+
+export const useCommunityGoals = () => useQuery({
+    queryKey: [ 'hotel-view', 'goals' ],
+    queryFn: () => api<{ goals: CommunityGoal[] }>('/hotel-view/goals'),
+});
+
+export const useGoalStanding = (id: number | null) => useQuery({
+    queryKey: [ 'hotel-view', 'goals', id, 'standing' ],
+    queryFn: () => api<GoalStanding>(`/hotel-view/goals/${id}/standing`),
+    enabled: id !== null,
+    refetchInterval: 30_000,
+});
+
+/** Adds a goal (no id) or changes one. */
+export const useSaveCommunityGoal = () => {
+    const refresh = useRefreshReception();
+
+    return useMutation({
+        mutationFn: ({ id, ...goal }: Omit<CommunityGoal, 'id'> & { id: number | null }) => (id === null
+            ? post<CommunityGoal>('/hotel-view/goals', goal)
+            : put<CommunityGoal>(`/hotel-view/goals/${id}`, goal)),
+        onSuccess: refresh,
+    });
+};
+
+export const useDeleteCommunityGoal = () => {
+    const refresh = useRefreshReception();
+
+    return useMutation({
+        mutationFn: (id: number) => api<void>(`/hotel-view/goals/${id}`, { method: 'DELETE' }),
+        onSuccess: refresh,
+    });
+};

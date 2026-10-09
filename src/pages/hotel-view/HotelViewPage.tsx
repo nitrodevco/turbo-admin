@@ -11,6 +11,7 @@ import { AllTab } from './AllTab';
 import { ArticlesTab } from './ArticlesTab';
 import { BackgroundsTab } from './BackgroundsTab';
 import { useHotelViewDraft } from './draft';
+import { GoalsTab } from './GoalsTab';
 import { slotShows } from './hooks';
 import { LookTab } from './LookTab';
 import { backgroundCodes, BG_TIMING, currentCode, fromLocalInput, nowAt, parseSchedule, parseTime, promoCodes, slotKey, SLOTS, toLocalInput, widgetLabel } from './model';
@@ -23,6 +24,7 @@ const TABS = [
     { value: 'slots', label: 'Slots' },
     { value: 'promos', label: 'Promos' },
     { value: 'articles', label: 'Articles' },
+    { value: 'goals', label: 'Community goals' },
     { value: 'backgrounds', label: 'Backgrounds' },
     { value: 'look', label: 'Look' },
     { value: 'all', label: 'All variables' },
@@ -169,6 +171,7 @@ const HotelViewEditor = ({ variables, canManage }: { variables: VariableEntry[];
                     />
                 )}
                 {tab === 'articles' && <ArticlesTab now={now} disabled={disabled} />}
+                {tab === 'goals' && <GoalsTab now={now} disabled={disabled} />}
                 {tab === 'backgrounds' && <BackgroundsTab draft={draft} codes={backgrounds} now={now} disabled={disabled} />}
                 {tab === 'look' && <LookTab draft={draft} disabled={disabled} />}
                 {tab === 'all' && <AllTab draft={draft} disabled={disabled} />}
