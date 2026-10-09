@@ -390,15 +390,22 @@ export const useDeleteText = () => {
 /** One of the client's external variables: its value as JSON (`"text"`, `true`, `120`, `[1, 2]`). */
 export interface VariableEntry {
     key: string;
+    /** For one that follows a setting, the setting's value now. */
     value: string;
+    /** The server setting it follows (`Turbo:Web:HotelName`); null or absent for one with a value of its own. */
+    setting?: string | null;
+    /** The gamedata file whose address it follows by hash (`furnidata_json`); null or absent for one that doesn't. */
+    file?: string | null;
 }
 
 export interface VariableSearchResult {
     items: VariableEntry[];
     total: number;
     pageSize: number;
-    /** The hotel's own gamedata addresses, by hash, which it writes itself; empty without a public address. */
-    stamped: VariableEntry[];
+    /** The files a variable may follow the address of. */
+    linkableFiles: string[];
+    /** False while the gamedata host has no public address: a variable following a file is then written with its own value. */
+    writesAddresses: boolean;
 }
 
 export interface VariableImportItem {
@@ -431,6 +438,19 @@ export const useSaveVariable = () => {
 
     return useMutation({
         mutationFn: (variable: VariableEntry) => put<VariableEntry>('/gamedata/variables', variable),
+        onSuccess: refresh,
+    });
+};
+
+/**
+ * Links a variable to a server setting, or to the address of one of the hotel's gamedata files, so
+ * the client gets what it follows; neither unlinks it.
+ */
+export const useLinkVariable = () => {
+    const refresh = useRefresh();
+
+    return useMutation({
+        mutationFn: (link: { key: string; setting?: string | null; file?: string | null }) => put<VariableEntry>('/gamedata/variables/link', link),
         onSuccess: refresh,
     });
 };

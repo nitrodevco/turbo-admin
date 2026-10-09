@@ -1,10 +1,11 @@
-import { FileUp, Lock, Plus, Save, Search, Trash2, Upload, X } from 'lucide-react';
+import { FileUp, Link2, Plus, Save, Search, Trash2, Unlink, Upload, X } from 'lucide-react';
 import { useState } from 'react';
 import { useSearchParams } from 'react-router';
 
-import { type GamedataStatus, useDeleteVariable, useSaveVariable, useVariableImport, useVariableImportPreview, useVariableSearch, type VariableEntry } from '#/api/gamedata';
+import { type GamedataStatus, useDeleteVariable, useLinkVariable, useSaveVariable, useVariableImport, useVariableImportPreview, useVariableSearch, type VariableEntry } from '#/api/gamedata';
+import { useSettings } from '#/api/settings';
 import { ListToolbar } from '#/components/ListToolbar';
-import { Button, EmptyState, ErrorNotice, Input, Labeled, Loading, Panel, SuccessNotice, Textarea, WarningNotice } from '#/components/ui';
+import { Badge, Button, EmptyState, ErrorNotice, Input, Labeled, Loading, Panel, Select, SuccessNotice, Textarea } from '#/components/ui';
 import { cx } from '#/lib/cx';
 
 import { OpenRow, ReviewItem } from './parts';
@@ -25,8 +26,85 @@ const jsonProblem = (value: string) => {
 /** A variable's JSON value, shown on one line. */
 const Value = ({ value }: { value: string }) => <span className="truncate font-mono text-xs text-muted">{value}</span>;
 
-/** A variable's value to change, as JSON. */
-const VariableEditor = ({ variable, canManage, onDone }: { variable: VariableEntry | null; canManage: boolean; onDone: () => void }) => {
+/** What a variable may follow besides a setting: the files, and whether their addresses are written. */
+interface Linking {
+    files: string[];
+    writesAddresses: boolean;
+}
+
+/**
+ * What a variable follows, if anything - a server setting, or a gamedata file's address by hash -
+ * or something to follow. Settings are offered by path to staff who may see them; others type it.
+ */
+const VariableLink = ({ variable, variableKey, linking, canManage, onDone }: { variable: VariableEntry | null; variableKey: string; linking: Linking; canManage: boolean; onDone: () => void }) => {
+    const [ path, setPath ] = useState('');
+    const [ file, setFile ] = useState(linking.files[0] ?? '');
+    const link = useLinkVariable();
+    const { data: settings } = useSettings();
+    const linkable = settings?.settings.filter(x => !x.secret) ?? [];
+    const follows = variable?.setting ?? variable?.file;
+
+    if (follows)
+        return (
+            <div className="flex flex-col gap-2 rounded-lg border border-line bg-canvas p-3">
+                {variable?.setting && (
+                    <p className="text-sm">
+                        Follows the setting <span className="font-mono">{variable.setting}</span>: the client gets its value, and the file is built again whenever it changes.
+                    </p>
+                )}
+                {variable?.file && (
+                    <p className="text-sm">
+                        Follows the address of <span className="font-mono">{variable.file}</span> by its current build, so the client loads exactly that build.
+                        {!linking.writesAddresses && ' The gamedata host has no public address (Turbo:Gamedata:PublicUrl), so its own value is written meanwhile.'}
+                    </p>
+                )}
+                {canManage && (
+                    <div>
+                        <Button variant="secondary" icon={<Unlink />} disabled={link.isPending} onClick={() => link.mutate({ key: variable!.key }, { onSuccess: onDone })}>
+                            {variable?.file ? 'Unlink, keeping its /0 address' : 'Unlink, keeping the value'}
+                        </Button>
+                    </div>
+                )}
+                {link.error && <ErrorNotice error={link.error} />}
+            </div>
+        );
+
+    if (!canManage) return null;
+
+    const disabled = variableKey.trim() === '' || link.isPending;
+
+    return (
+        <div className="flex flex-col gap-3">
+            <Labeled label="Or follow a server setting" hint="The client gets the setting's value, kept up to date. A secret can't be followed: the variables are public.">
+                <div className="flex flex-wrap gap-2">
+                    <Input value={path} onChange={event => setPath(event.target.value)} list="variable-settings" placeholder="Turbo:Web:HotelName" className="w-full font-mono sm:max-w-96" />
+                    <Button variant="secondary" icon={<Link2 />} disabled={path.trim() === '' || disabled} onClick={() => link.mutate({ key: variableKey, setting: path.trim() }, { onSuccess: onDone })}>
+                        Link
+                    </Button>
+                </div>
+            </Labeled>
+            <datalist id="variable-settings">
+                {linkable.map(setting => <option key={setting.path} value={setting.path}>{setting.summary}</option>)}
+            </datalist>
+            {linking.files.length > 0 && (
+                <Labeled label="Or follow a gamedata file's address" hint="Its address by the current build, built again with the file.">
+                    <div className="flex flex-wrap gap-2">
+                        <Select value={file} onChange={event => setFile(event.target.value)} className="w-full font-mono sm:max-w-72">
+                            {linking.files.map(name => <option key={name} value={name}>{name}</option>)}
+                        </Select>
+                        <Button variant="secondary" icon={<Link2 />} disabled={file === '' || disabled} onClick={() => link.mutate({ key: variableKey, file }, { onSuccess: onDone })}>
+                            Link
+                        </Button>
+                    </div>
+                </Labeled>
+            )}
+            {link.error && <ErrorNotice error={link.error} />}
+        </div>
+    );
+};
+
+/** A variable's value to change, as JSON, or what it follows. */
+const VariableEditor = ({ variable, linking, canManage, onDone }: { variable: VariableEntry | null; linking: Linking; canManage: boolean; onDone: () => void }) => {
     const [ key, setKey ] = useState(variable?.key ?? '');
     const [ value, setValue ] = useState(variable?.value ?? '');
     const save = useSaveVariable();
@@ -47,7 +125,7 @@ const VariableEditor = ({ variable, canManage, onDone }: { variable: VariableEnt
                     <Input value={key} onChange={event => setKey(event.target.value)} placeholder="socket.url" className="w-full font-mono sm:max-w-96" autoFocus />
                 </Labeled>
             )}
-            <Labeled label="Value" hint={'JSON: "text" in quotes, true, 120 or [1, 2].'}>
+            <Labeled label="Value" hint={variable?.setting || variable?.file ? 'What it follows now. Saving a value of its own unlinks it.' : 'JSON: "text" in quotes, true, 120 or [1, 2].'}>
                 <Textarea
                     value={value}
                     onChange={event => setValue(event.target.value)}
@@ -57,6 +135,7 @@ const VariableEditor = ({ variable, canManage, onDone }: { variable: VariableEnt
                 />
             </Labeled>
             {canManage && changed && problem && value !== '' && <p className="text-xs text-warn">{problem}</p>}
+            <VariableLink variable={variable} variableKey={variable?.key ?? key} linking={linking} canManage={canManage} onDone={onDone} />
             {canManage && (
                 <div className="flex flex-wrap items-center gap-2">
                     <Button type="submit" icon={variable ? <Save /> : <Plus />} disabled={!changed || !!problem || save.isPending || (!variable && key.trim() === '')}>{variable ? 'Save' : 'Add'}</Button>
@@ -176,8 +255,8 @@ const ImportPanel = ({ onDone }: { onDone: () => void }) => {
 
 /**
  * The client's external variables: its configuration, served from the gamedata host as
- * /gamedata/external_variables/0 (the client's nitro.config.url). The hotel writes its own
- * gamedata addresses into it by hash; staff edit the rest.
+ * /gamedata/external_variables/0 (the client's nitro.config.url). A variable holds a value of its
+ * own, or follows a server setting or a gamedata file's address by hash.
  */
 export const VariablesTab = ({ status }: { status: GamedataStatus }) => {
     const [ params ] = useSearchParams();
@@ -187,27 +266,10 @@ export const VariablesTab = ({ status }: { status: GamedataStatus }) => {
     const [ importing, setImporting ] = useState(false);
     const { data: found, isFetching, error } = useVariableSearch(text, page);
     const size = found?.pageSize ?? 1;
+    const linking: Linking = { files: found?.linkableFiles ?? [], writesAddresses: found?.writesAddresses ?? false };
 
     return (
         <>
-            {found && found.stamped.length > 0 && (
-                <Panel title="Written by the hotel" description="The address of each of the hotel's gamedata files by its current build. They change when a file is built anew, and can't be set here.">
-                    <ul className="divide-y divide-line">
-                        {found.stamped.map(item => (
-                            <li key={item.key} className="grid items-center gap-x-4 gap-y-0.5 px-4 py-2.5 sm:grid-cols-[minmax(12rem,22rem)_1fr_auto]">
-                                <span className="truncate font-mono text-[13px]">{item.key}</span>
-                                <Value value={item.value} />
-                                <Lock className="size-3.5 text-muted max-sm:hidden" aria-label="Written by the hotel" />
-                            </li>
-                        ))}
-                    </ul>
-                </Panel>
-            )}
-            {found && found.stamped.length === 0 && (
-                <WarningNotice>
-                    The hotel writes no gamedata addresses into the variables: Turbo:Gamedata:PublicUrl isn&apos;t set. Set furnituredata.url, productdata.url, figuredata.url and gamedata.urls.externalTexts here yourself, or set it.
-                </WarningNotice>
-            )}
             {importing && <ImportPanel onDone={() => setImporting(false)} />}
             <Panel className="overflow-clip">
                 <ListToolbar
@@ -237,7 +299,7 @@ export const VariablesTab = ({ status }: { status: GamedataStatus }) => {
                 </ListToolbar>
                 {open === '' && (
                     <div className="border-b border-line bg-subtle/40 p-4">
-                        <VariableEditor variable={null} canManage={status.canManage} onDone={() => setOpen(null)} />
+                        <VariableEditor variable={null} linking={linking} canManage={status.canManage} onDone={() => setOpen(null)} />
                     </div>
                 )}
                 {error && <div className="p-4"><ErrorNotice error={error} /></div>}
@@ -251,13 +313,14 @@ export const VariablesTab = ({ status }: { status: GamedataStatus }) => {
                                 open={open === item.key}
                                 onToggle={() => setOpen(open === item.key ? null : item.key)}
                                 summary={(
-                                    <div className="grid items-center gap-x-4 gap-y-0.5 sm:grid-cols-[minmax(12rem,22rem)_1fr]">
+                                    <div className="grid items-center gap-x-4 gap-y-0.5 sm:grid-cols-[minmax(12rem,22rem)_1fr_auto]">
                                         <span className="truncate font-mono text-[13px]">{item.key}</span>
                                         <Value value={item.value} />
+                                        <span className="max-sm:hidden">{(item.setting ?? item.file) && <Badge tone="accent" className="max-w-64 truncate"><Link2 className="size-3" /> {item.setting ?? item.file}</Badge>}</span>
                                     </div>
                                 )}
                             >
-                                <VariableEditor key={item.value} variable={item} canManage={status.canManage} onDone={() => setOpen(null)} />
+                                <VariableEditor key={`${item.value}|${item.setting ?? ''}|${item.file ?? ''}`} variable={item} linking={linking} canManage={status.canManage} onDone={() => setOpen(null)} />
                             </OpenRow>
                         ))}
                     </ul>

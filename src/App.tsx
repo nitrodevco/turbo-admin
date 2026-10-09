@@ -24,6 +24,7 @@ import { PlayersPage as PlayerListPage } from '#/pages/players/PlayersPage';
 import { RoomPage } from '#/pages/rooms/RoomPage';
 import { RoomSettingsPage } from '#/pages/rooms/RoomSettingsPage';
 import { RoomsPage } from '#/pages/rooms/RoomsPage';
+import { SettingsPage } from '#/pages/settings/SettingsPage';
 import { StaffPage } from '#/pages/StaffPage';
 
 // Its charts are a large library that no other page needs, so it loads when opened.
@@ -44,6 +45,7 @@ export const App = () => (
             <Route path="catalog" element={<CatalogPage />} />
             <Route path="catalog/songs" element={<SongsPage />} />
             <Route path="gamedata" element={<GamedataPage />} />
+            <Route path="settings" element={<SettingsPage />} />
             <Route path="command-log" element={<CommandLogPage />} />
             <Route path="chatlog" element={<ChatlogPage />} />
             <Route path="console" element={<ConsolePage />} />

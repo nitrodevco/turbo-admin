@@ -1,4 +1,4 @@
-import { Activity, Database, Gauge, House, KeyRound, MessagesSquare, ScrollText, ShieldCheck, SquareTerminal, Store, UserRound, Users } from 'lucide-react';
+import { Activity, Database, Gauge, House, KeyRound, MessagesSquare, ScrollText, ShieldCheck, SlidersHorizontal, SquareTerminal, Store, UserRound, Users } from 'lucide-react';
 import type { ReactNode } from 'react';
 import { useLocation } from 'react-router';
 
@@ -12,7 +12,7 @@ export interface NavItem {
     end: boolean;
     /** The letter after `g` that goes to it (`Shortcuts`). */
     key: string;
-    needs?: keyof Pick<MeResponse, 'canViewRooms' | 'canViewPlayers' | 'canViewPermissions' | 'canViewCommandLog' | 'canViewChatlog' | 'canViewCatalog' | 'canViewGamedata' | 'canResetPasskeys'>;
+    needs?: keyof Pick<MeResponse, 'canViewRooms' | 'canViewPlayers' | 'canViewPermissions' | 'canViewCommandLog' | 'canViewChatlog' | 'canViewCatalog' | 'canViewGamedata' | 'canViewSettings' | 'canResetPasskeys'>;
 }
 
 const NAV: NavItem[] = [
@@ -23,6 +23,7 @@ const NAV: NavItem[] = [
     { to: '/permissions', label: 'Permissions', icon: <KeyRound />, end: false, key: 'k', needs: 'canViewPermissions' },
     { to: '/catalog', label: 'Catalog', icon: <Store />, end: false, key: 'c', needs: 'canViewCatalog' },
     { to: '/gamedata', label: 'Gamedata', icon: <Database />, end: false, key: 'g', needs: 'canViewGamedata' },
+    { to: '/settings', label: 'Settings', icon: <SlidersHorizontal />, end: false, key: 'e', needs: 'canViewSettings' },
     { to: '/command-log', label: 'Command log', icon: <ScrollText />, end: false, key: 'l', needs: 'canViewCommandLog' },
     { to: '/chatlog', label: 'Chat log', icon: <MessagesSquare />, end: false, key: 'h', needs: 'canViewChatlog' },
     { to: '/console', label: 'Console', icon: <SquareTerminal />, end: false, key: 'o' },
