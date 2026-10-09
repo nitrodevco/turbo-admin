@@ -309,3 +309,89 @@ export const useSaveGroupEditor = () => {
         onSuccess: refresh,
     });
 };
+
+export interface PetBreed {
+    id: number;
+    typeId: number;
+    paletteId: number;
+    breedId: number;
+    rarityLevel: number;
+    sellable: boolean;
+    rare: boolean;
+    colorTag: number;
+}
+
+export interface PetLine {
+    id: number;
+    /** Null: said by every type without lines of its own. */
+    typeId: number | null;
+    line: string;
+}
+
+/** AvatarDanceType. */
+export const DANCES: Record<number, string> = { 0: 'Not dancing', 1: 'Dance', 2: 'Pogo mogo', 3: 'Duck funk', 4: 'The Rollie' };
+
+export interface BotItem {
+    id: number;
+    name: string;
+    motto: string;
+    figure: string;
+    gender: number;
+    ownerId: number;
+    ownerName: string;
+    roomId: number | null;
+    roomName: string | null;
+    chatText: string;
+    autoChat: boolean;
+    chatDelaySeconds: number;
+    mixSentences: boolean;
+    freeRoam: boolean;
+    dance: number;
+}
+
+export const usePets = () => useQuery({
+    queryKey: [ 'content', 'pets' ],
+    queryFn: () => api<{ breeds: PetBreed[]; speech: PetLine[] }>('/content/pets'),
+});
+
+/** Adds (no id) or changes a pet palette or a line pets say. */
+export const useSavePet = () => {
+    const refresh = useRefreshContent();
+
+    return useMutation({
+        mutationFn: ({ kind, id, body }: { kind: 'breeds' | 'speech'; id: number | null; body: Record<string, unknown> }) => (id === null
+            ? post<{ id: number }>(`/content/pets/${kind}`, body)
+            : put<{ id: number }>(`/content/pets/${kind}/${id}`, body)),
+        onSuccess: refresh,
+    });
+};
+
+export const useDeletePetLine = () => {
+    const refresh = useRefreshContent();
+
+    return useMutation({
+        mutationFn: (id: number) => api<void>(`/content/pets/speech/${id}`, { method: 'DELETE' }),
+        onSuccess: refresh,
+    });
+};
+
+export const useBots = (text: string, page: number) => useQuery({
+    queryKey: [ 'content', 'bots', text, page ],
+    queryFn: () => api<{ bots: BotItem[]; total: number; pageSize: number }>(`/content/bots?${new URLSearchParams({ q: text, page: String(page) })}`),
+    placeholderData: previous => previous,
+});
+
+/** Sets a placed bot, takes one out of its room, or deletes one from an inventory. */
+export const useBotAction = () => {
+    const refresh = useRefreshContent();
+
+    return useMutation({
+        mutationFn: (action: { id: number; edit?: Omit<BotItem, 'id' | 'ownerId' | 'ownerName' | 'roomId' | 'roomName'>; pickup?: true; remove?: true }) => {
+            if (action.edit) return put<void>(`/content/bots/${action.id}`, action.edit);
+            if (action.pickup) return post<void>(`/content/bots/${action.id}/pickup`);
+
+            return api<void>(`/content/bots/${action.id}`, { method: 'DELETE' });
+        },
+        onSuccess: refresh,
+    });
+};
