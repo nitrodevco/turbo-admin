@@ -214,3 +214,98 @@ export const useDeleteNavigator = () => {
         onSuccess: refresh,
     });
 };
+
+/** GuildMemberRank, as groups number it. */
+export const GROUP_RANKS: Record<number, string> = { 0: 'Owner', 1: 'Admin', 2: 'Member', 3: 'Requested', 4: 'Blocked' };
+
+/** GuildType. */
+export const GROUP_TYPES: Record<number, string> = { 0: 'Open', 1: 'Exclusive', 2: 'Private', 3: 'Large', 4: 'Open, large' };
+
+/** GuildBadgePartType, and GuildColorSlotType. */
+export const PART_TYPES: Record<number, string> = { 0: 'Base', 1: 'Symbol' };
+export const COLOR_SLOTS: Record<number, string> = { 0: 'Badge', 1: 'Primary', 2: 'Secondary' };
+
+export interface GroupItem {
+    id: number;
+    name: string;
+    badgeCode: string;
+    ownerId: number;
+    ownerName: string;
+    roomId: number;
+    members: number;
+    createdAt: string;
+}
+
+export interface GroupDetail {
+    id: number;
+    name: string;
+    description: string;
+    badgeCode: string;
+    type: number;
+    ownerId: number;
+    ownerName: string;
+    roomId: number;
+    roomName: string;
+    createdAt: string;
+    members: { playerId: number; name: string; rank: number }[];
+}
+
+export interface GroupBadgePart {
+    id: number;
+    partType: number;
+    partId: number;
+    fileName: string;
+    maskFileName: string;
+}
+
+export interface GroupColor {
+    id: number;
+    slot: number;
+    colorId: number;
+    color: string;
+}
+
+export const useGroups = (text: string, page: number) => useQuery({
+    queryKey: [ 'content', 'groups', text, page ],
+    queryFn: () => api<{ groups: GroupItem[]; total: number; pageSize: number }>(`/content/groups?${new URLSearchParams({ q: text, page: String(page) })}`),
+    placeholderData: previous => previous,
+});
+
+export const useGroup = (id: number | null) => useQuery({
+    queryKey: [ 'content', 'groups', 'detail', id ],
+    queryFn: () => api<GroupDetail>(`/content/groups/${id}`),
+    enabled: id !== null,
+});
+
+export const useGroupEditor = () => useQuery({
+    queryKey: [ 'content', 'groups', 'editor' ],
+    queryFn: () => api<{ parts: GroupBadgePart[]; colors: GroupColor[] }>('/content/groups/editor'),
+});
+
+/** A staff change to a group: renamed, its badge reset, a member removed, or deleted. */
+export const useGroupAction = () => {
+    const refresh = useRefreshContent();
+
+    return useMutation({
+        mutationFn: (action: { id: number; rename?: { name: string; description: string }; resetBadge?: true; removeMember?: number; remove?: true }) => {
+            if (action.rename) return put<void>(`/content/groups/${action.id}`, action.rename);
+            if (action.resetBadge) return post<void>(`/content/groups/${action.id}/reset-badge`);
+            if (action.removeMember !== undefined) return api<void>(`/content/groups/${action.id}/members/${action.removeMember}`, { method: 'DELETE' });
+
+            return api<void>(`/content/groups/${action.id}`, { method: 'DELETE' });
+        },
+        onSuccess: refresh,
+    });
+};
+
+/** Adds (no id) or changes a badge part or colour of the group badge editor. */
+export const useSaveGroupEditor = () => {
+    const refresh = useRefreshContent();
+
+    return useMutation({
+        mutationFn: ({ kind, id, body }: { kind: 'parts' | 'colors'; id: number | null; body: Record<string, unknown> }) => (id === null
+            ? post<{ id: number }>(`/content/groups/${kind}`, body)
+            : put<{ id: number }>(`/content/groups/${kind}/${id}`, body)),
+        onSuccess: refresh,
+    });
+};
