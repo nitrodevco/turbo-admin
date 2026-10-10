@@ -1,4 +1,4 @@
-import { Activity, Database, Disc3, Gauge, House, KeyRound, Landmark, MessagesSquare, Puzzle, ScrollText, ShieldCheck, SlidersHorizontal, SquareTerminal, Store, Ticket, UserRound, Users } from 'lucide-react';
+import { Activity, Boxes, Database, Disc3, Gauge, House, KeyRound, Landmark, MessagesSquare, Puzzle, ScrollText, ShieldCheck, SlidersHorizontal, SquareTerminal, Store, Ticket, UserRound, Users } from 'lucide-react';
 import type { ReactNode } from 'react';
 import { useLocation } from 'react-router';
 
@@ -31,6 +31,7 @@ const PAGES = {
     hotelView: { to: '/hotel-view', label: 'Hotel view', icon: <Landmark />, end: false, key: 'v', needs: 'canViewGamedata' },
     content: { to: '/content', label: 'Content', icon: <Puzzle />, end: false, key: 't', needs: 'canViewContent' },
     gamedata: { to: '/gamedata', label: 'Gamedata', icon: <Database />, end: false, key: 'g', needs: 'canViewGamedata' },
+    assets: { to: '/assets', label: 'Assets', icon: <Boxes />, end: false, key: 'b', needs: 'canViewGamedata' },
     permissions: { to: '/permissions', label: 'Permissions', icon: <KeyRound />, end: false, key: 'k', needs: 'canViewPermissions' },
     staff: { to: '/staff', label: 'Staff passkeys', icon: <ShieldCheck />, end: false, key: 's', needs: 'canResetPasskeys' },
     commandLog: { to: '/command-log', label: 'Command log', icon: <ScrollText />, end: false, key: 'l', needs: 'canViewCommandLog' },
@@ -84,6 +85,7 @@ const SECTIONS: NavSection[] = [
             { label: 'Hotel view', icon: <Landmark />, pages: [ 'hotelView' ], hint: 'The reception players land in' },
             { label: 'Content', icon: <Puzzle />, pages: [ 'content' ], hint: 'Achievements, badges, groups, pets' },
             { label: 'Gamedata', icon: <Database />, pages: [ 'gamedata' ], hint: 'Furni, texts, clothing, variables' },
+            { label: 'Assets', icon: <Boxes />, pages: [ 'assets' ], hint: 'Furni, effect and pet bundles' },
         ],
     },
     { label: 'Staff', entries: [ ACCESS, LOGS ] },

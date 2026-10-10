@@ -7,6 +7,7 @@ import { SetupPage } from '#/auth/SetupPage';
 import { Loading } from '#/components/ui';
 import { Shell } from '#/layout/Shell';
 import { AccountPage } from '#/pages/AccountPage';
+import { AssetsPage } from '#/pages/assets/AssetsPage';
 import { CatalogPage } from '#/pages/catalog/CatalogPage';
 import { SongsPage } from '#/pages/catalog/SongsPage';
 import { VouchersPage } from '#/pages/catalog/VouchersPage';
@@ -49,6 +50,7 @@ export const App = () => (
             <Route path="catalog/songs" element={<SongsPage />} />
             <Route path="vouchers" element={<VouchersPage />} />
             <Route path="gamedata" element={<GamedataPage />} />
+            <Route path="assets" element={<AssetsPage />} />
             <Route path="hotel-view" element={<HotelViewPage />} />
             <Route path="content" element={<ContentPage />} />
             <Route path="settings" element={<SettingsPage />} />
