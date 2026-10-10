@@ -4,11 +4,12 @@ import { Link, useSearchParams } from 'react-router';
 
 import { useCatalogTree } from '#/api/catalog';
 import { songCalls, type SongDetail, type SongInput, useSong, useSongEdit, useSongs } from '#/api/songs';
+import { ask } from '#/components/confirm';
+import { toast } from '#/components/toast';
 import { Badge, Button, EmptyState, ErrorNotice, Field, Labeled, Loading, PageBody, PageHeader, Panel, Switch, Textarea } from '#/components/ui';
 import { cx } from '#/lib/cx';
 
-import { toast } from './feedback';
-import { Toasts } from './Toasts';
+import { catalogTabs } from './catalogTabs';
 
 /** Seconds as minutes and seconds, as the jukebox shows them. */
 const clock = (seconds: number) => `${Math.floor(seconds / 60)}:${String(seconds % 60).padStart(2, '0')}`;
@@ -94,12 +95,12 @@ const SongEditor = ({ song, canManage, onSaved, onDeleted }: { song: SongDetail 
                             className="ml-auto text-bad hover:text-bad"
                             disabled={remove.isPending || song.discs > 0}
                             title={song.discs > 0 ? `${song.discs} disc${song.discs === 1 ? ' carries' : 's carry'} it, so it stays.` : undefined}
-                            onClick={() => window.confirm(`Delete ${song.name}?`) && remove.mutate([ song.id ], {
+                            onClick={() => ask({ title: `Delete ${song.name}?`, confirm: 'Delete' }, () => remove.mutate([ song.id ], {
                                 onSuccess: () => {
                                     toast(`Deleted ${song.name}.`);
                                     onDeleted();
                                 },
-                            })}
+                            }))}
                         >
                             Delete
                         </Button>
@@ -127,7 +128,7 @@ export const SongsPage = () => {
 
     return (
         <>
-            <PageHeader title="Songs" description={songs.data ? `${songs.data.songs.length} songs · ${songs.data.songs.filter(x => x.official).length} official` : 'What jukeboxes play'} back={{ to: '/catalog', label: 'Catalog' }}>
+            <PageHeader title="Catalog" tabs={catalogTabs('songs')} description={songs.data ? `${songs.data.songs.length} songs · ${songs.data.songs.filter(x => x.official).length} official` : 'What jukeboxes play'}>
                 {canManage && <Button icon={<Plus />} onClick={() => open('new')}>New song</Button>}
             </PageHeader>
             <PageBody className="grid items-start gap-4 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.2fr)]">
@@ -167,7 +168,6 @@ export const SongsPage = () => {
                     <p className="flex items-center gap-2 px-1 py-6 text-sm text-muted max-lg:hidden"><Music className="size-4" />Pick a song, or <Link to="/catalog" className="text-accent hover:underline">go back to the catalog</Link>.</p>
                 )}
             </PageBody>
-            <Toasts />
         </>
     );
 };

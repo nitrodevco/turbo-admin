@@ -1,9 +1,11 @@
-import { Eraser, Plus, Save, Search, Trash2, UserMinus } from 'lucide-react';
+import { Eraser, Plus, Save, Trash2, UserMinus } from 'lucide-react';
 import { useState } from 'react';
 import { Link } from 'react-router';
 
 import { COLOR_SLOTS, GROUP_RANKS, GROUP_TYPES, type GroupBadgePart, type GroupColor, PART_TYPES, useGroup, useGroupAction, useGroupEditor, useGroups, useSaveGroupEditor } from '#/api/content';
+import { ask } from '#/components/confirm';
 import { Pagination } from '#/components/Pagination';
+import { SearchInput } from '#/components/SearchInput';
 import { Badge, Button, EmptyState, ErrorNotice, IconButton, Input, Labeled, Loading, Panel, Select, SuccessNotice, Textarea } from '#/components/ui';
 import { cx } from '#/lib/cx';
 
@@ -25,13 +27,20 @@ const GroupDetailPanel = ({ id, canManage, onGone }: { id: number; canManage: bo
             description={<>{GROUP_TYPES[data.type] ?? data.type} group of <Link to={`/players/${data.ownerId}`} className="text-accent hover:underline">{data.ownerName}</Link>, home room <Link to={`/rooms/${data.roomId}`} className="text-accent hover:underline">{data.roomName}</Link>. Badge <span className="font-mono">{data.badgeCode}</span>.</>}
             actions={canManage && (
                 <>
-                    <Button variant="ghost" icon={<Eraser />} disabled={act.isPending} onClick={() => window.confirm(`Put ${data.name}'s badge back to the default one?`) && act.mutate({ id, resetBadge: true })}>Reset badge</Button>
+                    <Button variant="ghost" icon={<Eraser />} disabled={act.isPending} onClick={() => ask({ title: `Put ${data.name}'s badge back to the default one?`, confirm: 'Reset badge' }, () => act.mutate({ id, resetBadge: true }))}>Reset badge</Button>
                     <Button
                         variant="ghost"
                         icon={<Trash2 />}
                         className="text-bad hover:text-bad"
                         disabled={act.isPending}
-                        onClick={() => window.confirm(`Delete ${data.name}? Its ${data.members.length} members are told, and its home room's group furni goes back to their owners.`) && act.mutate({ id, remove: true }, { onSuccess: onGone })}
+                        onClick={() => ask(
+                            {
+                                title: `Delete ${data.name}?`,
+                                body: `Its ${data.members.length} members are told, and its home room's group furni goes back to their owners.`,
+                                confirm: 'Delete',
+                            },
+                            () => act.mutate({ id, remove: true }, { onSuccess: onGone }),
+                        )}
                     >
                         Delete
                     </Button>
@@ -65,7 +74,7 @@ const GroupDetailPanel = ({ id, canManage, onGone }: { id: number; canManage: bo
                                 <Link to={`/players/${member.playerId}`} className="min-w-0 flex-1 truncate text-accent hover:underline">{member.name}</Link>
                                 <Badge tone={member.rank === 0 ? 'accent' : member.rank >= 3 ? 'neutral' : 'green'}>{GROUP_RANKS[member.rank] ?? member.rank}</Badge>
                                 {canManage && member.rank !== 0 && (
-                                    <IconButton label={`Take ${member.name} out`} icon={<UserMinus />} tone="bad" disabled={act.isPending} onClick={() => window.confirm(`Take ${member.name} out of ${data.name}?`) && act.mutate({ id, removeMember: member.playerId })} />
+                                    <IconButton label={`Take ${member.name} out`} icon={<UserMinus />} tone="bad" disabled={act.isPending} onClick={() => ask({ title: `Take ${member.name} out of ${data.name}?`, confirm: 'Take out' }, () => act.mutate({ id, removeMember: member.playerId }))} />
                                 )}
                             </li>
                         ))}
@@ -205,17 +214,14 @@ export const GroupsTab = ({ canManage }: { canManage: boolean }) => {
         <div className="flex flex-col gap-4">
             <div className="grid items-start gap-4 lg:grid-cols-[24rem_minmax(0,1fr)]">
                 <Panel className="overflow-clip">
-                    <div className="relative border-b border-line p-3">
-                        <Search className="pointer-events-none absolute top-1/2 left-6 size-4 -translate-y-1/2 text-muted" />
-                        <Input
-                            type="search"
+                    <div className="border-b border-line p-3">
+                        <SearchInput
                             value={text}
-                            onChange={(event) => {
-                                setText(event.target.value);
+                            onValueChange={(value) => {
+                                setText(value);
                                 setPage(0);
                             }}
                             placeholder="Name, owner, group or room id"
-                            className="w-full pl-9"
                             aria-label="Find groups"
                         />
                     </div>

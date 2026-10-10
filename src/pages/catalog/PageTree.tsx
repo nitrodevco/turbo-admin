@@ -1,11 +1,12 @@
 import { useDndContext } from '@dnd-kit/core';
 import { SortableContext, useSortable, verticalListSortingStrategy } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
-import { ChevronRight, ChevronsDownUp, ChevronsUpDown, EyeOff, FolderPlus, GripVertical, Hammer, Plus, Search, Star, X } from 'lucide-react';
+import { ChevronRight, ChevronsDownUp, ChevronsUpDown, EyeOff, FolderPlus, GripVertical, Hammer, Plus, Star } from 'lucide-react';
 import { type KeyboardEventHandler, type ReactNode, useState } from 'react';
 
 import { catalogIconUrl, useClientAssets } from '#/api/assets';
 import { type CatalogPageNode, type CatalogTree, FRONT_PAGE_LAYOUT } from '#/api/catalog';
+import { SearchInput } from '#/components/SearchInput';
 import { cx } from '#/lib/cx';
 
 import { DISPLAY_LABELS, inBuildersClub } from './labels';
@@ -196,23 +197,13 @@ export const PageTree = ({ tree, rows, open, selected, projection, onToggle, onS
     return (
         <div className="flex min-h-0 flex-col">
             <div className="flex items-center gap-1 border-b border-line p-2">
-                <div className="relative min-w-0 flex-1">
-                    <Search className="pointer-events-none absolute top-1/2 left-2.5 size-4 -translate-y-1/2 text-muted" />
-                    <input
-                        type="search"
-                        value={filter}
-                        onChange={event => setFilter(event.target.value)}
-                        onKeyDown={event => event.key === 'Escape' && setFilter('')}
-                        placeholder="Find a page"
-                        aria-label="Find a page"
-                        className="h-11 w-full rounded-lg border border-transparent bg-subtle pr-8 pl-8 text-[15px] placeholder:text-muted/70 focus:border-accent focus:bg-canvas focus:outline-none sm:h-8 sm:text-[13px] [&::-webkit-search-cancel-button]:hidden"
-                    />
-                    {searching && (
-                        <button type="button" onClick={() => setFilter('')} aria-label="Clear the search" className="absolute top-1/2 right-1.5 grid size-6 -translate-y-1/2 place-items-center rounded text-muted hover:text-ink">
-                            <X className="size-3.5" />
-                        </button>
-                    )}
-                </div>
+                <SearchInput
+                    value={filter}
+                    onValueChange={setFilter}
+                    onKeyDown={event => event.key === 'Escape' && setFilter('')}
+                    placeholder="Find a page"
+                    className="min-w-0 flex-1"
+                />
                 {!searching && (
                     <ToolButton label={allOpen ? 'Close every page' : 'Open every page'} onClick={() => onSetOpen(allOpen ? new Set() : new Set(withChildren))}>
                         {allOpen ? <ChevronsDownUp /> : <ChevronsUpDown />}

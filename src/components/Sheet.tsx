@@ -1,6 +1,8 @@
-import { type ButtonHTMLAttributes, type ReactNode, useEffect, useRef } from 'react';
+import type { ButtonHTMLAttributes, ReactNode } from 'react';
 
 import { cx } from '#/lib/cx';
+
+import { useModalDialog } from './dialog';
 
 /**
  * A short list of choices that rises from the bottom of a phone's screen (and opens in the middle
@@ -8,29 +10,12 @@ import { cx } from '#/lib/cx';
  * dialog, so focus stays in it and Escape closes it; a tap outside it closes it too.
  */
 export const Sheet = ({ title, open, onClose, children }: { title: ReactNode; open: boolean; onClose: () => void; children: ReactNode }) => {
-    const ref = useRef<HTMLDialogElement>(null);
-
-    useEffect(() => {
-        const dialog = ref.current;
-
-        if (!dialog)
-            return;
-
-        if (open && !dialog.open)
-            dialog.showModal();
-        else if (!open && dialog.open)
-            dialog.close();
-    }, [ open ]);
+    const dialog = useModalDialog(open, onClose);
 
     return (
         <dialog
-            ref={ref}
-            onClose={onClose}
-            onClick={(event) => {
-                if (event.target === ref.current)
-                    onClose();
-            }}
-            className="mx-0 mt-auto mb-0 w-full max-w-none animate-sheet rounded-t-2xl border border-line bg-surface p-0 text-ink sm:m-auto sm:max-w-sm sm:animate-rise sm:rounded-2xl"
+            {...dialog}
+            className="mx-0 mt-auto mb-0 w-full max-w-none animate-sheet rounded-t-2xl border border-line bg-surface p-0 text-ink sm:m-auto sm:max-w-sm sm:animate-rise sm:rounded-2xl sm:shadow-2xl"
         >
             <div aria-hidden className="mx-auto mt-2 h-1 w-10 rounded-full bg-line sm:hidden" />
             <div className="px-5 pt-3 pb-1 text-sm font-semibold">{title}</div>

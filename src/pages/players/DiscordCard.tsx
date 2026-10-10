@@ -2,6 +2,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { LogOut, Unlink } from 'lucide-react';
 
 import { endSiteSessions, type PlayerDiscordInfo, unlinkDiscord } from '#/api/players';
+import { ask } from '#/components/confirm';
 import { Button, ErrorNotice, Kv, Panel } from '#/components/ui';
 import { formatDateTime } from '#/pages/rooms/labels';
 
@@ -31,7 +32,7 @@ export const DiscordCard = ({ playerId, playerName, discord, canManage }: { play
                         variant="secondary"
                         icon={<LogOut />}
                         disabled={signOut.isPending || discord.activeSignIns === 0}
-                        onClick={() => window.confirm(`Sign ${playerName} out of the site everywhere?`) && signOut.mutate()}
+                        onClick={() => ask({ title: `Sign ${playerName} out of the site everywhere?`, confirm: 'Sign out' }, () => signOut.mutate())}
                     >
                         Sign out of the site
                     </Button>
@@ -39,7 +40,12 @@ export const DiscordCard = ({ playerId, playerName, discord, canManage }: { play
                         variant="danger"
                         icon={<Unlink />}
                         disabled={unlink.isPending}
-                        onClick={() => window.confirm(`Unlink @${discord.username} from ${playerName}? They can't sign in to the site with it any more, and it could sign up as a new player.`) && unlink.mutate()}
+                        onClick={() => ask({
+                            title: `Unlink @${discord.username} from ${playerName}?`,
+                            body: 'They can\'t sign in to the site with it any more, and it could sign up as a new player.',
+                            confirm: 'Unlink',
+                            danger: true,
+                        }, () => unlink.mutate())}
                     >
                         Unlink Discord
                     </Button>

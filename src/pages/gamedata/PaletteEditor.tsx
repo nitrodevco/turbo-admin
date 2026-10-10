@@ -2,6 +2,7 @@ import { ArrowLeft, ArrowRight, Plus, Save, Trash2, Undo2 } from 'lucide-react';
 import { useMemo, useState } from 'react';
 
 import { FIGURE_KINDS, type FigurePalette, usePalettes, useSaveFigureBatch } from '#/api/gamedata';
+import { ask } from '#/components/confirm';
 import { Badge, Button, EmptyState, ErrorNotice, Input, Labeled, Loading, Panel, Select, SuccessNotice, Switch } from '#/components/ui';
 import { cx } from '#/lib/cx';
 
@@ -201,13 +202,17 @@ export const PaletteEditor = ({ canManage }: { canManage: boolean }) => {
     ].filter((x): x is string => typeof x === 'string');
 
     const choose = (id: number) => {
-        if (dirty && !window.confirm('Leave this palette? Its unsaved changes are lost.'))
-            return;
+        const go = () => {
+            setPaletteId(id);
+            setDraft(null);
+            setSelected(0);
+            save.reset();
+        };
 
-        setPaletteId(id);
-        setDraft(null);
-        setSelected(0);
-        save.reset();
+        if (dirty)
+            ask({ title: 'Leave this palette?', body: 'Its unsaved changes are lost.', confirm: 'Leave', danger: true }, go);
+        else
+            go();
     };
 
     const edit = (next: Colour[]) => setDraft(next);
@@ -236,14 +241,17 @@ export const PaletteEditor = ({ canManage }: { canManage: boolean }) => {
 
     const addPalette = () => {
         const id = Math.max(0, ...ids) + 1;
+        const go = () => {
+            setAdded([ ...added, id ]);
+            setPaletteId(id);
+            setDraft([]);
+            setSelected(0);
+        };
 
-        if (dirty && !window.confirm('Start a new palette? This one\'s unsaved changes are lost.'))
-            return;
-
-        setAdded([ ...added, id ]);
-        setPaletteId(id);
-        setDraft([]);
-        setSelected(0);
+        if (dirty)
+            ask({ title: 'Start a new palette?', body: 'This one\'s unsaved changes are lost.', confirm: 'Start new', danger: true }, go);
+        else
+            go();
     };
 
     const commit = () => {

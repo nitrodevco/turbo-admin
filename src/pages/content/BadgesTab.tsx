@@ -1,4 +1,4 @@
-import { Save, Search, UserMinus } from 'lucide-react';
+import { Save, UserMinus } from 'lucide-react';
 import { useState } from 'react';
 import { Link } from 'react-router';
 
@@ -6,6 +6,8 @@ import { badgeUrl, useClientAssets } from '#/api/assets';
 import { BADGE_RARITIES, type BadgeItem, useBadgeHolders, useBadges, useGiveBadge, useSaveText, useSetBadgeRarity, useTakeBadge } from '#/api/content';
 import { useHotelViewTexts } from '#/api/hotelView';
 import { useMe } from '#/api/queries';
+import { ask } from '#/components/confirm';
+import { SearchInput } from '#/components/SearchInput';
 import { Button, EmptyState, ErrorNotice, IconButton, Input, Labeled, Loading, Panel, Select } from '#/components/ui';
 import { cx } from '#/lib/cx';
 
@@ -73,7 +75,7 @@ const BadgeDetail = ({ badge, canManage }: { badge: BadgeItem; canManage: boolea
                                         tone="bad"
                                         className="size-7 sm:size-7"
                                         disabled={take.isPending}
-                                        onClick={() => window.confirm(`Take ${badge.code} from ${holder.name}?`) && take.mutate({ code: badge.code, playerId: holder.playerId })}
+                                        onClick={() => ask({ title: `Take ${badge.code} from ${holder.name}?`, confirm: 'Take it' }, () => take.mutate({ code: badge.code, playerId: holder.playerId }))}
                                     />
                                 )}
                             </li>
@@ -83,7 +85,7 @@ const BadgeDetail = ({ badge, canManage }: { badge: BadgeItem; canManage: boolea
             </div>
             {canManage && (
                 <Labeled label="Give it to">
-                    <PlayerPicker onPick={player => window.confirm(`Give ${badge.code} to ${player.name}?`) && give.mutate({ code: badge.code, playerId: player.id })} disabled={give.isPending} />
+                    <PlayerPicker onPick={player => ask({ title: `Give ${badge.code} to ${player.name}?`, confirm: 'Give' }, () => give.mutate({ code: badge.code, playerId: player.id }))} disabled={give.isPending} />
                 </Labeled>
             )}
             {(give.error || take.error) && <ErrorNotice error={give.error ?? take.error} />}
@@ -112,9 +114,8 @@ export const BadgesTab = ({ canManage }: { canManage: boolean }) => {
             description="Every badge players hold or that has a pinned rarity, most held first; a hundred at most. A pinned rarity reaches the hotel within five minutes."
             className="overflow-clip"
         >
-            <div className="relative border-b border-line p-3">
-                <Search className="pointer-events-none absolute top-1/2 left-6 size-4 -translate-y-1/2 text-muted" />
-                <Input type="search" value={text} onChange={event => setText(event.target.value)} placeholder="Badge code" className="w-full pl-9 sm:max-w-96" aria-label="Find badges" />
+            <div className="border-b border-line p-3">
+                <SearchInput value={text} onValueChange={setText} placeholder="Badge code" className="w-full sm:max-w-96" aria-label="Find badges" />
             </div>
             {error && <div className="p-4"><ErrorNotice error={error} /></div>}
             {!data && !error && <Loading />}

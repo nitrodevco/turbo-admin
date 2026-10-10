@@ -1,9 +1,11 @@
-import { LogOut, Save, Search, Trash2 } from 'lucide-react';
+import { LogOut, Save, Trash2 } from 'lucide-react';
 import { useState } from 'react';
 import { Link } from 'react-router';
 
 import { type BotItem, DANCES, useBotAction, useBots } from '#/api/content';
+import { ask } from '#/components/confirm';
 import { Pagination } from '#/components/Pagination';
+import { SearchInput } from '#/components/SearchInput';
 import { Badge, Button, EmptyState, ErrorNotice, Input, Labeled, Loading, Panel, Select, SuccessNotice, Switch, Textarea } from '#/components/ui';
 import { cx } from '#/lib/cx';
 
@@ -23,8 +25,8 @@ const BotEditor = ({ bot, canManage }: { bot: BotItem; canManage: boolean }) => 
             title={bot.name}
             description={<>Owned by <Link to={`/players/${bot.ownerId}`} className="text-accent hover:underline">{bot.ownerName}</Link>{placed ? <>, standing in <Link to={`/rooms/${bot.roomId}`} className="text-accent hover:underline">{bot.roomName}</Link>.</> : ', in their inventory: it can be set once it stands in a room.'}</>}
             actions={canManage && (placed
-                ? <Button variant="ghost" icon={<LogOut />} disabled={act.isPending} onClick={() => window.confirm(`Take ${bot.name} out of ${bot.roomName}, back to ${bot.ownerName}'s inventory?`) && act.mutate({ id: bot.id, pickup: true })}>Take out of the room</Button>
-                : <Button variant="ghost" icon={<Trash2 />} className="text-bad hover:text-bad" disabled={act.isPending} onClick={() => window.confirm(`Delete ${bot.name} from ${bot.ownerName}'s inventory?`) && act.mutate({ id: bot.id, remove: true })}>Delete</Button>)}
+                ? <Button variant="ghost" icon={<LogOut />} disabled={act.isPending} onClick={() => ask({ title: `Take ${bot.name} out of ${bot.roomName}, back to ${bot.ownerName}'s inventory?`, confirm: 'Take out', danger: false }, () => act.mutate({ id: bot.id, pickup: true }))}>Take out of the room</Button>
+                : <Button variant="ghost" icon={<Trash2 />} className="text-bad hover:text-bad" disabled={act.isPending} onClick={() => ask({ title: `Delete ${bot.name} from ${bot.ownerName}'s inventory?`, confirm: 'Delete' }, () => act.mutate({ id: bot.id, remove: true }))}>Delete</Button>)}
         >
             <form
                 className="flex flex-col gap-3 p-4"
@@ -97,17 +99,14 @@ export const BotsTab = ({ canManage }: { canManage: boolean }) => {
     return (
         <div className="grid items-start gap-4 lg:grid-cols-[24rem_minmax(0,1fr)]">
             <Panel className="overflow-clip">
-                <div className="relative border-b border-line p-3">
-                    <Search className="pointer-events-none absolute top-1/2 left-6 size-4 -translate-y-1/2 text-muted" />
-                    <Input
-                        type="search"
+                <div className="border-b border-line p-3">
+                    <SearchInput
                         value={text}
-                        onChange={(event) => {
-                            setText(event.target.value);
+                        onValueChange={(value) => {
+                            setText(value);
                             setPage(0);
                         }}
                         placeholder="Name, owner, bot or room id"
-                        className="w-full pl-9"
                         aria-label="Find bots"
                     />
                 </div>

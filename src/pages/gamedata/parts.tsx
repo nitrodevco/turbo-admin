@@ -2,6 +2,7 @@ import { ChevronDown, ChevronRight, Download, RefreshCw } from 'lucide-react';
 import { type ReactNode, useState } from 'react';
 
 import { type FurnitureFieldChange, IMPORT_ACTIONS, useCheckHabbo, useImportJob } from '#/api/gamedata';
+import { ask, type Question } from '#/components/confirm';
 import { Badge, type BadgeTone, Button, ErrorNotice, Loading, Panel, WarningNotice } from '#/components/ui';
 import { cx } from '#/lib/cx';
 import { fromNow } from '#/lib/time';
@@ -54,7 +55,8 @@ interface HabboUpdateProps {
     canManage: boolean;
     /** Whether there is anything to take in at all. */
     canTake: boolean;
-    confirm: string;
+    /** What to ask before taking it in; its button says "Take in". */
+    confirm: Pick<Question, 'title' | 'body'>;
     onTake: () => void;
     taking: boolean;
     takeError: unknown;
@@ -120,10 +122,7 @@ export const HabboUpdate = ({ title, version, preview, error, extra, file, canMa
                         <Button
                             icon={<Download />}
                             disabled={taking || running || !canTake}
-                            onClick={() => {
-                                if (window.confirm(confirm))
-                                    onTake();
-                            }}
+                            onClick={() => ask({ ...confirm, confirm: 'Take in', danger: false }, onTake)}
                         >
                             {running && job ? 'Taking in' : 'Take in'}
                         </Button>

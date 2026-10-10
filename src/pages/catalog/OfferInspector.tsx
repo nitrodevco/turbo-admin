@@ -2,10 +2,11 @@ import { Coins, Copy, Crown, RotateCcw, Save, Star, Trash2, X } from 'lucide-rea
 import { type FormEvent, type ReactNode, useEffect, useMemo, useState } from 'react';
 
 import { catalogCalls, type CatalogFeaturedItem, type CatalogOffer, type CatalogOfferInput, type CatalogProductInput, type CatalogTree, type EditableKind, FEATURED_MAX, useCatalogEdit } from '#/api/catalog';
+import { ask } from '#/components/confirm';
+import { toast } from '#/components/toast';
 import { Button, ErrorNotice, Input, Labeled, Select, Switch, WarningNotice } from '#/components/ui';
 import { cx } from '#/lib/cx';
 
-import { toast } from './feedback';
 import { lengthOf, membershipOfName } from './labels';
 import { LimitedSection } from './LimitedSection';
 import { givesOf } from './offers';
@@ -359,12 +360,12 @@ export const OfferInspector = ({ tree, pageId, offer, start, featured, onDone, o
                                 icon={<Trash2 />}
                                 disabled={remove.isPending}
                                 className="text-bad hover:text-bad"
-                                onClick={() => window.confirm('Delete this offer? What was bought from it stays bought.') && remove.mutate([ offer.id ], {
+                                onClick={() => ask({ title: 'Delete this offer?', body: 'What was bought from it stays bought.', confirm: 'Delete' }, () => remove.mutate([ offer.id ], {
                                     onSuccess: () => {
                                         toast('Offer deleted.');
                                         onDone();
                                     },
-                                })}
+                                }))}
                             >
                                 Delete
                             </Button>

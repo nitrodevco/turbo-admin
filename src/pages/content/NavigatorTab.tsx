@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { Link } from 'react-router';
 
 import { type NavigatorFlatCategory, type NavigatorList, useDeleteNavigator, useNavigatorContent, useSaveNavigator } from '#/api/content';
+import { ask } from '#/components/confirm';
 import { Badge, Button, EmptyState, ErrorNotice, IconButton, Input, Labeled, Loading, Panel, Switch } from '#/components/ui';
 
 /** A room category's fields as staff write them. */
@@ -49,7 +50,7 @@ const CategoryEditor = ({ category, onDone, canManage }: { category: NavigatorFl
                             icon={<Trash2 />}
                             className="ml-auto text-bad hover:text-bad"
                             disabled={remove.isPending}
-                            onClick={() => window.confirm(`Remove the category ${category.name}?`) && remove.mutate({ list: 'categories', id: category.id }, { onSuccess: onDone })}
+                            onClick={() => ask({ title: `Remove the category ${category.name}?`, confirm: 'Remove' }, () => remove.mutate({ list: 'categories', id: category.id }, { onSuccess: onDone }))}
                         >
                             Remove
                         </Button>
@@ -96,7 +97,7 @@ const SimpleList = ({ list, title, description, rows, placeholder, canManage }: 
                                     />
                                 )}
                                 <IconButton label={row.visible ? 'Hide' : 'Show'} icon={row.visible ? <EyeOff /> : <Eye />} onClick={() => save.mutate({ list, id: row.id, body: { [field]: row.name, visible: !row.visible } })} />
-                                <IconButton label="Remove" icon={<Trash2 />} tone="bad" onClick={() => window.confirm(`Remove ${row.name}?`) && remove.mutate({ list, id: row.id })} />
+                                <IconButton label="Remove" icon={<Trash2 />} tone="bad" onClick={() => ask({ title: `Remove ${row.name}?`, confirm: 'Remove' }, () => remove.mutate({ list, id: row.id }))} />
                             </>
                         )}
                     </li>

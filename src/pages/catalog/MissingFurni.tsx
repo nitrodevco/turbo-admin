@@ -1,12 +1,13 @@
-import { CheckSquare, EyeOff, PackagePlus, PackageSearch, Search, Square, X } from 'lucide-react';
+import { CheckSquare, EyeOff, PackagePlus, PackageSearch, Square, X } from 'lucide-react';
 import { useEffect, useState } from 'react';
 
 import { type AuditFacet, type AuditFurni, catalogCalls, type CatalogTree, type UnofferedScope, useCatalogEdit, useUnoffered } from '#/api/catalog';
 import { Pagination } from '#/components/Pagination';
+import { SearchInput } from '#/components/SearchInput';
+import { toast, toastError } from '#/components/toast';
 import { Button, ErrorNotice, Input, Loading, Segmented } from '#/components/ui';
 import { cx } from '#/lib/cx';
 
-import { toast, toastError } from './feedback';
 import { PageSelect, type Price, PriceFields } from './fields';
 import { ProductIcon } from './ProductIcon';
 
@@ -164,10 +165,7 @@ export const MissingFurni = ({ tree, pageId, onOpenPage, onAdded }: MissingFurni
                         ? 'Floor and wall items no offer sells. Patterns, posters, songs and pets are left out: their builders sell them.'
                         : 'Furni whose every offer is hidden, or on a page players can\'t reach.'}
                 </p>
-                <div className="relative">
-                    <Search className="pointer-events-none absolute top-1/2 left-2.5 size-4 -translate-y-1/2 text-muted" />
-                    <Input type="search" value={text} onChange={event => setText(event.target.value)} placeholder="Name or class name" aria-label="Find furni" className="w-full pl-8" />
-                </div>
+                <SearchInput value={text} onValueChange={setText} placeholder="Name or class name" aria-label="Find furni" />
                 {data && (
                     <>
                         <FacetList title="Lines" facets={data.lines} value={line} none="no line" onChange={filterLine} />

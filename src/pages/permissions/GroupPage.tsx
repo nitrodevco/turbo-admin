@@ -3,6 +3,7 @@ import { type FormEvent, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router';
 
 import { groupCalls, type GroupResponse, useGroup, useGroupAudit, useGroupMembers, useGroups, usePermissionChange } from '#/api/permissions';
+import { ask } from '#/components/confirm';
 import { TabbedPanel } from '#/components/TabbedPanel';
 import { Badge, Button, EmptyState, ErrorNotice, Field, Loading, PageBody, Panel, Select } from '#/components/ui';
 
@@ -26,10 +27,9 @@ const SettingsCard = ({ group }: { group: GroupResponse }) => {
     };
 
     const handleDelete = () => {
-        if (!window.confirm(`Delete the group ${group.name}? Its members leave it, and its nodes, meta and parents go with it.`))
-            return;
-
-        remove.mutate([], { onSuccess: () => navigate('/permissions/groups') });
+        ask({ title: `Delete the group ${group.name}?`, body: 'Its members leave it, and its nodes, meta and parents go with it.', confirm: 'Delete' }, () => {
+            remove.mutate([], { onSuccess: () => navigate('/permissions/groups') });
+        });
     };
 
     return (

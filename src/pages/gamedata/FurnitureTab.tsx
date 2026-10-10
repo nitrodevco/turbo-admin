@@ -1,8 +1,9 @@
-import { Save, Search, Undo2 } from 'lucide-react';
+import { Save, Undo2 } from 'lucide-react';
 import { type ReactNode, useState } from 'react';
 import { useSearchParams } from 'react-router';
 
 import { FILES, FURNITURE_KINDS, type FurnitureDefinition, type GamedataStatus, useFurnitureDefinition, useFurnitureSearch, useImport, useImportPreview, useUpdateDefinition } from '#/api/gamedata';
+import { SearchInput } from '#/components/SearchInput';
 import { Badge, Button, EmptyState, ErrorNotice, Input, Labeled, Loading, Panel, SuccessNotice, Switch, WarningNotice } from '#/components/ui';
 import { cx } from '#/lib/cx';
 
@@ -207,7 +208,7 @@ const HabboFurniture = ({ status }: { status: GamedataStatus }) => {
             file={FILES.furnitureData}
             canManage={status.canManage}
             canTake={!!preview && (preview.added + preview.updated + preview.kept > 0 || preview.filesToRead > 0)}
-            confirm={preview ? `Take in Habbo ${preview.release.revision}? ${preview.filesToRead} furniture files are read first, then ${preview.added} furniture are added and ${preview.updated} updated. It runs in the background and can be rolled back from the history.` : ''}
+            confirm={preview ? { title: `Take in Habbo ${preview.release.revision}?`, body: `${preview.filesToRead} furniture files are read first, then ${preview.added} furniture are added and ${preview.updated} updated. It runs in the background and can be rolled back from the history.` } : { title: '' }}
             onTake={() => preview && take.mutate(preview.release.id)}
             taking={take.isPending}
             takeError={take.error}
@@ -240,10 +241,7 @@ export const FurnitureTab = ({ status }: { status: GamedataStatus }) => {
             <div className="grid items-start gap-4 lg:grid-cols-[20rem_1fr]">
                 <Panel className="overflow-clip lg:sticky lg:top-6">
                     <div className="border-b border-line p-3">
-                        <div className="relative">
-                            <Search className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted" />
-                            <Input type="search" value={text} onChange={event => setText(event.target.value)} placeholder="Classname or id" className="w-full pl-9" aria-label="Find furniture" />
-                        </div>
+                        <SearchInput value={text} onValueChange={setText} placeholder="Classname or id" aria-label="Find furniture" />
                     </div>
                     {!text.trim() && <EmptyState>Type a classname or id.</EmptyState>}
                     {text.trim() && !results && isFetching && <Loading />}

@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { furniIconUrl, useClientAssets } from '#/api/assets';
 import { useFurnitureSearch } from '#/api/catalog';
 import { BONUS_SOURCES, type BonusRareCampaign, PURCHASE_RESULTS, useBonusRareCampaigns, useBonusRareStanding, useDeleteBonusRareCampaign, useRecordBonusRarePurchase, useSaveBonusRareCampaign } from '#/api/hotelView';
+import { ask } from '#/components/confirm';
 import { Badge, Button, EmptyState, ErrorNotice, Input, Labeled, Loading, Panel, Select, SuccessNotice } from '#/components/ui';
 import { cx } from '#/lib/cx';
 
@@ -127,7 +128,7 @@ const CampaignEditor = ({ campaign, now, onDone, disabled }: { campaign: BonusRa
                             icon={<Trash2 />}
                             className="ml-auto text-bad hover:text-bad"
                             disabled={remove.isPending}
-                            onClick={() => window.confirm(`Remove the campaign ${campaign.code}? Players' progress stays under its code.`) && remove.mutate(campaign.id, { onSuccess: onDone })}
+                            onClick={() => ask({ title: `Remove the campaign ${campaign.code}?`, body: 'Players\' progress stays under its code.', confirm: 'Remove' }, () => remove.mutate(campaign.id, { onSuccess: onDone }))}
                         >
                             Remove
                         </Button>

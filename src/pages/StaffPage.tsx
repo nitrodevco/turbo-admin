@@ -3,7 +3,8 @@ import { type FormEvent, useState } from 'react';
 
 import { post } from '#/api/client';
 import type { PasskeyLinkResponse } from '#/api/types';
-import { Button, ErrorNotice, Field, Input, PageBody, PageHeader, Panel, SuccessNotice, WarningNotice } from '#/components/ui';
+import { Button, ErrorNotice, Field, Input, PageBody, Panel, SuccessNotice, WarningNotice } from '#/components/ui';
+import { PermissionsHeader } from '#/pages/permissions/common';
 
 const LinkResult = ({ result }: { result: PasskeyLinkResponse }) => {
     const [ copied, setCopied ] = useState(false);
@@ -73,7 +74,7 @@ export const StaffPage = () => {
 
     return (
         <>
-            <PageHeader title="Staff passkeys" description="Setup and reset links for other staff's passkeys" />
+            <PermissionsHeader section="passkeys" description="Setup and reset links for other staff's passkeys" />
             <PageBody className="grid max-w-2xl gap-5">
                 <Panel
                     title="Set up or reset a passkey"

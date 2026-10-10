@@ -1,6 +1,7 @@
 import { Plus, Trash2, X } from 'lucide-react';
 import { useState } from 'react';
 
+import { ask } from '#/components/confirm';
 import { Button, Input, Labeled, Panel, Select, Switch } from '#/components/ui';
 
 import type { HotelViewDraft } from './draft';
@@ -22,18 +23,19 @@ export const BackgroundsTab = ({ draft, codes, now, disabled }: { draft: HotelVi
     const chosen = set === '' || codes.includes(set) ? set : '';
     const problem = making === null ? null : codeProblem(making.trim(), codes);
 
-    const remove = (code: string) => {
-        if (!window.confirm(`Remove the background set ${code}? It is taken out of the schedule too.`)) return;
+    const remove = (code: string) => ask(
+        { title: `Remove the background set ${code}?`, body: 'It is taken out of the schedule too.', confirm: 'Remove' },
+        () => {
+            const schedule = formatSchedule(parseSchedule(draft.text(BG_TIMING)).filter(x => x.code !== code));
 
-        const schedule = formatSchedule(parseSchedule(draft.text(BG_TIMING)).filter(x => x.code !== code));
-
-        draft.setMany({
-            ...Object.fromEntries(BACKGROUND_LAYERS.flatMap(({ name }) => [ [ layerKey(code, name, 'uri'), null ], [ layerKey(code, name, 'visible'), null ] ])),
-            ...Object.fromEntries(Array.from({ length: MAX_MOVING_OBJECTS }, (_, i) => [ bgObjectKey(code, i + 1), null ])),
-            [BG_TIMING]: schedule ? JSON.stringify(schedule) : null,
-        });
-        setSet('');
-    };
+            draft.setMany({
+                ...Object.fromEntries(BACKGROUND_LAYERS.flatMap(({ name }) => [ [ layerKey(code, name, 'uri'), null ], [ layerKey(code, name, 'visible'), null ] ])),
+                ...Object.fromEntries(Array.from({ length: MAX_MOVING_OBJECTS }, (_, i) => [ bgObjectKey(code, i + 1), null ])),
+                [BG_TIMING]: schedule ? JSON.stringify(schedule) : null,
+            });
+            setSet('');
+        },
+    );
 
     return (
         <div className="flex flex-col gap-4">

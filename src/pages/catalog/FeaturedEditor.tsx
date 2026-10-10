@@ -6,10 +6,10 @@ import { useState } from 'react';
 
 import { promoImageUrl, useClientAssets } from '#/api/assets';
 import { catalogCalls, type CatalogFeaturedInput, type CatalogFeaturedItem, type CatalogOffer, type CatalogTree, FEATURED_MAX, type FeaturedLinkType, useCatalogEdit } from '#/api/catalog';
+import { toast } from '#/components/toast';
 import { Button, ErrorNotice, Input, Labeled, Segmented, Select } from '#/components/ui';
 import { cx } from '#/lib/cx';
 
-import { toast } from './feedback';
 import { givesOf } from './offers';
 
 interface ItemDraft extends CatalogFeaturedInput {

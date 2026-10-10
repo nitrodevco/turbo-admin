@@ -6,6 +6,7 @@ import { post } from '#/api/client';
 import { actOnPlayer, type PlayerActionRequest, type PlayerDetailResponse, usePlayerAbilities } from '#/api/players';
 import type { RunCommandResponse } from '#/api/types';
 import { CommandAnswer } from '#/components/CommandAnswer';
+import { ask, type Question } from '#/components/confirm';
 import { type Tab, TabbedPanel } from '#/components/TabbedPanel';
 import { Button, ErrorNotice, Input, Label, Labeled, Segmented, Select, Textarea } from '#/components/ui';
 
@@ -68,11 +69,16 @@ export const PlayerActions = ({ player }: { player: PlayerDetailResponse }) => {
     if (!can)
         return null;
 
-    const run = (request: PlayerActionRequest, confirm?: string) => {
-        if (confirm && !window.confirm(confirm))
-            return;
+    const run = (request: PlayerActionRequest, question?: Question, then?: () => void) => {
+        const go = () => {
+            act.mutate(() => actOnPlayer(player.id, request));
+            then?.();
+        };
 
-        act.mutate(() => actOnPlayer(player.id, request));
+        if (question)
+            ask(question, go);
+        else
+            go();
     };
 
     const confirmPending = () => act.mutate(() => post<RunCommandResponse>('/commands/run', { line: 'confirm' }));
@@ -131,7 +137,7 @@ export const PlayerActions = ({ player }: { player: PlayerDetailResponse }) => {
                                         variant="danger"
                                         icon={<Gavel />}
                                         disabled={act.isPending}
-                                        onClick={() => run({ action: 'ban', duration: banFor, reason: banReason.trim() || undefined }, `Ban ${player.name} from the hotel?`)}
+                                        onClick={() => run({ action: 'ban', duration: banFor, reason: banReason.trim() || undefined }, { title: `Ban ${player.name} from the hotel?`, confirm: 'Ban' })}
                                     >
                                         Ban
                                     </Button>
@@ -170,8 +176,11 @@ export const PlayerActions = ({ player }: { player: PlayerDetailResponse }) => {
                 <form
                     onSubmit={(event) => {
                         event.preventDefault();
-                        run({ action: 'give', currency, amount: Number(amount) }, Number(amount) < 0 ? `Take ${-Number(amount)} ${currency} from ${player.name}?` : undefined);
-                        setAmount('');
+                        run(
+                            { action: 'give', currency, amount: Number(amount) },
+                            Number(amount) < 0 ? { title: `Take ${-Number(amount)} ${currency} from ${player.name}?`, confirm: 'Take' } : undefined,
+                            () => setAmount(''),
+                        );
                     }}
                 >
                     <Block title="Give or take">
@@ -219,7 +228,7 @@ export const PlayerActions = ({ player }: { player: PlayerDetailResponse }) => {
                                         <Button
                                             variant="ghost"
                                             disabled={act.isPending || badge.trim() === ''}
-                                            onClick={() => run({ action: 'takebadge', badge: badge.trim() }, `Take the badge ${badge.trim()} from ${player.name}?`)}
+                                            onClick={() => run({ action: 'takebadge', badge: badge.trim() }, { title: `Take the badge ${badge.trim()} from ${player.name}?`, confirm: 'Take badge' })}
                                         >
                                             Take
                                         </Button>
@@ -261,7 +270,7 @@ export const PlayerActions = ({ player }: { player: PlayerDetailResponse }) => {
                     variant="danger"
                     icon={<Unplug />}
                     disabled={act.isPending}
-                    onClick={() => run({ action: 'disconnect' }, `Close ${player.name}'s connection?`)}
+                    onClick={() => run({ action: 'disconnect' }, { title: `Close ${player.name}'s connection?`, confirm: 'Disconnect', danger: true })}
                 >
                     Disconnect
                 </Button>

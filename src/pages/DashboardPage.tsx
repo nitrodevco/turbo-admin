@@ -4,16 +4,12 @@ import { useLive } from '#/api/live';
 import { useDashboard, useMe } from '#/api/queries';
 import type { AvailabilityPhase } from '#/api/types';
 import { Badge, EmptyState, ErrorNotice, Label, LiveBadge, Loading, PageBody, PageHeader, Panel, Stat } from '#/components/ui';
+import { phaseOf } from '#/layout/availability';
+import { useHubTabs } from '#/layout/nav';
 
 import { HotelControls } from './HotelControls';
 
-const AVAILABILITY: Record<string, { label: string; tone: 'green' | 'amber' | 'red' }> = {
-    Open: { label: 'Open', tone: 'green' },
-    MaintenanceScheduled: { label: 'Maintenance scheduled', tone: 'amber' },
-    Maintenance: { label: 'In maintenance', tone: 'amber' },
-    ShutdownScheduled: { label: 'Shutdown scheduled', tone: 'red' },
-    ShuttingDown: { label: 'Shutting down', tone: 'red' },
-};
+const TONES = { good: 'green', warn: 'amber', bad: 'red' } as const;
 
 const formatUptime = (startedAtUtc: string) => {
     const minutes = Math.max(0, Math.floor((Date.now() - new Date(startedAtUtc).getTime()) / 60_000));
@@ -24,18 +20,19 @@ const formatUptime = (startedAtUtc: string) => {
 };
 
 const AvailabilityBadge = ({ phase, atUtc }: { phase: AvailabilityPhase; atUtc: string | null }) => {
-    const known = AVAILABILITY[phase];
+    const known = phaseOf(phase);
 
     return (
-        <Badge tone={known?.tone ?? 'neutral'}>
+        <Badge tone={TONES[known.tone]}>
             <span className="size-1.5 rounded-full bg-current" />
-            {known?.label ?? phase}
+            {known.label}
             {atUtc && <span className="font-normal">at {new Date(atUtc).toLocaleTimeString()}</span>}
         </Badge>
     );
 };
 
 export const DashboardPage = () => {
+    const tabs = useHubTabs('overview');
     const { data, error, isPending, dataUpdatedAt } = useDashboard();
     const canViewRooms = useMe().data?.canViewRooms ?? false;
     const live = useLive(state => state.connected);
@@ -43,7 +40,8 @@ export const DashboardPage = () => {
     return (
         <>
             <PageHeader
-                title="Dashboard"
+                title="Overview"
+                tabs={tabs}
                 description={data ? `Turbo ${data.version} · updated ${new Date(dataUpdatedAt).toLocaleTimeString()}` : 'The hotel right now'}
             >
                 <LiveBadge live={live}>{live ? 'LIVE' : 'EVERY 10S'}</LiveBadge>
@@ -89,7 +87,7 @@ export const DashboardPage = () => {
                                             )}
                                 </Panel>
                             </div>
-                            <div className="min-w-0 flex-[1_1_320px] max-lg:order-first">
+                            <div className="min-w-0 flex-[1_1_320px] max-lg:hidden">
                                 <HotelControls phase={data.availability} />
                             </div>
                         </div>

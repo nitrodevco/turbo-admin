@@ -3,16 +3,16 @@ import { ArrowLeft, Check, Coins, Hammer, Wand2 } from 'lucide-react';
 import { useMemo, useState } from 'react';
 
 import { type BuildPlan, type BuildRequest, catalogCalls, type CatalogPageDetail, type CatalogTree, type PageDisplay, useCatalogEdit, useFurniLines } from '#/api/catalog';
+import { Modal } from '#/components/Modal';
+import { toast } from '#/components/toast';
 import { Button, ErrorNotice, Input, Labeled, Segmented, Select, Switch, WarningNotice } from '#/components/ui';
 import { cx } from '#/lib/cx';
 
 import { buildersFor, type BuilderSpec } from './builders';
-import { toast } from './feedback';
 import { PageSelect } from './fields';
 import { IconPicker } from './IconPicker';
 import { DISPLAY_LABELS } from './labels';
 import { layoutOf } from './layouts';
-import { Modal } from './Modal';
 import { PageIcon } from './PageTree';
 import { ProductIcon } from './ProductIcon';
 

@@ -3,6 +3,7 @@ import { Check, Copy, KeyRound, Trash2 } from 'lucide-react';
 import { useState } from 'react';
 
 import { type IssuedTicket, issueTicket, revokeTicket, useTicketStatus } from '#/api/players';
+import { ask } from '#/components/confirm';
 import { Button, ErrorNotice, Label, Panel, Segmented, Switch, WarningNotice } from '#/components/ui';
 import { formatDateTime } from '#/pages/rooms/labels';
 
@@ -110,7 +111,12 @@ export const LoginTicketCard = ({ playerId, playerName }: { playerId: number; pl
                                     <Button
                                         icon={<KeyRound />}
                                         disabled={issue.isPending}
-                                        onClick={() => (!current?.hasTicket || window.confirm(`${playerName}'s ticket stops working. Issue a new one?`)) && issue.mutate()}
+                                        onClick={() => {
+                                            if (current?.hasTicket)
+                                                ask({ title: 'Issue a new ticket?', body: `${playerName}'s ticket stops working.`, confirm: 'Issue a new one', danger: true }, () => issue.mutate());
+                                            else
+                                                issue.mutate();
+                                        }}
                                     >
                                         {current?.hasTicket ? 'Issue a new ticket' : 'Issue a ticket'}
                                     </Button>
@@ -119,7 +125,7 @@ export const LoginTicketCard = ({ playerId, playerName }: { playerId: number; pl
                                             variant="ghost"
                                             icon={<Trash2 />}
                                             disabled={revoke.isPending}
-                                            onClick={() => window.confirm(`Take ${playerName}'s ticket away? It stops working at once.`) && revoke.mutate()}
+                                            onClick={() => ask({ title: `Take ${playerName}'s ticket away?`, body: 'It stops working at once.', confirm: 'Take it away' }, () => revoke.mutate())}
                                         >
                                             Take it away
                                         </Button>

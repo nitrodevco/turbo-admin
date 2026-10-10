@@ -1,10 +1,10 @@
-import { Search } from 'lucide-react';
 import { type FormEvent, useState } from 'react';
 import { Link, useNavigate } from 'react-router';
 
 import { findPlayer, useStaff } from '#/api/permissions';
 import { Row, RowList } from '#/components/RowList';
-import { Badge, Button, EmptyState, ErrorNotice, Input, Loading, PageBody, Panel } from '#/components/ui';
+import { SearchInput } from '#/components/SearchInput';
+import { Badge, Button, EmptyState, ErrorNotice, Loading, PageBody, Panel } from '#/components/ui';
 
 import { Expiry, PermissionsHeader } from './common';
 
@@ -37,10 +37,7 @@ export const PlayersPage = () => {
             <PageBody className="grid gap-5">
                 <Panel title="Find a player">
                     <form onSubmit={handleSubmit} className="flex flex-wrap gap-2 p-4">
-                        <div className="relative min-w-48 flex-1 sm:max-w-80">
-                            <Search className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted" />
-                            <Input value={name} onChange={event => setName(event.target.value)} placeholder="Their exact name" aria-label="Player name" className="w-full pl-9" />
-                        </div>
+                        <SearchInput value={name} onValueChange={setName} placeholder="Their exact name" aria-label="Player name" className="min-w-48 flex-1 sm:max-w-80" />
                         <Button type="submit" disabled={busy || name.trim() === ''}>Open</Button>
                     </form>
                     {error !== null && <div className="px-4 pb-4"><ErrorNotice error={error} /></div>}

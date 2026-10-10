@@ -1,4 +1,4 @@
-import { Search, X } from 'lucide-react';
+import { X } from 'lucide-react';
 import { type FormEvent, useId, useState } from 'react';
 import { Link, useSearchParams } from 'react-router';
 
@@ -6,7 +6,9 @@ import { type CommandLogEntry, type CommandLogFilter, useCommandLog } from '#/ap
 import { useCommands } from '#/api/queries';
 import { ListToolbar } from '#/components/ListToolbar';
 import { PhoneLabel, Row, RowList } from '#/components/RowList';
+import { SearchInput } from '#/components/SearchInput';
 import { Badge, type BadgeTone, Button, EmptyState, ErrorNotice, Input, Loading, PageBody, PageHeader, Panel, Select } from '#/components/ui';
+import { useHubTabs } from '#/layout/nav';
 import { cx } from '#/lib/cx';
 import { fromNow } from '#/lib/time';
 import { formatDateTime } from '#/pages/rooms/labels';
@@ -83,6 +85,7 @@ const filterOf = (params: URLSearchParams): CommandLogFilter => ({
  * can link straight to their commands.
  */
 export const CommandLogPage = () => {
+    const tabs = useHubTabs('logs');
     const [ params, setParams ] = useSearchParams();
     const filter = filterOf(params);
     const page = Math.max(1, Number(params.get('page')) || 1);
@@ -120,7 +123,8 @@ export const CommandLogPage = () => {
     return (
         <>
             <PageHeader
-                title="Command log"
+                title="Logs"
+                tabs={tabs}
                 description={log.data
                     ? `${log.data.total.toLocaleString()} ${log.data.total === 1 ? 'command' : 'commands'}${filtered ? ' matching' : ' logged'}`
                     : 'Who ran what, where, and how it went'}
@@ -137,17 +141,13 @@ export const CommandLogPage = () => {
                         }}
                     >
                         <form onSubmit={handleSubmit} className="flex min-w-0 flex-1 flex-wrap items-center gap-2">
-                            <div className="relative min-w-40 flex-1 sm:max-w-56">
-                                <Search className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted" />
-                                <Input
-                                    type="search"
-                                    value={draft.player}
-                                    onChange={event => setDraft({ ...draft, player: event.target.value })}
-                                    placeholder="Player name or id"
-                                    aria-label="Player"
-                                    className="w-full pl-9"
-                                />
-                            </div>
+                            <SearchInput
+                                value={draft.player}
+                                onValueChange={player => setDraft({ ...draft, player })}
+                                placeholder="Player name or id"
+                                aria-label="Player"
+                                className="min-w-40 flex-1 sm:max-w-56"
+                            />
                             <Input
                                 type="search"
                                 value={draft.command}

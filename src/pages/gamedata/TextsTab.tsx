@@ -1,9 +1,11 @@
-import { Plus, Save, Search, Trash2, X } from 'lucide-react';
+import { Plus, Save, Trash2, X } from 'lucide-react';
 import { useState } from 'react';
 import { useSearchParams } from 'react-router';
 
 import { FILES, type GamedataStatus, type TextEntry, useDeleteText, useSaveText, useTextImport, useTextImportPreview, useTextSearch } from '#/api/gamedata';
+import { ask } from '#/components/confirm';
 import { ListToolbar } from '#/components/ListToolbar';
+import { SearchInput } from '#/components/SearchInput';
 import { Badge, Button, EmptyState, ErrorNotice, Input, Labeled, Loading, Panel, Textarea } from '#/components/ui';
 import { cx } from '#/lib/cx';
 
@@ -24,7 +26,7 @@ const HabboTexts = ({ status }: { status: GamedataStatus }) => {
             file={FILES.externalTexts}
             canManage={status.canManage}
             canTake={!!preview && preview.added + preview.updated + preview.kept > 0}
-            confirm={preview ? `Take in Habbo's texts? ${preview.added} are added and ${preview.updated} updated. It runs in the background and can be rolled back from the history.` : ''}
+            confirm={preview ? { title: 'Take in Habbo\'s texts?', body: `${preview.added} are added and ${preview.updated} updated. It runs in the background and can be rolled back from the history.` } : { title: '' }}
             onTake={() => preview && take.mutate(preview.version.id)}
             taking={take.isPending}
             takeError={take.error}
@@ -78,10 +80,14 @@ const TextEditor = ({ text, canManage, onDone }: { text: TextEntry | null; canMa
                             icon={<Trash2 />}
                             className="ml-auto text-bad hover:text-bad"
                             disabled={remove.isPending}
-                            onClick={() => {
-                                if (window.confirm(`Remove the text ${text.key}? Habbo's later updates leave it removed unless Habbo changes it.`))
-                                    remove.mutate(text.key, { onSuccess: onDone });
-                            }}
+                            onClick={() => ask(
+                                {
+                                    title: `Remove the text ${text.key}?`,
+                                    body: 'Habbo\'s later updates leave it removed unless Habbo changes it.',
+                                    confirm: 'Remove',
+                                },
+                                () => remove.mutate(text.key, { onSuccess: onDone }),
+                            )}
                         >
                             Remove
                         </Button>
@@ -114,20 +120,16 @@ export const TextsTab = ({ status }: { status: GamedataStatus }) => {
                     watch={[ text, page ]}
                     page={{ offset: page * size, limit: size, total: found?.total, onChange: offset => setPage(Math.floor(offset / size)) }}
                 >
-                    <div className="relative min-w-48 flex-1 sm:max-w-96">
-                        <Search className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted" />
-                        <Input
-                            type="search"
-                            value={text}
-                            onChange={(event) => {
-                                setText(event.target.value);
-                                setPage(0);
-                            }}
-                            placeholder="Key or text"
-                            className="w-full pl-9"
-                            aria-label="Find texts"
-                        />
-                    </div>
+                    <SearchInput
+                        value={text}
+                        onValueChange={(value) => {
+                            setText(value);
+                            setPage(0);
+                        }}
+                        placeholder="Key or text"
+                        className="min-w-48 flex-1 sm:max-w-96"
+                        aria-label="Find texts"
+                    />
                     {status.canManage && <Button variant="secondary" icon={<Plus />} onClick={() => setOpen('')}>New text</Button>}
                 </ListToolbar>
                 {open === '' && (

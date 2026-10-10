@@ -3,6 +3,7 @@ import { useState } from 'react';
 
 import { promoImageUrl, useClientAssets } from '#/api/assets';
 import { type ExpiringPage, useDeleteExpiringPage, useExpiringPages, useHotelViewTexts, useSaveExpiringPage, useSaveHotelView } from '#/api/hotelView';
+import { ask } from '#/components/confirm';
 import { Badge, Button, EmptyState, ErrorNotice, Input, Labeled, Loading, Panel } from '#/components/ui';
 
 import { inputToIso, isoTime, isoToInput, pageExpiryTextKey } from './model';
@@ -71,7 +72,7 @@ const ExpiryRow = ({ page, now, disabled }: { page: ExpiringPage; now: number; d
                 {!disabled && (
                     <>
                         <Button variant="secondary" icon={<Save />} disabled={at === isoToInput(page.expiresAt) || !at || save.isPending} onClick={() => save.mutate({ pageId: page.pageId, expiresAt: inputToIso(at)!, image: page.image })}>Save</Button>
-                        <Button variant="ghost" icon={<Trash2 />} className="text-bad hover:text-bad" disabled={remove.isPending} onClick={() => window.confirm(`Stop counting down to ${page.pageName}?`) && remove.mutate(page.pageId)}>Remove</Button>
+                        <Button variant="ghost" icon={<Trash2 />} className="text-bad hover:text-bad" disabled={remove.isPending} onClick={() => ask({ title: `Stop counting down to ${page.pageName}?`, confirm: 'Remove', danger: true }, () => remove.mutate(page.pageId))}>Remove</Button>
                     </>
                 )}
             </div>

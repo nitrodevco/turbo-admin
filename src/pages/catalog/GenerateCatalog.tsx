@@ -3,10 +3,11 @@ import { ArrowRightLeft, ChevronRight, EyeOff, Hammer, Layers, Replace, Sparkles
 import { type ReactNode, useState } from 'react';
 
 import { catalogCalls, type CatalogTree, type GeneratedPage, type GenerateMode, type GeneratePageEdit, type GeneratePlan, type GenerateRequest, type GenerateSection, useCatalogEdit } from '#/api/catalog';
+import { ask } from '#/components/confirm';
+import { celebrate, toast, toastError } from '#/components/toast';
 import { Button, ErrorNotice, Input, Labeled, Switch } from '#/components/ui';
 import { cx } from '#/lib/cx';
 
-import { celebrate, toast, toastError } from './feedback';
 import { type Price, PriceFields } from './fields';
 import { IconPicker } from './IconPicker';
 import { layoutOf } from './layouts';
@@ -199,22 +200,21 @@ export const GenerateCatalog = ({ tree, onDone }: { tree: CatalogTree; onDone: (
     });
 
     const apply = (button: HTMLElement) => {
-        const message = mode === 'replace'
-            ? `Generate a fresh catalog? The ${data?.archivedTabs ?? 0} tabs there now go, with everything under them, into a hidden tab. Nothing goes live until you publish, and it's one step to undo.`
-            : 'Generate a catalog beside this one? Its tabs start hidden. Nothing goes live until you publish, and it\'s one step to undo.';
+        const question = mode === 'replace'
+            ? { title: 'Generate a fresh catalog?', body: `The ${data?.archivedTabs ?? 0} tabs there now go, with everything under them, into a hidden tab. Nothing goes live until you publish, and it's one step to undo.` }
+            : { title: 'Generate a catalog beside this one?', body: 'Its tabs start hidden. Nothing goes live until you publish, and it\'s one step to undo.' };
 
-        if (!window.confirm(message))
-            return;
-
-        generate.mutate([ request() ], {
-            onSuccess: (result) => {
-                celebrate(button);
-                toast(`Generated ${result.pages.toLocaleString()} pages: ${result.offersCreated.toLocaleString()} offers made, ${result.offersMoved.toLocaleString()} moved. Look it over, then publish.`);
-                plan.reset();
-                setEdits(new Map());
-                onDone();
-            },
-            onError: toastError,
+        ask({ ...question, confirm: 'Generate' }, () => {
+            generate.mutate([ request() ], {
+                onSuccess: (result) => {
+                    celebrate(button);
+                    toast(`Generated ${result.pages.toLocaleString()} pages: ${result.offersCreated.toLocaleString()} offers made, ${result.offersMoved.toLocaleString()} moved. Look it over, then publish.`);
+                    plan.reset();
+                    setEdits(new Map());
+                    onDone();
+                },
+                onError: toastError,
+            });
         });
     };
 

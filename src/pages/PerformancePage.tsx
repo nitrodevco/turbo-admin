@@ -4,6 +4,7 @@ import { type ReactNode, useState } from 'react';
 import { type PerformancePoint, type PerformanceStage, usePerformance } from '#/api/performance';
 import { type ChartPoint, type ChartSeries, ChartTable, LineChart } from '#/components/LineChart';
 import { EmptyState, ErrorNotice, IconButton, Loading, PageBody, PageHeader, Panel, Segmented, Stat } from '#/components/ui';
+import { useHubTabs } from '#/layout/nav';
 
 const RANGES = [
     { value: '1', label: '1 hour' },
@@ -120,6 +121,7 @@ const StageTable = ({ stages }: { stages: PerformanceStage[] }) => (
  * memory, so they start again when it restarts.
  */
 export const PerformancePage = () => {
+    const tabs = useHubTabs('overview');
     const [ hours, setHours ] = useState('1');
     const { data, error, isPending, isFetching, isPlaceholderData } = usePerformance(Number(hours));
     const points = data?.points ?? [];
@@ -130,7 +132,8 @@ export const PerformancePage = () => {
     return (
         <>
             <PageHeader
-                title="Performance"
+                title="Overview"
+                tabs={tabs}
                 description={data?.recordingSinceUtc
                     ? `This server, sampled every ${data.sampleSeconds} s since ${new Date(data.recordingSinceUtc).toLocaleString()}`
                     : 'How this server is running'}

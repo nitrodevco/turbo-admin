@@ -1,8 +1,9 @@
-import { History, KeyRound, ListTree, Search, Users } from 'lucide-react';
+import { History, KeyRound, ListTree, Search, ShieldCheck, Users } from 'lucide-react';
 import type { ReactNode } from 'react';
 import { Link } from 'react-router';
 
 import type { AuditEntry } from '#/api/permissions';
+import { useMe } from '#/api/queries';
 import { PhoneLabel, Row, RowList } from '#/components/RowList';
 import type { TabItem } from '#/components/Tabs';
 import { Badge, EmptyState, PageHeader, Select } from '#/components/ui';
@@ -10,7 +11,7 @@ import { formatDateTime } from '#/pages/rooms/labels';
 
 import { DURATIONS, targetLink } from './links';
 
-export type Section = 'groups' | 'players' | 'search' | 'log' | 'nodes';
+export type Section = 'groups' | 'players' | 'search' | 'log' | 'nodes' | 'passkeys';
 
 const SECTIONS: TabItem[] = [
     { value: 'groups', label: 'Groups', icon: <ListTree />, to: '/permissions/groups' },
@@ -20,23 +21,33 @@ const SECTIONS: TabItem[] = [
     { value: 'nodes', label: 'Nodes', icon: <KeyRound />, to: '/permissions/nodes' },
 ];
 
-/** The header every permissions page shares: its own title, and the section's tabs under it. */
-export const PermissionsHeader = ({ section, title = 'Permissions', description, back, children }: {
+const PASSKEYS: TabItem = { value: 'passkeys', label: 'Staff passkeys', icon: <ShieldCheck />, to: '/staff' };
+
+/**
+ * The header every access page shares: its own title, and the sections' tabs under it, the
+ * permissions' and the staff passkeys', each only for who may open it.
+ */
+export const PermissionsHeader = ({ section, title = 'Access', description, back, children }: {
     section: Section;
     title?: string;
     description?: ReactNode;
     back?: { to: string; label: string };
     children?: ReactNode;
-}) => (
-    <PageHeader
-        title={title}
-        description={description}
-        back={back}
-        tabs={{ items: SECTIONS, value: section }}
-    >
-        {children}
-    </PageHeader>
-);
+}) => {
+    const { data: me } = useMe();
+    const items = [ ...(me?.canViewPermissions ? SECTIONS : []), ...(me?.canResetPasskeys ? [ PASSKEYS ] : []) ];
+
+    return (
+        <PageHeader
+            title={title}
+            description={description}
+            back={back}
+            tabs={items.length > 1 ? { items, value: section } : undefined}
+        >
+            {children}
+        </PageHeader>
+    );
+};
 
 /** When an assignment ends, or that it does not. */
 export const Expiry = ({ at }: { at: string | null }) =>

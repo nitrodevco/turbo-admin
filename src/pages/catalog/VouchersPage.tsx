@@ -1,14 +1,18 @@
-import { Copy, Download, Plus, Save, Search, Sparkles, Trash2, X } from 'lucide-react';
+import { Copy, Download, Plus, Save, Sparkles, Trash2, X } from 'lucide-react';
 import { useState } from 'react';
 import { Link } from 'react-router';
 
 import { furniIconUrl, useClientAssets } from '#/api/assets';
 import { useCatalogTree, useFurnitureSearch } from '#/api/catalog';
 import { useDeleteVoucher, useGenerateVouchers, useSaveVoucher, useVoucherRedemptions, useVouchers, type VoucherDraft, type VoucherItem } from '#/api/vouchers';
+import { ask } from '#/components/confirm';
 import { ListToolbar } from '#/components/ListToolbar';
+import { SearchInput } from '#/components/SearchInput';
 import { Badge, Button, EmptyState, ErrorNotice, Input, Labeled, Loading, PageBody, PageHeader, Panel, Select, SuccessNotice, Switch } from '#/components/ui';
 import { cx } from '#/lib/cx';
 import { inputToIso, isoTime, isoToInput } from '#/pages/hotel-view/model';
+
+import { catalogTabs } from './catalogTabs';
 
 const EMPTY: VoucherDraft = {
     code: '',
@@ -194,7 +198,7 @@ const VoucherEditor = ({ item, onDone, disabled }: { item: VoucherItem | null; o
                             icon={<Trash2 />}
                             className="ml-auto text-bad hover:text-bad"
                             disabled={remove.isPending}
-                            onClick={() => window.confirm(`Delete the voucher ${item.voucher.code}? Who redeemed it is forgotten too.`) && remove.mutate(item.voucher.id, { onSuccess: onDone })}
+                            onClick={() => ask({ title: `Delete the voucher ${item.voucher.code}?`, body: 'Who redeemed it is forgotten too.', confirm: 'Delete' }, () => remove.mutate(item.voucher.id, { onSuccess: onDone }))}
                         >
                             Delete
                         </Button>
@@ -286,7 +290,7 @@ export const VouchersPage = () => {
 
     return (
         <>
-            <PageHeader title="Vouchers" description={data ? `${data.total} voucher${data.total === 1 ? '' : 's'}` : 'Codes players redeem in the catalogue'}>
+            <PageHeader title="Catalog" tabs={catalogTabs('vouchers')} description={data ? `${data.total} voucher${data.total === 1 ? '' : 's'}` : 'Codes players redeem in the catalogue'}>
                 {canManage && (
                     <>
                         <Button variant="secondary" icon={<Sparkles />} onClick={() => setOpen('generate')} disabled={open === 'generate'}>Make many</Button>
@@ -298,20 +302,15 @@ export const VouchersPage = () => {
                 {open === 'generate' && <Panel title="Make many vouchers" description="Each its own random code, giving the same."><div className="p-4"><Generator onDone={() => setOpen(null)} /></div></Panel>}
                 <Panel className="overflow-clip">
                     <ListToolbar watch={[ text, page ]} page={{ offset: page * (data?.pageSize ?? 50), limit: data?.pageSize ?? 50, total: data?.total, onChange: offset => setPage(Math.floor(offset / (data?.pageSize ?? 50))) }}>
-                        <div className="relative min-w-48 flex-1">
-                            <Search className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted" />
-                            <Input
-                                type="search"
-                                value={text}
-                                onChange={(event) => {
-                                    setText(event.target.value);
-                                    setPage(0);
-                                }}
-                                placeholder="Find by code or note"
-                                aria-label="Find by code or note"
-                                className="w-full pl-9"
-                            />
-                        </div>
+                        <SearchInput
+                            value={text}
+                            onValueChange={(value) => {
+                                setText(value);
+                                setPage(0);
+                            }}
+                            placeholder="Find by code or note"
+                            className="min-w-48 flex-1"
+                        />
                     </ListToolbar>
                     {error && <div className="p-4"><ErrorNotice error={error} /></div>}
                     {!data && !error && <Loading />}

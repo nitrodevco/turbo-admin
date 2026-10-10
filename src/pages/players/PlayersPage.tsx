@@ -1,10 +1,11 @@
-import { Search, UserPlus } from 'lucide-react';
+import { UserPlus } from 'lucide-react';
 import { type FormEvent, useState } from 'react';
 import { Link, useSearchParams } from 'react-router';
 
 import { type PlayerListItem, type PlayerSearchMode, usePlayerAbilities, usePlayerSearch } from '#/api/players';
 import { ListToolbar } from '#/components/ListToolbar';
-import { Avatar, Badge, Button, EmptyState, ErrorNotice, Input, LiveBadge, Loading, PageBody, PageHeader, Panel, Select, Switch, Td, Th } from '#/components/ui';
+import { SearchInput } from '#/components/SearchInput';
+import { Avatar, Badge, Button, EmptyState, ErrorNotice, LiveBadge, Loading, PageBody, PageHeader, Panel, Select, Switch, Td, Th } from '#/components/ui';
 import { cx } from '#/lib/cx';
 import { fromNow } from '#/lib/time';
 
@@ -78,18 +79,14 @@ export const PlayersPage = () => {
                             <Select value={draftBy} onChange={event => setDraftBy(modeOf(event.target.value))} aria-label="Search by">
                                 {MODES.map(mode => <option key={mode.value} value={mode.value}>{mode.label}</option>)}
                             </Select>
-                            <div className="relative min-w-48 flex-1 sm:max-w-80">
-                                <Search className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted" />
-                                <Input
-                                    type="search"
-                                    value={draft}
-                                    onChange={event => setDraft(event.target.value)}
-                                    placeholder={MODES.find(x => x.value === draftBy)?.placeholder}
-                                    aria-label="Search"
-                                    inputMode={draftBy === 'id' ? 'numeric' : undefined}
-                                    className="w-full pl-9"
-                                />
-                            </div>
+                            <SearchInput
+                                value={draft}
+                                onValueChange={setDraft}
+                                placeholder={MODES.find(x => x.value === draftBy)?.placeholder}
+                                aria-label="Search"
+                                inputMode={draftBy === 'id' ? 'numeric' : undefined}
+                                className="min-w-48 flex-1 sm:max-w-80"
+                            />
                             <Button type="submit">Search</Button>
                             <Switch label="Online only" checked={online} onChange={value => go({ online: value, page: 1 })} className="min-h-9 gap-3 sm:ml-2" />
                         </form>

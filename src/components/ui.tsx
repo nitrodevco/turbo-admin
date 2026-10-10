@@ -1,8 +1,8 @@
-import { CheckCircle2, Menu, XCircle } from 'lucide-react';
+import { CheckCircle2, XCircle } from 'lucide-react';
 import type { ButtonHTMLAttributes, InputHTMLAttributes, ReactNode, SelectHTMLAttributes, TextareaHTMLAttributes } from 'react';
 
 import { SearchButton } from '#/layout/CommandPalette';
-import { useDrawer } from '#/layout/drawer';
+import { HotelStatusPill } from '#/layout/HotelStatus';
 import { useActiveNavItem } from '#/layout/nav';
 import { NotificationsBell } from '#/layout/NotificationsBell';
 import { cx } from '#/lib/cx';
@@ -31,23 +31,13 @@ interface PageHeaderProps {
  * and a line under it; the page's actions, the bell and the search to the right (actions that do
  * not fit go under "More"); and along its bottom edge the page's tabs (or, with none, the page's
  * name marked as a tab is, so every header is the same height). On a phone it stays at the top as
- * an app bar, with the menu button that opens the navigation; from a laptop up it scrolls away
- * with the page.
+ * an app bar, with the hotel's state at a glance (the bottom bar holds the menu and the search);
+ * from a laptop up it scrolls away with the page.
  */
 export const PageHeader = ({ title, description, back, tabs, children }: PageHeaderProps) => {
-    const openDrawer = useDrawer(state => state.setOpen);
-
     return (
         <header className="sticky top-0 z-30 border-b border-line bg-chrome/95 backdrop-blur lg:static lg:z-auto lg:bg-chrome lg:backdrop-blur-none">
-            <div className={cx(PAGE_WIDTH, 'flex min-h-14 items-center gap-x-3 px-2 py-2 sm:px-4 lg:min-h-17 lg:px-6')}>
-                <button
-                    type="button"
-                    onClick={() => openDrawer(true)}
-                    aria-label="Open menu"
-                    className="grid size-10 shrink-0 place-items-center rounded-lg text-muted hover:bg-subtle hover:text-ink lg:hidden [&>svg]:size-5"
-                >
-                    <Menu />
-                </button>
+            <div className={cx(PAGE_WIDTH, 'flex min-h-14 items-center gap-x-2.5 px-3 py-2 sm:gap-x-3 sm:px-4 lg:min-h-17 lg:px-6')}>
                 <BackArrow back={back} />
                 <HeaderIcon />
                 <div data-title className="min-w-0 flex-1">
@@ -59,6 +49,7 @@ export const PageHeader = ({ title, description, back, tabs, children }: PageHea
                     )}
                 </div>
                 {children && <HeaderActions>{children}</HeaderActions>}
+                <HotelStatusPill />
                 <NotificationsBell />
                 <SearchButton />
             </div>

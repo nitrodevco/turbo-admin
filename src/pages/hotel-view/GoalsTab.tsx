@@ -4,6 +4,7 @@ import { Link } from 'react-router';
 
 import { promoImageUrl, useClientAssets } from '#/api/assets';
 import { type CommunityGoal, GOAL_MODES, useCommunityGoals, useDeleteCommunityGoal, useGoalStanding, useHotelViewTexts, useSaveCommunityGoal, useSaveHotelView } from '#/api/hotelView';
+import { ask } from '#/components/confirm';
 import { Badge, Button, EmptyState, ErrorNotice, Input, Labeled, Loading, Panel, Select, SuccessNotice } from '#/components/ui';
 import { cx } from '#/lib/cx';
 
@@ -205,7 +206,7 @@ const GoalEditor = ({ goal, now, onDone, disabled }: { goal: CommunityGoal | nul
                                 icon={<Trash2 />}
                                 className="ml-auto text-bad hover:text-bad"
                                 disabled={remove.isPending}
-                                onClick={() => window.confirm(`Remove the goal ${goal.code}, and everything players gave it?`) && remove.mutate(goal.id, { onSuccess: onDone })}
+                                onClick={() => ask({ title: `Remove the goal ${goal.code}, and everything players gave it?`, confirm: 'Remove' }, () => remove.mutate(goal.id, { onSuccess: onDone }))}
                             >
                                 Remove
                             </Button>

@@ -1,34 +1,17 @@
-import { Search } from 'lucide-react';
 import { type FormEvent, useId, useMemo, useState } from 'react';
 import { Link, useSearchParams } from 'react-router';
 
 import { useCatalog, useHolders, useLog } from '#/api/permissions';
 import { ListToolbar } from '#/components/ListToolbar';
 import { Row, RowList } from '#/components/RowList';
-import { Badge, Button, EmptyState, ErrorNotice, Input, Loading, PageBody, Panel } from '#/components/ui';
+import { SearchInput } from '#/components/SearchInput';
+import { Badge, Button, EmptyState, ErrorNotice, Loading, PageBody, Panel } from '#/components/ui';
 
 import { AuditTable, Expiry, PermissionsHeader, Verdict } from './common';
 import { targetLink } from './links';
 
 /** Rows shown at once in the lists paged here, which the server sends whole. */
 const PAGE_SIZE = 25;
-
-const SearchBox = ({ value, onChange, placeholder, list }: { value: string; onChange: (value: string) => void; placeholder: string; list?: string }) => (
-    <div className="relative min-w-48 flex-1 sm:max-w-80">
-        <Search className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted" />
-        <Input
-            type="search"
-            value={value}
-            onChange={event => onChange(event.target.value)}
-            placeholder={placeholder}
-            aria-label={placeholder}
-            list={list}
-            spellCheck={false}
-            autoComplete="off"
-            className="w-full pl-9"
-        />
-    </div>
-);
 
 /** Every group and player given a node, exactly or by a wildcard that covers it. */
 export const SearchPage = () => {
@@ -51,7 +34,7 @@ export const SearchPage = () => {
                 <Panel className="overflow-clip">
                     <ListToolbar watch={[ node ]}>
                         <form onSubmit={handleSubmit} className="flex min-w-0 flex-1 gap-2">
-                            <SearchBox value={draft} onChange={setDraft} placeholder="A node, like room.enter.locked" list={listId} />
+                            <SearchInput value={draft} onValueChange={setDraft} placeholder="A node, like room.enter.locked" list={listId} spellCheck={false} autoComplete="off" className="min-w-48 flex-1 sm:max-w-80" />
                             <datalist id={listId}>
                                 {catalog.data?.nodes.map(x => <option key={x.node} value={x.node}>{x.description}</option>)}
                             </datalist>
@@ -116,7 +99,7 @@ export const LogPage = () => {
                         page={{ offset, limit: PAGE_SIZE, total: log.data?.length, onChange: setOffset }}
                     >
                         <form onSubmit={handleSubmit} className="flex min-w-0 flex-1 gap-2">
-                            <SearchBox value={draft} onChange={setDraft} placeholder="Node, key or group name" />
+                            <SearchInput value={draft} onValueChange={setDraft} placeholder="Node, key or group name" spellCheck={false} autoComplete="off" className="min-w-48 flex-1 sm:max-w-80" />
                             <Button type="submit" variant="secondary">Search</Button>
                         </form>
                     </ListToolbar>
@@ -153,13 +136,16 @@ export const NodesPage = () => {
                             watch={[ filter, offset ]}
                             page={{ offset, limit: PAGE_SIZE, total: catalog.data ? nodes.length : undefined, onChange: setOffset }}
                         >
-                            <SearchBox
+                            <SearchInput
                                 value={filter}
-                                onChange={(value) => {
+                                onValueChange={(value) => {
                                     setFilter(value);
                                     setOffset(0);
                                 }}
                                 placeholder="Filter nodes"
+                                spellCheck={false}
+                                autoComplete="off"
+                                className="min-w-48 flex-1 sm:max-w-80"
                             />
                         </ListToolbar>
                         {catalog.error && <div className="p-4"><ErrorNotice error={catalog.error} /></div>}

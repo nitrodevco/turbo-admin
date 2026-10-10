@@ -1,11 +1,11 @@
-import { Check, Image, Search, Type } from 'lucide-react';
+import { Check, Image, Type } from 'lucide-react';
 import { useState } from 'react';
 
-import { Input } from '#/components/ui';
+import { Modal } from '#/components/Modal';
+import { SearchInput } from '#/components/SearchInput';
 import { cx } from '#/lib/cx';
 
 import { isKnownLayout, LAYOUT_GROUPS, LAYOUTS } from './layouts';
-import { Modal } from './Modal';
 
 /**
  * Picking a page's layout from what the client can draw, grouped by what it is for: each with what
@@ -27,10 +27,7 @@ export const LayoutPicker = ({ value, open, extra, onPick, onClose }: { value: s
     return (
         <Modal title="Pick a layout" open={open} onClose={onClose} className="sm:max-w-4xl">
             <div className="flex flex-col gap-4 p-4">
-                <div className="relative">
-                    <Search className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted" />
-                    <Input type="search" value={filter} onChange={event => setFilter(event.target.value)} placeholder="Find a layout, or type a code" aria-label="Find a layout" className="w-full pl-9" autoFocus />
-                </div>
+                <SearchInput value={filter} onValueChange={setFilter} placeholder="Find a layout, or type a code" aria-label="Find a layout" autoFocus />
                 {custom && (
                     <button type="button" onClick={() => pick(needle)} className="self-start rounded-lg border border-dashed border-line px-3 py-2 text-left text-sm hover:border-accent">
                         Use <span className="font-mono">{needle}</span>, a layout this list doesn't know

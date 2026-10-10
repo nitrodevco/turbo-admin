@@ -1,9 +1,11 @@
-import { Lock, RotateCcw, Save, Search } from 'lucide-react';
+import { Lock, RotateCcw, Save } from 'lucide-react';
 import { useMemo, useState } from 'react';
 import { Link, useSearchParams } from 'react-router';
 
 import { type ServerSetting, SOURCE, useResetSetting, useSaveSetting, useSettingHistory, useSettings } from '#/api/settings';
+import { ask } from '#/components/confirm';
 import { ListToolbar } from '#/components/ListToolbar';
+import { SearchInput } from '#/components/SearchInput';
 import { Badge, Button, EmptyState, ErrorNotice, Input, Labeled, Loading, PageBody, PageHeader, Panel, Segmented, Select, Switch, Textarea, WarningNotice } from '#/components/ui';
 import { cx } from '#/lib/cx';
 import { fromNow } from '#/lib/time';
@@ -171,10 +173,7 @@ const SettingEditor = ({ setting, canManage }: { setting: ServerSetting; canMana
                                 variant="ghost"
                                 icon={<RotateCcw />}
                                 disabled={reset.isPending}
-                                onClick={() => {
-                                    if (window.confirm(`Put ${setting.path} back to what appsettings.json says? It applies after a restart.`))
-                                        reset.mutate(setting.path);
-                                }}
+                                onClick={() => ask({ title: `Put ${setting.path} back to what appsettings.json says?`, body: 'It applies after a restart.', confirm: 'Put back' }, () => reset.mutate(setting.path))}
                             >
                                 Put back
                             </Button>
@@ -227,10 +226,7 @@ const SettingsTab = () => {
             )}
             <Panel className="overflow-clip">
                 <ListToolbar watch={[ text, filter ]}>
-                    <div className="relative min-w-48 flex-1 sm:max-w-96">
-                        <Search className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted" />
-                        <Input type="search" value={text} onChange={event => setText(event.target.value)} placeholder="Name, text or value" className="w-full pl-9" aria-label="Find settings" />
-                    </div>
+                    <SearchInput value={text} onValueChange={setText} placeholder="Name, text or value" aria-label="Find settings" className="min-w-48 flex-1 sm:max-w-96" />
                     <div className="w-full sm:w-80"><Segmented label="Show" value={filter} onChange={setFilter} options={FILTERS} /></div>
                 </ListToolbar>
                 {sections.length === 0 && <EmptyState>No setting matches.</EmptyState>}

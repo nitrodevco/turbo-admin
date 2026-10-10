@@ -30,7 +30,7 @@ const HabboFigures = ({ status }: { status: GamedataStatus }) => {
             file={FILES.figureData}
             canManage={status.canManage}
             canTake={!!preview && preview.added + preview.updated + preview.kept > 0}
-            confirm={preview ? `Take in Habbo's figure data? ${preview.added} records are added and ${preview.updated} updated. It runs in the background and can be rolled back from the history.` : ''}
+            confirm={preview ? { title: 'Take in Habbo\'s figure data?', body: `${preview.added} records are added and ${preview.updated} updated. It runs in the background and can be rolled back from the history.` } : { title: '' }}
             onTake={() => preview && take.mutate(preview.version.id)}
             taking={take.isPending}
             takeError={take.error}

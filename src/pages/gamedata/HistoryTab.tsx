@@ -2,6 +2,7 @@ import { ChevronDown, ChevronLeft, ChevronRight, Undo2 } from 'lucide-react';
 import { useState } from 'react';
 
 import { CHANGE_KINDS, type ChangeSet, RECORD_TYPES, useChanges, useHistory, useRollback } from '#/api/gamedata';
+import { ask } from '#/components/confirm';
 import { Badge, type BadgeTone, Button, EmptyState, ErrorNotice, IconButton, Loading, Panel, SuccessNotice, WarningNotice } from '#/components/ui';
 import { cx } from '#/lib/cx';
 import { fromNow } from '#/lib/time';
@@ -135,10 +136,7 @@ export const HistoryTab = ({ canManage }: { canManage: boolean }) => {
                                             variant="ghost"
                                             icon={<Undo2 />}
                                             disabled={rollback.isPending}
-                                            onClick={() => {
-                                                if (window.confirm(`Roll back #${set.id}? ${set.summary}`))
-                                                    rollback.mutate(set.id);
-                                            }}
+                                            onClick={() => ask({ title: `Roll back #${set.id}?`, body: set.summary, confirm: 'Roll back' }, () => rollback.mutate(set.id))}
                                         >
                                             Roll back
                                         </Button>

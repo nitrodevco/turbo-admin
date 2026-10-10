@@ -1,6 +1,8 @@
 import { Copy, Plus, Trash2, X } from 'lucide-react';
 import { useState } from 'react';
 
+import { ask } from '#/components/confirm';
+import { SearchInput } from '#/components/SearchInput';
 import { Badge, Button, EmptyState, Input, Labeled, Panel, Select } from '#/components/ui';
 import { cx } from '#/lib/cx';
 
@@ -83,30 +85,30 @@ export const PromosTab = ({ draft, codes, now, open, onOpen, onOpenSlot, disable
 
     const remove = (code: string) => {
         const uses = usesOf(draft, code, now);
-        const message = uses.length > 0
-            ? `Remove the promo ${code}? It is taken out of the schedules of slot ${uses.map(x => x.slot).join(' and ')} too. Its texts stay.`
-            : `Remove the promo ${code}? Its texts stay.`;
+        const body = uses.length > 0
+            ? `It is taken out of the schedules of slot ${uses.map(x => x.slot).join(' and ')} too. Its texts stay.`
+            : 'Its texts stay.';
 
-        if (!window.confirm(message)) return;
+        ask({ title: `Remove the promo ${code}?`, body, confirm: 'Remove' }, () => {
+            draft.setMany({
+                [codeKey(code, 'widget')]: null,
+                [codeKey(code, 'conf')]: null,
+                [codeKey(code, 'layout')]: null,
+                ...Object.fromEntries(uses.map(({ slot }) => {
+                    const schedule = formatSchedule(parseSchedule(draft.text(slotKey(slot, 'conf'))).filter(x => x.code !== code));
 
-        draft.setMany({
-            [codeKey(code, 'widget')]: null,
-            [codeKey(code, 'conf')]: null,
-            [codeKey(code, 'layout')]: null,
-            ...Object.fromEntries(uses.map(({ slot }) => {
-                const schedule = formatSchedule(parseSchedule(draft.text(slotKey(slot, 'conf'))).filter(x => x.code !== code));
-
-                return [ slotKey(slot, 'conf'), schedule ? JSON.stringify(schedule) : null ];
-            })),
+                    return [ slotKey(slot, 'conf'), schedule ? JSON.stringify(schedule) : null ];
+                })),
+            });
+            onOpen(null);
         });
-        onOpen(null);
     };
 
     return (
         <div className="grid items-start gap-4 lg:grid-cols-[18rem_minmax(0,1fr)]">
             <Panel className="overflow-clip lg:sticky lg:top-4">
                 <div className="flex items-center gap-2 border-b border-line p-3">
-                    <Input type="search" value={filter} onChange={event => setFilter(event.target.value)} placeholder="Find a promo" aria-label="Find a promo" className="min-w-0 flex-1" />
+                    <SearchInput value={filter} onValueChange={setFilter} placeholder="Find a promo" className="min-w-0 flex-1" />
                     {!disabled && <Button variant="secondary" icon={<Plus />} onClick={() => setMaking({ from: null })}>New</Button>}
                 </div>
                 {making && <NewPromo codes={codes} from={making.from} onMake={code => make(code, making.from)} onCancel={() => setMaking(null)} />}

@@ -3,10 +3,11 @@ import { type FormEvent, type ReactNode, useEffect, useId, useState } from 'reac
 
 import { catalogImageUrl, useClientAssets } from '#/api/assets';
 import { catalogCalls, type CatalogPageDetail, type CatalogTree, type PageDisplay, useCatalogEdit } from '#/api/catalog';
+import { ask } from '#/components/confirm';
+import { toast } from '#/components/toast';
 import { Button, ErrorNotice, Field, Input, Labeled, Textarea } from '#/components/ui';
 import { cx } from '#/lib/cx';
 
-import { toast } from './feedback';
 import { IconPicker } from './IconPicker';
 import { DISPLAY_LABELS, inBuildersClub } from './labels';
 import { LayoutPicker } from './LayoutPicker';
@@ -226,12 +227,12 @@ export const PageInspector = ({ tree, page, draft, onDraft, focus, onOpen }: Pag
                                         icon={<Trash2 />}
                                         disabled={remove.isPending || page.offers.length > 0}
                                         title={page.offers.length > 0 ? 'Move or delete its offers first.' : undefined}
-                                        onClick={() => window.confirm(`Delete the page "${page.localization}"?`) && remove.mutate([ page.id ], {
+                                        onClick={() => ask({ title: `Delete the page "${page.localization}"?`, confirm: 'Delete' }, () => remove.mutate([ page.id ], {
                                             onSuccess: () => {
                                                 toast(`Deleted ${page.localization}.`);
                                                 onOpen(page.parentId);
                                             },
-                                        })}
+                                        }))}
                                     >
                                         Delete page
                                     </Button>

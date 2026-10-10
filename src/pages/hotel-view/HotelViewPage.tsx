@@ -5,6 +5,7 @@ import { Link, useSearchParams } from 'react-router';
 
 import type { VariableEntry } from '#/api/gamedata';
 import { useHotelView, useSaveHotelView } from '#/api/hotelView';
+import { ask } from '#/components/confirm';
 import { Badge, Button, ErrorNotice, Input, Loading, PageBody, PageHeader, Panel, Segmented, SuccessNotice } from '#/components/ui';
 
 import { AllTab } from './AllTab';
@@ -190,7 +191,7 @@ const HotelViewEditor = ({ variables, canManage }: { variables: VariableEntry[];
                             </span>
                             {save.error && <div className="w-full sm:order-last"><ErrorNotice error={save.error} /></div>}
                             <span className="ml-auto flex gap-2">
-                                <Button variant="ghost" icon={<RotateCcw />} disabled={save.isPending || draft.count === 0} onClick={() => window.confirm('Throw away every change not saved?') && draft.discard()}>Discard</Button>
+                                <Button variant="ghost" icon={<RotateCcw />} disabled={save.isPending || draft.count === 0} onClick={() => ask({ title: 'Throw away every change not saved?', confirm: 'Discard' }, () => draft.discard())}>Discard</Button>
                                 <Button
                                     icon={<Save />}
                                     disabled={save.isPending || draft.count === 0}

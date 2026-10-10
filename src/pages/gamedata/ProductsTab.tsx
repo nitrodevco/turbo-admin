@@ -1,9 +1,11 @@
-import { Plus, Save, Search, Trash2, X } from 'lucide-react';
+import { Plus, Save, Trash2, X } from 'lucide-react';
 import { useState } from 'react';
 import { useSearchParams } from 'react-router';
 
 import { FILES, type GamedataStatus, type ProductEntry, useDeleteProduct, useProductImport, useProductImportPreview, useProductSearch, useSaveProduct } from '#/api/gamedata';
+import { ask } from '#/components/confirm';
 import { ListToolbar } from '#/components/ListToolbar';
+import { SearchInput } from '#/components/SearchInput';
 import { Badge, Button, EmptyState, ErrorNotice, Input, Labeled, Loading, Panel, Textarea } from '#/components/ui';
 import { cx } from '#/lib/cx';
 
@@ -24,7 +26,7 @@ const HabboProducts = ({ status }: { status: GamedataStatus }) => {
             file={FILES.productData}
             canManage={status.canManage}
             canTake={!!preview && preview.added + preview.updated + preview.kept > 0}
-            confirm={preview ? `Take in Habbo's product data? ${preview.added} products are added and ${preview.updated} updated. It runs in the background and can be rolled back from the history.` : ''}
+            confirm={preview ? { title: 'Take in Habbo\'s product data?', body: `${preview.added} products are added and ${preview.updated} updated. It runs in the background and can be rolled back from the history.` } : { title: '' }}
             onTake={() => preview && take.mutate(preview.version.id)}
             taking={take.isPending}
             takeError={take.error}
@@ -80,10 +82,14 @@ const ProductEditor = ({ product, canManage, onDone }: { product: ProductEntry |
                             icon={<Trash2 />}
                             className="ml-auto text-bad hover:text-bad"
                             disabled={remove.isPending}
-                            onClick={() => {
-                                if (window.confirm(`Remove the product ${product.code}? Habbo's later updates leave it removed unless Habbo changes it.`))
-                                    remove.mutate(product.code, { onSuccess: onDone });
-                            }}
+                            onClick={() => ask(
+                                {
+                                    title: `Remove the product ${product.code}?`,
+                                    body: 'Habbo\'s later updates leave it removed unless Habbo changes it.',
+                                    confirm: 'Remove',
+                                },
+                                () => remove.mutate(product.code, { onSuccess: onDone }),
+                            )}
                         >
                             Remove
                         </Button>
@@ -128,20 +134,16 @@ export const ProductsTab = ({ status }: { status: GamedataStatus }) => {
                     watch={[ text, page ]}
                     page={{ offset: page * size, limit: size, total: found?.total, onChange: offset => setPage(Math.floor(offset / size)) }}
                 >
-                    <div className="relative min-w-48 flex-1 sm:max-w-96">
-                        <Search className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted" />
-                        <Input
-                            type="search"
-                            value={text}
-                            onChange={(event) => {
-                                setText(event.target.value);
-                                setPage(0);
-                            }}
-                            placeholder="Code, name or description"
-                            className="w-full pl-9"
-                            aria-label="Find products"
-                        />
-                    </div>
+                    <SearchInput
+                        value={text}
+                        onValueChange={(value) => {
+                            setText(value);
+                            setPage(0);
+                        }}
+                        placeholder="Code, name or description"
+                        className="min-w-48 flex-1 sm:max-w-96"
+                        aria-label="Find products"
+                    />
                     {status.canManage && <Button variant="secondary" icon={<Plus />} onClick={() => setOpen('')}>New product</Button>}
                 </ListToolbar>
                 {open === '' && (

@@ -1,11 +1,13 @@
-import { CheckCircle2, Copy, EyeOff, Search, Trash2 } from 'lucide-react';
+import { CheckCircle2, Copy, EyeOff, Trash2 } from 'lucide-react';
 import { useState } from 'react';
 
 import { catalogCalls, type CatalogTree, type Duplicate, type DuplicateOffer, useCatalogEdit, useDuplicates } from '#/api/catalog';
-import { Button, ErrorNotice, Input, Loading, Switch } from '#/components/ui';
+import { ask } from '#/components/confirm';
+import { SearchInput } from '#/components/SearchInput';
+import { toast, toastError } from '#/components/toast';
+import { Button, ErrorNotice, Loading, Switch } from '#/components/ui';
 import { cx } from '#/lib/cx';
 
-import { toast, toastError } from './feedback';
 import { priceOf } from './offers';
 import { ProductIcon } from './ProductIcon';
 
@@ -67,8 +69,11 @@ export const Duplicates = ({ tree, onOpen }: { tree: CatalogTree; onOpen: (pageI
     const resolveAll = () => {
         const ids = shown.flatMap(x => x.offers.filter(o => o !== keeperOf(x)).map(o => o.offerId));
 
-        if (window.confirm(`Delete ${ids.length} offers, keeping one of each of the ${shown.length} furni (the first players see)? You can undo it.`))
-            deleteOffers(ids, ', one of each furni kept');
+        ask({
+            title: `Delete ${ids.length} offers, keeping one of each of the ${shown.length} furni (the first players see)?`,
+            body: 'You can undo it.',
+            confirm: 'Delete',
+        }, () => deleteOffers(ids, ', one of each furni kept'));
     };
 
     return (
@@ -78,10 +83,7 @@ export const Duplicates = ({ tree, onOpen }: { tree: CatalogTree; onOpen: (pageI
                     <Copy className="size-4 text-accent" />
                     {duplicates.data ? `${all.length.toLocaleString()} furni sold more than once` : '…'}
                 </span>
-                <div className="relative w-56">
-                    <Search className="pointer-events-none absolute top-1/2 left-2.5 size-4 -translate-y-1/2 text-muted" />
-                    <Input type="search" value={filter} onChange={event => setFilter(event.target.value)} placeholder="Find furni" aria-label="Find furni" className="w-full pl-8" />
-                </div>
+                <SearchInput value={filter} onValueChange={setFilter} placeholder="Find furni" className="w-full sm:w-56" />
                 <Switch label="Only where players see two" checked={shownOnly} onChange={setShownOnly} className="min-h-9" />
                 {tree.canManage && shown.length > 0 && (
                     <Button variant="secondary" icon={<Trash2 />} disabled={remove.isPending} onClick={resolveAll} className="ml-auto">

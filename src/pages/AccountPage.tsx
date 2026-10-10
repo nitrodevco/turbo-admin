@@ -6,6 +6,7 @@ import { useAccount } from '#/api/queries';
 import type { AccountPasskey } from '#/api/types';
 import { useSession } from '#/auth/session';
 import { type Ceremony, createPasskey, getPasskey, passkeysSupported } from '#/auth/webauthn';
+import { confirmAsync } from '#/components/confirm';
 import { Button, ErrorNotice, Field, Loading, PageBody, PageHeader, Panel } from '#/components/ui';
 
 type Options = Ceremony<Record<string, unknown>>;
@@ -17,7 +18,7 @@ const PasskeyRow = ({ passkey, isLast, onRemoved }: { passkey: AccountPasskey; i
     const [ busy, setBusy ] = useState(false);
 
     const handleRemove = async () => {
-        if (!window.confirm(`Remove the passkey "${passkey.name}"? It will no longer sign you in.`))
+        if (!await confirmAsync({ title: `Remove the passkey "${passkey.name}"?`, body: 'It will no longer sign you in.', confirm: 'Remove' }))
             return;
 
         setBusy(true);

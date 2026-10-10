@@ -3,6 +3,7 @@ import { useState } from 'react';
 
 import { promoImageUrl, useClientAssets } from '#/api/assets';
 import { ARTICLE_LINK_TYPES, type PromoArticle, type PromoArticleDraft, useDeletePromoArticle, usePromoArticles, useReorderPromoArticles, useSavePromoArticle } from '#/api/hotelView';
+import { ask } from '#/components/confirm';
 import { Badge, Button, EmptyState, ErrorNotice, IconButton, Input, Labeled, Loading, Panel, Select, Switch, Textarea } from '#/components/ui';
 
 import { inputToIso, isoTime, isoToInput } from './model';
@@ -93,7 +94,7 @@ const ArticleEditor = ({ article, onDone, disabled }: { article: PromoArticle | 
                                 icon={<Trash2 />}
                                 className="ml-auto text-bad hover:text-bad"
                                 disabled={remove.isPending}
-                                onClick={() => window.confirm(`Remove the article "${article.title}"?`) && remove.mutate(article.id, { onSuccess: onDone })}
+                                onClick={() => ask({ title: `Remove the article "${article.title}"?`, confirm: 'Remove' }, () => remove.mutate(article.id, { onSuccess: onDone }))}
                             >
                                 Remove
                             </Button>

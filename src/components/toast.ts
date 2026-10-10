@@ -14,7 +14,7 @@ interface ToastState {
 
 let nextId = 1;
 
-/** The editor's short notes: what a drag did, or why the server refused it. */
+/** The panel's short notes: what an action did, or why the server refused it. Shown by `Toasts`, mounted once in the shell. */
 export const useToasts = create<ToastState>(set => ({
     toasts: [],
     push: (tone, text) => {

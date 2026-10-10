@@ -1,8 +1,9 @@
-import { CheckCheck, Copy, Plus, Search, Trash2, Upload } from 'lucide-react';
+import { CheckCheck, Copy, Plus, Trash2, Upload } from 'lucide-react';
 import { useMemo, useState } from 'react';
 
 import { badgeUrl, useClientAssets } from '#/api/assets';
 import { ACHIEVEMENT_STATES, type AchievementDefinition, type AchievementItem, useAchievementDefinition, useAchievements, useCheckAchievement, usePublishAchievement } from '#/api/content';
+import { SearchInput } from '#/components/SearchInput';
 import { Badge, Button, EmptyState, ErrorNotice, IconButton, Input, Labeled, Loading, Panel, Select, SuccessNotice, Textarea } from '#/components/ui';
 import { cx } from '#/lib/cx';
 
@@ -214,9 +215,8 @@ export const AchievementsTab = () => {
     return (
         <div className="grid items-start gap-4 lg:grid-cols-[22rem_minmax(0,1fr)]">
             <Panel className="overflow-clip lg:sticky lg:top-4">
-                <div className="relative border-b border-line p-3">
-                    <Search className="pointer-events-none absolute top-1/2 left-6 size-4 -translate-y-1/2 text-muted" />
-                    <Input type="search" value={filter} onChange={event => setFilter(event.target.value)} placeholder="Key, category or source" className="w-full pl-9" aria-label="Find achievements" />
+                <div className="border-b border-line p-3">
+                    <SearchInput value={filter} onValueChange={setFilter} placeholder="Key, category or source" aria-label="Find achievements" />
                 </div>
                 {shown.length === 0 && <EmptyState>No achievement matches.</EmptyState>}
                 <div className="max-h-[75vh] overflow-y-auto">

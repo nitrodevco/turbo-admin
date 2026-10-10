@@ -1,8 +1,10 @@
-import { Braces, Plus, Save, Search, Trash2, Undo2, X } from 'lucide-react';
+import { Braces, Plus, Save, Trash2, Undo2, X } from 'lucide-react';
 import { useMemo, useState } from 'react';
 
 import { FIGURE_KINDS, type FigureEntry, type FigureKindEntry, useDeleteFigure, useFigureKinds, useFigureSearch, usePalettes, useSaveFigure } from '#/api/gamedata';
+import { ask } from '#/components/confirm';
 import { ListToolbar } from '#/components/ListToolbar';
+import { SearchInput } from '#/components/SearchInput';
 import { Badge, Button, EmptyState, ErrorNotice, IconButton, Input, Labeled, Loading, Panel, Segmented, Select, Switch, Textarea } from '#/components/ui';
 import { cx } from '#/lib/cx';
 
@@ -167,10 +169,14 @@ const KindSettings = ({ kind, pieces, canManage, onRemoved }: { kind: FigureEntr
                             tone="bad"
                             icon={<Trash2 />}
                             disabled={remove.isPending}
-                            onClick={() => {
-                                if (window.confirm(`Remove the kind ${kind.key}?${pieces ? ` Its ${pieces} pieces stay, but the client can't draw them without it.` : ''}`))
-                                    remove.mutate({ kind: FIGURE_KINDS.setType, key: kind.key }, { onSuccess: onRemoved });
-                            }}
+                            onClick={() => ask(
+                                {
+                                    title: `Remove the kind ${kind.key}?`,
+                                    body: pieces ? `Its ${pieces} pieces stay, but the client can't draw them without it.` : undefined,
+                                    confirm: 'Remove',
+                                },
+                                () => remove.mutate({ kind: FIGURE_KINDS.setType, key: kind.key }, { onSuccess: onRemoved }),
+                            )}
                         />
                     )}
                 </>
@@ -414,10 +420,14 @@ const PieceEditor = ({ entry, type, nextId, canManage, onDone }: { entry: Figure
                         icon={<Trash2 />}
                         className="ml-auto text-bad hover:text-bad"
                         disabled={remove.isPending}
-                        onClick={() => {
-                            if (window.confirm(`Remove ${entry.group}-${entry.key}? Nobody can wear it, and Habbo's later updates leave it removed unless Habbo changes it.`))
-                                remove.mutate({ kind: FIGURE_KINDS.set, key: entry.key }, { onSuccess: onDone });
-                        }}
+                        onClick={() => ask(
+                            {
+                                title: `Remove ${entry.group}-${entry.key}?`,
+                                body: 'Nobody can wear it, and Habbo\'s later updates leave it removed unless Habbo changes it.',
+                                confirm: 'Remove',
+                            },
+                            () => remove.mutate({ kind: FIGURE_KINDS.set, key: entry.key }, { onSuccess: onDone }),
+                        )}
                     >
                         Remove
                     </Button>
@@ -446,20 +456,16 @@ const Pieces = ({ type, nextId, canManage }: { type: string; nextId: number; can
                 watch={[ type, text, gender, access, page ]}
                 page={{ offset: page * size, limit: size, total: found?.total, onChange: offset => setPage(Math.floor(offset / size)) }}
             >
-                <div className="relative min-w-36 flex-1 sm:max-w-56">
-                    <Search className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted" />
-                    <Input
-                        type="search"
-                        value={text}
-                        onChange={(event) => {
-                            setText(event.target.value);
-                            setPage(0);
-                        }}
-                        placeholder="Id or asset"
-                        className="w-full pl-9"
-                        aria-label="Find pieces"
-                    />
-                </div>
+                <SearchInput
+                    value={text}
+                    onValueChange={(value) => {
+                        setText(value);
+                        setPage(0);
+                    }}
+                    placeholder="Id or asset"
+                    className="min-w-36 flex-1 sm:max-w-56"
+                    aria-label="Find pieces"
+                />
                 <Select
                     value={gender}
                     aria-label="Gender"

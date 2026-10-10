@@ -5,7 +5,7 @@ interface DrawerState {
     setOpen: (open: boolean) => void;
 }
 
-/** Whether the navigation is open on a phone: a drawer from the left, opened from the page header's menu button. */
+/** Whether the menu is open on a phone or a tablet: a sheet from the bottom, opened from the bottom bar. */
 export const useDrawer = create<DrawerState>(set => ({
     open: false,
     setOpen: open => set({ open }),

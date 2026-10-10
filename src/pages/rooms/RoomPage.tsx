@@ -6,6 +6,7 @@ import { useLive } from '#/api/live';
 import { useMe, useRoom } from '#/api/queries';
 import { type RoomActionResponse, roomCalls, useRoomAction, useRoomVisitors } from '#/api/rooms';
 import type { RoomDetailResponse, RoomPlayerRef } from '#/api/types';
+import { ask, type Question } from '#/components/confirm';
 import { Sheet, SheetItem } from '#/components/Sheet';
 import { TabbedPanel } from '#/components/TabbedPanel';
 import { Avatar, Badge, Button, EmptyState, ErrorNotice, IconButton, Input, Kv, Label, Loading, PageBody, Panel, Segmented, Select, Stat, Switch, Textarea } from '#/components/ui';
@@ -28,7 +29,7 @@ const BAN_DURATIONS = [
 ];
 
 /** Runs an action on the room, after a confirmation when it asks for one. */
-type Run = (action: () => Promise<RoomActionResponse>, confirm?: string) => void;
+type Run = (action: () => Promise<RoomActionResponse>, question?: Question, then?: () => void) => void;
 
 type Role = 'owner' | 'rights' | 'visitor';
 
@@ -41,8 +42,8 @@ const PersonSheet = ({ room, player, run, onClose }: { room: RoomDetailResponse;
     const [ minutes, setMinutes ] = useState('5');
     const [ duration, setDuration ] = useState('Hour');
 
-    const act = (action: () => Promise<RoomActionResponse>, confirm?: string) => {
-        run(action, confirm);
+    const act = (action: () => Promise<RoomActionResponse>, question?: Question) => {
+        run(action, question);
         onClose();
     };
 
@@ -50,7 +51,7 @@ const PersonSheet = ({ room, player, run, onClose }: { room: RoomDetailResponse;
         <Sheet title={player ? `${player.name} · #${player.id}` : ''} open={player !== null} onClose={onClose}>
             {player && (
                 <>
-                    <SheetItem icon={<UserX />} onClick={() => act(() => calls.kick(player.id), `Kick ${player.name} out of the room?`)}>Kick out of the room</SheetItem>
+                    <SheetItem icon={<UserX />} onClick={() => act(() => calls.kick(player.id), { title: `Kick ${player.name} out of the room?`, confirm: 'Kick' })}>Kick out of the room</SheetItem>
                     <div className="flex flex-col gap-2 border-t border-line px-3 py-3">
                         <Label>Mute</Label>
                         <Segmented label="How long to mute" value={minutes} onChange={setMinutes} options={MUTE_MINUTES} />
@@ -59,7 +60,7 @@ const PersonSheet = ({ room, player, run, onClose }: { room: RoomDetailResponse;
                     <div className="flex flex-col gap-2 border-t border-line px-3 py-3">
                         <Label>Ban from the room</Label>
                         <Segmented label="How long to ban" value={duration} onChange={setDuration} options={BAN_DURATIONS} />
-                        <Button variant="danger" icon={<Ban />} onClick={() => act(() => calls.ban({ playerId: player.id }, duration), `Ban ${player.name} from the room?`)}>Ban {player.name}</Button>
+                        <Button variant="danger" icon={<Ban />} onClick={() => act(() => calls.ban({ playerId: player.id }, duration), { title: `Ban ${player.name} from the room?`, confirm: 'Ban' })}>Ban {player.name}</Button>
                     </div>
                 </>
             )}
@@ -87,7 +88,7 @@ const InsideRow = ({ room, player, run, busy, onMore, linked }: { room: RoomDeta
                 <>
                     <div className="hidden gap-0.5 sm:flex">
                         <IconButton label={`Mute ${player.name}`} icon={<MicOff />} disabled={busy} onClick={onMore} />
-                        <IconButton label={`Kick ${player.name}`} icon={<UserX />} disabled={busy} onClick={() => run(() => calls.kick(player.id), `Kick ${player.name} out of the room?`)} />
+                        <IconButton label={`Kick ${player.name}`} icon={<UserX />} disabled={busy} onClick={() => run(() => calls.kick(player.id), { title: `Kick ${player.name} out of the room?`, confirm: 'Kick' })} />
                         <IconButton label={`Ban ${player.name}`} icon={<Ban />} tone="bad" disabled={busy} onClick={onMore} />
                     </div>
                     <IconButton label={`Actions for ${player.name}`} icon={<Ellipsis />} className="sm:hidden" onClick={onMore} />
@@ -108,8 +109,7 @@ const RoomControls = ({ room, run, busy }: { room: RoomDetailResponse; run: Run;
 
     const handleAlert = (event: FormEvent) => {
         event.preventDefault();
-        run(() => calls.alert(alert.trim()));
-        setAlert('');
+        run(() => calls.alert(alert.trim()), undefined, () => setAlert(''));
     };
 
     return (
@@ -139,12 +139,12 @@ const RoomControls = ({ room, run, busy }: { room: RoomDetailResponse; run: Run;
                     <Label className="text-bad">Danger zone</Label>
                     <div className="grid grid-cols-2 gap-2">
                         {can.kickAll && (
-                            <Button variant="danger" icon={<DoorOpen />} disabled={busy || !room.isLoaded} onClick={() => run(calls.kickAll, 'Send everyone out of the room? Its owner and staff stay.')}>
+                            <Button variant="danger" icon={<DoorOpen />} disabled={busy || !room.isLoaded} onClick={() => run(calls.kickAll, { title: 'Send everyone out of the room?', body: 'Its owner and staff stay.', confirm: 'Send everyone out', danger: true })}>
                                 Kick everyone
                             </Button>
                         )}
                         {can.unload && (
-                            <Button variant="danger" icon={<Power />} disabled={busy || !room.isLoaded} onClick={() => run(calls.unload, 'Send everyone out and unload the room?')}>
+                            <Button variant="danger" icon={<Power />} disabled={busy || !room.isLoaded} onClick={() => run(calls.unload, { title: 'Send everyone out and unload the room?', confirm: 'Unload', danger: true })}>
                                 Unload
                             </Button>
                         )}
@@ -177,7 +177,7 @@ const Rights = ({ room, run, busy }: { room: RoomDetailResponse; run: Run; busy:
             </ul>
             {room.can.manageRights && (
                 <div className="border-t border-line p-4">
-                    <Button variant="danger" disabled={busy} onClick={() => run(calls.removeAllRights, 'Take everyone\'s rights in this room away?')}>Remove everyone&apos;s rights</Button>
+                    <Button variant="danger" disabled={busy} onClick={() => run(calls.removeAllRights, { title: 'Take everyone\'s rights in this room away?', confirm: 'Remove rights' })}>Remove everyone&apos;s rights</Button>
                 </div>
             )}
         </>
@@ -221,8 +221,7 @@ const Bans = ({ room, run, busy }: { room: RoomDetailResponse; run: Run; busy: b
 
     const handleBan = (event: FormEvent) => {
         event.preventDefault();
-        run(() => calls.ban({ name: name.trim() }, duration), `Ban ${name.trim()} from the room?`);
-        setName('');
+        run(() => calls.ban({ name: name.trim() }, duration), { title: `Ban ${name.trim()} from the room?`, confirm: 'Ban' }, () => setName(''));
     };
 
     return (
@@ -270,11 +269,16 @@ export const RoomPage = () => {
     const canViewPlayers = me?.canViewPlayers ?? false;
     const live = useLive(state => state.connected);
 
-    const run: Run = (fn, confirm) => {
-        if (confirm && !window.confirm(confirm))
-            return;
+    const run: Run = (fn, question, then) => {
+        const go = () => {
+            action.mutate(fn);
+            then?.();
+        };
 
-        action.mutate(fn);
+        if (question)
+            ask(question, go);
+        else
+            go();
     };
 
     return (

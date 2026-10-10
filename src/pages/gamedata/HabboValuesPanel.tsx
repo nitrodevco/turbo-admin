@@ -2,6 +2,7 @@ import { RotateCcw, X } from 'lucide-react';
 import { useState } from 'react';
 
 import { useHabboValuesPreview, useTakeHabboValues } from '#/api/gamedata';
+import { ask } from '#/components/confirm';
 import { Button, ErrorNotice, IconButton, Panel, SuccessNotice, Switch, WarningNotice } from '#/components/ui';
 
 import { FIELDS } from './fields';
@@ -31,10 +32,14 @@ export const HabboValuesPanel = ({ onClose }: { onClose: () => void }) => {
                     <Button
                         icon={<RotateCcw />}
                         disabled={take.isPending || isFetching || affected === 0}
-                        onClick={() => {
-                            if (window.confirm(`Use Habbo's ${chosen.join(', ')} on ${affected} furniture? It can be rolled back from the history.`))
-                                take.mutate(chosen, { onSuccess: () => setChosen([]) });
-                        }}
+                        onClick={() => ask(
+                            {
+                                title: `Use Habbo's ${chosen.join(', ')} on ${affected} furniture?`,
+                                body: 'It can be rolled back from the history.',
+                                confirm: 'Use Habbo\'s',
+                            },
+                            () => take.mutate(chosen, { onSuccess: () => setChosen([]) }),
+                        )}
                     >
                         {affected > 0 ? `Use on ${affected.toLocaleString()} furniture` : 'Use Habbo\'s'}
                     </Button>

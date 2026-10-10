@@ -1,9 +1,10 @@
-import { Award, Bot, Crown, PawPrint, Search, Sofa, Sparkles, SquareStack, Trash2 } from 'lucide-react';
+import { Award, Bot, Crown, PawPrint, Sofa, Sparkles, SquareStack, Trash2 } from 'lucide-react';
 import { type ReactNode, useMemo, useState } from 'react';
 
 import { badgeUrl, useClientAssets } from '#/api/assets';
 import { type CatalogFurniture, type CatalogProductInput, type EditableKind, type Membership, useFurnitureSearch } from '#/api/catalog';
 import { useProductLookup } from '#/api/gamedata';
+import { SearchInput } from '#/components/SearchInput';
 import { Input, Labeled, Segmented, Textarea } from '#/components/ui';
 import { cx } from '#/lib/cx';
 
@@ -45,19 +46,15 @@ const ItemPicker = ({ type, value, onPick, disabled }: { type: 'floor' | 'wall';
     return (
         <div className="flex min-w-0 flex-col gap-1.5">
             {!disabled && (
-                <div className="relative">
-                    <Search className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted" />
-                    <Input
-                        type="search"
-                        value={text}
-                        onChange={event => setText(event.target.value)}
-                        placeholder={value.id ? 'Swap for another…' : `Find a ${type} item by class name or id`}
-                        aria-label="Find an item"
-                        spellCheck={false}
-                        autoComplete="off"
-                        className="w-full pl-9 font-mono"
-                    />
-                </div>
+                <SearchInput
+                    value={text}
+                    onValueChange={setText}
+                    placeholder={value.id ? 'Swap for another…' : `Find a ${type} item by class name or id`}
+                    aria-label="Find an item"
+                    spellCheck={false}
+                    autoComplete="off"
+                    className="w-full font-mono"
+                />
             )}
             {text.trim() && (
                 <ul className="max-h-52 overflow-y-auto rounded-lg border border-line bg-surface">

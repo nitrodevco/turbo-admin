@@ -60,10 +60,14 @@ export const ListToolbar = ({ children, page, watch }: {
         if (!element)
             return;
 
-        const top = element.getBoundingClientRect().top + window.scrollY;
+        // The page scrolls in the shell's main on a phone, and the window from a laptop up.
+        const root = element.closest<HTMLElement>('[data-scroll-root]');
+        const scroller = root && root.scrollHeight > root.clientHeight ? root : null;
+        const scrolled = scroller ? scroller.scrollTop : window.scrollY;
+        const top = element.getBoundingClientRect().top - (scroller?.getBoundingClientRect().top ?? 0) + scrolled;
 
-        if (window.scrollY > top + 1)
-            window.scrollTo({ top, behavior: lessMotion() ? 'auto' : 'smooth' });
+        if (scrolled > top + 1)
+            (scroller ?? window).scrollTo({ top, behavior: lessMotion() ? 'auto' : 'smooth' });
     }, [ key ]);
 
     return (

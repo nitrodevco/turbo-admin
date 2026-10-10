@@ -2,10 +2,9 @@ import { Ban } from 'lucide-react';
 import { useState } from 'react';
 
 import { catalogIconUrl, useClientAssets } from '#/api/assets';
+import { Modal } from '#/components/Modal';
 import { Input } from '#/components/ui';
 import { cx } from '#/lib/cx';
-
-import { Modal } from './Modal';
 
 /** How many icon numbers are offered: Habbo's go a little past 300; more can be typed. */
 const ICON_COUNT = 400;

@@ -6,6 +6,7 @@ import { post } from '#/api/client';
 import { actOnHotel, type HotelActionRequest, saveWelcomeMessage, useHotelAbilities, useWelcomeMessage, type WelcomeMessage } from '#/api/queries';
 import type { AvailabilityPhase, RunCommandResponse } from '#/api/types';
 import { CommandAnswer } from '#/components/CommandAnswer';
+import { ask, type Question } from '#/components/confirm';
 import { type Tab, TabbedPanel } from '#/components/TabbedPanel';
 import { Button, ErrorNotice, Input, Label, Labeled, Loading, Segmented, SuccessNotice, Textarea } from '#/components/ui';
 
@@ -102,11 +103,16 @@ export const HotelControls = ({ phase }: { phase: AvailabilityPhase }) => {
     if (!can || (!can.alert && !can.maintenance && !can.shutdown && !can.welcomeMessage))
         return null;
 
-    const run = (request: HotelActionRequest, confirm?: string) => {
-        if (confirm && !window.confirm(confirm))
-            return;
+    const run = (request: HotelActionRequest, question?: Question, then?: () => void) => {
+        const go = () => {
+            act.mutate(() => actOnHotel(request));
+            then?.();
+        };
 
-        act.mutate(() => actOnHotel(request));
+        if (question)
+            ask(question, go);
+        else
+            go();
     };
 
     const confirmPending = () => act.mutate(() => post<RunCommandResponse>('/commands/run', { line: 'confirm' }));
@@ -123,8 +129,7 @@ export const HotelControls = ({ phase }: { phase: AvailabilityPhase }) => {
                     className="flex flex-col gap-2.5 p-4"
                     onSubmit={(event) => {
                         event.preventDefault();
-                        run({ action: 'alert', message: alert.trim() }, 'Send this to everyone online?');
-                        setAlert('');
+                        run({ action: 'alert', message: alert.trim() }, { title: 'Send this to everyone online?', confirm: 'Send' }, () => setAlert(''));
                     }}
                 >
                     <Label>A pop-up for everyone online</Label>
@@ -151,7 +156,14 @@ export const HotelControls = ({ phase }: { phase: AvailabilityPhase }) => {
                             variant="danger"
                             icon={<Wrench />}
                             disabled={act.isPending || shuttingDown}
-                            onClick={() => run({ action: 'maintenance', minutes: Number(maintenanceIn), message: reason.trim() || undefined })}
+                            onClick={() => run({ action: 'maintenance', minutes: Number(maintenanceIn), message: reason.trim() || undefined }, {
+                                title: maintenanceIn === '0' ? 'Start maintenance now?' : `Start maintenance in ${maintenanceIn} min?`,
+                                body: maintenanceIn === '0'
+                                    ? 'Everyone without the bypass is sent home now and kept out until it ends.'
+                                    : `Everyone without the bypass is sent home in ${maintenanceIn} min and kept out until it ends.`,
+                                confirm: 'Start maintenance',
+                                danger: true,
+                            })}
                         >
                             {maintenanceIn === '0' ? 'Start maintenance now' : `Start in ${maintenanceIn} min`}
                         </Button>
@@ -178,7 +190,11 @@ export const HotelControls = ({ phase }: { phase: AvailabilityPhase }) => {
                             variant="danger"
                             icon={<Power />}
                             disabled={act.isPending}
-                            onClick={() => run({ action: 'shutdown', minutes: Number(shutdownIn), message: reason.trim() || undefined }, `Shut the hotel down in ${shutdownIn} min?`)}
+                            onClick={() => run({ action: 'shutdown', minutes: Number(shutdownIn), message: reason.trim() || undefined }, {
+                                title: `Shut the hotel down in ${shutdownIn} min?`,
+                                body: 'Everyone is sent home, and the server stops. It does not start again by itself.',
+                                confirm: 'Shut down',
+                            })}
                         >
                             {`Shut down in ${shutdownIn} min`}
                         </Button>

@@ -3,7 +3,7 @@ import { useEffect, useRef } from 'react';
 
 import { cx } from '#/lib/cx';
 
-import { useToasts } from './feedback';
+import { useToasts } from './toast';
 
 /**
  * The notes, bottom centre, above everything; a tap dismisses one. They sit in the browser's top

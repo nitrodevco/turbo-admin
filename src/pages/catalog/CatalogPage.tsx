@@ -15,10 +15,10 @@ import {
 } from '@dnd-kit/core';
 import { arrayMove, sortableKeyboardCoordinates } from '@dnd-kit/sortable';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { ArrowLeft, Copy, DatabaseBackup, Disc3, Eye, LayoutGrid, PackagePlus, PackageSearch, Settings2, Sparkles, Wand2 } from 'lucide-react';
+import { ArrowLeft, Eye, PackagePlus, Settings2, Sparkles } from 'lucide-react';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
-import { Link, useSearchParams } from 'react-router';
+import { useSearchParams } from 'react-router';
 
 import {
     catalogCalls,
@@ -35,20 +35,22 @@ import {
     useCatalogPage,
     useCatalogTree,
 } from '#/api/catalog';
-import { Badge, Button, EmptyState, ErrorNotice, Loading, PageHeader, WarningNotice } from '#/components/ui';
+import { ask } from '#/components/confirm';
+import { Modal } from '#/components/Modal';
+import { celebrate, toast, toastError } from '#/components/toast';
+import { Badge, Button, EmptyState, ErrorNotice, Loading, PageHeader, Segmented, WarningNotice } from '#/components/ui';
 import { cx } from '#/lib/cx';
 
 import { Backups } from './Backups';
 import { CatalogHome } from './CatalogHome';
+import { catalogTabs } from './catalogTabs';
 import { ChangesBar } from './ChangesBar';
 import { Duplicates } from './Duplicates';
 import { FeaturedEditor } from './FeaturedEditor';
-import { celebrate, toast, toastError } from './feedback';
 import { GenerateCatalog } from './GenerateCatalog';
 import { DISPLAY_LABELS, stepLabel } from './labels';
 import { layoutOf, showsOffers } from './layouts';
 import { MissingFurni } from './MissingFurni';
-import { Modal } from './Modal';
 import { OfferInspector, type OfferStart } from './OfferInspector';
 import { offerKey } from './offers';
 import { OfferFace } from './OfferTile';
@@ -57,7 +59,6 @@ import { type PageDraft, pageDraftOf } from './pageDraft';
 import { PageInspector } from './PageInspector';
 import { PagePreview, type SlotRef } from './PagePreview';
 import { PageIcon, PageRowBody, PageTree } from './PageTree';
-import { Toasts } from './Toasts';
 import { ancestorsOf, childrenOf } from './tree';
 import { flatten, movePageIn, project } from './treeDrag';
 
@@ -134,8 +135,9 @@ type PageTab = 'preview' | 'settings' | 'featured';
 /**
  * The catalog editor. Its views: the editor itself - the page tree on the left, the picked page in
  * the middle drawn as the client draws it, and on the right what is being edited (the page, an
- * offer, or the front page's featured items); the furni the catalog doesn't sell; the furni it
- * sells twice; generating a whole catalog; and backups to roll back to. Edits are saved as they are made, can be undone
+ * offer, or the front page's featured items); the audit, of the furni the catalog doesn't sell and
+ * the furni it sells twice; generating a whole catalog; and backups to roll back to. Vouchers and
+ * songs are pages of their own under the same tabs. Edits are saved as they are made, can be undone
  * and redone (Ctrl+Z, Ctrl+Shift+Z) or thrown away together, and go in front of players when
  * published. The view, the open page and offer live in the address, so they can be linked to.
  */
@@ -395,27 +397,29 @@ export const CatalogPage = () => {
     const busy = step.isPending || publish.isPending || discard.isPending;
 
     const doPublish = () => {
-        if (!window.confirm('Publish the catalog? Everyone online gets the new catalog at once.'))
-            return;
-
-        publish.mutate([], {
-            onSuccess: (result) => {
-                celebrate(publishButton.current);
-                toast(`Live! ${result.offers.toLocaleString()} offers on ${result.pages.toLocaleString()} pages; ${result.playersTold} ${result.playersTold === 1 ? 'player' : 'players'} told to refresh.`);
-            },
-            onError: toastError,
+        ask({ title: 'Publish the catalog?', body: 'Everyone online gets the new catalog at once.', confirm: 'Publish' }, () => {
+            publish.mutate([], {
+                onSuccess: (result) => {
+                    celebrate(publishButton.current);
+                    toast(`Live! ${result.offers.toLocaleString()} offers on ${result.pages.toLocaleString()} pages; ${result.playersTold} ${result.playersTold === 1 ? 'player' : 'players'} told to refresh.`);
+                },
+                onError: toastError,
+            });
         });
     };
 
     const doDiscard = () => {
         const steps = history.data?.undo.length ?? 0;
 
-        if (!window.confirm(`Throw away ${steps} ${steps === 1 ? 'change' : 'changes'}? The saved catalog goes back to the one players have. You can redo them afterwards.`))
-            return;
-
-        discard.mutate([], {
-            onSuccess: () => toast('Thrown away: the catalog is the one players have.'),
-            onError: toastError,
+        ask({
+            title: `Throw away ${steps} ${steps === 1 ? 'change' : 'changes'}?`,
+            body: 'The saved catalog goes back to the one players have. You can redo them afterwards.',
+            confirm: 'Throw away',
+        }, () => {
+            discard.mutate([], {
+                onSuccess: () => toast('Thrown away: the catalog is the one players have.'),
+                onError: toastError,
+            });
         });
     };
 
@@ -434,22 +438,10 @@ export const CatalogPage = () => {
                 title="Catalog"
                 description={data ? `${(data.pages.length - 1).toLocaleString()} pages · ${unpublished > 0 ? `${unpublished} ${unpublished === 1 ? 'change' : 'changes'} waiting to go live` : 'everything is live'}` : 'Pages, offers and prices'}
                 tabs={{
-                    value: view,
-                    onChange: value => setView(value as View),
-                    items: [
-                        { value: 'editor', label: 'Editor', icon: <LayoutGrid /> },
-                        { value: 'missing', label: 'Missing furni', icon: <PackageSearch /> },
-                        { value: 'duplicates', label: 'Duplicates', icon: <Copy /> },
-                        { value: 'generate', label: 'Generate', icon: <Wand2 /> },
-                        { value: 'backups', label: 'Backups', icon: <DatabaseBackup /> },
-                    ],
+                    ...catalogTabs(view === 'missing' || view === 'duplicates' ? 'audit' : view, true),
+                    onChange: value => setView(value === 'audit' ? 'missing' : value as View),
                 }}
-            >
-                <Link to="/catalog/songs" className="inline-flex h-11 items-center gap-2 rounded-lg border border-line bg-subtle px-3.5 text-sm font-medium hover:border-muted/50 sm:h-9 [&>svg]:size-4">
-                    <Disc3 />
-                    Songs
-                </Link>
-            </PageHeader>
+            />
             {/* The usual page body's width, without its rising entrance: a transformed parent would move the drag overlay. */}
             <div className="mx-auto flex w-full max-w-[1240px] flex-col gap-3 px-3 py-4 sm:px-4 lg:px-6 lg:py-6">
                 {tree.error && <ErrorNotice error={tree.error} />}
@@ -478,6 +470,16 @@ export const CatalogPage = () => {
                     />
                 )}
 
+                {data && (view === 'missing' || view === 'duplicates') && (
+                    <div className="sm:max-w-sm">
+                        <Segmented
+                            label="What to audit"
+                            value={view}
+                            onChange={value => setView(value as View)}
+                            options={[ { value: 'missing', label: 'Not sold' }, { value: 'duplicates', label: 'Sold twice' } ]}
+                        />
+                    </div>
+                )}
                 {data && view === 'missing' && <MissingFurni tree={data} pageId={selected} onOpenPage={id => openPage(id)} />}
                 {data && view === 'duplicates' && <Duplicates tree={data} onOpen={(pageId, offerId) => openPage(pageId, offerId)} />}
                 {data && view === 'generate' && <GenerateCatalog tree={data} onDone={() => openPage(null)} />}
@@ -669,7 +671,6 @@ export const CatalogPage = () => {
                     </div>
                 </Modal>
             )}
-            <Toasts />
         </>
     );
 };

@@ -1,11 +1,11 @@
-import { Search } from 'lucide-react';
 import { type FormEvent, useState } from 'react';
 import { Link, useSearchParams } from 'react-router';
 
 import { useRoomSearch } from '#/api/queries';
 import type { RoomSearchMode } from '#/api/types';
 import { ListToolbar } from '#/components/ListToolbar';
-import { Button, EmptyState, ErrorNotice, Input, Loading, PageBody, PageHeader, Panel, Select, Td, Th } from '#/components/ui';
+import { SearchInput } from '#/components/SearchInput';
+import { Button, EmptyState, ErrorNotice, Loading, PageBody, PageHeader, Panel, Select, Td, Th } from '#/components/ui';
 import { cx } from '#/lib/cx';
 
 import { doorModeLabel, formatDateTime } from './labels';
@@ -63,18 +63,14 @@ export const RoomsPage = () => {
                             <Select value={draftBy} onChange={event => setDraftBy(modeOf(event.target.value))} aria-label="Search by">
                                 {MODES.map(mode => <option key={mode.value} value={mode.value}>{mode.label}</option>)}
                             </Select>
-                            <div className="relative min-w-48 flex-1 sm:max-w-80">
-                                <Search className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted" />
-                                <Input
-                                    type="search"
-                                    value={draft}
-                                    onChange={event => setDraft(event.target.value)}
-                                    placeholder={MODES.find(x => x.value === draftBy)?.placeholder}
-                                    aria-label="Search"
-                                    inputMode={draftBy === 'id' ? 'numeric' : undefined}
-                                    className="w-full pl-9"
-                                />
-                            </div>
+                            <SearchInput
+                                value={draft}
+                                onValueChange={setDraft}
+                                placeholder={MODES.find(x => x.value === draftBy)?.placeholder}
+                                aria-label="Search"
+                                inputMode={draftBy === 'id' ? 'numeric' : undefined}
+                                className="min-w-48 flex-1 sm:max-w-80"
+                            />
                             <Button type="submit">Search</Button>
                         </form>
                     </ListToolbar>

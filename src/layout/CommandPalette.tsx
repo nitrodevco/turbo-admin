@@ -273,14 +273,6 @@ export const SearchButton = () => {
                 <span className="min-w-0 flex-1 truncate">Search everything</span>
                 <kbd className="rounded border border-line px-1.5 font-mono text-[10px]">Ctrl K</kbd>
             </button>
-            <button
-                type="button"
-                onClick={() => setOpen(true)}
-                aria-label="Search"
-                className="grid size-10 shrink-0 place-items-center rounded-lg text-muted hover:bg-subtle hover:text-ink lg:hidden [&>svg]:size-5"
-            >
-                <Search />
-            </button>
         </>
     );
 };

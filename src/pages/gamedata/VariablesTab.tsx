@@ -4,7 +4,9 @@ import { useSearchParams } from 'react-router';
 
 import { type GamedataStatus, useDeleteVariable, useLinkVariable, useSaveVariable, useVariableImport, useVariableImportPreview, useVariableSearch, type VariableEntry } from '#/api/gamedata';
 import { useSettings } from '#/api/settings';
+import { ask } from '#/components/confirm';
 import { ListToolbar } from '#/components/ListToolbar';
+import { SearchInput } from '#/components/SearchInput';
 import { Badge, Button, EmptyState, ErrorNotice, Input, Labeled, Loading, Panel, Select, SuccessNotice, Textarea } from '#/components/ui';
 import { cx } from '#/lib/cx';
 
@@ -146,10 +148,10 @@ const VariableEditor = ({ variable, linking, canManage, onDone }: { variable: Va
                             icon={<Trash2 />}
                             className="ml-auto text-bad hover:text-bad"
                             disabled={remove.isPending}
-                            onClick={() => {
-                                if (window.confirm(`Remove the variable ${variable.key}? The client falls back to its own default for it.`))
-                                    remove.mutate(variable.key, { onSuccess: onDone });
-                            }}
+                            onClick={() => ask(
+                                { title: `Remove the variable ${variable.key}?`, body: 'The client falls back to its own default for it.', confirm: 'Remove' },
+                                () => remove.mutate(variable.key, { onSuccess: onDone }),
+                            )}
                         >
                             Remove
                         </Button>
@@ -218,10 +220,14 @@ const ImportPanel = ({ onDone }: { onDone: () => void }) => {
                         <Button
                             icon={<Upload />}
                             disabled={seen.added + seen.updated === 0 || take.isPending}
-                            onClick={() => {
-                                if (window.confirm(`Import the config? ${seen.added} variables are added and ${seen.updated} changed. It can be rolled back from the history.`))
-                                    take.mutate(json);
-                            }}
+                            onClick={() => ask(
+                                {
+                                    title: 'Import the config?',
+                                    body: `${seen.added} variables are added and ${seen.updated} changed. It can be rolled back from the history.`,
+                                    confirm: 'Import',
+                                },
+                                () => take.mutate(json),
+                            )}
                         >
                             Import
                         </Button>
@@ -276,20 +282,16 @@ export const VariablesTab = ({ status }: { status: GamedataStatus }) => {
                     watch={[ text, page ]}
                     page={{ offset: page * size, limit: size, total: found?.total, onChange: offset => setPage(Math.floor(offset / size)) }}
                 >
-                    <div className="relative min-w-48 flex-1 sm:max-w-96">
-                        <Search className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted" />
-                        <Input
-                            type="search"
-                            value={text}
-                            onChange={(event) => {
-                                setText(event.target.value);
-                                setPage(0);
-                            }}
-                            placeholder="Key or value"
-                            className="w-full pl-9"
-                            aria-label="Find variables"
-                        />
-                    </div>
+                    <SearchInput
+                        value={text}
+                        onValueChange={(value) => {
+                            setText(value);
+                            setPage(0);
+                        }}
+                        placeholder="Key or value"
+                        className="min-w-48 flex-1 sm:max-w-96"
+                        aria-label="Find variables"
+                    />
                     {status.canManage && (
                         <>
                             <Button variant="secondary" icon={<Upload />} onClick={() => setImporting(true)} disabled={importing}>Import</Button>

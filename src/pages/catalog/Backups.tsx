@@ -2,9 +2,9 @@ import { ArchiveRestore, DatabaseBackup, Save, Trash2 } from 'lucide-react';
 import { useState } from 'react';
 
 import { type CatalogBackup, catalogCalls, type CatalogTree, useCatalogBackups, useCatalogEdit } from '#/api/catalog';
+import { ask } from '#/components/confirm';
+import { toast, toastError } from '#/components/toast';
 import { Badge, Button, ErrorNotice, Input, Loading } from '#/components/ui';
-
-import { toast, toastError } from './feedback';
 
 /** The longest name a backup takes, as the server holds it. */
 const NAME_MAX_LENGTH = 100;
@@ -64,22 +64,24 @@ export const Backups = ({ tree }: { tree: CatalogTree }) => {
     });
 
     const doRollback = (backup: CatalogBackup) => {
-        if (!window.confirm(`Roll the catalog back to "${backup.name}"? Every page, offer and featured item goes back as it has them. What is there now is backed up first, and you can undo it. Players get it when you publish.`))
-            return;
-
-        rollback.mutate([ backup.id ], {
-            onSuccess: () => toast(`Rolled back to "${backup.name}". Publish to put it in front of players.`),
-            onError: toastError,
+        ask({
+            title: `Roll the catalog back to "${backup.name}"?`,
+            body: 'Every page, offer and featured item goes back as it has them. What is there now is backed up first, and you can undo it. Players get it when you publish.',
+            confirm: 'Roll back',
+        }, () => {
+            rollback.mutate([ backup.id ], {
+                onSuccess: () => toast(`Rolled back to "${backup.name}". Publish to put it in front of players.`),
+                onError: toastError,
+            });
         });
     };
 
     const doDelete = (backup: CatalogBackup) => {
-        if (!window.confirm(`Delete the backup "${backup.name}"? It can't be brought back.`))
-            return;
-
-        remove.mutate([ backup.id ], {
-            onSuccess: () => toast(`Deleted the backup "${backup.name}".`),
-            onError: toastError,
+        ask({ title: `Delete the backup "${backup.name}"?`, body: 'It can\'t be brought back.', confirm: 'Delete' }, () => {
+            remove.mutate([ backup.id ], {
+                onSuccess: () => toast(`Deleted the backup "${backup.name}".`),
+                onError: toastError,
+            });
         });
     };
 
