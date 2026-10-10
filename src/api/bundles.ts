@@ -44,8 +44,8 @@ export interface AssetJob {
     failed: number;
     log: string[];
     error: string | null;
-    /** What it came to. The spec leaves its shape open: a line, or a few named counts. */
-    result: unknown;
+    /** What it came to, in a line, once done: "312 converted, 4 failed". */
+    result: string | null;
     playerId: number | null;
     startedAt: string;
     finishedAt: string | null;
@@ -64,14 +64,14 @@ export interface AssetsStatus {
     kinds: AssetKindSummary[];
     job: AssetJob | null;
     checks: { errors: number; warnings: number };
-    /** The publish targets; their shape here isn't fixed, so the panel reads them from `/assets/targets`. */
-    targets: unknown;
+    /** How many publish targets there are; the list itself is `/assets/targets`. */
+    targets: number;
 }
 
 export interface AssetBundle {
     kind: BundleKind;
     name: string;
-    revision: string | number | null;
+    revision: string | null;
     source: 'habbo' | 'upload';
     hash: string | null;
     size: number;

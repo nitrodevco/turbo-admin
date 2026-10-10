@@ -12,25 +12,9 @@ import { formatTime } from './format';
 
 const STATUS_TONES: Record<AssetJob['status'], BadgeTone> = { running: 'accent', done: 'green', failed: 'red', canceled: 'amber' };
 
-/** What a job came to: a line, or a few named counts. */
-const Result = ({ result }: { result: unknown }) => {
-    if (result === null || result === undefined || result === '')
-        return null;
-
-    if (typeof result !== 'object')
-        return <p className="text-sm">{String(result)}</p>;
-
-    return (
-        <div className="flex flex-wrap gap-1.5">
-            {Object.entries(result as Record<string, unknown>).map(([ key, value ]) => (
-                <span key={key} className="rounded-md border border-line bg-subtle px-2 py-0.5 font-mono text-xs">
-                    <span className="text-muted">{key} </span>
-                    {typeof value === 'number' ? value.toLocaleString() : String(value)}
-                </span>
-            ))}
-        </div>
-    );
-};
+/** What a job came to, in a line. */
+const Result = ({ result }: { result: string | null }) =>
+    result ? <p className="text-sm">{result}</p> : null;
 
 /**
  * The job's log in the mono face, newest at the bottom. While the job runs it follows the newest
