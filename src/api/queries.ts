@@ -77,9 +77,10 @@ export interface WelcomeMessage {
     maxLength: number;
 }
 
-export const useWelcomeMessage = () => useQuery({
+export const useWelcomeMessage = (enabled = true) => useQuery({
     queryKey: [ 'welcome-message' ],
     queryFn: () => api<WelcomeMessage>('/hotel/welcome-message'),
+    enabled,
 });
 
 /** Saves the welcome message for every login from now on; an empty one turns it off. */

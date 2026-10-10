@@ -147,8 +147,8 @@ export const DashboardPage = () => {
                                 </Panel>
                             </div>
                             {canControl && (
-                                <div className="min-w-0 flex-[1_1_320px] max-lg:hidden">
-                                    <HotelControls phase={data.availability} />
+                                <div className="min-w-0 flex-[1_1_380px] max-lg:hidden">
+                                    <HotelControls phase={data.availability} atUtc={data.availabilityAtUtc} />
                                 </div>
                             )}
                         </div>

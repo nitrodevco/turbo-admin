@@ -127,7 +127,7 @@ export const HotelSheet = () => {
                             <X className="size-4" />
                         </button>
                     </div>
-                    <HotelControls phase={data.availability} />
+                    <HotelControls phase={data.availability} atUtc={data.availabilityAtUtc} />
                 </div>
             )}
         </dialog>
