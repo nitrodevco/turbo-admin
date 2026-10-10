@@ -395,3 +395,54 @@ export const useBotAction = () => {
         onSuccess: refresh,
     });
 };
+
+/** What a currency is: credits, silver, emeralds, or a kind of activity points the client shows by its number. */
+export type CurrencyKind = 'credits' | 'silver' | 'emeralds' | 'activity_points';
+
+/** A currency type, and what uses it: players holding it, catalog offers priced in it, vouchers giving it. */
+export interface Currency {
+    id: number;
+    /** How :give names it: lowercase letters, digits and _. */
+    name: string;
+    type: CurrencyKind;
+    /** The number the client shows activity points by (0 duckets, 5 diamonds); null for the rest. */
+    activityPointType: number | null;
+    enabled: boolean;
+    holders: number;
+    offers: number;
+    vouchers: number;
+}
+
+export interface CurrencyInput {
+    name: string;
+    type: CurrencyKind;
+    activityPointType: number | null;
+    enabled: boolean;
+}
+
+export const useCurrencies = () => useQuery({
+    queryKey: [ 'content', 'currencies' ],
+    queryFn: () => api<{ items: Currency[] }>('/content/currencies'),
+});
+
+/** Adds (no id) or changes a currency; the server's wallets, vouchers and :give use it at once. */
+export const useSaveCurrency = () => {
+    const refresh = useRefreshContent();
+
+    return useMutation({
+        mutationFn: ({ id, input }: { id: number | null; input: CurrencyInput }) => (id === null
+            ? post<{ id: number }>('/content/currencies', input)
+            : put<{ id: number }>(`/content/currencies/${id}`, input)),
+        onSuccess: refresh,
+    });
+};
+
+/** Deletes a currency nothing uses. */
+export const useDeleteCurrency = () => {
+    const refresh = useRefreshContent();
+
+    return useMutation({
+        mutationFn: (id: number) => api<void>(`/content/currencies/${id}`, { method: 'DELETE' }),
+        onSuccess: refresh,
+    });
+};

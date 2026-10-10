@@ -6,6 +6,7 @@ import { PageBody, PageHeader } from '#/components/ui';
 import { AchievementsTab } from './AchievementsTab';
 import { BadgesTab } from './BadgesTab';
 import { BotsTab } from './BotsTab';
+import { CurrenciesTab } from './CurrenciesTab';
 import { GroupsTab } from './GroupsTab';
 import { NavigatorTab } from './NavigatorTab';
 import { PetsTab } from './PetsTab';
@@ -17,11 +18,12 @@ const TABS = [
     { value: 'groups', label: 'Groups' },
     { value: 'pets', label: 'Pets' },
     { value: 'bots', label: 'Bots' },
+    { value: 'currencies', label: 'Currencies' },
 ];
 
 /**
  * The game's content: what players earn, wear, find and meet - achievements, badges, the
- * navigator, groups, pets and bots. Each change is made at once.
+ * navigator, groups, pets, bots and the currencies wallets hold. Each change is made at once.
  */
 export const ContentPage = () => {
     const [ params, setParams ] = useSearchParams();
@@ -33,7 +35,7 @@ export const ContentPage = () => {
         <>
             <PageHeader
                 title="Content"
-                description="Achievements, badges, the navigator, groups, pets and bots"
+                description="Achievements, badges, the navigator, groups, pets, bots and currencies"
                 tabs={{ items: TABS, value: tab, onChange: value => setParams({ tab: value }, { replace: true }) }}
             />
             <PageBody className="flex flex-col gap-4 lg:gap-5">
@@ -43,6 +45,7 @@ export const ContentPage = () => {
                 {tab === 'groups' && <GroupsTab canManage={canManage} />}
                 {tab === 'pets' && <PetsTab canManage={canManage} />}
                 {tab === 'bots' && <BotsTab canManage={canManage} />}
+                {tab === 'currencies' && <CurrenciesTab canManage={canManage} />}
             </PageBody>
         </>
     );
