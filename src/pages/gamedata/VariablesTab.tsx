@@ -7,7 +7,7 @@ import { useSettings } from '#/api/settings';
 import { ask } from '#/components/confirm';
 import { ListToolbar } from '#/components/ListToolbar';
 import { SearchInput } from '#/components/SearchInput';
-import { Badge, Button, EmptyState, ErrorNotice, Input, Labeled, Loading, Panel, Select, SuccessNotice, Textarea } from '#/components/ui';
+import { Badge, Button, Checkbox, EmptyState, ErrorNotice, Input, Labeled, Loading, Panel, Select, SuccessNotice, Textarea } from '#/components/ui';
 import { cx } from '#/lib/cx';
 
 import { OpenRow, ReviewItem } from './parts';
@@ -165,18 +165,21 @@ const VariableEditor = ({ variable, linking, canManage, onDone }: { variable: Va
 
 /**
  * A client config taken in whole: pasted or read from a file, looked at, then imported. Keys the
- * hotel lacks are added and those that differ changed; the hotel's other variables stay.
+ * hotel lacks are added and those that differ changed; the hotel's other variables stay, or are
+ * removed when asked. Variables that follow a setting or a file always stay.
  */
 const ImportPanel = ({ onDone }: { onDone: () => void }) => {
     const [ json, setJson ] = useState('');
+    const [ removeMissing, setRemoveMissing ] = useState(false);
     const preview = useVariableImportPreview();
     const take = useVariableImport();
     const seen = preview.data;
+    const removing = seen?.removed.length ?? 0;
 
     return (
         <Panel
             title="Import a client config"
-            description="Paste a nitro-config.json, or open one. Its keys are added or changed; the hotel's other variables stay."
+            description="Paste a nitro-config.json, or open one. Its keys are added or changed; the hotel's other variables stay unless you remove them."
             actions={<Button variant="ghost" icon={<X />} onClick={onDone}>Close</Button>}
         >
             <div className="flex flex-col gap-3 p-4">
@@ -191,6 +194,17 @@ const ImportPanel = ({ onDone }: { onDone: () => void }) => {
                     placeholder={'{\n    "socket.url": "wss://hotel.example/ws",\n    "catalog.deep.hierarchy": true\n}'}
                     className="font-mono text-xs"
                     aria-label="Client config"
+                />
+                <Checkbox
+                    label="Remove the hotel's variables the config doesn't have"
+                    hint="Variables that follow a setting or a file stay."
+                    checked={removeMissing}
+                    onChange={(checked) => {
+                        setRemoveMissing(checked);
+                        take.reset();
+
+                        if (preview.data) preview.mutate({ json, removeMissing: checked });
+                    }}
                 />
                 <div className="flex flex-wrap items-center gap-2">
                     <label className="inline-flex cursor-pointer items-center gap-2 text-sm font-medium text-accent hover:underline [&>svg]:size-4">
@@ -210,23 +224,24 @@ const ImportPanel = ({ onDone }: { onDone: () => void }) => {
                                 void file.text().then((text) => {
                                     setJson(text);
                                     take.reset();
-                                    preview.mutate(text);
+                                    preview.mutate({ json: text, removeMissing });
                                 });
                             }}
                         />
                     </label>
-                    <Button variant="secondary" icon={<Search />} disabled={json.trim() === '' || preview.isPending} onClick={() => preview.mutate(json)}>Look first</Button>
+                    <Button variant="secondary" icon={<Search />} disabled={json.trim() === '' || preview.isPending} onClick={() => preview.mutate({ json, removeMissing })}>Look first</Button>
                     {seen && (
                         <Button
                             icon={<Upload />}
-                            disabled={seen.added + seen.updated === 0 || take.isPending}
+                            disabled={seen.added + seen.updated + removing === 0 || take.isPending}
                             onClick={() => ask(
                                 {
                                     title: 'Import the config?',
-                                    body: `${seen.added} variables are added and ${seen.updated} changed. It can be rolled back from the history.`,
+                                    body: `${seen.added} variables are added, ${seen.updated} changed${removing > 0 ? ` and ${removing} removed` : ''}. It can be rolled back from the history.`,
                                     confirm: 'Import',
+                                    danger: removing > 0,
                                 },
-                                () => take.mutate(json),
+                                () => take.mutate({ json, removeMissing }),
                             )}
                         >
                             Import
@@ -237,12 +252,12 @@ const ImportPanel = ({ onDone }: { onDone: () => void }) => {
                 {take.isSuccess && <SuccessNotice>{take.data.changeSet ? `Imported: ${take.data.changeSet.summary}.` : 'The hotel already had all of it.'}</SuccessNotice>}
                 {seen && !take.isSuccess && (
                     <p className="text-sm text-muted">
-                        {seen.added} to add, {seen.updated} to change, {seen.unchanged} already the same.
+                        {seen.added} to add, {seen.updated} to change,{removeMissing && ` ${removing} to remove,`} {seen.unchanged} already the same.
                         {seen.skipped.length > 0 && ` Left out: ${seen.skipped.join(', ')}.`}
                     </p>
                 )}
             </div>
-            {seen && !take.isSuccess && seen.items.length > 0 && (
+            {seen && !take.isSuccess && seen.items.length + removing > 0 && (
                 <ul className="divide-y divide-line border-t border-line">
                     {seen.items.map(item => (
                         <ReviewItem key={item.key} action={item.action} name={item.key}>
@@ -253,6 +268,13 @@ const ImportPanel = ({ onDone }: { onDone: () => void }) => {
                         </ReviewItem>
                     ))}
                     {seen.truncated && <li className="px-4 py-2.5 text-xs text-muted">And more, not listed.</li>}
+                    {seen.removed.map(key => (
+                        <li key={`removed:${key}`} className="grid gap-x-3 gap-y-1 px-4 py-2.5 sm:grid-cols-[5.5rem_minmax(10rem,1fr)_2fr]">
+                            <span><Badge tone="red">remove</Badge></span>
+                            <span className="min-w-0 truncate font-mono text-xs">{key}</span>
+                            <span className="text-xs text-muted">Not in the config</span>
+                        </li>
+                    ))}
                 </ul>
             )}
         </Panel>

@@ -1,9 +1,10 @@
-import { ArrowRight, Hammer, RefreshCw } from 'lucide-react';
+import { ArrowRight, Check, Hammer, Pencil, RefreshCw, X } from 'lucide-react';
+import { useState } from 'react';
 import { Link } from 'react-router';
 
-import { FILES, type GamedataFile, type GamedataStatus, useCheckHabbo, useRebuild } from '#/api/gamedata';
+import { FILES, type GamedataFile, type GamedataStatus, useCheckHabbo, useRebuild, useSetFileKey } from '#/api/gamedata';
 import { PhoneLabel, Row, RowList } from '#/components/RowList';
-import { Badge, Button, ErrorNotice, Panel, SuccessNotice } from '#/components/ui';
+import { Badge, Button, ErrorNotice, IconButton, Input, Panel, SuccessNotice } from '#/components/ui';
 import { fromNow } from '#/lib/time';
 
 import { formatSize } from './labels';
@@ -18,9 +19,66 @@ interface HabboRow {
 interface FileRow {
     what: string;
     file: GamedataFile;
-    /** The client's setting that loads it. */
+    /** The client's setting that loads it, as the client names it. */
     setting: string;
 }
+
+/**
+ * The client setting a file's address is written under: the variables that follow it. Staff who
+ * manage the gamedata can choose another key; the one before is unlinked, keeping the /0 address.
+ */
+const FileKey = ({ file, keys, fallback, canManage }: { file: string; keys: string[]; fallback: string; canManage: boolean }) => {
+    const [ editing, setEditing ] = useState(false);
+    const [ key, setKey ] = useState('');
+    const setFileKey = useSetFileKey();
+    const shown = keys.length > 0 ? keys.join(', ') : null;
+
+    if (editing) {
+        const save = () => setFileKey.mutate({ file, key: key.trim() }, { onSuccess: () => setEditing(false) });
+
+        return (
+            <span className="flex min-w-0 flex-col gap-1">
+                <span className="flex items-center gap-1">
+                    <Input
+                        value={key}
+                        onChange={event => setKey(event.target.value)}
+                        onKeyDown={(event) => {
+                            if (event.key === 'Enter' && key.trim() !== '') save();
+                            if (event.key === 'Escape') setEditing(false);
+                        }}
+                        placeholder={fallback}
+                        aria-label={`Client setting for ${file}`}
+                        className="min-w-0 flex-1 font-mono text-xs"
+                        autoFocus
+                    />
+                    <IconButton label="Save" icon={<Check />} disabled={key.trim() === '' || setFileKey.isPending} onClick={save} />
+                    <IconButton label="Cancel" icon={<X />} onClick={() => setEditing(false)} />
+                </span>
+                {setFileKey.error && <ErrorNotice error={setFileKey.error} />}
+            </span>
+        );
+    }
+
+    return (
+        <span className="flex min-w-0 items-center gap-1">
+            <span className="truncate font-mono text-xs" title={shown ?? undefined}>
+                <PhoneLabel>Setting </PhoneLabel>
+                {shown ?? <Badge tone="amber">no variable</Badge>}
+            </span>
+            {canManage && (
+                <IconButton
+                    label="Change the client setting"
+                    icon={<Pencil />}
+                    onClick={() => {
+                        setKey(keys[0] ?? fallback);
+                        setFileKey.reset();
+                        setEditing(true);
+                    }}
+                />
+            )}
+        </span>
+    );
+};
 
 /**
  * The gamedata at a glance: what Habbo serves now and whether the hotel has taken it in, and the
@@ -97,7 +155,7 @@ export const OverviewTab = ({ status }: { status: GamedataStatus }) => {
 
             <Panel
                 title="Files the client loads"
-                description="Built from the database whenever what they're made from changes. Point each client setting at its /0 address: it redirects to the current build."
+                description="Built from the database whenever what they're made from changes. Each file's address is written into the external variables under its client setting; change the key here if your client reads another. The external variables themselves are loaded from the client's page by nitro.config.url."
                 actions={status.canManage && (
                     <Button
                         variant="secondary"
@@ -113,18 +171,24 @@ export const OverviewTab = ({ status }: { status: GamedataStatus }) => {
                     columns="minmax(12rem,1.4fr) minmax(12rem,1.2fr) 7rem 5rem 7rem"
                     headers={[ { label: 'File' }, { label: 'Client setting' }, { label: 'Build' }, { label: 'Size', className: 'text-right' }, { label: 'Built' } ]}
                 >
-                    {files.map(row => (
-                        <Row key={row.file.file}>
-                            <span className="min-w-0">
-                                <span className="block font-medium">{row.what}</span>
-                                <span className="block truncate font-mono text-[11px] text-muted">/gamedata/{row.file.file}/0</span>
-                            </span>
-                            <span className="truncate font-mono text-xs"><PhoneLabel>Setting </PhoneLabel>{row.setting}</span>
-                            <span className="font-mono text-xs" title={row.file.hash}>{row.file.hash.slice(0, 10)}</span>
-                            <span className="font-mono text-xs text-muted tabular-nums sm:text-right">{formatSize(row.file.size)}</span>
-                            <span className="text-xs text-muted">{fromNow(row.file.builtAt)}</span>
-                        </Row>
-                    ))}
+                    {files.map((row) => {
+                        const keys = status.fileKeys[row.file.file];
+
+                        return (
+                            <Row key={row.file.file}>
+                                <span className="min-w-0">
+                                    <span className="block font-medium">{row.what}</span>
+                                    <span className="block truncate font-mono text-[11px] text-muted">/gamedata/{row.file.file}/0</span>
+                                </span>
+                                {keys
+                                    ? <FileKey file={row.file.file} keys={keys} fallback={row.setting} canManage={status.canManage} />
+                                    : <span className="truncate font-mono text-xs"><PhoneLabel>Setting </PhoneLabel>{row.setting}</span>}
+                                <span className="font-mono text-xs" title={row.file.hash}>{row.file.hash.slice(0, 10)}</span>
+                                <span className="font-mono text-xs text-muted tabular-nums sm:text-right">{formatSize(row.file.size)}</span>
+                                <span className="text-xs text-muted">{fromNow(row.file.builtAt)}</span>
+                            </Row>
+                        );
+                    })}
                 </RowList>
                 {(rebuild.error || rebuild.isSuccess) && (
                     <div className="border-t border-line p-4">

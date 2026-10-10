@@ -78,6 +78,8 @@ export interface GamedataStatus {
     productData: GamedataFile;
     figureData: GamedataFile;
     externalVariables: GamedataFile;
+    /** The variables that carry each file's address, by file (`furnidata_json`): those that follow it. */
+    fileKeys: Record<string, string[]>;
     canManage: boolean;
 }
 
@@ -241,6 +243,19 @@ export const useRebuild = () => {
 
     return useMutation({
         mutationFn: (file: string) => post<GamedataFile>(`/gamedata/files/${file}/build`),
+        onSuccess: refresh,
+    });
+};
+
+/**
+ * Makes a variable the one that carries a file's address: it follows the file, and any other
+ * variable that did is unlinked, keeping the file's /0 address.
+ */
+export const useSetFileKey = () => {
+    const refresh = useRefresh();
+
+    return useMutation({
+        mutationFn: ({ file, key }: { file: string; key: string }) => put<VariableEntry>(`/gamedata/files/${file}/key`, { key }),
         onSuccess: refresh,
     });
 };
@@ -425,6 +440,14 @@ export interface VariableImportPreview {
     skipped: string[];
     items: VariableImportItem[];
     truncated: boolean;
+    /** The hotel's variables the config lacks, removed when asked; never one that follows a setting or a file. */
+    removed: string[];
+}
+
+/** A client config to import, and whether the hotel's variables it lacks are removed. */
+export interface VariableImport {
+    json: string;
+    removeMissing: boolean;
 }
 
 export const useVariableSearch = (text: string, page: number) => useQuery({
@@ -466,15 +489,15 @@ export const useDeleteVariable = () => {
 
 /** What importing a client config (a JSON object, as nitro-config.json) would do. */
 export const useVariableImportPreview = () => useMutation({
-    mutationFn: (json: string) => post<VariableImportPreview>('/gamedata/variables/import/preview', { json }),
+    mutationFn: (config: VariableImport) => post<VariableImportPreview>('/gamedata/variables/import/preview', config),
 });
 
-/** Takes a client config's variables in: added and changed, the hotel's others kept. */
+/** Takes a client config's variables in: added and changed, the hotel's others kept or, when asked, removed. */
 export const useVariableImport = () => {
     const refresh = useRefresh();
 
     return useMutation({
-        mutationFn: (json: string) => post<{ changeSet: ChangeSet | null }>('/gamedata/variables/import', { json }),
+        mutationFn: (config: VariableImport) => post<{ changeSet: ChangeSet | null }>('/gamedata/variables/import', config),
         onSuccess: refresh,
     });
 };
