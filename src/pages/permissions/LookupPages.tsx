@@ -100,7 +100,7 @@ export const LogPage = () => {
                     >
                         <form onSubmit={handleSubmit} className="flex min-w-0 flex-1 gap-2">
                             <SearchInput value={draft} onValueChange={setDraft} placeholder="Node, key or group name" spellCheck={false} autoComplete="off" className="min-w-48 flex-1 sm:max-w-80" />
-                            <Button type="submit" variant="secondary">Search</Button>
+                            <Button type="submit">Search</Button>
                         </form>
                     </ListToolbar>
                     {log.error && <div className="p-4"><ErrorNotice error={log.error} /></div>}

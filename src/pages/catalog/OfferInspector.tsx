@@ -355,6 +355,9 @@ export const OfferInspector = ({ tree, pageId, offer, start, featured, onDone, o
                                     {isFeatured ? 'Featured' : 'Feature'}
                                 </Button>
                             )}
+                            {featured && !isFeatured && featured.length >= FEATURED_MAX && (
+                                <span className="order-last w-full text-xs text-muted">The front page shows {FEATURED_MAX} featured items; take one off there to feature this.</span>
+                            )}
                             <Button
                                 variant="ghost"
                                 icon={<Trash2 />}

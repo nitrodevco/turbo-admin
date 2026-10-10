@@ -26,13 +26,13 @@ const OfferRow = ({ tree, offer, busy, onOpen, onDelete, onKeepOnly }: { tree: C
                 {offer.visible ? 'page hidden' : 'hidden'}
             </span>
         )}
-        <span className="w-28 text-right font-mono text-xs tabular-nums">{priceOf(offer, tree)}</span>
+        <span className="font-mono text-xs tabular-nums sm:w-28 sm:text-right">{priceOf(offer, tree)}</span>
         {tree.canManage && (
             <span className="flex items-center gap-1">
-                <button type="button" disabled={busy} onClick={onKeepOnly} className="rounded-md px-2 py-1 text-xs text-accent hover:bg-accent-soft disabled:pointer-events-none disabled:opacity-40" title="Delete the other offers of it">
+                <button type="button" disabled={busy} onClick={onKeepOnly} className="min-h-10 rounded-md px-2 py-1 text-xs text-accent hover:bg-accent-soft sm:min-h-0 disabled:pointer-events-none disabled:opacity-40" title="Delete the other offers of it">
                     Keep only this
                 </button>
-                <button type="button" disabled={busy} onClick={onDelete} aria-label={`Delete offer ${offer.offerId}`} title="Delete this offer" className="grid size-8 place-items-center rounded-md text-muted hover:bg-bad-soft hover:text-bad disabled:opacity-40">
+                <button type="button" disabled={busy} onClick={onDelete} aria-label={`Delete offer ${offer.offerId}`} title="Delete this offer" className="grid size-10 place-items-center rounded-md text-muted hover:bg-bad-soft hover:text-bad disabled:opacity-40 sm:size-8">
                     <Trash2 className="size-3.5" />
                 </button>
             </span>

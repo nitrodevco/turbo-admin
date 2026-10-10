@@ -1,9 +1,8 @@
 import { Input, Labeled, Panel, Select } from '#/components/ui';
 
 import type { HotelViewDraft } from './draft';
-import { useResolveImage } from './hooks';
 import { COMMON, toColorInput } from './model';
-import { Changed, ImageField } from './parts';
+import { Changed } from './parts';
 import { WidgetSettings } from './WidgetSettings';
 
 const ETCHING_POSITIONS = [ 'bottom', 'top', 'left', 'right', 'top-left', 'top-right', 'bottom-left', 'bottom-right' ];
@@ -30,9 +29,8 @@ const ColorField = ({ label, hint, colorKey, draft, fallback, disabled }: { labe
     );
 };
 
-/** The look every widget shares, the panes' widths and the bonus rare's picture. */
+/** The look every widget shares and the panes' widths. The bonus rare's picture is with its campaigns. */
 export const LookTab = ({ draft, disabled }: { draft: HotelViewDraft; disabled?: boolean }) => {
-    const resolve = useResolveImage(draft);
     const number = (key: string, label: string, hint: string) => (
         <Labeled label={label} hint={hint}>
             <div className="flex items-center gap-2">
@@ -62,11 +60,6 @@ export const LookTab = ({ draft, disabled }: { draft: HotelViewDraft; disabled?:
                 <div className="grid gap-4 p-4 sm:grid-cols-2">
                     {number(COMMON.leftPaneWidth, 'Left pane (pixels)', 'Empty is 500.')}
                     {number(COMMON.rightPaneWidth, 'Right pane (pixels)', 'Empty is 250.')}
-                </div>
-            </Panel>
-            <Panel title="Bonus rare" description="The picture of the bonus rare widget; its furni and its count come from the server's bonus rare settings.">
-                <div className="p-4">
-                    <ImageField label="Picture" value={draft.text(COMMON.bonusRareImage)} onChange={value => draft.setText(COMMON.bonusRareImage, value)} resolve={resolve} changed={draft.changed(COMMON.bonusRareImage)} disabled={disabled} />
                 </div>
             </Panel>
             <WidgetSettings draft={draft} disabled={disabled} />

@@ -5,6 +5,7 @@ import { Link, useSearchParams } from 'react-router';
 import { type CommandLogEntry, type CommandLogFilter, useCommandLog } from '#/api/commandLog';
 import { useCommands } from '#/api/queries';
 import { ListToolbar } from '#/components/ListToolbar';
+import { LogFilters } from '#/components/LogFilters';
 import { PhoneLabel, Row, RowList } from '#/components/RowList';
 import { SearchInput } from '#/components/SearchInput';
 import { Badge, type BadgeTone, Button, EmptyState, ErrorNotice, Input, Loading, PageBody, PageHeader, Panel, Select } from '#/components/ui';
@@ -13,18 +14,19 @@ import { cx } from '#/lib/cx';
 import { fromNow } from '#/lib/time';
 import { formatDateTime } from '#/pages/rooms/labels';
 
+/** How a command went, in the words the console uses for the same outcomes. */
 const OUTCOMES: Record<string, { label: string; tone: BadgeTone }> = {
-    completed: { label: 'done', tone: 'green' },
-    partial: { label: 'partly', tone: 'amber' },
-    confirm: { label: 'awaiting confirm', tone: 'amber' },
-    refused: { label: 'not allowed', tone: 'red' },
-    failed: { label: 'failed', tone: 'red' },
-    bind_failed: { label: 'bad arguments', tone: 'red' },
-    vetoed: { label: 'stopped by a plugin', tone: 'amber' },
-    canceled: { label: 'canceled', tone: 'neutral' },
-    flood: { label: 'too fast', tone: 'amber' },
-    room_level: { label: 'room level', tone: 'neutral' },
-    error: { label: 'error', tone: 'red' },
+    completed: { label: 'Done', tone: 'green' },
+    partial: { label: 'Partly done', tone: 'amber' },
+    confirm: { label: 'Needs confirming', tone: 'amber' },
+    refused: { label: 'Not allowed', tone: 'red' },
+    failed: { label: 'Did not go through', tone: 'red' },
+    bind_failed: { label: 'Check the arguments', tone: 'red' },
+    vetoed: { label: 'Stopped by a plugin', tone: 'amber' },
+    canceled: { label: 'Canceled', tone: 'neutral' },
+    flood: { label: 'Too fast', tone: 'amber' },
+    room_level: { label: 'Room only', tone: 'neutral' },
+    error: { label: 'Error', tone: 'red' },
 };
 
 const SOURCES: { value: string; label: string }[] = [
@@ -148,29 +150,31 @@ export const CommandLogPage = () => {
                                 aria-label="Player"
                                 className="min-w-40 flex-1 sm:max-w-56"
                             />
-                            <Input
-                                type="search"
-                                value={draft.command}
-                                onChange={event => setDraft({ ...draft, command: event.target.value })}
-                                list={listId}
-                                placeholder="Command"
-                                aria-label="Command"
-                                spellCheck={false}
-                                autoComplete="off"
-                                className="w-36 flex-[1_1_8rem] font-mono sm:flex-none"
-                            />
-                            <datalist id={listId}>
-                                {commands.data?.map(x => <option key={x.name} value={x.name} />)}
-                            </datalist>
-                            <Select value={filter.outcome} onChange={event => go({ outcome: event.target.value, page: 1 })} aria-label="Outcome">
-                                <option value="">Any outcome</option>
-                                {Object.entries(OUTCOMES).map(([ value, x ]) => <option key={value} value={value}>{x.label}</option>)}
-                            </Select>
-                            <Select value={filter.source} onChange={event => go({ source: event.target.value, page: 1 })} aria-label="Where from">
-                                {SOURCES.map(x => <option key={x.value} value={x.value}>{x.label}</option>)}
-                            </Select>
-                            <Button type="submit">Search</Button>
-                            {filtered && <Button type="button" variant="ghost" icon={<X />} onClick={clear}>Clear</Button>}
+                            <LogFilters active={[ filter.command, filter.outcome, filter.source ].filter(x => x !== '').length}>
+                                <Input
+                                    type="search"
+                                    value={draft.command}
+                                    onChange={event => setDraft({ ...draft, command: event.target.value })}
+                                    list={listId}
+                                    placeholder="Command"
+                                    aria-label="Command"
+                                    spellCheck={false}
+                                    autoComplete="off"
+                                    className="w-36 flex-[1_1_8rem] font-mono sm:flex-none"
+                                />
+                                <datalist id={listId}>
+                                    {commands.data?.map(x => <option key={x.name} value={x.name} />)}
+                                </datalist>
+                                <Select value={filter.outcome} onChange={event => go({ outcome: event.target.value, page: 1 })} aria-label="Outcome">
+                                    <option value="">Any outcome</option>
+                                    {Object.entries(OUTCOMES).map(([ value, x ]) => <option key={value} value={value}>{x.label}</option>)}
+                                </Select>
+                                <Select value={filter.source} onChange={event => go({ source: event.target.value, page: 1 })} aria-label="Where from">
+                                    {SOURCES.map(x => <option key={x.value} value={x.value}>{x.label}</option>)}
+                                </Select>
+                                <Button type="submit">Search</Button>
+                                {filtered && <Button type="button" variant="ghost" icon={<X />} onClick={clear}>Clear</Button>}
+                            </LogFilters>
                         </form>
                     </ListToolbar>
 

@@ -5,7 +5,7 @@ import { useMemo, useState } from 'react';
 import { type BuildPlan, type BuildRequest, catalogCalls, type CatalogPageDetail, type CatalogTree, type PageDisplay, useCatalogEdit, useFurniLines } from '#/api/catalog';
 import { Modal } from '#/components/Modal';
 import { toast } from '#/components/toast';
-import { Button, ErrorNotice, Input, Labeled, Segmented, Select, Switch, WarningNotice } from '#/components/ui';
+import { Button, EmptyState, ErrorNotice, Input, Labeled, Segmented, Select, Switch, WarningNotice } from '#/components/ui';
 import { cx } from '#/lib/cx';
 
 import { buildersFor, type BuilderSpec } from './builders';
@@ -279,7 +279,7 @@ export const PageBuilder = ({ tree, page, open, onClose, onBuiltPage }: PageBuil
                                 <button type="button" className="text-accent hover:underline" onClick={() => setPicked(new Set())}>none</button>
                             </div>
                             {data.items.length === 0
-                                ? <p className="rounded-xl border border-dashed border-line p-6 text-center text-sm text-muted">Nothing to build from that.</p>
+                                ? <EmptyState>Nothing to build from that.</EmptyState>
                                 : (
                                         <ul className="max-h-[40dvh] divide-y divide-line overflow-y-auto rounded-xl border border-line">
                                             {data.items.map((item) => {

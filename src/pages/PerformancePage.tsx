@@ -1,9 +1,9 @@
-import { ChartLine, Table } from 'lucide-react';
 import { type ReactNode, useState } from 'react';
 
 import { type PerformancePoint, type PerformanceStage, usePerformance } from '#/api/performance';
 import { type ChartPoint, type ChartSeries, ChartTable, LineChart } from '#/components/LineChart';
-import { EmptyState, ErrorNotice, IconButton, Loading, PageBody, PageHeader, Panel, Segmented, Stat } from '#/components/ui';
+import { PhoneLabel, Row, RowList } from '#/components/RowList';
+import { EmptyState, ErrorNotice, Loading, PageBody, PageHeader, Panel, Segmented, Stat } from '#/components/ui';
 import { useHubTabs } from '#/layout/nav';
 
 const RANGES = [
@@ -43,6 +43,11 @@ const STAGES: Record<string, string> = {
     'command.execute': 'Chat commands',
 };
 
+const VIEWS = [
+    { value: 'chart', label: 'Chart' },
+    { value: 'table', label: 'Table' },
+];
+
 /** One chart in a card, with a switch to the same figures as a table. */
 const ChartCard = ({ title, description, series, points, format, max, dimmed }: {
     title: string;
@@ -60,11 +65,7 @@ const ChartCard = ({ title, description, series, points, format, max, dimmed }: 
             title={title}
             description={description}
             actions={(
-                <IconButton
-                    label={table ? 'Show as a chart' : 'Show as a table'}
-                    icon={table ? <ChartLine /> : <Table />}
-                    onClick={() => setTable(!table)}
-                />
+                <Segmented label={`Show ${title} as`} value={table ? 'table' : 'chart'} onChange={value => setTable(value === 'table')} options={VIEWS} />
             )}
         >
             {points.length === 0
@@ -79,38 +80,41 @@ const ChartCard = ({ title, description, series, points, format, max, dimmed }: 
 const pointsOf = (points: PerformancePoint[], ...pick: ((point: PerformancePoint) => number | null)[]): ChartPoint[] =>
     points.map(point => ({ at: new Date(point.atUtc).getTime(), values: pick.map(f => f(point)) }));
 
+const STAGE_COLUMNS = [
+    { label: 'Operation' },
+    { label: 'Times', className: 'text-right' },
+    { label: 'Median', className: 'text-right' },
+    { label: 'p95', className: 'text-right' },
+    { label: 'Longest', className: 'text-right' },
+];
+
+/** One figure of an operation: a column of the table from a tablet up, a labelled figure in its row on a phone. */
+const StageFigure = ({ label, children }: { label: string; children: ReactNode }) => (
+    <span className="font-mono text-[13px] tabular-nums sm:text-right sm:text-sm">
+        <PhoneLabel>{`${label} `}</PhoneLabel>
+        {children}
+    </span>
+);
+
 /** The timings of every measured operation over the range, the most frequent first. */
 const StageTable = ({ stages }: { stages: PerformanceStage[] }) => (
     stages.length === 0
         ? <EmptyState>Nothing has been measured in this range yet.</EmptyState>
         : (
-                <div className="overflow-x-auto">
-                    <table className="w-full text-sm">
-                        <thead className="border-b border-line font-mono text-[11px] tracking-[0.08em] text-muted uppercase">
-                            <tr>
-                                <th scope="col" className="px-4 py-2 text-left font-medium">Operation</th>
-                                <th scope="col" className="px-4 py-2 text-right font-medium">Times</th>
-                                <th scope="col" className="px-4 py-2 text-right font-medium">Median</th>
-                                <th scope="col" className="px-4 py-2 text-right font-medium">p95</th>
-                                <th scope="col" className="px-4 py-2 text-right font-medium">Longest</th>
-                            </tr>
-                        </thead>
-                        <tbody className="divide-y divide-line">
-                            {stages.map(stage => (
-                                <tr key={stage.stage} className="hover:bg-subtle/60">
-                                    <td className="px-4 py-2">
-                                        <div className="font-medium">{STAGES[stage.stage] ?? stage.stage}</div>
-                                        <div className="font-mono text-[11px] text-muted">{stage.stage}</div>
-                                    </td>
-                                    <td className="px-4 py-2 text-right font-mono tabular-nums">{stage.count.toLocaleString()}</td>
-                                    <td className="px-4 py-2 text-right font-mono tabular-nums">{ms(stage.p50Ms)}</td>
-                                    <td className="px-4 py-2 text-right font-mono tabular-nums">{ms(stage.p95Ms)}</td>
-                                    <td className="px-4 py-2 text-right font-mono tabular-nums">{ms(stage.maxMs)}</td>
-                                </tr>
-                            ))}
-                        </tbody>
-                    </table>
-                </div>
+                <RowList columns="minmax(0,1fr) repeat(4,auto)" headers={STAGE_COLUMNS}>
+                    {stages.map(stage => (
+                        <Row key={stage.stage}>
+                            <div>
+                                <div className="font-medium">{STAGES[stage.stage] ?? stage.stage}</div>
+                                <div className="truncate font-mono text-[11px] text-muted">{stage.stage}</div>
+                            </div>
+                            <StageFigure label="Times">{stage.count.toLocaleString()}</StageFigure>
+                            <StageFigure label="Median">{ms(stage.p50Ms)}</StageFigure>
+                            <StageFigure label="p95">{ms(stage.p95Ms)}</StageFigure>
+                            <StageFigure label="Longest">{ms(stage.maxMs)}</StageFigure>
+                        </Row>
+                    ))}
+                </RowList>
             )
 );
 

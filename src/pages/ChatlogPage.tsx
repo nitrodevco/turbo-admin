@@ -5,9 +5,10 @@ import { Link, useSearchParams } from 'react-router';
 import { type ChatlogCursor, type ChatlogEntry, type ChatlogFilter, type ChatlogResponse, useChatlog, useChatlogContext } from '#/api/chatlog';
 import { useMe } from '#/api/queries';
 import { ListToolbar } from '#/components/ListToolbar';
+import { LogFilters } from '#/components/LogFilters';
 import { PhoneLabel, Row, RowList } from '#/components/RowList';
 import { SearchInput } from '#/components/SearchInput';
-import { Badge, Button, EmptyState, ErrorNotice, IconButton, Input, Loading, PageBody, PageHeader, Panel } from '#/components/ui';
+import { Badge, Button, EmptyState, ErrorNotice, Input, Loading, PageBody, PageHeader, Panel } from '#/components/ui';
 import { useHubTabs } from '#/layout/nav';
 import { cx } from '#/lib/cx';
 import { fromNow } from '#/lib/time';
@@ -55,7 +56,15 @@ const Lines = ({ data, highlight, onContext }: { data: ChatlogResponse; highligh
                         {entry.message}
                     </span>
                     {onContext && (
-                        <IconButton label="Show in context" icon={<TextSearch />} onClick={() => onContext(entry)} className="max-sm:ml-auto" />
+                        <Button
+                            variant="ghost"
+                            icon={<TextSearch />}
+                            onClick={() => onContext(entry)}
+                            aria-label={`Show in context: ${entry.message}`}
+                            className="h-9 px-2 text-xs max-sm:ml-auto sm:h-8"
+                        >
+                            In context
+                        </Button>
                     )}
                 </Row>
             ))}
@@ -161,40 +170,49 @@ export const ChatlogPage = () => {
                                             aria-label="Player"
                                             className="min-w-40 flex-1 sm:max-w-56"
                                         />
-                                        <Input
-                                            type="search"
-                                            inputMode="numeric"
-                                            value={draft.room}
-                                            onChange={event => setDraft({ ...draft, room: event.target.value.replace(/\D/g, '') })}
-                                            placeholder="Room id"
-                                            aria-label="Room id"
-                                            className="w-28 flex-[1_1_6rem] font-mono sm:flex-none"
-                                        />
-                                        <Input
-                                            type="search"
-                                            value={draft.text}
-                                            onChange={event => setDraft({ ...draft, text: event.target.value })}
-                                            placeholder="Words"
-                                            aria-label="Words in the line"
-                                            className="min-w-32 flex-1 sm:max-w-56"
-                                        />
-                                        <Button type="submit">Search</Button>
-                                        {filtered && <Button type="button" variant="ghost" icon={<X />} onClick={clear}>Clear</Button>}
+                                        <LogFilters active={[ filter.room, filter.text ].filter(x => x !== '').length}>
+                                            <Input
+                                                type="search"
+                                                inputMode="numeric"
+                                                value={draft.room}
+                                                onChange={event => setDraft({ ...draft, room: event.target.value.replace(/\D/g, '') })}
+                                                placeholder="Room id"
+                                                aria-label="Room id"
+                                                className="w-28 flex-[1_1_6rem] font-mono sm:flex-none"
+                                            />
+                                            <Input
+                                                type="search"
+                                                value={draft.text}
+                                                onChange={event => setDraft({ ...draft, text: event.target.value })}
+                                                placeholder="Words"
+                                                aria-label="Words in the line"
+                                                className="min-w-32 flex-1 sm:max-w-56"
+                                            />
+                                            <Button type="submit">Search</Button>
+                                            {filtered && <Button type="button" variant="ghost" icon={<X />} onClick={clear}>Clear</Button>}
+                                        </LogFilters>
                                     </form>
-                                    <div className="flex items-center gap-1">
-                                        <IconButton
-                                            label="Newer"
+                                    {/* The lines are newest first: newer ones are before these, older ones after. */}
+                                    <nav aria-label="Pages" className="ml-auto flex items-center gap-1">
+                                        <Button
+                                            variant="ghost"
                                             icon={<ChevronLeft />}
                                             disabled={!log.data?.hasNewer || !first}
                                             onClick={() => first && go(filter, { after: first.id })}
-                                        />
-                                        <IconButton
-                                            label="Older"
-                                            icon={<ChevronRight />}
+                                            className="h-9 px-2.5"
+                                        >
+                                            Newer
+                                        </Button>
+                                        <Button
+                                            variant="ghost"
                                             disabled={!log.data?.hasOlder || !last}
                                             onClick={() => last && go(filter, { before: last.id })}
-                                        />
-                                    </div>
+                                            className="h-9 px-2.5"
+                                        >
+                                            Older
+                                            <ChevronRight />
+                                        </Button>
+                                    </nav>
                                 </ListToolbar>
 
                                 {log.error && <div className="p-4"><ErrorNotice error={log.error} /></div>}

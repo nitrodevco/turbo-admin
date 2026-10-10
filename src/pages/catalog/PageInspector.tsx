@@ -185,7 +185,11 @@ export const PageInspector = ({ tree, page, draft, onDraft, focus, onOpen }: Pag
                                 );
                             })}
                         </div>
-                        {inBuildersClub(draft.display) && !isTab && <p className="text-xs text-muted">The pages above it are shown in the Builders Club catalog too, to lead to it, without their own offers.</p>}
+                        <p className="text-xs text-muted">
+                            {DISPLAYS.find(x => x.value === draft.display)?.hint}
+                            {inBuildersClub(draft.display) && !isTab && ' The pages above it are shown in the Builders Club catalog too, to lead to it, without their own offers.'}
+                            {isTab && canManage && ' A tab can\'t be in the Builders Club catalog, which has no tabs.'}
+                        </p>
                     </Section>
 
                     <Section title="Layout">
@@ -237,6 +241,7 @@ export const PageInspector = ({ tree, page, draft, onDraft, focus, onOpen }: Pag
                                         Delete page
                                     </Button>
                                 )}
+                                {!isRoot && page.offers.length > 0 && <p className="w-full text-xs text-muted">To delete the page, move or delete its offers first.</p>}
                             </div>
                             <p className="text-xs text-muted">A new page starts hidden, so it can be set up before anyone sees it. Drag a page in the tree to move it.</p>
                         </Section>

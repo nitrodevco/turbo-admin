@@ -8,7 +8,10 @@ import { ask } from '#/components/confirm';
 import { Badge, Button, EmptyState, ErrorNotice, Input, Labeled, Loading, Panel, Select, SuccessNotice } from '#/components/ui';
 import { cx } from '#/lib/cx';
 
-import { inputToIso, isoTime, isoToInput } from './model';
+import type { HotelViewDraft } from './draft';
+import { useResolveImage } from './hooks';
+import { COMMON, inputToIso, isoTime, isoToInput } from './model';
+import { ImageField } from './parts';
 
 type CampaignDraft = Omit<BonusRareCampaign, 'id'>;
 
@@ -171,9 +174,11 @@ const RecordPurchase = () => {
 
 /**
  * The bonus rare: a furniture given for every so many credits a player brings in, counted as the
- * running campaign says. The widget's picture is the Look tab's. Saved at once.
+ * running campaign says. The campaigns are saved at once; the widget's picture is a variable, kept
+ * with the page's other changes until they are saved together.
  */
-export const BonusRareTab = ({ now, disabled }: { now: number; disabled?: boolean }) => {
+export const BonusRareTab = ({ draft, now, disabled }: { draft: HotelViewDraft; now: number; disabled?: boolean }) => {
+    const resolve = useResolveImage(draft);
     const { data, error } = useBonusRareCampaigns();
     const [ open, setOpen ] = useState<number | 'new' | null>(null);
     const campaigns = data?.campaigns ?? [];
@@ -183,7 +188,7 @@ export const BonusRareTab = ({ now, disabled }: { now: number; disabled?: boolea
         <div className="flex flex-col gap-4">
             <Panel
                 title="Bonus rare campaigns"
-                description="Shown by a slot holding the Bonus rare widget: the last one started and not ended runs; with none, the widget is hidden. Its picture is on the Look tab. Saved at once."
+                description="Shown by a slot holding the Bonus rare widget: the last one started and not ended runs; with none, the widget is hidden. Each is saved at once."
                 actions={!disabled && <Button variant="secondary" icon={<Plus />} onClick={() => setOpen('new')} disabled={open === 'new'}>New campaign</Button>}
                 className="overflow-clip"
             >
@@ -204,6 +209,11 @@ export const BonusRareTab = ({ now, disabled }: { now: number; disabled?: boolea
                         </li>
                     ))}
                 </ul>
+            </Panel>
+            <Panel title="Widget picture" description="What the bonus rare widget shows beside the furni and the count. Kept with the page's other changes until you press Save.">
+                <div className="p-4">
+                    <ImageField label="Picture" value={draft.text(COMMON.bonusRareImage)} onChange={value => draft.setText(COMMON.bonusRareImage, value)} resolve={resolve} changed={draft.changed(COMMON.bonusRareImage)} disabled={disabled} />
+                </div>
             </Panel>
             {!disabled && <RecordPurchase />}
         </div>

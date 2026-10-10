@@ -1,5 +1,6 @@
 import { CheckCircle2, XCircle } from 'lucide-react';
 import type { ButtonHTMLAttributes, InputHTMLAttributes, ReactNode, SelectHTMLAttributes, TextareaHTMLAttributes } from 'react';
+import { Link } from 'react-router';
 
 import { SearchButton } from '#/layout/CommandPalette';
 import { HotelStatusPill } from '#/layout/HotelStatus';
@@ -84,6 +85,17 @@ const HeaderPage = ({ title }: { title: string }) => {
         </span>
     );
 };
+
+/**
+ * A link in a page's header that looks like the header's buttons: from a room or a player to their
+ * chat, commands, permissions or profile.
+ */
+export const HeaderLink = ({ to, icon, children }: { to: string; icon: ReactNode; children: ReactNode }) => (
+    <Link to={to} className="inline-flex h-11 items-center gap-2 rounded-lg border border-line bg-subtle px-3.5 text-sm font-medium hover:border-muted/50 sm:h-9 [&>svg]:size-4">
+        {icon}
+        {children}
+    </Link>
+);
 
 /** The page under its header, to the same width. */
 export const PageBody = ({ children, className }: { children: ReactNode; className?: string }) => (
@@ -217,7 +229,7 @@ export const Labeled = ({ label, hint, children, className }: { label: string; h
 );
 
 export const Checkbox = ({ label, checked, onChange, disabled, hint }: { label: ReactNode; checked: boolean; onChange: (checked: boolean) => void; disabled?: boolean; hint?: string }) => (
-    <label className={cx('flex items-start gap-2 text-sm select-none', disabled && 'opacity-60')} title={hint}>
+    <label className={cx('flex items-start gap-2 text-sm select-none', disabled && 'opacity-60')}>
         <input
             type="checkbox"
             className="mt-0.5 size-4 rounded border-line accent-accent"
@@ -225,7 +237,10 @@ export const Checkbox = ({ label, checked, onChange, disabled, hint }: { label: 
             disabled={disabled}
             onChange={event => onChange(event.target.checked)}
         />
-        <span>{label}</span>
+        <span>
+            {label}
+            {hint && <span className="block text-xs text-muted">{hint}</span>}
+        </span>
     </label>
 );
 

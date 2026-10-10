@@ -4,6 +4,7 @@ import type { ReactNode } from 'react';
 
 import { catalogImageUrl, promoImageUrl, useClientAssets } from '#/api/assets';
 import type { CatalogFeaturedItem, CatalogOffer, CatalogPageDetail, CatalogTree } from '#/api/catalog';
+import { EmptyState } from '#/components/ui';
 import { cx } from '#/lib/cx';
 
 import { checkLayout } from './layoutCheck';
@@ -151,7 +152,7 @@ export const PagePreview = ({ tree, page, draft, featured, selectedOffer, onSele
         body = <FeaturedPreview items={featured} onEdit={onEditFeatured} />;
     else if (sells)
         body = page.offers.length === 0 && !tree.canManage
-            ? <p className="p-4 text-sm text-muted">No offers on this page.</p>
+            ? <EmptyState>No offers on this page.</EmptyState>
             : <OfferGrid tree={tree} offers={page.offers} selectedOffer={selectedOffer} flagged={flagged} onSelectOffer={onSelectOffer} onAddOffer={onAddOffer} />;
     else
         body = (

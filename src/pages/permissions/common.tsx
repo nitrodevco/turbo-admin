@@ -1,12 +1,13 @@
 import { History, KeyRound, ListTree, Search, ShieldCheck, Users } from 'lucide-react';
-import type { ReactNode } from 'react';
+import type { ButtonHTMLAttributes, ReactNode } from 'react';
 import { Link } from 'react-router';
 
 import type { AuditEntry } from '#/api/permissions';
 import { useMe } from '#/api/queries';
 import { PhoneLabel, Row, RowList } from '#/components/RowList';
 import type { TabItem } from '#/components/Tabs';
-import { Badge, EmptyState, PageHeader, Select } from '#/components/ui';
+import { Badge, EmptyState, Labeled, PageHeader, Select } from '#/components/ui';
+import { cx } from '#/lib/cx';
 import { formatDateTime } from '#/pages/rooms/labels';
 
 import { DURATIONS, targetLink } from './links';
@@ -57,7 +58,10 @@ export const Expiry = ({ at }: { at: string | null }) =>
 export const Verdict = ({ value }: { value: boolean }) =>
     <Badge tone={value ? 'green' : 'red'}>{value ? 'grant' : 'deny'}</Badge>;
 
-/** How long a new assignment lasts, and whether a running one is extended rather than replaced. */
+/**
+ * How long a new assignment lasts, and whether a running one is extended rather than replaced,
+ * each with its label; the Extend box says what it does under it.
+ */
 export const TimingFields = ({ duration, extend, onDuration, onExtend }: {
     duration: string;
     extend: boolean;
@@ -65,16 +69,40 @@ export const TimingFields = ({ duration, extend, onDuration, onExtend }: {
     onExtend: (value: boolean) => void;
 }) => (
     <>
-        <Select value={duration} onChange={event => onDuration(event.target.value)} aria-label="How long">
-            {DURATIONS.map(option => <option key={option.value} value={option.value}>{option.label}</option>)}
-        </Select>
+        <Labeled label="How long" className="sm:w-36">
+            <Select value={duration} onChange={event => onDuration(event.target.value)} className="w-full">
+                {DURATIONS.map(option => <option key={option.value} value={option.value}>{option.label}</option>)}
+            </Select>
+        </Labeled>
         {duration !== '' && (
-            <label className="flex items-center gap-1.5 text-xs text-muted" title="Add the time to one already running, instead of replacing its end">
-                <input type="checkbox" checked={extend} onChange={event => onExtend(event.target.checked)} className="accent-accent" />
-                Extend
+            <label className="flex items-start gap-2 text-sm select-none sm:max-w-60">
+                <input type="checkbox" checked={extend} onChange={event => onExtend(event.target.checked)} className="mt-0.5 size-4 shrink-0 accent-accent" />
+                <span>
+                    Extend
+                    <span className="block text-xs text-muted">Add the time to one already running, instead of replacing its end.</span>
+                </span>
             </label>
         )}
     </>
+);
+
+/** The layout every add form in an access card shares: stacked fields with labels on a phone, a row from a tablet up. */
+export const ADD_FORM_CLASS = 'flex flex-col gap-3 border-t border-line p-4 sm:flex-row sm:flex-wrap sm:items-end';
+
+/** A row's remove button: only an icon, a thumb's size on a phone and small from a tablet up. */
+export const UnsetButton = ({ label, icon, className, ...button }: ButtonHTMLAttributes<HTMLButtonElement> & { label: string; icon: ReactNode }) => (
+    <button
+        type="button"
+        aria-label={label}
+        title={label}
+        {...button}
+        className={cx(
+            'grid size-11 shrink-0 place-items-center rounded-lg border border-transparent text-muted transition hover:border-line hover:bg-subtle hover:text-ink disabled:pointer-events-none disabled:opacity-50 sm:size-7 [&>svg]:size-4',
+            className,
+        )}
+    >
+        {icon}
+    </button>
 );
 
 const ACTIONS: Record<string, string> = {

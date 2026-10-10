@@ -16,7 +16,7 @@ import {
 import { arrayMove, sortableKeyboardCoordinates } from '@dnd-kit/sortable';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { ArrowLeft, Eye, PackagePlus, Settings2, Sparkles } from 'lucide-react';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useId, useMemo, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { useSearchParams } from 'react-router';
 
@@ -37,6 +37,7 @@ import {
 } from '#/api/catalog';
 import { ask } from '#/components/confirm';
 import { Modal } from '#/components/Modal';
+import { Tabs } from '#/components/Tabs';
 import { celebrate, toast, toastError } from '#/components/toast';
 import { Badge, Button, EmptyState, ErrorNotice, Loading, PageHeader, Segmented, WarningNotice } from '#/components/ui';
 import { cx } from '#/lib/cx';
@@ -161,6 +162,8 @@ export const CatalogPage = () => {
     const moveOffer = useCatalogEdit(catalogCalls.moveOffer);
     const queryClient = useQueryClient();
     const publishButton = useRef<HTMLDivElement>(null);
+    const tabsId = useId();
+    const tabIds = { tab: (value: string) => `${tabsId}-tab-${value}`, panel: (value: string) => `${tabsId}-panel-${value}` };
 
     // Undoing or redoing several steps is one call after another, newest first.
     const step = useMutation({
@@ -490,6 +493,12 @@ export const CatalogPage = () => {
                         ? <EmptyState>This catalog has no pages.</EmptyState>
                         : (
                                 <DndContext sensors={sensors} collisionDetection={collision} onDragStart={onDragStart} onDragMove={onDragMove} onDragEnd={onDragEnd} onDragCancel={endDrag}>
+                                    {/* A phone has no room beside the tree for the home: a short summary of it goes above. */}
+                                    {selected === null && (
+                                        <div className="lg:hidden">
+                                            <CatalogHome tree={data} busy={frontPage.isPending} compact onOpenPage={id => openPage(id)} onView={setView} onCreateFrontPage={createFrontPage} />
+                                        </div>
+                                    )}
                                     <div className="grid items-start gap-3 lg:grid-cols-[17rem_minmax(0,1fr)]">
                                         <aside
                                             aria-label="Pages"
@@ -545,67 +554,68 @@ export const CatalogPage = () => {
                                                                 <span className="ml-auto flex shrink-0 items-center gap-1.5">
                                                                     {draft && draft.display !== 'regular' && <Badge className="max-sm:hidden">{DISPLAY_LABELS[draft.display]}</Badge>}
                                                                     {data.canManage && page.data && spec && showsOffers(spec) && (
-                                                                        <Button variant="secondary" icon={<PackagePlus />} onClick={() => setAddingFurni(true)} title="Put furni the catalog doesn't sell yet on this page">
+                                                                        <Button variant="secondary" icon={<PackagePlus />} onClick={() => setAddingFurni(true)} title="Put furni the catalog doesn't sell yet on this page" aria-label="Add furni">
                                                                             <span className="max-sm:hidden">Add furni</span>
                                                                         </Button>
                                                                     )}
                                                                 </span>
                                                             </div>
                                                             {page.data && draft && (
-                                                                <div role="tablist" aria-label="The page" className="flex gap-1 border-t border-line px-2">
-                                                                    {[
-                                                                        { value: 'preview' as const, label: 'Page', icon: <Eye />, shown: true },
-                                                                        { value: 'settings' as const, label: 'Settings', icon: <Settings2 />, shown: true },
-                                                                        { value: 'featured' as const, label: 'Featured items', icon: <Sparkles />, shown: isFeatured },
-                                                                    ].filter(x => x.shown).map(x => (
-                                                                        <button
-                                                                            key={x.value}
-                                                                            type="button"
-                                                                            role="tab"
-                                                                            aria-selected={shownTab === x.value}
-                                                                            onClick={() => setTab(x.value)}
-                                                                            className={cx(
-                                                                                '-mb-px flex h-10 items-center gap-1.5 border-b-2 px-3 text-[13px] font-medium transition-colors [&>svg]:size-4',
-                                                                                shownTab === x.value ? 'border-accent text-accent' : 'border-transparent text-muted hover:text-ink',
-                                                                            )}
-                                                                        >
-                                                                            {x.icon}
-                                                                            {x.label}
-                                                                            {x.value === 'settings' && pageDirty && <span className="size-1.5 rounded-full bg-accent" title="Unsaved changes" />}
-                                                                        </button>
-                                                                    ))}
-                                                                </div>
+                                                                <Tabs
+                                                                    label="The page"
+                                                                    value={shownTab}
+                                                                    onChange={value => setTab(value as PageTab)}
+                                                                    ids={tabIds}
+                                                                    rule={false}
+                                                                    className="border-t border-line px-2"
+                                                                    tabs={[
+                                                                        { value: 'preview', label: 'Page', icon: <Eye /> },
+                                                                        {
+                                                                            value: 'settings',
+                                                                            icon: <Settings2 />,
+                                                                            label: (
+                                                                                <>
+                                                                                    Settings
+                                                                                    {pageDirty && <span className="size-1.5 rounded-full bg-accent" aria-label="unsaved changes" role="img" />}
+                                                                                </>
+                                                                            ),
+                                                                        },
+                                                                        ...(isFeatured ? [ { value: 'featured', label: 'Featured items', icon: <Sparkles /> } ] : []),
+                                                                    ]}
+                                                                />
                                                             )}
                                                         </div>
                                                         {page.error && <ErrorNotice error={page.error} />}
                                                         {page.isPending && <Loading />}
                                                         {page.data && draft && shownTab === 'preview' && (
-                                                            <PagePreview
-                                                                tree={data}
-                                                                page={page.data}
-                                                                draft={draft}
-                                                                featured={featured.data?.items ?? []}
-                                                                selectedOffer={selectedOffer}
-                                                                onSelectOffer={id => selectOffer(selectedOffer === id ? null : id)}
-                                                                onAddOffer={() => selectOffer('new')}
-                                                                onEditSlot={(slot) => {
-                                                                    const at = Date.now();
+                                                            <div role="tabpanel" id={tabIds.panel('preview')} aria-labelledby={tabIds.tab('preview')}>
+                                                                <PagePreview
+                                                                    tree={data}
+                                                                    page={page.data}
+                                                                    draft={draft}
+                                                                    featured={featured.data?.items ?? []}
+                                                                    selectedOffer={selectedOffer}
+                                                                    onSelectOffer={id => selectOffer(selectedOffer === id ? null : id)}
+                                                                    onAddOffer={() => selectOffer('new')}
+                                                                    onEditSlot={(slot) => {
+                                                                        const at = Date.now();
 
-                                                                    setTab('settings');
-                                                                    setFocus({ ...slot, at });
-                                                                    // The field stays lit a moment, to be found.
-                                                                    setTimeout(() => setFocus(current => (current?.at === at ? null : current)), 2500);
-                                                                }}
-                                                                onEditFeatured={() => setTab('featured')}
-                                                            />
+                                                                        setTab('settings');
+                                                                        setFocus({ ...slot, at });
+                                                                        // The field stays lit a moment, to be found.
+                                                                        setTimeout(() => setFocus(current => (current?.at === at ? null : current)), 2500);
+                                                                    }}
+                                                                    onEditFeatured={() => setTab('featured')}
+                                                                />
+                                                            </div>
                                                         )}
                                                         {page.data && draft && shownTab === 'settings' && (
-                                                            <div className="overflow-clip rounded-xl border border-line bg-surface">
+                                                            <div role="tabpanel" id={tabIds.panel('settings')} aria-labelledby={tabIds.tab('settings')} className="overflow-clip rounded-xl border border-line bg-surface">
                                                                 <PageInspector tree={data} page={page.data} draft={draft} onDraft={setDraft} focus={focus} onOpen={openPage} />
                                                             </div>
                                                         )}
                                                         {page.data && shownTab === 'featured' && (
-                                                            <div className="overflow-clip rounded-xl border border-line bg-surface">
+                                                            <div role="tabpanel" id={tabIds.panel('featured')} aria-labelledby={tabIds.tab('featured')} className="overflow-clip rounded-xl border border-line bg-surface">
                                                                 {featured.data && <FeaturedEditor key={JSON.stringify(featured.data.items)} tree={data} items={featured.data.items} offers={page.data.offers} />}
                                                                 {featured.error && <div className="p-4"><ErrorNotice error={featured.error} /></div>}
                                                             </div>

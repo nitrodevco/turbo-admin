@@ -36,7 +36,7 @@ export const IconPicker = ({ value, open, onPick, onClose }: { value: number; op
                     }}
                     className="flex items-center gap-2"
                 >
-                    <Input type="number" min={0} value={typed} onChange={event => setTyped(event.target.value)} placeholder="Or type a number" aria-label="Icon number" className="w-44 font-mono" />
+                    <Input type="number" min={0} value={typed} onChange={event => setTyped(event.target.value)} placeholder="Or type a number" aria-label="Icon number" className="min-w-0 flex-1 font-mono sm:w-44 sm:flex-none" />
                     <span className="text-xs text-muted">Now {value > 0 ? `icon ${value}` : 'none'}.</span>
                 </form>
                 <ul className="grid grid-cols-[repeat(auto-fill,minmax(2.75rem,1fr))] gap-1.5">

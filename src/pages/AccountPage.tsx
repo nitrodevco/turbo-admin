@@ -7,7 +7,7 @@ import type { AccountPasskey } from '#/api/types';
 import { useSession } from '#/auth/session';
 import { type Ceremony, createPasskey, getPasskey, passkeysSupported } from '#/auth/webauthn';
 import { confirmAsync } from '#/components/confirm';
-import { Button, ErrorNotice, Field, Loading, PageBody, PageHeader, Panel } from '#/components/ui';
+import { Button, EmptyState, ErrorNotice, Field, Loading, PageBody, PageHeader, Panel } from '#/components/ui';
 
 type Options = Ceremony<Record<string, unknown>>;
 
@@ -41,14 +41,10 @@ const PasskeyRow = ({ passkey, isLast, onRemoved }: { passkey: AccountPasskey; i
                     Added {formatDate(passkey.createdAtUtc)}
                     {passkey.lastUsedAtUtc ? `, last used ${formatDate(passkey.lastUsedAtUtc)}` : ', not used yet'}
                 </div>
+                {isLast && <div className="mt-1 text-xs text-muted">Your only passkey, so it cannot be removed. Add another first.</div>}
                 {error !== null && <div className="mt-2"><ErrorNotice error={error} /></div>}
             </div>
-            <Button
-                variant="danger"
-                onClick={handleRemove}
-                disabled={busy || isLast}
-                title={isLast ? 'Your only passkey: add another before removing this one.' : undefined}
-            >
+            <Button variant="danger" onClick={handleRemove} disabled={busy || isLast}>
                 Remove
             </Button>
         </li>
@@ -122,16 +118,20 @@ export const AccountPage = () => {
                 {account.data && (
                     <div className="max-w-2xl">
                         <Panel title="Passkeys" description="How you sign in. Keep more than one, so losing a device does not lock you out.">
-                            <ul className="divide-y divide-line">
-                                {account.data.passkeys.map(passkey => (
-                                    <PasskeyRow
-                                        key={passkey.id}
-                                        passkey={passkey}
-                                        isLast={account.data.passkeys.length === 1}
-                                        onRemoved={refresh}
-                                    />
-                                ))}
-                            </ul>
+                            {account.data.passkeys.length === 0
+                                ? <EmptyState>You have no passkeys yet. Add one below so you can sign in again.</EmptyState>
+                                : (
+                                        <ul className="divide-y divide-line">
+                                            {account.data.passkeys.map(passkey => (
+                                                <PasskeyRow
+                                                    key={passkey.id}
+                                                    passkey={passkey}
+                                                    isLast={account.data.passkeys.length === 1}
+                                                    onRemoved={refresh}
+                                                />
+                                            ))}
+                                        </ul>
+                                    )}
                             <AddPasskey onAdded={refresh} />
                         </Panel>
                     </div>

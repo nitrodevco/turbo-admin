@@ -123,7 +123,7 @@ export const BadgesTab = ({ canManage }: { canManage: boolean }) => {
             <ul className={cx('divide-y divide-line transition-opacity', isFetching && 'opacity-60')}>
                 {[ ...(unheld ? [ unheld ] : []), ...badges ].map(badge => (
                     <li key={badge.code}>
-                        <div className="flex items-center gap-3 px-4 py-2">
+                        <div className="flex flex-wrap items-center gap-x-3 gap-y-2 px-4 py-2">
                             <button type="button" className="flex min-w-0 flex-1 items-center gap-3 text-left" onClick={() => setOpen(open === badge.code ? null : badge.code)}>
                                 <span className="grid size-10 shrink-0 place-items-center rounded-lg border border-line bg-canvas">
                                     {badgeUrl(assets, badge.code) && <img src={badgeUrl(assets, badge.code)!} alt="" className="max-h-full max-w-full [image-rendering:pixelated]" />}
@@ -136,7 +136,7 @@ export const BadgesTab = ({ canManage }: { canManage: boolean }) => {
                                 onChange={event => rarity.mutate({ code: badge.code, rarity: event.target.value === '' ? null : Number(event.target.value) })}
                                 disabled={!canManage || rarity.isPending}
                                 aria-label={`Rarity of ${badge.code}`}
-                                className="h-8 w-40 text-xs sm:h-8"
+                                className="h-10 w-full text-xs sm:h-8 sm:w-40"
                             >
                                 <option value="">By how many hold it</option>
                                 {Object.entries(BADGE_RARITIES).map(([ value, label ]) => <option key={value} value={value}>{label}</option>)}

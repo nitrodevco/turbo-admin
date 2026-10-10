@@ -9,10 +9,10 @@ import type { RoomDetailResponse, RoomPlayerRef } from '#/api/types';
 import { ask, type Question } from '#/components/confirm';
 import { Sheet, SheetItem } from '#/components/Sheet';
 import { TabbedPanel } from '#/components/TabbedPanel';
-import { Avatar, Badge, Button, EmptyState, ErrorNotice, IconButton, Input, Kv, Label, Loading, PageBody, Panel, Segmented, Select, Stat, Switch, Textarea } from '#/components/ui';
+import { Avatar, Badge, Button, EmptyState, ErrorNotice, HeaderLink, IconButton, Input, Kv, Label, Loading, PageBody, Panel, Segmented, Select, Stat, Switch, Textarea } from '#/components/ui';
 import { fromNow } from '#/lib/time';
 
-import { chatFloodLabel, doorModeLabel, formatDateTime, tradeModeLabel, whoLabel } from './labels';
+import { doorModeLabel, formatDateTime, tradeModeLabel, whoLabel } from './labels';
 import { ActionOutcome, RoomHeader } from './RoomHeader';
 
 const MUTE_MINUTES = [
@@ -86,10 +86,21 @@ const InsideRow = ({ room, player, run, busy, onMore, linked }: { room: RoomDeta
             <Badge tone={role === 'owner' ? 'accent' : 'neutral'}>{role}</Badge>
             {actionable && (
                 <>
-                    <div className="hidden gap-0.5 sm:flex">
-                        <IconButton label={`Mute ${player.name}`} icon={<MicOff />} disabled={busy} onClick={onMore} />
-                        <IconButton label={`Kick ${player.name}`} icon={<UserX />} disabled={busy} onClick={() => run(() => calls.kick(player.id), { title: `Kick ${player.name} out of the room?`, confirm: 'Kick' })} />
-                        <IconButton label={`Ban ${player.name}`} icon={<Ban />} tone="bad" disabled={busy} onClick={onMore} />
+                    {/* Kick asks, then acts; muting and banning need a length, so they open the sheet with every action. */}
+                    <div className="hidden gap-1 sm:flex">
+                        <Button
+                            variant="ghost"
+                            icon={<UserX />}
+                            disabled={busy}
+                            aria-label={`Kick ${player.name}`}
+                            onClick={() => run(() => calls.kick(player.id), { title: `Kick ${player.name} out of the room?`, confirm: 'Kick' })}
+                            className="px-2.5"
+                        >
+                            Kick
+                        </Button>
+                        <Button variant="ghost" icon={<Gavel />} disabled={busy} aria-label={`Mute or ban ${player.name}`} onClick={onMore} className="px-2.5">
+                            Mute or ban
+                        </Button>
                     </div>
                     <IconButton label={`Actions for ${player.name}`} icon={<Ellipsis />} className="sm:hidden" onClick={onMore} />
                 </>
@@ -285,13 +296,7 @@ export const RoomPage = () => {
         <>
             <RoomHeader id={id} room={room} tab="overview">
                 {me?.canViewChatlog && (
-                    <Link
-                        to={`/chatlog?${new URLSearchParams({ room: String(id) })}`}
-                        className="inline-flex h-11 items-center gap-2 rounded-lg border border-line bg-subtle px-3.5 text-sm font-medium hover:border-muted/50 sm:h-9 [&>svg]:size-4"
-                    >
-                        <MessagesSquare />
-                        Chat
-                    </Link>
+                    <HeaderLink to={`/chatlog?${new URLSearchParams({ room: String(id) })}`} icon={<MessagesSquare />}>Chat</HeaderLink>
                 )}
             </RoomHeader>
             <PageBody className="flex flex-col gap-4 lg:gap-5">
@@ -340,15 +345,12 @@ export const RoomPage = () => {
 
                             <div className="flex min-w-0 flex-[1_1_300px] flex-col gap-4 max-lg:order-first lg:gap-5">
                                 <RoomControls room={room} run={run} busy={action.isPending} />
-                                <Panel title="Settings at a glance" actions={room.can.editSettings ? <Link to={`/rooms/${id}/settings`} className="text-xs text-accent hover:underline">Edit</Link> : undefined}>
+                                {/* Only what bears on the people in the room now; everything else is on the Settings tab. */}
+                                <Panel title="Who may do what" actions={room.can.editSettings ? <Link to={`/rooms/${id}/settings`} className="text-xs text-accent hover:underline">All settings</Link> : undefined}>
                                     <dl>
-                                        <Kv label="Door">{doorModeLabel(room.doorMode).toLowerCase()}{room.hasPassword ? ' · set' : ''}</Kv>
+                                        <Kv label="Door">{doorModeLabel(room.doorMode).toLowerCase()}{room.hasPassword ? ' · password set' : ''}</Kv>
                                         <Kv label="Trading">{tradeModeLabel(room.tradeMode).toLowerCase()}</Kv>
                                         <Kv label="Mute · kick · ban">{[ room.whoCanMute, room.whoCanKick, room.whoCanBan ].map(x => whoLabel(x).toLowerCase()).join(' · ')}</Kv>
-                                        <Kv label="Chat flood">{chatFloodLabel(room.chatFloodProtection).toLowerCase()}</Kv>
-                                        <Kv label="Category">{room.categoryName ?? 'none'}</Kv>
-                                        <Kv label="Tags">{room.tags.length > 0 ? room.tags.join(', ') : 'none'}</Kv>
-                                        <Kv label="Model">{room.model}</Kv>
                                         <Kv label="Last active">{formatDateTime(room.lastActiveUtc)}</Kv>
                                     </dl>
                                 </Panel>

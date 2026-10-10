@@ -1,12 +1,13 @@
-import { Plus, Search, X } from 'lucide-react';
+import { Plus, Search, UserRound, X } from 'lucide-react';
 import { type FormEvent, useId, useMemo, useState } from 'react';
 import { Link, useParams } from 'react-router';
 
 import { checkNode, type CheckResponse, type CheckSource, playerCalls, type PlayerPermissions, useCatalog, useGroups, usePermissionChange, usePlayerAudit, usePlayerPermissions } from '#/api/permissions';
-import { Badge, Button, EmptyState, ErrorNotice, Input, Loading, PageBody, Panel, Select } from '#/components/ui';
+import { useMe } from '#/api/queries';
+import { Badge, Button, EmptyState, ErrorNotice, HeaderLink, Input, Labeled, Loading, PageBody, Panel, Select } from '#/components/ui';
 
 import { MetaCard, NodesCard } from './AssignmentCards';
-import { AuditTable, Expiry, PermissionsHeader, TimingFields, Verdict } from './common';
+import { ADD_FORM_CLASS, AuditTable, Expiry, PermissionsHeader, TimingFields, UnsetButton, Verdict } from './common';
 import { LevelCard } from './LevelCard';
 
 /** The groups the player holds directly, and putting them in or taking them out of one. */
@@ -39,14 +40,11 @@ const GroupsCard = ({ player }: { player: PlayerPermissions }) => {
                                         <Expiry at={g.expiresAtUtc} />
                                     </span>
                                     {player.canEdit && (
-                                        <Button
-                                            variant="ghost"
+                                        <UnsetButton
+                                            label={`Take ${player.name} out of ${g.name}`}
                                             icon={<X />}
-                                            aria-label={`Take ${player.name} out of ${g.name}`}
-                                            title="Take out of the group"
                                             disabled={removeGroup.isPending}
                                             onClick={() => removeGroup.mutate([ g.name, g.expiresAtUtc !== null ])}
-                                            className="h-7 px-2"
                                         />
                                     )}
                                 </li>
@@ -54,11 +52,13 @@ const GroupsCard = ({ player }: { player: PlayerPermissions }) => {
                         </ul>
                     )}
             {player.canEdit && (
-                <form onSubmit={handleSubmit} className="flex flex-wrap items-center gap-2 border-t border-line p-4">
-                    <Select value={group} onChange={event => setGroup(event.target.value)} aria-label="Group" className="min-w-0 flex-1">
-                        <option value="">Choose a group</option>
-                        {choices.map(x => <option key={x.name} value={x.name}>{x.displayName} ({x.weight})</option>)}
-                    </Select>
+                <form onSubmit={handleSubmit} className={ADD_FORM_CLASS}>
+                    <Labeled label="Group" className="sm:min-w-40 sm:flex-1">
+                        <Select value={group} onChange={event => setGroup(event.target.value)} className="w-full">
+                            <option value="">Choose a group</option>
+                            {choices.map(x => <option key={x.name} value={x.name}>{x.displayName} ({x.weight})</option>)}
+                        </Select>
+                    </Labeled>
                     <TimingFields duration={duration} extend={extend} onDuration={setDuration} onExtend={setExtend} />
                     <Button type="submit" icon={<Plus />} disabled={group === '' || add.isPending}>Add</Button>
                 </form>
@@ -213,6 +213,7 @@ const PlayerHistory = ({ playerId }: { playerId: number }) => {
 export const PlayerPage = () => {
     const id = Number(useParams().id);
     const { data: player, error, isPending } = usePlayerPermissions(id);
+    const canViewPlayers = useMe().data?.canViewPlayers ?? false;
 
     return (
         <>
@@ -223,6 +224,9 @@ export const PlayerPage = () => {
                 description={player && `Client level ${player.client.securityLevel} (${player.client.securityLevelValue})${player.client.isAmbassador ? ', ambassador' : ''}${player.client.isModerator ? ', moderator' : ''}`}
             >
                 {player && !player.canEdit && <Badge>Read-only</Badge>}
+                {player && canViewPlayers && (
+                    <HeaderLink to={`/players/${player.id}`} icon={<UserRound />}>Profile</HeaderLink>
+                )}
             </PermissionsHeader>
             <PageBody>
                 {isPending && <Loading />}

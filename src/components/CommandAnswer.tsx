@@ -8,7 +8,7 @@ const OUTCOMES: Record<string, { label: string; tone: string }> = {
     AwaitingConfirmation: { label: 'Needs confirming', tone: 'text-warn' },
     Refused: { label: 'Not allowed', tone: 'text-bad' },
     Failed: { label: 'Did not go through', tone: 'text-bad' },
-    BindFailed: { label: 'Check what you entered', tone: 'text-bad' },
+    BindFailed: { label: 'Check the arguments', tone: 'text-bad' },
 };
 
 /**

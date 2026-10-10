@@ -7,6 +7,7 @@ import { type KeyboardEventHandler, type ReactNode, useState } from 'react';
 import { catalogIconUrl, useClientAssets } from '#/api/assets';
 import { type CatalogPageNode, type CatalogTree, FRONT_PAGE_LAYOUT } from '#/api/catalog';
 import { SearchInput } from '#/components/SearchInput';
+import { EmptyState } from '#/components/ui';
 import { cx } from '#/lib/cx';
 
 import { DISPLAY_LABELS, inBuildersClub } from './labels';
@@ -121,7 +122,7 @@ const Row = ({ row, selected, open, canManage, projectedDepth, onToggle, onSelec
                     type="button"
                     aria-label={open ? `Close ${page.localization}` : `Open ${page.localization}`}
                     onClick={onToggle}
-                    className={cx('grid size-6 shrink-0 place-items-center rounded text-muted hover:bg-surface hover:text-ink', !row.hasChildren && 'invisible')}
+                    className={cx('grid size-8 shrink-0 place-items-center rounded text-muted hover:bg-surface hover:text-ink sm:size-6', !row.hasChildren && 'invisible')}
                 >
                     <ChevronRight className={cx('size-3.5 transition-transform', open && 'rotate-90')} />
                 </button>
@@ -135,7 +136,11 @@ const Row = ({ row, selected, open, canManage, projectedDepth, onToggle, onSelec
                             onClick={onAddUnder}
                             title={`Add a page under ${page.localization}`}
                             aria-label={`Add a page under ${page.localization}`}
-                            className="grid size-6 shrink-0 place-items-center rounded text-muted opacity-0 group-hover:opacity-100 hover:bg-surface hover:text-accent focus-visible:opacity-100 max-sm:hidden"
+                            // Hidden until the row is pointed at, picked or focused; a touch screen has no pointing, so there it always shows.
+                            className={cx(
+                                'grid size-9 shrink-0 place-items-center rounded text-muted transition-opacity hover:bg-surface hover:text-accent focus-visible:opacity-100 sm:size-6 [@media(hover:none)]:opacity-100',
+                                selected ? 'opacity-100' : 'opacity-0 group-hover:opacity-100',
+                            )}
                         >
                             <Plus className="size-3.5" />
                         </button>
@@ -144,7 +149,7 @@ const Row = ({ row, selected, open, canManage, projectedDepth, onToggle, onSelec
                             onKeyDown={onKeyDown as KeyboardEventHandler<HTMLSpanElement> | undefined}
                             aria-label={`Move ${page.localization}`}
                             title="Drag the row to move it; sideways to go in or out a level. Space picks it up from the keyboard."
-                            className="grid size-6 shrink-0 cursor-grab touch-none place-items-center rounded text-muted/50 group-hover:text-muted hover:bg-surface hover:text-ink active:cursor-grabbing"
+                            className="grid size-9 shrink-0 cursor-grab touch-none place-items-center rounded text-muted hover:bg-surface hover:text-ink active:cursor-grabbing sm:size-6"
                         >
                             <GripVertical className="size-3.5" />
                         </span>
@@ -220,7 +225,7 @@ export const PageTree = ({ tree, rows, open, selected, projection, onToggle, onS
                 {searching
                     ? (
                             <ul className="flex flex-col gap-0.5">
-                                {matches.length === 0 && <li className="px-3 py-6 text-center text-sm text-muted">No page matches “{filter.trim()}”.</li>}
+                                {matches.length === 0 && <li><EmptyState>No page matches “{filter.trim()}”.</EmptyState></li>}
                                 {matches.map(page => (
                                     <li key={page.id}>
                                         <button
@@ -237,7 +242,7 @@ export const PageTree = ({ tree, rows, open, selected, projection, onToggle, onS
                     : (
                             <SortableContext items={rows.map(x => pageDragId(x.page.id))} strategy={verticalListSortingStrategy}>
                                 <ul className="flex flex-col gap-px">
-                                    {rows.length === 0 && <li className="px-3 py-6 text-center text-sm text-muted">No pages yet.</li>}
+                                    {rows.length === 0 && <li><EmptyState>No pages yet.</EmptyState></li>}
                                     {rows.map(row => (
                                         <Row
                                             key={row.page.id}
@@ -255,6 +260,11 @@ export const PageTree = ({ tree, rows, open, selected, projection, onToggle, onS
                             </SortableContext>
                         )}
             </div>
+            {tree.canManage && !searching && rows.length > 0 && (
+                <p className="border-t border-line px-3 py-2 text-[11px] leading-snug text-muted">
+                    Drag a page by its grip to move it, and sideways to go in or out a level. On a touch screen, hold it a moment first.
+                </p>
+            )}
         </div>
     );
 };

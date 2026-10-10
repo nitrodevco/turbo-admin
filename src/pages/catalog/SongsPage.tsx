@@ -1,5 +1,5 @@
-import { Disc3, Music, Plus, Save, Trash2 } from 'lucide-react';
-import { type FormEvent, useState } from 'react';
+import { ArrowLeft, Disc3, Music, Plus, Save, Trash2 } from 'lucide-react';
+import { type FormEvent, useEffect, useRef, useState } from 'react';
 import { Link, useSearchParams } from 'react-router';
 
 import { useCatalogTree } from '#/api/catalog';
@@ -88,13 +88,15 @@ const SongEditor = ({ song, canManage, onSaved, onDeleted }: { song: SongDetail 
             {canManage && (
                 <div className="flex flex-wrap items-center gap-2">
                     <Button type="submit" icon={<Save />} disabled={save.isPending}>{song ? 'Save song' : 'Add song'}</Button>
+                    {song && song.discs > 0 && (
+                        <span className="ml-auto text-xs text-muted">{song.discs} disc{song.discs === 1 ? ' carries' : 's carry'} it, so it can't be deleted.</span>
+                    )}
                     {song && (
                         <Button
                             variant="ghost"
                             icon={<Trash2 />}
-                            className="ml-auto text-bad hover:text-bad"
+                            className={cx('text-bad hover:text-bad', song.discs === 0 && 'ml-auto')}
                             disabled={remove.isPending || song.discs > 0}
-                            title={song.discs > 0 ? `${song.discs} disc${song.discs === 1 ? ' carries' : 's carry'} it, so it stays.` : undefined}
                             onClick={() => ask({ title: `Delete ${song.name}?`, confirm: 'Delete' }, () => remove.mutate([ song.id ], {
                                 onSuccess: () => {
                                     toast(`Deleted ${song.name}.`);
@@ -114,7 +116,8 @@ const SongEditor = ({ song, canManage, onSaved, onDeleted }: { song: SongDetail 
 /**
  * The hotel's trax songs, which jukeboxes play off song discs: the list, and one to add or change.
  * Official songs are sold on discs from the catalog (a song disc is the song_disk furni carrying
- * the song's number); the Song discs builder makes a soundmachine page of them.
+ * the song's number); the Song discs builder makes a soundmachine page of them. Below the wide
+ * layout the list and the song take turns: picking one shows it alone, with a way back.
  */
 export const SongsPage = () => {
     const [ params, setParams ] = useSearchParams();
@@ -124,7 +127,15 @@ export const SongsPage = () => {
     const song = useSong(typeof selected === 'number' ? selected : null);
     const canManage = useCatalogTree().data?.canManage ?? false;
 
+    const editor = useRef<HTMLDivElement>(null);
+
     const open = (id: number | 'new' | null) => setParams(id === null ? {} : { song: String(id) });
+
+    // The page scrolls inside the shell: a song picked far down the list is brought to its top.
+    useEffect(() => {
+        if (selected !== null && !window.matchMedia('(min-width: 64rem)').matches)
+            editor.current?.scrollIntoView({ block: 'start' });
+    }, [ selected ]);
 
     return (
         <>
@@ -132,7 +143,7 @@ export const SongsPage = () => {
                 {canManage && <Button icon={<Plus />} onClick={() => open('new')}>New song</Button>}
             </PageHeader>
             <PageBody className="grid items-start gap-4 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.2fr)]">
-                <Panel title="Songs">
+                <Panel title="Songs" className={cx(selected !== null && 'max-lg:hidden')}>
                     {songs.error && <div className="p-4"><ErrorNotice error={songs.error} /></div>}
                     {songs.isPending && <Loading />}
                     {songs.data && (songs.data.songs.length === 0
@@ -157,12 +168,18 @@ export const SongsPage = () => {
                             ))}
                 </Panel>
                 {selected !== null && (
-                    <Panel title={selected === 'new' ? 'New song' : song.data?.name ?? 'Song'} description={selected !== 'new' && song.data ? `#${song.data.id}` : undefined}>
-                        {selected === 'new' && <SongEditor key="new" song={null} canManage={canManage} onSaved={open} onDeleted={() => open(null)} />}
-                        {typeof selected === 'number' && song.isPending && <Loading />}
-                        {typeof selected === 'number' && song.error && <div className="p-4"><ErrorNotice error={song.error} /></div>}
-                        {typeof selected === 'number' && song.data && <SongEditor key={JSON.stringify(song.data)} song={song.data} canManage={canManage} onSaved={open} onDeleted={() => open(null)} />}
-                    </Panel>
+                    <div ref={editor} className="min-w-0 scroll-mt-4">
+                        <Panel
+                            title={selected === 'new' ? 'New song' : song.data?.name ?? 'Song'}
+                            description={selected !== 'new' && song.data ? `#${song.data.id}` : undefined}
+                            actions={<Button variant="ghost" icon={<ArrowLeft />} onClick={() => open(null)} className="lg:hidden">All songs</Button>}
+                        >
+                            {selected === 'new' && <SongEditor key="new" song={null} canManage={canManage} onSaved={open} onDeleted={() => open(null)} />}
+                            {typeof selected === 'number' && song.isPending && <Loading />}
+                            {typeof selected === 'number' && song.error && <div className="p-4"><ErrorNotice error={song.error} /></div>}
+                            {typeof selected === 'number' && song.data && <SongEditor key={JSON.stringify(song.data)} song={song.data} canManage={canManage} onSaved={open} onDeleted={() => open(null)} />}
+                        </Panel>
+                    </div>
                 )}
                 {selected === null && songs.data && songs.data.songs.length > 0 && (
                     <p className="flex items-center gap-2 px-1 py-6 text-sm text-muted max-lg:hidden"><Music className="size-4" />Pick a song, or <Link to="/catalog" className="text-accent hover:underline">go back to the catalog</Link>.</p>

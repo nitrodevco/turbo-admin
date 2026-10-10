@@ -23,6 +23,8 @@ interface TabsProps {
     ids?: { tab: (value: string) => string; panel: (value: string) => string };
     /** Draw the row's own bottom rule; off where the row sits on another line (the page header's). */
     rule?: boolean;
+    /** What the row is, for screen readers. */
+    label?: string;
     className?: string;
 }
 
@@ -50,7 +52,7 @@ const Count = ({ count, active }: { count: number; active: boolean }) => (
  * moves. Tabs that switch in place follow the WAI-ARIA tabs pattern: one stop for Tab, and the
  * arrow keys (with Home and End) move between them. Tabs with a `to` are links to their pages.
  */
-export const Tabs = ({ value, tabs, onChange, ids, rule = true, className }: TabsProps) => {
+export const Tabs = ({ value, tabs, onChange, ids, rule = true, label, className }: TabsProps) => {
     const list = useRef<HTMLDivElement>(null);
     const group = tabs.map(tab => tab.value).join('|');
     const [ line, setLine ] = useState<Line | null>(() => lastLines.get(group) ?? null);
@@ -106,6 +108,7 @@ export const Tabs = ({ value, tabs, onChange, ids, rule = true, className }: Tab
         <div
             ref={list}
             role={linked ? undefined : 'tablist'}
+            aria-label={label}
             // Its rule is a shadow, not a border, so the line sits on it rather than under it.
             className={cx('no-scrollbar relative flex gap-1 overflow-x-auto', rule && 'shadow-[inset_0_-1px_0_var(--color-line)]', className)}
         >

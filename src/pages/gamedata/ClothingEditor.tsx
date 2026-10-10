@@ -1,5 +1,5 @@
 import { Braces, Plus, Save, Trash2, Undo2, X } from 'lucide-react';
-import { useMemo, useState } from 'react';
+import { type ReactNode, useMemo, useState } from 'react';
 
 import { FIGURE_KINDS, type FigureEntry, type FigureKindEntry, useDeleteFigure, useFigureKinds, useFigureSearch, usePalettes, useSaveFigure } from '#/api/gamedata';
 import { ask } from '#/components/confirm';
@@ -232,52 +232,69 @@ const PieceSummary = ({ entry }: { entry: FigureEntry }) => {
     );
 };
 
-/** A piece's parts, one row each: the asset it draws, on which layer, in which of its colours. */
+/** The columns of a part's row, from `sm` up: asset id, part, layer, colour, and removing it. */
+const PART_COLUMNS = 'sm:grid-cols-[6rem_5rem_4rem_minmax(9rem,1fr)_2rem]';
+
+/** A field of a part's row: named above it on a phone, where the column headings aren't shown. */
+const PartField = ({ label, children, className }: { label: string; children: ReactNode; className?: string }) => (
+    <label className={cx('flex min-w-0 flex-col gap-1', className)}>
+        <span className="text-xs font-medium text-muted sm:sr-only">{label}</span>
+        {children}
+    </label>
+);
+
+/**
+ * A piece's parts, one row each: the asset it draws, on which layer, in which of its colours. A
+ * compact grid under column headings from `sm` up; on a phone each part is a small card of its own.
+ */
 const PartsTable = ({ parts, onChange, disabled }: { parts: Part[]; onChange: (parts: Part[]) => void; disabled: boolean }) => {
     const set = (index: number, part: Part) => onChange(parts.map((x, i) => (i === index ? part : x)));
+    const removeButton = (index: number) => !disabled && <IconButton label="Remove part" icon={<X />} onClick={() => onChange(parts.filter((_, i) => i !== index))} />;
 
     return (
-        <div className="overflow-x-auto rounded-lg border border-line">
-            <table className="w-full text-sm">
-                <thead>
-                    <tr className="font-mono text-[11px] tracking-[0.08em] text-muted uppercase">
-                        <th className="px-3 py-2 text-left font-medium">Asset id</th>
-                        <th className="px-3 py-2 text-left font-medium">Part</th>
-                        <th className="px-3 py-2 text-left font-medium">Layer</th>
-                        <th className="px-3 py-2 text-left font-medium">Coloured by</th>
-                        <th />
-                    </tr>
-                </thead>
-                <tbody className="divide-y divide-line border-t border-line">
-                    {parts.map((part, index) => (
-                        <tr key={index}>
-                            <td className="px-3 py-1.5"><Input value={part.id} onChange={event => set(index, { ...part, id: Number(event.target.value) || 0 })} inputMode="numeric" disabled={disabled} className="w-24 font-mono" aria-label="Asset id" /></td>
-                            <td className="px-3 py-1.5"><Input value={part.type} onChange={event => set(index, { ...part, type: event.target.value.toLowerCase() })} disabled={disabled} className="w-20 font-mono" aria-label="Part type" /></td>
-                            <td className="px-3 py-1.5"><Input value={part.index} onChange={event => set(index, { ...part, index: Number(event.target.value) || 0 })} inputMode="numeric" disabled={disabled} className="w-16 font-mono" aria-label="Layer" /></td>
-                            <td className="px-3 py-1.5">
-                                <Select
-                                    value={part.colorable ? part.colorindex : 0}
-                                    onChange={(event) => {
-                                        const colorindex = Number(event.target.value);
+        <div className="rounded-lg border border-line">
+            <div aria-hidden className={cx('grid gap-x-3 px-3 py-2 font-mono text-[11px] font-medium tracking-[0.08em] text-muted uppercase max-sm:hidden', PART_COLUMNS)}>
+                <span>Asset id</span>
+                <span>Part</span>
+                <span>Layer</span>
+                <span>Coloured by</span>
+            </div>
+            <ul className="divide-y divide-line sm:border-t sm:border-line">
+                {parts.map((part, index) => (
+                    <li key={index} className={cx('grid grid-cols-3 gap-x-3 gap-y-2 p-3 sm:items-center sm:px-3 sm:py-1.5', PART_COLUMNS)}>
+                        <div className="col-span-3 flex items-center justify-between sm:hidden">
+                            <span className="text-xs font-semibold">Part {index + 1}</span>
+                            {removeButton(index)}
+                        </div>
+                        <PartField label="Asset id">
+                            <Input value={part.id} onChange={event => set(index, { ...part, id: Number(event.target.value) || 0 })} inputMode="numeric" disabled={disabled} className="w-full font-mono" />
+                        </PartField>
+                        <PartField label="Part">
+                            <Input value={part.type} onChange={event => set(index, { ...part, type: event.target.value.toLowerCase() })} disabled={disabled} className="w-full font-mono" />
+                        </PartField>
+                        <PartField label="Layer">
+                            <Input value={part.index} onChange={event => set(index, { ...part, index: Number(event.target.value) || 0 })} inputMode="numeric" disabled={disabled} className="w-full font-mono" />
+                        </PartField>
+                        <PartField label="Coloured by" className="col-span-3 sm:col-span-1">
+                            <Select
+                                value={part.colorable ? part.colorindex : 0}
+                                onChange={(event) => {
+                                    const colorindex = Number(event.target.value);
 
-                                        set(index, { ...part, colorindex, colorable: colorindex > 0 });
-                                    }}
-                                    disabled={disabled}
-                                    aria-label="Coloured by"
-                                >
-                                    <option value={0}>Not coloured</option>
-                                    <option value={1}>First colour</option>
-                                    <option value={2}>Second colour</option>
-                                    <option value={3}>Third colour</option>
-                                </Select>
-                            </td>
-                            <td className="px-2 py-1.5 text-right">
-                                {!disabled && <IconButton label="Remove part" icon={<X />} onClick={() => onChange(parts.filter((_, i) => i !== index))} />}
-                            </td>
-                        </tr>
-                    ))}
-                </tbody>
-            </table>
+                                    set(index, { ...part, colorindex, colorable: colorindex > 0 });
+                                }}
+                                disabled={disabled}
+                            >
+                                <option value={0}>Not coloured</option>
+                                <option value={1}>First colour</option>
+                                <option value={2}>Second colour</option>
+                                <option value={3}>Third colour</option>
+                            </Select>
+                        </PartField>
+                        <div className="text-right max-sm:hidden">{removeButton(index)}</div>
+                    </li>
+                ))}
+            </ul>
             {!disabled && (
                 <div className="border-t border-line p-2">
                     <Button
@@ -363,13 +380,13 @@ const PieceEditor = ({ entry, type, nextId, canManage, onDone }: { entry: Figure
                         <Input value={piece.id} onChange={event => set({ id: Number(event.target.value) || 0 })} inputMode="numeric" className="w-28 font-mono" />
                     </Labeled>
                 )}
-                <div className="flex flex-col gap-1.5">
+                <div className="flex flex-col gap-1.5 max-sm:w-full">
                     <span className="text-xs font-medium text-muted">For</span>
-                    <div className="w-60"><Segmented label="For" value={piece.gender} onChange={gender => set({ gender })} options={GENDERS} disabled={disabled} /></div>
+                    <div className="w-full sm:w-60"><Segmented label="For" value={piece.gender} onChange={gender => set({ gender })} options={GENDERS} disabled={disabled} /></div>
                 </div>
-                <div className="flex flex-col gap-1.5">
+                <div className="flex flex-col gap-1.5 max-sm:w-full">
                     <span className="text-xs font-medium text-muted">Who may wear it</span>
-                    <div className="w-60"><Segmented label="Who may wear it" value={String(piece.club)} onChange={club => set({ club: Number(club) })} options={CLUBS} disabled={disabled} /></div>
+                    <div className="w-full sm:w-60"><Segmented label="Who may wear it" value={String(piece.club)} onChange={club => set({ club: Number(club) })} options={CLUBS} disabled={disabled} /></div>
                 </div>
             </div>
             <div className="grid gap-x-8 sm:grid-cols-2 lg:max-w-3xl">

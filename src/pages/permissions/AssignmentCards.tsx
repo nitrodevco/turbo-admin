@@ -4,9 +4,9 @@ import { Link } from 'react-router';
 
 import { type MetaAssignment, type NodeAssignment, type Target, targetCalls, useCatalog, usePermissionChange } from '#/api/permissions';
 import { PhoneLabel, Row, RowList } from '#/components/RowList';
-import { Button, EmptyState, ErrorNotice, Input, Panel, Select } from '#/components/ui';
+import { Button, EmptyState, ErrorNotice, Input, Labeled, Panel, Select } from '#/components/ui';
 
-import { Expiry, TimingFields, Verdict } from './common';
+import { ADD_FORM_CLASS, Expiry, TimingFields, UnsetButton, Verdict } from './common';
 
 /** The answer to the last change: an error, or the server's word that nothing changed. */
 const Outcome = ({ error, message }: { error: unknown; message: string | null }) => (
@@ -105,14 +105,12 @@ export const NodesCard = ({ target, nodes, canEdit }: { target: Target; nodes: N
                                         <Expiry at={assignment.expiresAtUtc} />
                                     </span>
                                     {canEdit && (
-                                        <Button
-                                            variant="ghost"
+                                        <UnsetButton
+                                            label={`Unset ${assignment.node}`}
                                             icon={<Trash2 />}
-                                            aria-label={`Unset ${assignment.node}`}
-                                            title="Unset"
                                             disabled={unset.isPending}
                                             onClick={() => handleRemove(assignment)}
-                                            className="ml-auto h-7 px-2"
+                                            className="ml-auto"
                                         />
                                     )}
                                 </Row>
@@ -120,24 +118,27 @@ export const NodesCard = ({ target, nodes, canEdit }: { target: Target; nodes: N
                         </RowList>
                     )}
             {canEdit && (
-                <form onSubmit={handleSubmit} className="flex flex-wrap items-center gap-2 border-t border-line p-4">
-                    <Input
-                        value={node}
-                        onChange={event => setNode(event.target.value)}
-                        list={listId}
-                        placeholder="room.enter.locked, room.*"
-                        aria-label="Node"
-                        spellCheck={false}
-                        autoComplete="off"
-                        className="min-w-48 flex-1 font-mono"
-                    />
+                <form onSubmit={handleSubmit} className={ADD_FORM_CLASS}>
+                    <Labeled label="Node" className="sm:min-w-48 sm:flex-1">
+                        <Input
+                            value={node}
+                            onChange={event => setNode(event.target.value)}
+                            list={listId}
+                            placeholder="room.enter.locked, room.*"
+                            spellCheck={false}
+                            autoComplete="off"
+                            className="w-full font-mono"
+                        />
+                    </Labeled>
                     <datalist id={listId}>
                         {suggestions.map(x => <option key={x.value} value={x.value}>{x.label}</option>)}
                     </datalist>
-                    <Select value={value ? 'grant' : 'deny'} onChange={event => setValue(event.target.value === 'grant')} aria-label="Grant or deny">
-                        <option value="grant">Grant</option>
-                        <option value="deny">Deny</option>
-                    </Select>
+                    <Labeled label="Grant or deny">
+                        <Select value={value ? 'grant' : 'deny'} onChange={event => setValue(event.target.value === 'grant')}>
+                            <option value="grant">Grant</option>
+                            <option value="deny">Deny</option>
+                        </Select>
+                    </Labeled>
                     <TimingFields duration={duration} extend={extend} onDuration={setDuration} onExtend={setExtend} />
                     <Button type="submit" icon={<Plus />} disabled={set.isPending || node.trim() === ''}>Set</Button>
                 </form>
@@ -197,18 +198,16 @@ export const MetaCard = ({ target, meta, canEdit }: { target: Target; meta: Meta
                                         <Expiry at={assignment.expiresAtUtc} />
                                     </span>
                                     {canEdit && (
-                                        <Button
-                                            variant="ghost"
+                                        <UnsetButton
+                                            label={`Unset ${assignment.key}`}
                                             icon={<Trash2 />}
-                                            aria-label={`Unset ${assignment.key}`}
-                                            title="Unset"
                                             disabled={unset.isPending}
                                             onClick={() => {
                                                 setMessage(null);
                                                 set.reset();
                                                 unset.mutate([ assignment.key, assignment.expiresAtUtc !== null ]);
                                             }}
-                                            className="ml-auto h-7 px-2"
+                                            className="ml-auto"
                                         />
                                     )}
                                 </Row>
@@ -216,21 +215,24 @@ export const MetaCard = ({ target, meta, canEdit }: { target: Target; meta: Meta
                         </RowList>
                     )}
             {canEdit && (
-                <form onSubmit={handleSubmit} className="flex flex-wrap items-center gap-2 border-t border-line p-4">
-                    <Input
-                        value={key}
-                        onChange={event => setKey(event.target.value)}
-                        list={listId}
-                        placeholder="limit.rooms"
-                        aria-label="Key"
-                        spellCheck={false}
-                        autoComplete="off"
-                        className="min-w-36 flex-1 font-mono"
-                    />
+                <form onSubmit={handleSubmit} className={ADD_FORM_CLASS}>
+                    <Labeled label="Key" className="sm:min-w-36 sm:flex-1">
+                        <Input
+                            value={key}
+                            onChange={event => setKey(event.target.value)}
+                            list={listId}
+                            placeholder="limit.rooms"
+                            spellCheck={false}
+                            autoComplete="off"
+                            className="w-full font-mono"
+                        />
+                    </Labeled>
                     <datalist id={listId}>
                         {catalog.data?.metaKeys.map(x => <option key={x.key} value={x.key}>{x.description}</option>)}
                     </datalist>
-                    <Input value={value} onChange={event => setValue(event.target.value)} placeholder="Value" aria-label="Value" className="w-28" />
+                    <Labeled label="Value" className="sm:w-28">
+                        <Input value={value} onChange={event => setValue(event.target.value)} placeholder="5" />
+                    </Labeled>
                     <TimingFields duration={duration} extend={extend} onDuration={setDuration} onExtend={setExtend} />
                     <Button type="submit" icon={<Plus />} disabled={set.isPending || key.trim() === '' || value.trim() === ''}>Set</Button>
                 </form>

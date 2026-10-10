@@ -107,7 +107,7 @@ const RailTheme = () => {
     );
 };
 
-/** One entry of the sidebar: its icon and name, and how many pages it holds when more than one. */
+/** One entry of the sidebar: its icon and name. */
 const RailLink = ({ entry, active }: { entry: ShownEntry; active: boolean }) => (
     <Link
         to={entry.to}
@@ -121,7 +121,6 @@ const RailLink = ({ entry, active }: { entry: ShownEntry; active: boolean }) => 
     >
         {entry.icon}
         <span className="min-w-0 flex-1 truncate">{entry.label}</span>
-        {entry.shown.length > 1 && <span className="font-mono text-[10px] text-muted/70 tabular-nums">{entry.shown.length}</span>}
     </Link>
 );
 
@@ -144,7 +143,7 @@ const Rail = () => {
                 <span className="font-mono text-xs font-medium tracking-[0.08em] text-ink uppercase">Turbo Admin</span>
             </Link>
             <HotelStatusCard />
-            <div className="flex flex-1 flex-col gap-4 overflow-y-auto px-3 py-4">
+            <div className="no-scrollbar flex flex-1 flex-col gap-3 overflow-y-auto px-3 py-3">
                 {sections.map(section => (
                     <div key={section.label ?? 'top'} className="flex flex-col gap-0.5">
                         {section.label && <span className="px-3 pb-1 font-mono text-[10px] font-medium tracking-[0.12em] text-muted/70 uppercase">{section.label}</span>}

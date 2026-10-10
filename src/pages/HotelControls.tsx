@@ -93,7 +93,9 @@ export const HotelControls = ({ phase }: { phase: AvailabilityPhase }) => {
     const [ alert, setAlert ] = useState('');
     const [ maintenanceIn, setMaintenanceIn ] = useState('10');
     const [ shutdownIn, setShutdownIn ] = useState('5');
-    const [ reason, setReason ] = useState('');
+    // Each countdown keeps its own reason, so one typed for maintenance is not sent with a shutdown.
+    const [ maintenanceReason, setMaintenanceReason ] = useState('');
+    const [ shutdownReason, setShutdownReason ] = useState('');
 
     const act = useMutation({
         mutationFn: (run: () => Promise<RunCommandResponse>) => run(),
@@ -134,7 +136,7 @@ export const HotelControls = ({ phase }: { phase: AvailabilityPhase }) => {
                 >
                     <Label>A pop-up for everyone online</Label>
                     <Textarea value={alert} onChange={event => setAlert(event.target.value)} rows={3} placeholder="What everyone should read" aria-label="Hotel alert" />
-                    <Button type="submit" variant="secondary" icon={<Megaphone />} disabled={act.isPending || alert.trim() === ''} className="self-start">Send to everyone</Button>
+                    <Button type="submit" variant="secondary" icon={<Megaphone />} disabled={act.isPending || alert.trim() === ''} className="sm:self-start">Send to everyone</Button>
                 </form>
             ),
         });
@@ -149,14 +151,14 @@ export const HotelControls = ({ phase }: { phase: AvailabilityPhase }) => {
                     <p className="text-xs text-muted">Players are reminded as it runs out, then everyone without the bypass is sent home and kept out until it ends.</p>
                     <Segmented label="Start maintenance in" value={maintenanceIn} onChange={setMaintenanceIn} options={MAINTENANCE_MINUTES} />
                     <Labeled label="Reason (optional)">
-                        <Input value={reason} onChange={event => setReason(event.target.value)} placeholder="Shown to players" />
+                        <Input value={maintenanceReason} onChange={event => setMaintenanceReason(event.target.value)} placeholder="Shown to players" />
                     </Labeled>
-                    <div className="flex flex-wrap gap-2">
+                    <div className="flex flex-wrap gap-2 max-sm:[&>button]:flex-1">
                         <Button
                             variant="danger"
                             icon={<Wrench />}
                             disabled={act.isPending || shuttingDown}
-                            onClick={() => run({ action: 'maintenance', minutes: Number(maintenanceIn), message: reason.trim() || undefined }, {
+                            onClick={() => run({ action: 'maintenance', minutes: Number(maintenanceIn), message: maintenanceReason.trim() || undefined }, {
                                 title: maintenanceIn === '0' ? 'Start maintenance now?' : `Start maintenance in ${maintenanceIn} min?`,
                                 body: maintenanceIn === '0'
                                     ? 'Everyone without the bypass is sent home now and kept out until it ends.'
@@ -183,14 +185,14 @@ export const HotelControls = ({ phase }: { phase: AvailabilityPhase }) => {
                     <p className="text-xs text-muted">Players are reminded as it runs out, then sent home, and the server stops so everything is saved. It does not start again by itself.</p>
                     <Segmented label="Shut down in" value={shutdownIn} onChange={setShutdownIn} options={SHUTDOWN_MINUTES} />
                     <Labeled label="Reason (optional)">
-                        <Input value={reason} onChange={event => setReason(event.target.value)} placeholder="Shown to players" />
+                        <Input value={shutdownReason} onChange={event => setShutdownReason(event.target.value)} placeholder="Shown to players" />
                     </Labeled>
-                    <div className="flex flex-wrap gap-2">
+                    <div className="flex flex-wrap gap-2 max-sm:[&>button]:flex-1">
                         <Button
                             variant="danger"
                             icon={<Power />}
                             disabled={act.isPending}
-                            onClick={() => run({ action: 'shutdown', minutes: Number(shutdownIn), message: reason.trim() || undefined }, {
+                            onClick={() => run({ action: 'shutdown', minutes: Number(shutdownIn), message: shutdownReason.trim() || undefined }, {
                                 title: `Shut the hotel down in ${shutdownIn} min?`,
                                 body: 'Everyone is sent home, and the server stops. It does not start again by itself.',
                                 confirm: 'Shut down',

@@ -227,10 +227,10 @@ export const MissingFurni = ({ tree, pageId, onOpenPage, onAdded }: MissingFurni
                     <div className="sticky bottom-3 z-20 flex flex-wrap items-center gap-2 rounded-xl border border-accent/50 bg-surface/95 p-2.5 shadow-xl backdrop-blur">
                         <span className="flex items-center gap-1.5 px-1 text-sm font-medium">
                             {picked.size} picked
-                            <button type="button" onClick={() => setPicked(new Map())} aria-label="Unpick them all" className="grid size-6 place-items-center rounded text-muted hover:bg-subtle hover:text-ink"><X className="size-3.5" /></button>
+                            <button type="button" onClick={() => setPicked(new Map())} aria-label="Unpick them all" className="grid size-9 place-items-center rounded text-muted hover:bg-subtle hover:text-ink sm:size-6"><X className="size-3.5" /></button>
                         </span>
                         <span className="text-xs text-muted">add to</span>
-                        <PageSelect tree={tree} value={target} onChange={setTarget} className="w-56" />
+                        <PageSelect tree={tree} value={target} onChange={setTarget} className="flex-1 sm:w-56 sm:flex-none" />
                         {target && <button type="button" onClick={() => onOpenPage(target)} className="text-xs text-accent hover:underline">open</button>}
                         <span className="text-xs text-muted">at</span>
                         <PriceFields tree={tree} value={price} onChange={setPrice} />

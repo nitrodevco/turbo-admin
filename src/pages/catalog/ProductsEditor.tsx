@@ -215,6 +215,19 @@ export const ProductsEditor = ({ products, onChange, disabled, locked, allowed }
     const hasPet = products.some(x => x.type === 'pet');
     const canEdit = !disabled && !locked;
 
+    // Why a kind can't be added now, or null when it can.
+    const blockedBy = (type: EditableKind) => {
+        if (products.length >= 20)
+            return 'That\'s the most an offer holds.';
+
+        if ((hasClub || type === 'club') && products.length > 0)
+            return 'A membership is sold on its own.';
+
+        return type === 'pet' && hasPet ? 'One pet per offer.' : null;
+    };
+
+    const whyNot = [ ...new Set(KINDS.filter(x => allowed.includes(x.type)).map(x => blockedBy(x.type)).filter(x => x !== null)) ];
+
     return (
         <div className="flex flex-col gap-2">
             <ul className="flex flex-col gap-2">
@@ -228,7 +241,7 @@ export const ProductsEditor = ({ products, onChange, disabled, locked, allowed }
                                 <span className="text-xs font-semibold">{kind?.label ?? product.type}</span>
                                 {products.length > 1 && <span className="font-mono text-[11px] text-muted">{i + 1} of {products.length}</span>}
                                 {canEdit && products.length > 1 && (
-                                    <button type="button" onClick={() => onChange(products.filter(x => x.key !== product.key))} aria-label="Remove it" title="Remove it" className="ml-auto grid size-7 place-items-center rounded-lg text-muted hover:bg-bad-soft hover:text-bad">
+                                    <button type="button" onClick={() => onChange(products.filter(x => x.key !== product.key))} aria-label="Remove it" title="Remove it" className="ml-auto grid size-10 place-items-center rounded-lg text-muted hover:bg-bad-soft hover:text-bad sm:size-7">
                                         <Trash2 className="size-3.5" />
                                     </button>
                                 )}
@@ -242,14 +255,14 @@ export const ProductsEditor = ({ products, onChange, disabled, locked, allowed }
                 <div className="flex flex-wrap items-center gap-1.5">
                     <span className="mr-1 text-xs text-muted">{products.length ? 'Add to it:' : 'It gives:'}</span>
                     {KINDS.filter(x => allowed.includes(x.type)).map((kind) => {
-                        const blocked = (hasClub && products.length > 0) || (kind.type === 'club' && products.length > 0) || (kind.type === 'pet' && hasPet) || products.length >= 20;
+                        const blocked = blockedBy(kind.type);
 
                         return (
                             <button
                                 key={kind.type}
                                 type="button"
-                                disabled={blocked}
-                                title={blocked ? (hasClub || kind.type === 'club' ? 'A membership is sold on its own.' : kind.type === 'pet' ? 'One pet per offer.' : 'That\'s the most an offer holds.') : kind.blurb}
+                                disabled={blocked !== null}
+                                title={blocked ?? kind.blurb}
                                 onClick={() => onChange([ ...products, productDraft(blank(kind.type)) ])}
                                 className="flex items-center gap-1 rounded-full border border-line bg-surface px-2.5 py-1 text-xs transition hover:-translate-y-0.5 hover:border-accent hover:text-accent disabled:pointer-events-none disabled:opacity-40 [&>svg]:size-3.5"
                             >
@@ -260,6 +273,7 @@ export const ProductsEditor = ({ products, onChange, disabled, locked, allowed }
                     })}
                 </div>
             )}
+            {canEdit && whyNot.length > 0 && <p className="text-xs text-muted">{whyNot.join(' ')}</p>}
             {locked && <p className="text-xs text-muted">A limited series fixes what this offer gives.</p>}
         </div>
     );

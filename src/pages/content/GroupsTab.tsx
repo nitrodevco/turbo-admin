@@ -95,8 +95,8 @@ const PartRow = ({ part, canManage }: { part: GroupBadgePart; canManage: boolean
     return (
         <li className="flex flex-wrap items-center gap-2 px-3 py-1.5">
             <span className="w-10 text-right font-mono text-xs text-muted">{part.partId}</span>
-            <Input value={file} onChange={event => setFile(event.target.value)} aria-label="File" className="h-8 w-44 font-mono text-xs sm:h-8" disabled={!canManage} />
-            <Input value={mask} onChange={event => setMask(event.target.value)} aria-label="Mask" placeholder="no mask" className="h-8 w-44 font-mono text-xs sm:h-8" disabled={!canManage} />
+            <Input value={file} onChange={event => setFile(event.target.value)} aria-label="File" className="h-10 min-w-0 flex-1 font-mono text-xs sm:h-8 sm:w-44 sm:flex-none" disabled={!canManage} />
+            <Input value={mask} onChange={event => setMask(event.target.value)} aria-label="Mask" placeholder="no mask" className="h-10 min-w-0 flex-1 font-mono text-xs sm:h-8 sm:w-44 sm:flex-none" disabled={!canManage} />
             {canManage && changed && <IconButton label="Save" icon={<Save />} disabled={save.isPending} onClick={() => save.mutate({ kind: 'parts', id: part.id, body: { fileName: file, maskFileName: mask } })} />}
             {save.error && <ErrorNotice error={save.error} />}
         </li>

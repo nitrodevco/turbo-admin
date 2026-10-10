@@ -102,7 +102,7 @@ const PlanNode = ({ page, depth, edits, open, onToggle, onEdit, onPickIcon, skip
                 {page.display === 'bc_only' && <span title="Builders Club only"><Hammer className="size-3.5 shrink-0 text-muted" /></span>}
                 {page.name && <span className="hidden shrink-0 font-mono text-[10px] text-muted sm:inline" title="The name the client opens it by">{page.name}</span>}
                 <span className="hidden w-32 shrink-0 truncate text-right text-[11px] font-normal text-muted md:inline" title={page.layout}>{layoutOf(page.layout).title}</span>
-                <span className="w-24 shrink-0 text-right font-mono text-[11px] font-normal text-muted tabular-nums">
+                <span className="shrink-0 text-right font-mono sm:w-24 text-[11px] font-normal text-muted tabular-nums">
                     {sum.added > 0 && <span className="text-ink">{sum.added.toLocaleString()} new</span>}
                     {sum.added > 0 && sum.moved > 0 && ' · '}
                     {sum.moved > 0 && <span className="text-accent">{sum.moved.toLocaleString()} moved</span>}
@@ -114,7 +114,7 @@ const PlanNode = ({ page, depth, edits, open, onToggle, onEdit, onPickIcon, skip
                     onChange={event => onEdit(page.key, { skip: !event.target.checked })}
                     title={skipped ? 'Left out' : 'Leave it out, with everything under it'}
                     aria-label={`Make ${title}`}
-                    className="size-4 shrink-0 accent-accent"
+                    className="size-5 shrink-0 accent-accent sm:size-4"
                 />
             </div>
             {isOpen && page.children.length > 0 && (

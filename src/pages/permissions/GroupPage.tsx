@@ -8,7 +8,7 @@ import { TabbedPanel } from '#/components/TabbedPanel';
 import { Badge, Button, EmptyState, ErrorNotice, Field, Loading, PageBody, Panel, Select } from '#/components/ui';
 
 import { MetaCard, NodesCard } from './AssignmentCards';
-import { AuditTable, Expiry, PermissionsHeader } from './common';
+import { AuditTable, Expiry, PermissionsHeader, UnsetButton } from './common';
 import { LevelCard } from './LevelCard';
 
 /** The group's display name and weight, and deleting it. */
@@ -87,14 +87,11 @@ const ParentsCard = ({ group }: { group: GroupResponse }) => {
                                         <span className="ml-2 text-xs text-muted">weight {p.weight}</span>
                                     </span>
                                     {group.canEdit && (
-                                        <Button
-                                            variant="ghost"
+                                        <UnsetButton
+                                            label={`Stop inheriting ${p.name}`}
                                             icon={<X />}
-                                            aria-label={`Stop inheriting ${p.name}`}
-                                            title="Stop inheriting"
                                             disabled={removeParent.isPending}
                                             onClick={() => removeParent.mutate([ p.name ])}
-                                            className="h-7 px-2"
                                         />
                                     )}
                                 </li>

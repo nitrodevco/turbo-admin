@@ -83,7 +83,7 @@ export const ScheduleEditor = ({ value, onChange, codes, now, emptyLabel, disabl
                             type="datetime-local"
                             value={toLocalInput(entry.at)}
                             onChange={event => set(entries.map((x, i) => (i === index ? { ...x, at: fromLocalInput(event.target.value) } : x)))}
-                            className={cx('w-56', bad && 'border-warn')}
+                            className={cx('min-w-0 flex-1 sm:w-56 sm:flex-none', bad && 'border-warn')}
                             disabled={disabled}
                             aria-label="Starts at (UTC)"
                         />

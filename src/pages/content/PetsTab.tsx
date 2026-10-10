@@ -12,16 +12,18 @@ const BreedRow = ({ breed, canManage }: { breed: PetBreed; canManage: boolean })
     const [ draft, setDraft ] = useState(breed);
     const save = useSavePet();
     const changed = JSON.stringify(draft) !== JSON.stringify(breed);
+    // Each named beside it, where a touch screen can see what it is.
     const number = (field: 'breedId' | 'rarityLevel' | 'colorTag', label: string) => (
-        <Input
-            value={draft[field]}
-            onChange={event => setDraft({ ...draft, [field]: Number(event.target.value.replace(/[^-\d]/g, '')) || 0 })}
-            inputMode="numeric"
-            aria-label={label}
-            title={label}
-            className="h-8 w-16 sm:h-8"
-            disabled={!canManage}
-        />
+        <label className="flex items-center gap-1 text-xs text-muted">
+            {label}
+            <Input
+                value={draft[field]}
+                onChange={event => setDraft({ ...draft, [field]: Number(event.target.value.replace(/[^-\d]/g, '')) || 0 })}
+                inputMode="numeric"
+                className="h-10 w-16 text-ink sm:h-8"
+                disabled={!canManage}
+            />
+        </label>
     );
 
     return (
@@ -71,7 +73,7 @@ export const PetsTab = ({ canManage }: { canManage: boolean }) => {
 
     return (
         <div className="grid items-start gap-4 xl:grid-cols-2">
-            <Panel title="Palettes" description="Breed is the body the info stand names; rarity weighs breeding; the catalogue sells only the sold ones. Breed, rarity and colour tag in that order." className="overflow-clip">
+            <Panel title="Palettes" description="Breed is the body the info stand names; rarity weighs breeding; the catalogue sells only the sold ones." className="overflow-clip">
                 {types.length === 0 && <EmptyState>No palettes.</EmptyState>}
                 <div className="max-h-[70vh] overflow-y-auto">
                     {types.map(type => (

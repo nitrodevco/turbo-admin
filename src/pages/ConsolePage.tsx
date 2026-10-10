@@ -1,7 +1,7 @@
 import { type FormEvent, type KeyboardEvent, useEffect, useMemo, useRef, useState } from 'react';
-import { useSearchParams } from 'react-router';
+import { Link, useSearchParams } from 'react-router';
 
-import { useCommands, useRunCommand } from '#/api/queries';
+import { useCommands, useMe, useRunCommand } from '#/api/queries';
 import type { CommandInfo, RunCommandResponse } from '#/api/types';
 import { Button, ErrorNotice, FIELD_CLASS, Input, Loading, PageBody, PageHeader, Panel } from '#/components/ui';
 import { cx } from '#/lib/cx';
@@ -37,7 +37,11 @@ const outcomeOf = (entry: Entry) => {
     return OUTCOMES[outcome] ?? { label: outcome, tone: 'text-muted' };
 };
 
-const CommandList = ({ commands, onPick }: { commands: CommandInfo[]; onPick: (command: CommandInfo) => void }) => {
+/**
+ * Every command, grouped and searchable. The one picked shows its usage under it; a command that
+ * acts on the room you are in says so, and cannot be picked, since the panel is in no room.
+ */
+const CommandList = ({ commands, picked, onPick }: { commands: CommandInfo[]; picked: CommandInfo | null; onPick: (command: CommandInfo) => void }) => {
     const [ filter, setFilter ] = useState('');
 
     const groups = useMemo(() => {
@@ -51,9 +55,11 @@ const CommandList = ({ commands, onPick }: { commands: CommandInfo[]; onPick: (c
         return Object.entries(Object.groupBy(shown, command => command.category));
     }, [ commands, filter ]);
 
+    const anyRoomOnly = commands.some(command => command.needsRoom);
+
     return (
         <Panel title="Commands" className="flex max-h-[70dvh] flex-col">
-            <div className="border-b border-line p-3">
+            <div className="flex flex-col gap-2 border-b border-line p-3">
                 <Input
                     type="search"
                     value={filter}
@@ -61,6 +67,7 @@ const CommandList = ({ commands, onPick }: { commands: CommandInfo[]; onPick: (c
                     placeholder="Find a command"
                     aria-label="Find a command"
                 />
+                {anyRoomOnly && <p className="text-xs text-muted">Commands marked room only act on the room you are standing in, so run them in game.</p>}
             </div>
             <div className="overflow-y-auto p-2">
                 {groups.length === 0 && <p className="p-2 text-sm text-muted">No command matches.</p>}
@@ -73,12 +80,17 @@ const CommandList = ({ commands, onPick }: { commands: CommandInfo[]; onPick: (c
                                 type="button"
                                 disabled={command.needsRoom}
                                 onClick={() => onPick(command)}
-                                title={command.help.join('\n')}
-                                className="block w-full rounded-md px-2 py-1.5 text-left hover:bg-subtle disabled:cursor-not-allowed disabled:opacity-50"
+                                aria-current={picked?.name === command.name || undefined}
+                                className="block w-full rounded-md px-2 py-1.5 text-left hover:bg-subtle disabled:cursor-not-allowed aria-[current]:bg-subtle"
                             >
-                                <span className="font-mono text-sm">{command.name}</span>
-                                {command.needsRoom && <span className="ml-2 text-xs text-muted">room only</span>}
+                                <span className={cx('font-mono text-sm', command.needsRoom && 'text-muted')}>{command.name}</span>
+                                {command.needsRoom && <span className="ml-2 text-xs text-muted">room only, in game</span>}
                                 <span className="block truncate text-xs text-muted">{command.description}</span>
+                                {picked?.name === command.name && command.help.length > 0 && (
+                                    <span className="mt-1 block font-mono text-[11px] text-muted">
+                                        {command.help.map((help, index) => <span key={index} className="block">{help}</span>)}
+                                    </span>
+                                )}
                             </button>
                         ))}
                     </div>
@@ -94,6 +106,7 @@ const CommandList = ({ commands, onPick }: { commands: CommandInfo[]; onPick: (c
  */
 export const ConsolePage = () => {
     const commands = useCommands();
+    const canViewCommandLog = useMe().data?.canViewCommandLog ?? false;
     const run = useRunCommand();
     const [ entries, setEntries ] = useState<Entry[]>([]);
     const [ line, setLine ] = useState('');
@@ -195,7 +208,7 @@ export const ConsolePage = () => {
                 <div className="order-2 lg:order-1">
                     {commands.isPending && <Loading />}
                     {commands.error && <ErrorNotice error={commands.error} />}
-                    {commands.data && <CommandList commands={commands.data} onPick={pick} />}
+                    {commands.data && <CommandList commands={commands.data} picked={picked} onPick={pick} />}
                 </div>
                 <div className="order-1 flex min-w-0 flex-col gap-3 lg:order-2">
                     <Panel className="min-h-80 flex-1">
@@ -238,14 +251,9 @@ export const ConsolePage = () => {
                                             </p>
                                         ))}
                                         {awaiting && (
-                                            <button
-                                                type="button"
-                                                onClick={() => submit('confirm')}
-                                                disabled={run.isPending}
-                                                className="mt-2 rounded-md bg-warn px-3 py-1 font-sans text-sm font-medium text-[#0a0e13] hover:opacity-90 disabled:opacity-50"
-                                            >
+                                            <Button variant="danger" onClick={() => submit('confirm')} disabled={run.isPending} className="mt-2 font-sans">
                                                 Confirm
-                                            </button>
+                                            </Button>
                                         )}
                                     </div>
                                 );
@@ -253,9 +261,13 @@ export const ConsolePage = () => {
                             <div ref={bottom} />
                         </div>
                     </Panel>
-                    {picked && line.startsWith(picked.name) && picked.help.length > 0 && (
-                        <div className="rounded-md border border-line bg-subtle px-3 py-2 font-mono text-xs text-muted">
-                            {picked.help.map((help, index) => <div key={index}>{help}</div>)}
+                    {picked && line.startsWith(picked.name) && (
+                        <div className="rounded-md border border-line bg-subtle px-3 py-2 text-xs text-muted">
+                            <div className="text-ink">
+                                <span className="font-mono font-semibold">{picked.name}</span>
+                                {picked.description && ` · ${picked.description}`}
+                            </div>
+                            {picked.help.map((help, index) => <div key={index} className="mt-0.5 font-mono">{help}</div>)}
                         </div>
                     )}
                     <form onSubmit={handleSubmit} className="flex gap-2">
@@ -272,6 +284,12 @@ export const ConsolePage = () => {
                         />
                         <Button type="submit" disabled={run.isPending || line.trim() === ''}>Run</Button>
                     </form>
+                    {canViewCommandLog && (
+                        <p className="text-xs text-muted">
+                            {'Every command run here is logged as yours. '}
+                            <Link to="/command-log?source=panel" className="font-medium text-accent hover:underline">See the log</Link>
+                        </p>
+                    )}
                 </div>
             </PageBody>
         </>

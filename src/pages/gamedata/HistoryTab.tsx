@@ -3,7 +3,7 @@ import { useState } from 'react';
 
 import { CHANGE_KINDS, type ChangeSet, RECORD_TYPES, useChanges, useHistory, useRollback } from '#/api/gamedata';
 import { ask } from '#/components/confirm';
-import { Badge, type BadgeTone, Button, EmptyState, ErrorNotice, IconButton, Loading, Panel, SuccessNotice, WarningNotice } from '#/components/ui';
+import { Badge, type BadgeTone, Button, EmptyState, ErrorNotice, Loading, Panel, SuccessNotice, WarningNotice } from '#/components/ui';
 import { cx } from '#/lib/cx';
 import { fromNow } from '#/lib/time';
 
@@ -95,8 +95,11 @@ export const HistoryTab = ({ canManage }: { canManage: boolean }) => {
             actions={(
                 <div className="flex items-center gap-1 text-xs text-muted">
                     <span className="mr-1 tabular-nums">Page {page + 1}</span>
-                    <IconButton label="Newer" icon={<ChevronLeft />} disabled={page === 0} onClick={() => setPage(page - 1)} />
-                    <IconButton label="Older" icon={<ChevronRight />} disabled={!sets || sets.length === 0} onClick={() => setPage(page + 1)} />
+                    <Button variant="ghost" icon={<ChevronLeft />} disabled={page === 0} onClick={() => setPage(page - 1)}>Newer</Button>
+                    <Button variant="ghost" disabled={!sets || sets.length === 0} onClick={() => setPage(page + 1)}>
+                        Older
+                        <ChevronRight />
+                    </Button>
                 </div>
             )}
         >
@@ -118,28 +121,33 @@ export const HistoryTab = ({ canManage }: { canManage: boolean }) => {
 
                         return (
                             <li key={set.id} className={cx(open === set.id && 'bg-subtle/40')}>
-                                <div className="flex items-center gap-2 pr-3 hover:bg-subtle/60">
+                                <div className="flex flex-wrap items-center gap-x-2 pr-3 hover:bg-subtle/60">
                                     <button
                                         type="button"
                                         onClick={() => setOpen(open === set.id ? null : set.id)}
                                         aria-expanded={open === set.id}
-                                        className="flex min-w-0 flex-1 flex-wrap items-center gap-x-3 gap-y-1 px-4 py-2.5 text-left text-sm [&>svg]:size-4 [&>svg]:shrink-0 [&>svg]:text-muted"
+                                        className="flex min-w-0 grow basis-full flex-wrap items-center sm:basis-0 gap-x-3 gap-y-1 px-4 py-2.5 text-left text-sm [&>svg]:size-4 [&>svg]:shrink-0 [&>svg]:text-muted"
                                     >
                                         {open === set.id ? <ChevronDown /> : <ChevronRight />}
-                                        <Badge tone={KIND_TONES[kind] ?? 'neutral'} className="w-24 justify-center">{kind}</Badge>
+                                        <Badge tone={KIND_TONES[kind] ?? 'neutral'} className="justify-center sm:min-w-24">{kind}</Badge>
                                         <span className={cx('min-w-0 flex-[1_1_16rem] truncate', set.rolledBackById !== null && 'text-muted line-through decoration-muted/50')}>{set.summary}</span>
                                         <span className="font-mono text-[11px] text-muted tabular-nums">#{set.id} · {set.changeCount.toLocaleString()} rows · {fromNow(set.createdAt)}</span>
                                     </button>
-                                    {set.rolledBackById !== null && <Badge tone="amber">undone by #{set.rolledBackById}</Badge>}
-                                    {canRollBack && (
-                                        <Button
-                                            variant="ghost"
-                                            icon={<Undo2 />}
-                                            disabled={rollback.isPending}
-                                            onClick={() => ask({ title: `Roll back #${set.id}?`, body: set.summary, confirm: 'Roll back' }, () => rollback.mutate(set.id))}
-                                        >
-                                            Roll back
-                                        </Button>
+                                    {(set.rolledBackById !== null || canRollBack) && (
+                                        // On a phone the actions go under the summary, in line with it.
+                                        <span className="flex items-center gap-2 max-sm:pb-2 max-sm:pl-11">
+                                            {set.rolledBackById !== null && <Badge tone="amber">undone by #{set.rolledBackById}</Badge>}
+                                            {canRollBack && (
+                                                <Button
+                                                    variant="ghost"
+                                                    icon={<Undo2 />}
+                                                    disabled={rollback.isPending}
+                                                    onClick={() => ask({ title: `Roll back #${set.id}?`, body: set.summary, confirm: 'Roll back' }, () => rollback.mutate(set.id))}
+                                                >
+                                                    Roll back
+                                                </Button>
+                                            )}
+                                        </span>
                                     )}
                                 </div>
                                 {open === set.id && <div className="border-t border-line"><Changes set={set} /></div>}

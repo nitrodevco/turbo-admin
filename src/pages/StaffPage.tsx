@@ -75,18 +75,21 @@ export const StaffPage = () => {
     return (
         <>
             <PermissionsHeader section="passkeys" description="Setup and reset links for other staff's passkeys" />
-            <PageBody className="grid max-w-2xl gap-5">
-                <Panel
-                    title="Set up or reset a passkey"
-                    description="A one-time link for a staff member to create their passkey. For someone who already has one, it replaces them all, for a lost device. Only for players whose permissions you all hold yourself."
-                >
-                    <form onSubmit={handleSubmit} className="space-y-3 p-4">
-                        {error !== null && <ErrorNotice error={error} />}
-                        <Field label="Player name" name="player" value={name} onChange={event => setName(event.target.value)} required />
-                        <Button type="submit" icon={<KeyRound />} disabled={busy || name.trim() === ''}>Make link</Button>
-                    </form>
-                </Panel>
-                {result && <Panel className="p-4"><LinkResult result={result} /></Panel>}
+            {/* The page's full width, as under the other access tabs, with the form kept to a readable column. */}
+            <PageBody>
+                <div className="grid max-w-2xl gap-5">
+                    <Panel
+                        title="Set up or reset a passkey"
+                        description="A one-time link for a staff member to create their passkey. For someone who already has one, it replaces them all, for a lost device. Only for players whose permissions you all hold yourself."
+                    >
+                        <form onSubmit={handleSubmit} className="space-y-3 p-4">
+                            {error !== null && <ErrorNotice error={error} />}
+                            <Field label="Player name" name="player" value={name} onChange={event => setName(event.target.value)} required />
+                            <Button type="submit" icon={<KeyRound />} disabled={busy || name.trim() === ''}>Make link</Button>
+                        </form>
+                    </Panel>
+                    {result && <Panel className="p-4"><LinkResult result={result} /></Panel>}
+                </div>
             </PageBody>
         </>
     );

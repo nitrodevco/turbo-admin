@@ -7,7 +7,7 @@ import { useState } from 'react';
 import { promoImageUrl, useClientAssets } from '#/api/assets';
 import { catalogCalls, type CatalogFeaturedInput, type CatalogFeaturedItem, type CatalogOffer, type CatalogTree, FEATURED_MAX, type FeaturedLinkType, useCatalogEdit } from '#/api/catalog';
 import { toast } from '#/components/toast';
-import { Button, ErrorNotice, Input, Labeled, Segmented, Select } from '#/components/ui';
+import { Button, EmptyState, ErrorNotice, Input, Labeled, Segmented, Select } from '#/components/ui';
 import { cx } from '#/lib/cx';
 
 import { givesOf } from './offers';
@@ -49,13 +49,13 @@ const ItemCard = ({ item, index, tree, offers, onChange, onRemove, disabled }: {
         <li ref={setNodeRef} style={{ transform: CSS.Transform.toString(transform), transition }} className={cx('rounded-xl border border-line bg-canvas', isDragging && 'z-10 shadow-lg')}>
             <div className="flex items-center gap-2 border-b border-line px-3 py-2">
                 {!disabled && (
-                    <span {...attributes} {...listeners} aria-label="Move it" className="grid size-7 cursor-grab touch-none place-items-center rounded text-muted hover:bg-subtle hover:text-ink active:cursor-grabbing">
+                    <span {...attributes} {...listeners} aria-label="Move it" className="grid size-10 cursor-grab touch-none place-items-center rounded text-muted hover:bg-subtle hover:text-ink active:cursor-grabbing sm:size-7">
                         <GripVertical className="size-4" />
                     </span>
                 )}
                 <span className="text-xs font-semibold">{index + 1}. {SLOT_NAMES[index]}</span>
                 {!disabled && (
-                    <button type="button" onClick={onRemove} aria-label="Remove it" className="ml-auto grid size-7 place-items-center rounded-lg text-muted hover:bg-bad-soft hover:text-bad">
+                    <button type="button" onClick={onRemove} aria-label="Remove it" className="ml-auto grid size-10 place-items-center rounded-lg text-muted hover:bg-bad-soft hover:text-bad sm:size-7">
                         <Trash2 className="size-3.5" />
                     </button>
                 )}
@@ -98,7 +98,7 @@ const ItemCard = ({ item, index, tree, offers, onChange, onRemove, disabled }: {
                                 {offers.map(x => <option key={x.id} value={x.id}>{givesOf(x)} (#{x.id})</option>)}
                             </Select>
                         )}
-                        <Input type="number" min={1} value={item.value} onChange={event => set('value', event.target.value)} placeholder="Offer id" aria-label="Offer id" disabled={disabled} className="w-28 shrink-0 font-mono" />
+                        <Input type="number" min={1} value={item.value} onChange={event => set('value', event.target.value)} placeholder="Offer id" aria-label="Offer id" disabled={disabled} className="w-24 shrink-0 font-mono sm:w-28" />
                     </div>
                 )}
                 {item.type === 'product' && (
@@ -170,7 +170,7 @@ export const FeaturedEditor = ({ tree, items, offers = [] }: { tree: CatalogTree
                         Add a featured item
                     </button>
                 )}
-                {drafts.length === 0 && disabled && <p className="text-sm text-muted">No featured items.</p>}
+                {drafts.length === 0 && disabled && <EmptyState>No featured items.</EmptyState>}
             </div>
             {save.error && <div className="px-4 pb-3"><ErrorNotice error={save.error} /></div>}
             {!disabled && dirty && (

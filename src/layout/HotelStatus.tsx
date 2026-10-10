@@ -1,5 +1,4 @@
 import { ChevronRight, X } from 'lucide-react';
-import { create } from 'zustand';
 
 import { useLive } from '#/api/live';
 import { useDashboard, useHotelAbilities } from '#/api/queries';
@@ -8,16 +7,12 @@ import { cx } from '#/lib/cx';
 import { HotelControls } from '#/pages/HotelControls';
 
 import { phaseOf, type PhaseTone } from './availability';
+import { useHotelSheet } from './hotelSheet';
 
 type Tone = PhaseTone;
 
 const DOT: Record<Tone, string> = { good: 'bg-good', warn: 'bg-warn', bad: 'bg-bad' };
 const TEXT: Record<Tone, string> = { good: 'text-good', warn: 'text-warn', bad: 'text-bad' };
-
-const useHotelSheet = create<{ open: boolean; setOpen: (open: boolean) => void }>(set => ({
-    open: false,
-    setOpen: open => set({ open }),
-}));
 
 /** A dot in the phase's colour that pulses while the hotel is not simply open, or while the stream is live. */
 const Dot = ({ tone, pulse }: { tone: Tone; pulse: boolean }) => (
@@ -59,9 +54,9 @@ export const HotelStatusCard = () => {
         >
             <Dot tone={phase.tone} pulse={phase.tone !== 'good' || live} />
             <span className="min-w-0 flex-1">
-                <span className={cx('block truncate text-[13px] font-medium', TEXT[phase.tone])}>{phase.label}</span>
+                <span className={cx('block text-[13px] leading-snug font-medium text-pretty', TEXT[phase.tone])}>{phase.label}</span>
                 <span className="block truncate font-mono text-[11px] text-muted tabular-nums">
-                    {data.playersOnline.toLocaleString()} online · {data.roomsLoaded.toLocaleString()} rooms
+                    {data.playersOnline.toLocaleString()} online
                 </span>
             </span>
             {canControl && <ChevronRight className="size-4 shrink-0 text-muted transition-transform group-hover:translate-x-0.5" />}
