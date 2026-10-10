@@ -15,7 +15,7 @@ import {
 } from '@dnd-kit/core';
 import { arrayMove, sortableKeyboardCoordinates } from '@dnd-kit/sortable';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { ArrowLeft, Copy, Disc3, Eye, LayoutGrid, PackagePlus, PackageSearch, Settings2, Sparkles, Wand2 } from 'lucide-react';
+import { ArrowLeft, Copy, DatabaseBackup, Disc3, Eye, LayoutGrid, PackagePlus, PackageSearch, Settings2, Sparkles, Wand2 } from 'lucide-react';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { Link, useSearchParams } from 'react-router';
@@ -38,6 +38,7 @@ import {
 import { Badge, Button, EmptyState, ErrorNotice, Loading, PageHeader, WarningNotice } from '#/components/ui';
 import { cx } from '#/lib/cx';
 
+import { Backups } from './Backups';
 import { CatalogHome } from './CatalogHome';
 import { ChangesBar } from './ChangesBar';
 import { Duplicates } from './Duplicates';
@@ -67,9 +68,9 @@ const startOf = (layout: string): OfferStart => (layout === CLUB_BUY ? 'membersh
 type Dragging = { kind: 'page'; id: number } | { kind: 'offer'; id: number };
 
 /** The editor's views, along the header. */
-type View = 'editor' | 'missing' | 'duplicates' | 'generate';
+type View = 'editor' | 'missing' | 'duplicates' | 'generate' | 'backups';
 
-const VIEWS: View[] = [ 'editor', 'missing', 'duplicates', 'generate' ];
+const VIEWS: View[] = [ 'editor', 'missing', 'duplicates', 'generate', 'backups' ];
 
 const idOf = (dragId: string | number) => Number(String(dragId).split(':')[1]);
 const kindOf = (dragId: string | number) => String(dragId).split(':')[0];
@@ -134,7 +135,7 @@ type PageTab = 'preview' | 'settings' | 'featured';
  * The catalog editor. Its views: the editor itself - the page tree on the left, the picked page in
  * the middle drawn as the client draws it, and on the right what is being edited (the page, an
  * offer, or the front page's featured items); the furni the catalog doesn't sell; the furni it
- * sells twice; and generating a whole catalog. Edits are saved as they are made, can be undone
+ * sells twice; generating a whole catalog; and backups to roll back to. Edits are saved as they are made, can be undone
  * and redone (Ctrl+Z, Ctrl+Shift+Z) or thrown away together, and go in front of players when
  * published. The view, the open page and offer live in the address, so they can be linked to.
  */
@@ -440,6 +441,7 @@ export const CatalogPage = () => {
                         { value: 'missing', label: 'Missing furni', icon: <PackageSearch /> },
                         { value: 'duplicates', label: 'Duplicates', icon: <Copy /> },
                         { value: 'generate', label: 'Generate', icon: <Wand2 /> },
+                        { value: 'backups', label: 'Backups', icon: <DatabaseBackup /> },
                     ],
                 }}
             >
@@ -479,6 +481,7 @@ export const CatalogPage = () => {
                 {data && view === 'missing' && <MissingFurni tree={data} pageId={selected} onOpenPage={id => openPage(id)} />}
                 {data && view === 'duplicates' && <Duplicates tree={data} onOpen={(pageId, offerId) => openPage(pageId, offerId)} />}
                 {data && view === 'generate' && <GenerateCatalog tree={data} onDone={() => openPage(null)} />}
+                {data && view === 'backups' && <Backups tree={data} />}
 
                 {data && view === 'editor' && (
                     data.rootId === 0

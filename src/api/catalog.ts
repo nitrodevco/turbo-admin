@@ -431,6 +431,21 @@ export interface GenerateResult {
     unpublishedChanges: number;
 }
 
+/** A kept copy of the catalog's pages, offers and featured items, to roll back to. */
+export interface CatalogBackup {
+    id: number;
+    name: string;
+    takenById: number;
+    takenByName: string | null;
+    takenAtUtc: string;
+    /** Taken by the editor itself, of what a rollback replaced. */
+    automatic: boolean;
+    pages: number;
+    offers: number;
+    products: number;
+    featuredItems: number;
+}
+
 /** The layout of the page the catalogue opens on. */
 export const FRONT_PAGE_LAYOUT = 'frontpage4';
 
@@ -438,6 +453,11 @@ export const useCatalogHistory = (enabled: boolean) => useQuery({
     queryKey: [ 'catalog', 'history' ],
     queryFn: () => api<CatalogHistory>('/catalog/history'),
     enabled,
+});
+
+export const useCatalogBackups = () => useQuery({
+    queryKey: [ 'catalog', 'backups' ],
+    queryFn: () => api<{ items: CatalogBackup[] }>('/catalog/backups'),
 });
 
 export const useUnoffered = (query: UnofferedQuery) => useQuery({
@@ -477,6 +497,9 @@ export const catalogCalls = {
     undo: () => post<CatalogHistory>('/catalog/undo'),
     redo: () => post<CatalogHistory>('/catalog/redo'),
     discard: () => post<CatalogHistory>('/catalog/discard'),
+    backup: (name: string) => post<Saved>('/catalog/backups', { name }),
+    rollback: (backupId: number) => post<CatalogHistory>(`/catalog/backups/${backupId}/rollback`),
+    deleteBackup: (backupId: number) => remove<Saved>(`/catalog/backups/${backupId}`),
     previewGenerate: (request: GenerateRequest) => post<GeneratePlan>('/catalog/generate/preview', request),
     generate: (request: GenerateRequest) => post<GenerateResult>('/catalog/generate', request),
 };

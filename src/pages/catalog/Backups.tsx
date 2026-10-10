@@ -1,0 +1,134 @@
+import { ArchiveRestore, DatabaseBackup, Save, Trash2 } from 'lucide-react';
+import { useState } from 'react';
+
+import { type CatalogBackup, catalogCalls, type CatalogTree, useCatalogBackups, useCatalogEdit } from '#/api/catalog';
+import { Badge, Button, ErrorNotice, Input, Loading } from '#/components/ui';
+
+import { toast, toastError } from './feedback';
+
+/** The longest name a backup takes, as the server holds it. */
+const NAME_MAX_LENGTH = 100;
+
+const takenAt = (utc: string) => new Date(utc).toLocaleString([], { dateStyle: 'medium', timeStyle: 'short' });
+
+const BackupRow = ({ backup, canManage, busy, onRollback, onDelete }: { backup: CatalogBackup; canManage: boolean; busy: boolean; onRollback: () => void; onDelete: () => void }) => (
+    <li className="flex flex-wrap items-center gap-x-4 gap-y-2 px-4 py-3">
+        <div className="min-w-0 flex-1">
+            <div className="flex min-w-0 items-center gap-2">
+                <span className="truncate text-sm font-medium">{backup.name}</span>
+                {backup.automatic && <Badge tone="amber">Before a rollback</Badge>}
+            </div>
+            <div className="truncate text-xs text-muted">
+                {takenAt(backup.takenAtUtc)}
+                {' · '}
+                {backup.takenByName ?? `player ${backup.takenById}`}
+            </div>
+        </div>
+        <div className="font-mono text-xs text-muted tabular-nums">
+            {backup.pages.toLocaleString()} pages · {backup.offers.toLocaleString()} offers · {backup.featuredItems} featured
+        </div>
+        {canManage && (
+            <div className="flex items-center gap-1.5">
+                <Button variant="secondary" icon={<ArchiveRestore />} disabled={busy} onClick={onRollback} title="Put the catalog back as this backup has it">
+                    Roll back
+                </Button>
+                <button type="button" disabled={busy} onClick={onDelete} aria-label={`Delete the backup ${backup.name}`} title="Delete this backup" className="grid size-11 place-items-center rounded-md text-muted hover:bg-bad-soft hover:text-bad disabled:opacity-40 sm:size-9">
+                    <Trash2 className="size-4" />
+                </button>
+            </div>
+        )}
+    </li>
+);
+
+/**
+ * The catalog's backups: copies of every page, offer, product and featured item as they were
+ * saved when taken. Rolling back puts the catalog back as one is, ids included, as one change that
+ * can be undone and goes live when published; what it replaces is backed up first, so a rollback
+ * can itself be rolled back after a publish. Limited series stay as they are.
+ */
+export const Backups = ({ tree }: { tree: CatalogTree }) => {
+    const backups = useCatalogBackups();
+    const take = useCatalogEdit(catalogCalls.backup);
+    const rollback = useCatalogEdit(catalogCalls.rollback);
+    const remove = useCatalogEdit(catalogCalls.deleteBackup);
+    const [ name, setName ] = useState('');
+    const busy = take.isPending || rollback.isPending || remove.isPending;
+    const items = backups.data?.items ?? [];
+
+    const doTake = () => take.mutate([ name ], {
+        onSuccess: () => {
+            setName('');
+            toast('Backed up: every page, offer and featured item as saved now.');
+        },
+        onError: toastError,
+    });
+
+    const doRollback = (backup: CatalogBackup) => {
+        if (!window.confirm(`Roll the catalog back to "${backup.name}"? Every page, offer and featured item goes back as it has them. What is there now is backed up first, and you can undo it. Players get it when you publish.`))
+            return;
+
+        rollback.mutate([ backup.id ], {
+            onSuccess: () => toast(`Rolled back to "${backup.name}". Publish to put it in front of players.`),
+            onError: toastError,
+        });
+    };
+
+    const doDelete = (backup: CatalogBackup) => {
+        if (!window.confirm(`Delete the backup "${backup.name}"? It can't be brought back.`))
+            return;
+
+        remove.mutate([ backup.id ], {
+            onSuccess: () => toast(`Deleted the backup "${backup.name}".`),
+            onError: toastError,
+        });
+    };
+
+    return (
+        <div className="flex flex-col gap-3">
+            {tree.canManage && (
+                <form
+                    className="flex flex-wrap items-center gap-3 rounded-xl border border-line bg-surface p-3"
+                    onSubmit={(event) => {
+                        event.preventDefault();
+                        doTake();
+                    }}
+                >
+                    <span className="flex items-center gap-2 text-sm font-medium">
+                        <DatabaseBackup className="size-4 text-accent" />
+                        Back up the catalog
+                    </span>
+                    <Input value={name} onChange={event => setName(event.target.value)} maxLength={NAME_MAX_LENGTH} placeholder="Name it (optional)" aria-label="Backup name" className="min-w-0 flex-1 sm:max-w-sm" />
+                    <Button type="submit" icon={<Save />} disabled={busy}>
+                        Back up now
+                    </Button>
+                    <p className="w-full text-xs text-muted">
+                        Keeps every page, offer and featured item as they are saved now, published or not. Rolling back is one change you can undo, and goes live when you publish.
+                    </p>
+                </form>
+            )}
+
+            {backups.error && <ErrorNotice error={backups.error} />}
+            {backups.isPending && <Loading />}
+            {backups.data && items.length === 0 && (
+                <div className="flex flex-col items-center gap-2 rounded-2xl border border-dashed border-line px-6 py-16 text-center">
+                    <DatabaseBackup className="size-8 text-muted" />
+                    <p className="text-sm text-muted">No backups yet.</p>
+                </div>
+            )}
+            {items.length > 0 && (
+                <ul className="divide-y divide-line overflow-hidden rounded-xl border border-line bg-surface">
+                    {items.map(backup => (
+                        <BackupRow
+                            key={backup.id}
+                            backup={backup}
+                            canManage={tree.canManage}
+                            busy={busy}
+                            onRollback={() => doRollback(backup)}
+                            onDelete={() => doDelete(backup)}
+                        />
+                    ))}
+                </ul>
+            )}
+        </div>
+    );
+};
