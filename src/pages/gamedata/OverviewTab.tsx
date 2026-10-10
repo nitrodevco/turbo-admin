@@ -172,7 +172,7 @@ export const OverviewTab = ({ status }: { status: GamedataStatus }) => {
                     headers={[ { label: 'File' }, { label: 'Client setting' }, { label: 'Build' }, { label: 'Size', className: 'text-right' }, { label: 'Built' } ]}
                 >
                     {files.map((row) => {
-                        const keys = status.fileKeys[row.file.file];
+                        const keys = status.fileKeys?.[row.file.file];
 
                         return (
                             <Row key={row.file.file}>

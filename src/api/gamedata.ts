@@ -78,8 +78,8 @@ export interface GamedataStatus {
     productData: GamedataFile;
     figureData: GamedataFile;
     externalVariables: GamedataFile;
-    /** The variables that carry each file's address, by file (`furnidata_json`): those that follow it. */
-    fileKeys: Record<string, string[]>;
+    /** The variables that carry each file's address, by file (`furnidata_json`): those that follow it. Absent from a server older than the panel. */
+    fileKeys?: Record<string, string[]>;
     canManage: boolean;
 }
 
@@ -440,8 +440,10 @@ export interface VariableImportPreview {
     skipped: string[];
     items: VariableImportItem[];
     truncated: boolean;
-    /** The hotel's variables the config lacks, removed when asked; never one that follows a setting or a file. */
+    /** The hotel's variables the config lacks, removed when asked, up to the preview's limit; never one that follows a setting or a file, nor the reception's (landing.view.*). */
     removed: string[];
+    /** Every variable the import would remove, listed or not. */
+    removedCount: number;
 }
 
 /** A client config to import, and whether the hotel's variables it lacks are removed. */

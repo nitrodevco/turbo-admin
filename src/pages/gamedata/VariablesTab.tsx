@@ -174,7 +174,7 @@ const ImportPanel = ({ onDone }: { onDone: () => void }) => {
     const preview = useVariableImportPreview();
     const take = useVariableImport();
     const seen = preview.data;
-    const removing = seen?.removed.length ?? 0;
+    const removing = seen?.removedCount ?? 0;
 
     return (
         <Panel
@@ -197,7 +197,7 @@ const ImportPanel = ({ onDone }: { onDone: () => void }) => {
                 />
                 <Checkbox
                     label="Remove the hotel's variables the config doesn't have"
-                    hint="Variables that follow a setting or a file stay."
+                    hint="Variables that follow a setting or a file stay, and so do the Hotel view's (landing.view.*). A config with no keys can't remove anything."
                     checked={removeMissing}
                     onChange={(checked) => {
                         setRemoveMissing(checked);
@@ -275,6 +275,7 @@ const ImportPanel = ({ onDone }: { onDone: () => void }) => {
                             <span className="text-xs text-muted">Not in the config</span>
                         </li>
                     ))}
+                    {removing > seen.removed.length && <li className="px-4 py-2.5 text-xs text-muted">And {removing - seen.removed.length} more to remove, not listed.</li>}
                 </ul>
             )}
         </Panel>
