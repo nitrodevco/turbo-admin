@@ -218,7 +218,7 @@ const Notices = ({ server, canManage, save }: { server: NoticeData; canManage: b
             <>
                 <PageHeader
                     title={key}
-                    description={isNew(key) ? 'A new notice: nothing is made until you save it' : at >= 0 ? `Shown, #${at + 1}${reason ? ` - players don't see it now (${reason})` : ''}` : 'Not shown'}
+                    description={!isNew(key) && (at >= 0 ? `Shown, #${at + 1}${reason ? ` - players don't see it now (${reason})` : ''}` : 'Not shown')}
                     back={{ to: '/notices', label: 'Notices' }}
                 >
                     {compareButton}
@@ -229,11 +229,11 @@ const Notices = ({ server, canManage, save }: { server: NoticeData; canManage: b
                 <PageBody>
                     {notices}
                     <div className="grid items-start gap-4 lg:grid-cols-[minmax(0,1fr)_22rem] lg:gap-6">
-                        <Panel title="Notice" description="What it says and shows, where a click goes, how it closes, and when it shows and to whom.">
+                        <Panel title="Notice">
                             <NoticeEditor key={key} notice={notice} onChange={update} disabled={disabled} />
                         </Panel>
                         <aside className="flex flex-col gap-4 lg:sticky lg:top-6 lg:gap-6">
-                            <Panel title="As docked" description="About as the client draws it under the purse. Unsaved changes show here too.">
+                            <Panel title="As docked">
                                 <div className="flex justify-center rounded-b-xl bg-[#0e1a2b] p-6" data-testid="notice-live-preview">
                                     <NoticePreview notice={notice} />
                                 </div>
@@ -286,7 +286,7 @@ const Notices = ({ server, canManage, save }: { server: NoticeData; canManage: b
 
     return (
         <>
-            <PageHeader title="Notices" description="The new feature notices docked under the purse: what they say and show, where they go, when and to whom">
+            <PageHeader title="Notices">
                 {compareButton}
                 {canManage && <Button variant="secondary" icon={<CloudDownload />} onClick={() => setPulling(true)}>Copy Habbo's set</Button>}
                 {count > 0 && <Button variant="ghost" icon={<RotateCcw />} onClick={discardAll}>Discard all</Button>}
@@ -307,13 +307,13 @@ const Notices = ({ server, canManage, save }: { server: NoticeData; canManage: b
                 )}
                 <Panel
                     title={<span className="flex items-center gap-2">Shown{orderDirty && <Badge tone="accent">order unsaved</Badge>}</span>}
-                    description="Top to bottom as the column docks them; one with an expiry or a countdown docks after the others. Open a notice to change it."
+                    description="One with an expiry or a countdown docks after the others."
                     actions={orderDirty && canManage && <Button variant="secondary" icon={<Save />} disabled={save.isPending} onClick={saveOrder}>Save order</Button>}
                 >
                     {making && <NewNotice taken={x => set.notices.some(y => y.key === x)} onMake={make} />}
                     {table(shown, true, 'None shown.')}
                 </Panel>
-                <Panel title="Not shown" description="Kept, ready to show again.">
+                <Panel title="Not shown">
                     {table(hidden, false, 'Every notice is shown.')}
                 </Panel>
             </PageBody>

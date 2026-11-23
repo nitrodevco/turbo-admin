@@ -79,14 +79,14 @@ export const FurnitureSheet = ({ player, action, open, onClose, canGive, canGift
                     </datalist>
                 </div>
                 {canGive && canGift && (
-                    <Switch label="Send as a gift" hint="A present with a note on its tag, opened in the client" checked={asGift} onChange={setAsGift} />
+                    <Switch label="Send as a gift" checked={asGift} onChange={setAsGift} />
                 )}
                 {asGift && (
                     <>
                         <Labeled label="Note on the tag" hint="One line; the hotel caps its length (140 characters unless changed).">
                             <Textarea value={note} onChange={event => setNote(event.target.value)} rows={2} placeholder="Thanks for playing!" />
                         </Labeled>
-                        <Labeled label="Badge inside" hint="Given as the present is opened; leave empty for none.">
+                        <Labeled label="Badge inside">
                             <Input value={badge} onChange={event => setBadge(event.target.value)} placeholder="ADM, ACH_Login1" spellCheck={false} className="font-mono" />
                         </Labeled>
                     </>

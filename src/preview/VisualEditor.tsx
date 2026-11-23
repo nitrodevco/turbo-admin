@@ -461,7 +461,7 @@ export const VisualEditor = ({ template, part, ops, history, draft, owner, foote
                     overlay={box && <Handles box={box} onDrag={onDrag} onClick={(x, y) => controls.current?.pick(x, y)} />}
                 />
                 <div className="flex flex-col gap-3 text-sm" aria-label="The picked element">
-                    <Labeled label="Element" hint="Click it in the window, or pick it here (hidden ones too). Esc picks nothing.">
+                    <Labeled label="Element">
                         <span className="flex gap-1">
                             <Select
                                 aria-label="Element"

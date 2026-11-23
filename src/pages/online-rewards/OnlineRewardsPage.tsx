@@ -311,12 +311,12 @@ const OnlineRewardsForm = ({ settings, canManage }: { settings: Record<Name, Ser
             {NAMES.some(lockedBy) && <WarningNotice>Some of these are set in the environment, which always wins over the panel. Change them there.</WarningNotice>}
             <Panel
                 title="Pay players for time online"
-                description={<>Not part of Habbo: off unless you turn it on. Also under <Link to={`/settings?q=${encodeURIComponent(SECTION)}`} className="underline-offset-2 hover:underline">Settings</Link>.</>}
+                description="Not part of Habbo: off unless you turn it on."
             >
                 <div className="p-4">
                     <Switch
                         label="Online rewards"
-                        hint={draft.enabled ? 'On: every player online is paid by the rules below.' : 'Off: nobody is paid. The rules are kept for when it is on.'}
+                        hint={!draft.enabled && 'Off: nobody is paid. The rules are kept for when it is on.'}
                         checked={draft.enabled}
                         disabled={!editable('Enabled')}
                         onChange={enabled => set({ enabled })}
@@ -325,7 +325,7 @@ const OnlineRewardsForm = ({ settings, canManage }: { settings: Record<Name, Ser
             </Panel>
             <Panel
                 title="Rules"
-                description="One rule per currency. Each player's clock starts when they log in, so a rule of 15 minutes pays at 15, 30 and 45 minutes online, and so on. Time offline, or while this was off, is never paid afterwards."
+                description="One rule per currency. Each player's clock starts at login, so a 15 minute rule pays at 15, 30 and 45 minutes online; time offline is never paid."
                 className="overflow-clip"
             >
                 <RulesTable rules={draft.rules} currencies={currencies} disabled={!editable('Rules')} onChange={rules => set({ rules })} />
@@ -408,7 +408,7 @@ export const OnlineRewardsPage = () => {
 
     return (
         <>
-            <PageHeader title="Online rewards" description="Currency paid to players for time online" />
+            <PageHeader title="Online rewards" />
             <PageBody>
                 {error && <ErrorNotice error={error} />}
                 {!error && !data && <Loading />}

@@ -122,9 +122,7 @@ export const CommandLogPage = () => {
             <PageHeader
                 title="Logs"
                 tabs={tabs}
-                description={log.data
-                    ? `${log.data.total.toLocaleString()} ${log.data.total === 1 ? 'command' : 'commands'}${filtered ? ' matching' : ' logged'}`
-                    : 'Who ran what, where, and how it went'}
+                description={log.data && `${log.data.total.toLocaleString()} ${log.data.total === 1 ? 'command' : 'commands'}${filtered ? ' matching' : ' logged'}`}
             />
             <PageBody>
                 <Panel className="overflow-clip">

@@ -84,22 +84,20 @@ interface Section {
     id: string;
     title: string;
     icon: ReactNode;
-    /** What the section is for, under its title. */
-    about: string;
     keys: string[];
     floorOnly?: boolean;
 }
 
 /** The editor's sections, in the order a definition is usually looked over. */
 const SECTIONS: Section[] = [
-    { id: 'overview', title: 'Overview', icon: <Box />, about: 'How it looks, where it is sold and the bundle it is drawn from.', keys: [] },
-    { id: 'text', title: 'Name', icon: <Type />, about: 'What players read in the catalog, their inventory and the room.', keys: [ 'name', 'description' ] },
-    { id: 'kind', title: 'Kind', icon: <LayoutGrid />, about: 'What sort of furniture it is, and the line it belongs to.', keys: [ 'specialtype', 'category', 'furniline', 'environment', 'rare', 'excludeddynamic' ] },
-    { id: 'placement', title: 'Placement', icon: <ArrowLeftRight />, about: 'The tiles it takes, how tall it stands and what avatars may do on it.', keys: [ 'xdim', 'ydim', 'height', 'defaultdir', 'canstandon', 'cansiton', 'canlayon', 'canputstuffon' ], floorOnly: true },
-    { id: 'behaviour', title: 'Behaviour', icon: <Settings2 />, about: 'The logic the server runs for it, who may use it, and its states.', keys: [ 'logic', 'usagepolicy', 'states', 'customparams', 'extradata' ] },
-    { id: 'trading', title: 'Trading', icon: <Store />, about: 'Where players may pass it on.', keys: [ 'tradeable', 'recyclable', 'cangroup', 'cansell' ] },
-    { id: 'client', title: 'Client', icon: <Palette />, about: 'What only the client reads: where its asset is, its colours and ads.', keys: [ 'revision', 'partcolors', 'adurl' ] },
-    { id: 'identity', title: 'Identity', icon: <Fingerprint />, about: 'What the hotel and the client know it by.', keys: [ 'classname', 'id' ] },
+    { id: 'overview', title: 'Overview', icon: <Box />, keys: [] },
+    { id: 'text', title: 'Name', icon: <Type />, keys: [ 'name', 'description' ] },
+    { id: 'kind', title: 'Kind', icon: <LayoutGrid />, keys: [ 'specialtype', 'category', 'furniline', 'environment', 'rare', 'excludeddynamic' ] },
+    { id: 'placement', title: 'Placement', icon: <ArrowLeftRight />, keys: [ 'xdim', 'ydim', 'height', 'defaultdir', 'canstandon', 'cansiton', 'canlayon', 'canputstuffon' ], floorOnly: true },
+    { id: 'behaviour', title: 'Behaviour', icon: <Settings2 />, keys: [ 'logic', 'usagepolicy', 'states', 'customparams', 'extradata' ] },
+    { id: 'trading', title: 'Trading', icon: <Store />, keys: [ 'tradeable', 'recyclable', 'cangroup', 'cansell' ] },
+    { id: 'client', title: 'Client', icon: <Palette />, keys: [ 'revision', 'partcolors', 'adurl' ] },
+    { id: 'identity', title: 'Identity', icon: <Fingerprint />, keys: [ 'classname', 'id' ] },
 ];
 
 /** Longer words for some fields, under their controls. */
@@ -115,15 +113,7 @@ const HINTS: Record<string, string> = {
 
 /** What a flag means, under its switch. */
 const FLAG_HINTS: Record<string, string> = {
-    canstandon: 'Avatars may walk onto it.',
-    cansiton: 'Avatars sit on it.',
-    canlayon: 'Avatars lie on it, as on a bed.',
-    canputstuffon: 'Other furniture may be stacked on it.',
-    tradeable: 'Players may trade it to each other.',
-    recyclable: 'The recycler takes it.',
     cangroup: 'Several of it show as one stack in the inventory.',
-    cansell: 'Players may sell it on the marketplace.',
-    rare: 'Shown as a rare in the client.',
     excludeddynamic: 'Left out of what the client downloads as it goes.',
 };
 
@@ -510,10 +500,7 @@ const EditorBody = ({ definition, canManage, section, onSection, onUnsaved, save
                 </nav>
 
                 <div className="min-w-0 p-4 sm:p-5">
-                    <header className="mb-5">
-                        <h3 className="text-base font-semibold">{shown.title}</h3>
-                        <p className="mt-0.5 text-ui text-muted">{shown.about}</p>
-                    </header>
+                    <h3 className="mb-5 text-base font-semibold">{shown.title}</h3>
 
                     {shown.id === 'overview' && (
                         <Overview

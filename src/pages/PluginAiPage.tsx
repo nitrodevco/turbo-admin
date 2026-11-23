@@ -87,7 +87,7 @@ export const PluginAiPage = () => {
 
     return (
         <>
-            <PageHeader title="Plugins" description="Language models, access and usage" tabs={tabs} />
+            <PageHeader title="Plugins" tabs={tabs} />
             <PageBody>
                 {error && <ErrorNotice error={error} />}
                 {isPending && <Loading />}
@@ -114,7 +114,7 @@ export const PluginAiPage = () => {
                                 </ul>
                             )}
                         </Panel>
-                        <Panel title="Configuration" description="Providers, models, failover, allowed plugin keys and limits. Values use JSON. API keys are entered above.">
+                        <Panel title="Configuration" description="Values are JSON. API keys are entered above.">
                             {settings.error && <div className="p-4"><ErrorNotice error={settings.error} /></div>}
                             {settings.isPending && <Loading />}
                             {aiSettings?.length === 0 && <EmptyState>The server has no AI settings to show.</EmptyState>}

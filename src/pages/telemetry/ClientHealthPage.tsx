@@ -99,7 +99,7 @@ export const ClientHealthPage = () => {
 
     return (
         <>
-            <PageHeader title="Overview" tabs={tabs} description="How the players' clients run, from what they report" />
+            <PageHeader title="Overview" tabs={tabs} />
             <PageBody>
                 <div className="flex flex-wrap items-center gap-2">
                     <RangePicker days={days} setDays={setDays} />
@@ -137,7 +137,6 @@ export const ClientHealthPage = () => {
                         <div className="grid gap-4 lg:grid-cols-2 lg:gap-6">
                             <DayChartCard
                                 title="Frame rate"
-                                description={filter.room ? 'In this room, from performance reports and frame rate events.' : 'Frames per second, from performance reports.'}
                                 series={[ { name: 'Median', color: SERIES_1 }, { name: 'p95', color: SERIES_2 } ]}
                                 points={dayPoints(data.days, x => x.fpsP50 > 0 || x.fpsP95 > 0, x => x.fpsP50, x => x.fpsP95)}
                                 format={fps}
@@ -146,7 +145,6 @@ export const ClientHealthPage = () => {
                             />
                             <DayChartCard
                                 title="Latency"
-                                description="The average ping of each latency test."
                                 series={[ { name: 'Median', color: SERIES_1 }, { name: 'p95', color: SERIES_2 } ]}
                                 points={dayPoints(data.days, x => x.latencyReports > 0, x => x.latencyP50Ms, x => x.latencyP95Ms)}
                                 format={ms}
@@ -156,7 +154,6 @@ export const ClientHealthPage = () => {
                             {!filter.room && (
                                 <DayChartCard
                                     title="Client memory"
-                                    description="What the client holds, where the browser says."
                                     series={[ { name: 'Median', color: SERIES_1 }, { name: 'p95', color: SERIES_2 } ]}
                                     points={dayPoints(data.days, x => x.reports > 0, x => x.memoryP50Mb, x => x.memoryP95Mb)}
                                     format={megabytes}
@@ -166,7 +163,7 @@ export const ClientHealthPage = () => {
                             )}
                             <DayChartCard
                                 title="Chat lag warnings"
-                                description="Chat lines that came back to their sender late, every browser."
+                                description="Chat lines that came back to their sender late."
                                 series={[ { name: 'Warnings', color: SERIES_1 } ]}
                                 points={dayPoints(data.days, () => totals.lag > 0, x => x.lagWarnings)}
                                 format={number}
@@ -175,7 +172,7 @@ export const ClientHealthPage = () => {
                             />
                         </div>
 
-                        <Panel title="Browsers and devices" description="Read from each report's user agent. Percentiles over several days weight each day by its reports.">
+                        <Panel title="Browsers and devices">
                             {data.devices.length === 0
                                 ? <EmptyState>{NO_PERFORMANCE_HINT}</EmptyState>
                                 : (
@@ -199,7 +196,7 @@ export const ClientHealthPage = () => {
                         </Panel>
 
                         <div className="grid gap-4 lg:grid-cols-2 lg:gap-6">
-                            <Panel title="Rooms" description="The most chat lag first. A room opens its own reports.">
+                            <Panel title="Rooms">
                                 {data.rooms.length === 0
                                     ? <EmptyState>No room reported anything in this range.</EmptyState>
                                     : (
@@ -219,7 +216,7 @@ export const ClientHealthPage = () => {
                                             </SortedRowList>
                                         )}
                             </Panel>
-                            <Panel title="Logins, as the server sees them" description="How many connections reached each step, and how long after the socket opened. Habbo's client tells its own steps only to its web page, so these are the server's.">
+                            <Panel title="Logins, as the server sees them" description="How many connections reached each step, and how long after the socket opened.">
                                 {firstStep === 0
                                     ? <EmptyState>No logins in this range.</EmptyState>
                                     : (

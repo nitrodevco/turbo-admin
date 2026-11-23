@@ -445,7 +445,7 @@ const CatalogEditor = ({ view }: { view: View }) => {
         <>
             <PageHeader
                 title="Catalog"
-                description={data ? `${(data.pages.length - 1).toLocaleString()} pages · ${unpublished > 0 ? `${unpublished} ${unpublished === 1 ? 'change' : 'changes'} waiting to go live` : 'everything is live'}` : 'Pages, offers and prices'}
+                description={data && `${(data.pages.length - 1).toLocaleString()} pages · ${unpublished > 0 ? `${unpublished} ${unpublished === 1 ? 'change' : 'changes'} waiting to go live` : 'everything is live'}`}
                 tabs={{
                     ...catalogTabs(view === 'missing' || view === 'duplicates' ? 'audit' : view, true),
                     onChange: value => setView(value === 'audit' ? 'missing' : value as View),

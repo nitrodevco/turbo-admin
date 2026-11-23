@@ -1,6 +1,5 @@
 import { Gift, Layers, Plus, RotateCcw, Save, Sparkles, Star, Undo2, X } from 'lucide-react';
 import { type KeyboardEvent, type PointerEvent, type ReactNode, useMemo, useState } from 'react';
-import { Link } from 'react-router';
 
 import { type ServerSetting, SOURCE, useResetSetting, useSaveSetting, useSettings } from '#/api/settings';
 import { ask } from '#/components/confirm';
@@ -356,7 +355,7 @@ const Preview = ({ ruleset }: { ruleset: Ruleset }) => {
     const next = nextFree(ruleset, quantity);
 
     return (
-        <Panel title="Try it" description="What a buyer sees and gets, from the values here, saved or not.">
+        <Panel title="Try it">
             <div className="flex flex-col gap-4 p-4">
                 <div className="flex items-center gap-3">
                     <input
@@ -446,7 +445,6 @@ const DiscountForm = ({ settings, canManage }: { settings: Record<Name, ServerSe
                 {NAMES.some(lockedBy) && <WarningNotice>Some of these are set in the environment, which always wins over the panel. Change them there.</WarningNotice>}
                 <Panel
                     title="Start from"
-                    description={<>A ready-made setup to adjust below. Free items are given on top of what is paid for; the builders club has none. Also under <Link to={`/settings?q=${encodeURIComponent(SECTION)}`} className="underline-offset-2 hover:underline">Settings</Link>.</>}
                 >
                     <div className="grid gap-2 p-4 sm:grid-cols-3">
                         {PRESETS.map(option => (
@@ -571,7 +569,7 @@ export const DiscountsPage = () => {
 
     return (
         <>
-            <PageHeader title="Catalog" tabs={catalogTabs('discounts')} description="Bulk buying and the free items it gives" />
+            <PageHeader title="Catalog" tabs={catalogTabs('discounts')} />
             <PageBody>
                 {error && <ErrorNotice error={error} />}
                 {!error && !data && <Loading />}

@@ -35,7 +35,7 @@ const TryIt = () => {
     };
 
     return (
-        <Panel title="Try a line" description="What players see when they type it, with the list as it is now.">
+        <Panel title="Try a line">
             <form onSubmit={handleSubmit} className="flex flex-col gap-2 p-4">
                 <div className="flex gap-2">
                     <Input value={text} onChange={event => setText(event.target.value)} placeholder="Type what a player might say" aria-label="A line to try" className="min-w-0 flex-1" />
@@ -94,7 +94,7 @@ export const WordFilterPage = () => {
             <PageHeader
                 title="Moderation"
                 tabs={tabs}
-                description={data ? `${plural(data.words.length, 'word')} filtered, each shown as “${data.replacement}”` : 'The words kept out of what players type'}
+                description={data && `${plural(data.words.length, 'word')} filtered, each shown as “${data.replacement}”`}
             />
             <PageBody>
                 {filter.error && <ErrorNotice error={filter.error} />}

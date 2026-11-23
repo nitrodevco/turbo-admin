@@ -15,11 +15,6 @@ export const CLIENTS_OWN = 'Habbo\'s own';
 /** What each area of the base theme's styles restyles, said under its heading. */
 export const GROUP_HINTS: Record<string, string> = {
     Windows: 'The frame, title bar and colour most windows are drawn with: catalogue, inventory, navigator.',
-    Purse: 'The purse at the top right: its border art.',
-    Catalogue: 'The catalogue window: its colour and where it first opens.',
-    Navigator: 'The navigator window: its colour and where it first opens.',
-    Fonts: 'The typefaces windows and chat are written in.',
-    'Loading screen': 'What players see while the hotel loads: the picture, the bar and the words.',
 };
 
 /** Whose default a style goes back to: Habbo's own (the base theme's, or the client's) or that of the theme that set one. */

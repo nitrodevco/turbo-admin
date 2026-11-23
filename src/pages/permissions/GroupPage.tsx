@@ -75,7 +75,7 @@ const ParentsCard = ({ group }: { group: GroupResponse }) => {
     };
 
     return (
-        <Panel title="Inherits from" description="Members also hold everything these groups hold.">
+        <Panel title="Inherits from">
             {group.parents.length === 0
                 ? <EmptyState>Nothing: it holds only its own nodes.</EmptyState>
                 : (

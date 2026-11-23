@@ -43,7 +43,7 @@ const MenuPreview = ({ tracks }: { tracks: RewardTrackListItem[] }) => {
     return (
         <Panel
             title="Progression menu"
-            description="What players see under the toolbar's Progression icon, left to right. Introduction is always there and opens the introduction track. Every other live track gets its own item after it, in the order of the list below: use the arrows to move one. A changed order shows at each player's next login; a track turned on or off shows or goes at once. Each track's item shows how many of its prizes the player can claim, and the icon shows those of every track plus the daily tasks done."
+            description="Use the arrows below to order the tracks. A new order shows at each player's next login; turning a track on or off shows at once."
         >
             <ol className="flex flex-wrap items-center gap-2 px-4 py-3">
                 {MENU_ITEMS.map(x => item(x, x))}
@@ -179,7 +179,7 @@ export const RewardTracksPage = ({ importing = false }: { importing?: boolean })
         <>
             <PageHeader
                 title="Reward tracks"
-                description={importing ? 'Take Habbo\'s tracks in from a capture' : 'The Progression menu\'s tracks: tasks to do, points, prizes and premium'}
+                description={importing && 'Take Habbo\'s tracks in from a capture'}
                 back={importing ? { to: '/reward-tracks', label: 'Reward tracks' } : undefined}
             >
                 {!importing && (
@@ -199,7 +199,7 @@ export const RewardTracksPage = ({ importing = false }: { importing?: boolean })
                 {data && !importing && (
                     <>
                         <MenuPreview tracks={data.tracks} />
-                        <Panel title="Tracks" description="Players get the live ones at login, in this order. A change here is sent to everyone online at once. Open a track to change its tasks, prizes, dates and menu item text.">
+                        <Panel title="Tracks" description="A change here is sent to everyone online at once.">
                             {making && <NewTrack taken={data.tracks.map(x => x.id)} onMake={open} />}
                             <TrackList tracks={data.tracks} onOpen={open} />
                         </Panel>

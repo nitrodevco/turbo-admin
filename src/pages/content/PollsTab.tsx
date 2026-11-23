@@ -170,7 +170,7 @@ const PollEditor = ({ start, id, canManage, onClose }: { start: PollInput | Poll
     return (
         <Panel
             title={id === null ? 'New poll' : draft.headline || 'Poll'}
-            description={detail ? `${detail.roomName ?? `Room ${detail.roomId}`} · ${detail.finished} finished, ${detail.started} started, ${detail.rejected} said no` : 'Offered to everyone who enters the room until they finish it or say no.'}
+            description={detail && `${detail.roomName ?? `Room ${detail.roomId}`} · ${detail.finished} finished, ${detail.started} started, ${detail.rejected} said no`}
             actions={<Button variant="ghost" icon={<ChevronLeft />} onClick={onClose}>All polls</Button>}
             className="overflow-clip"
         >
@@ -185,23 +185,23 @@ const PollEditor = ({ start, id, canManage, onClose }: { start: PollInput | Poll
                         <Labeled label="Room id">
                             <Input value={draft.roomId || ''} onChange={event => set({ roomId: Number(event.target.value.replace(/\D/g, '')) })} inputMode="numeric" className="w-full font-mono" required />
                         </Labeled>
-                        <Labeled label="Headline" hint="The offer's title.">
+                        <Labeled label="Headline">
                             <Input value={draft.headline} onChange={event => set({ headline: event.target.value })} className="w-full" required />
                         </Labeled>
                     </div>
-                    <Labeled label="Summary" hint="The offer's text, under the headline.">
+                    <Labeled label="Summary">
                         <Textarea rows={2} value={draft.summary} onChange={event => set({ summary: event.target.value })} required />
                     </Labeled>
                     <div className="grid gap-3 sm:grid-cols-2">
-                        <Labeled label="Start message" hint="Shown above the first question.">
+                        <Labeled label="Start message">
                             <Input value={draft.startMessage} onChange={event => set({ startMessage: event.target.value })} className="w-full" />
                         </Labeled>
-                        <Labeled label="End message" hint="Shown once it is done.">
+                        <Labeled label="End message">
                             <Input value={draft.endMessage} onChange={event => set({ endMessage: event.target.value })} className="w-full" />
                         </Labeled>
                     </div>
                     <div className="flex flex-wrap gap-x-6 gap-y-2">
-                        <Switch label="On" hint="Off, it isn't offered." checked={draft.enabled} onChange={enabled => set({ enabled })} />
+                        <Switch label="On" checked={draft.enabled} onChange={enabled => set({ enabled })} />
                         <Switch label="Score poll" hint="A choice decides which follow-up comes next." checked={draft.npsPoll} onChange={npsPoll => set({ npsPoll, questions: npsPoll ? draft.questions : draft.questions.map(x => ({ ...x, parent: null })) })} />
                     </div>
                 </fieldset>
@@ -281,7 +281,6 @@ export const PollsTab = () => {
     return (
         <Panel
             title="Room polls"
-            description="Offered to everyone who enters the room until they finish it or say no."
             actions={data.canManage && <Button icon={<Plus />} onClick={() => setOpen('new')}>Add poll</Button>}
             className="overflow-clip"
         >

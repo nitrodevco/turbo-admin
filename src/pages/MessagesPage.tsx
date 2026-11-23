@@ -67,7 +67,7 @@ export const MessagesPage = () => {
 
     return (
         <>
-            <PageHeader title="Logs" tabs={tabs} description="What friends sent each other in the messenger" />
+            <PageHeader title="Logs" tabs={tabs} />
             <PageBody>
                 <Panel className="overflow-clip">
                     <ListToolbar

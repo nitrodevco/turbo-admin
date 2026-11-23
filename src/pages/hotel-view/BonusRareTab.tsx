@@ -30,7 +30,7 @@ const FurniturePicker = ({ value, onChange, disabled }: { value: string; onChang
     const icon = furniIconUrl(assets, value || null);
 
     return (
-        <Labeled label="Furniture given" hint="Found by its name in the furniture definitions.">
+        <Labeled label="Furniture given">
             <div className="flex flex-col gap-2">
                 <div className="flex items-center gap-3">
                     <span className="grid size-10 shrink-0 place-items-center rounded-lg border border-line bg-canvas">{icon && <img src={icon} alt="" className="max-h-8 max-w-8" />}</span>
@@ -215,7 +215,7 @@ export const BonusRareTab = ({ draft, now, onOpenSlot, disabled }: { draft: Hote
                     ))}
                 </ul>
             </Panel>
-            <Panel title="Widget picture" description="What the bonus rare widget shows beside the furni and the count. Kept with the page's other changes until you press Save.">
+            <Panel title="Widget picture" description="Saved with the page's other changes.">
                 <div className="p-4">
                     <ImageField label="Picture" value={draft.text(COMMON.bonusRareImage)} onChange={value => draft.setText(COMMON.bonusRareImage, value)} accept={BONUS_RARE_IMAGE} resolve={resolve} changed={draft.changed(COMMON.bonusRareImage)} disabled={disabled} />
                 </div>

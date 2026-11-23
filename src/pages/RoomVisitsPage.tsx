@@ -81,7 +81,7 @@ export const RoomVisitsPage = () => {
 
     return (
         <>
-            <PageHeader title="Logs" tabs={tabs} description="Who went into which room, and when" />
+            <PageHeader title="Logs" tabs={tabs} />
             <PageBody>
                 <Panel className="overflow-clip">
                     <ListToolbar

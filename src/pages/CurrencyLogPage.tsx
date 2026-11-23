@@ -73,7 +73,7 @@ export const CurrencyLogPage = () => {
 
     return (
         <>
-            <PageHeader title="Logs" tabs={tabs} description="Every change to players' wallets, and why" />
+            <PageHeader title="Logs" tabs={tabs} />
             <PageBody>
                 <div className="flex flex-col gap-4">
                     {log.data && !log.data.recording && (

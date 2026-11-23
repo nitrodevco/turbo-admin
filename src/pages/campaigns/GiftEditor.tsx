@@ -53,12 +53,11 @@ export const GiftEditor = ({ gift, currencies, errorOf, onChange, onRemove }: {
     return (
         <Panel
             title={`Day ${gift.dayIndex + 1}`}
-            description={`Door ${gift.dayIndex + 1}'s gift (day index ${gift.dayIndex}). Any mix of it is given, once per player.`}
             actions={<Button variant="ghost" icon={<Trash2 />} onClick={onRemove}>No gift</Button>}
         >
             <div className="grid gap-5 p-4 lg:grid-cols-2">
                 <div className="flex flex-col gap-4">
-                    <Labeled label="Furni" hint="One of it is given; its icon shows on the door when there is no picture.">
+                    <Labeled label="Furni" hint="Its icon shows on the door when there is no picture.">
                         <div className="flex flex-col gap-2">
                             <div className="flex items-center gap-2">
                                 <Input value={gift.furnitureClassName} onChange={event => set('furnitureClassName', event.target.value.trim())} placeholder="Class name, or find one below" className={cx('min-w-0 flex-1 font-mono', marked(errorOf('furnitureClassName')))} aria-label="Furni class name" spellCheck={false} />
@@ -87,7 +86,7 @@ export const GiftEditor = ({ gift, currencies, errorOf, onChange, onRemove }: {
                         </Labeled>
                     </div>
                     <div className="grid gap-3 sm:grid-cols-2">
-                        <Labeled label="Badge" hint="Given when the player has not got it.">
+                        <Labeled label="Badge">
                             <Input value={gift.badgeCode} onChange={event => set('badgeCode', event.target.value.trim())} placeholder="e.g. ADV01" className="font-mono" aria-label="Badge code" spellCheck={false} />
                         </Labeled>
                         <Labeled label="Effect" hint="An avatar effect id, one timed copy.">

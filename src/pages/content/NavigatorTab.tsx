@@ -69,7 +69,7 @@ const CategoryEditor = ({ category, onDone, canManage }: { category: NavigatorFl
 const SimpleList = ({ list, title, description, rows, placeholder, canManage }: {
     list: NavigatorList;
     title: string;
-    description: string;
+    description?: string;
     rows: { id: number; name: string; visible: boolean; detail?: string; orderNum?: number }[];
     placeholder: string;
     canManage: boolean;
@@ -159,7 +159,7 @@ const NavigatorLists = ({ canManage }: { canManage: boolean }) => {
         <div className="flex flex-col gap-4">
             <Panel
                 title="Room categories"
-                description={<>What rooms are filed under and players browse by. A category rooms are in can't be removed until they move. Staff picks are set on <Link to="/rooms" className="text-accent hover:underline">each room</Link>.</>}
+                description={<>A category with rooms in it can't be removed until they move. Staff picks are set on <Link to="/rooms" className="text-accent hover:underline">each room</Link>.</>}
                 actions={canManage && <Button variant="secondary" icon={<Plus />} onClick={() => setOpen('new')} disabled={open === 'new'}>New category</Button>}
                 className="overflow-clip"
             >
@@ -185,7 +185,7 @@ const NavigatorLists = ({ canManage }: { canManage: boolean }) => {
                 <SimpleList
                     list="event-categories"
                     title="Event categories"
-                    description="What a room event is promoted under. One that events are in can be hidden, and removed once they are over."
+                    description="One with events in it can be hidden, and removed once they are over."
                     rows={data.eventCategories.map(x => ({ id: x.id, name: x.name, visible: x.visible, detail: plural(x.events, 'event') }))}
                     placeholder="${roomevent_type_1}"
                     canManage={canManage}
@@ -193,7 +193,6 @@ const NavigatorLists = ({ canManage }: { canManage: boolean }) => {
                 <SimpleList
                     list="tabs"
                     title="Tabs"
-                    description="The navigator's top tabs, by search code, in order; only shown ones are sent."
                     rows={data.contexts.map(x => ({ id: x.id, name: x.searchCode, visible: x.visible, orderNum: x.orderNum }))}
                     placeholder="hotel_view"
                     canManage={canManage}

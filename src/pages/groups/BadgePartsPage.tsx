@@ -63,7 +63,7 @@ const BadgeEditor = ({ canManage }: { canManage: boolean }) => {
 
     return (
         <div className="grid items-start gap-4 lg:gap-6 lg:grid-cols-2">
-            <Panel title="Badge parts" description="Bases and symbols; the client loads badgepart_<file>.png. Read again by the hotel as soon as one is saved." className="overflow-clip">
+            <Panel title="Badge parts" description="The client loads badgepart_<file>.png." className="overflow-clip">
                 {[ 0, 1 ].map(type => (
                     <section key={type}>
                         <h3 className="border-b border-line bg-subtle px-4 py-1.5 font-mono text-2xs font-medium tracking-[0.08em] text-muted uppercase">{PART_TYPES[type]}s</h3>
@@ -88,7 +88,7 @@ const BadgeEditor = ({ canManage }: { canManage: boolean }) => {
                     </form>
                 )}
             </Panel>
-            <Panel title="Colours" description="The badge's colours, and the group's two. Changing one repaints every badge that uses it." className="overflow-clip">
+            <Panel title="Colours" description="Changing one repaints every badge that uses it." className="overflow-clip">
                 {[ 0, 1, 2 ].map(colorSlot => (
                     <section key={colorSlot}>
                         <h3 className="border-b border-line bg-subtle px-4 py-1.5 font-mono text-2xs font-medium tracking-[0.08em] text-muted uppercase">{COLOR_SLOTS[colorSlot]}</h3>
@@ -125,7 +125,7 @@ export const BadgePartsPage = () => {
 
     return (
         <>
-            <PageHeader title="Badge parts" tabs={tabs} description="The bases, symbols and colours players build group badges from" />
+            <PageHeader title="Badge parts" tabs={tabs} />
             <PageBody>
                 <BadgeEditor canManage={canManage} />
             </PageBody>

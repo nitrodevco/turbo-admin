@@ -35,9 +35,9 @@ const SettingsTab = ({ track, onChange }: { track: RewardTrack; onChange: (track
 
     return (
         <div className="grid items-start gap-4 lg:gap-6 xl:grid-cols-2">
-            <Panel title="When players get it" description="The protocol has no dates: a track is sent at login while it is on and within its dates, and counts nothing once it has ended.">
+            <Panel title="When players get it" description="Sent at login while it is on and within its dates; it counts nothing once it has ended.">
                 <div className="flex flex-col gap-4 p-4">
-                    <Switch label="On" hint="Off, it is sent to nobody and nothing counts for it." checked={track.enabled} onChange={value => set('enabled', value)} />
+                    <Switch label="On" checked={track.enabled} onChange={value => set('enabled', value)} />
                     <div className="grid gap-3 sm:grid-cols-2">
                         <Labeled label="Starts (UTC)" hint="Empty: from now.">
                             <Input type="datetime-local" value={isoToInput(track.startsAt)} onChange={event => set('startsAt', inputToIso(event.target.value))} aria-label="Starts (UTC)" />
@@ -49,7 +49,7 @@ const SettingsTab = ({ track, onChange }: { track: RewardTrack; onChange: (track
                     <p className="flex items-center gap-2 text-xs text-muted"><Badge tone={status.tone}>{status.label}</Badge>{status.meaning}</p>
                 </div>
             </Panel>
-            <Panel title="Theme" description="The window's colours (RewardTrackTheme); a name the client does not know draws as blue.">
+            <Panel title="Theme" description="A name the client does not know draws as blue.">
                 <div className="flex flex-col gap-3 p-4">
                     <div className="flex flex-wrap gap-2">
                         {THEME_NAMES.map((name) => {
@@ -71,13 +71,13 @@ const SettingsTab = ({ track, onChange }: { track: RewardTrack; onChange: (track
                             );
                         })}
                     </div>
-                    <Labeled label="Theme name" hint="As the client is sent it.">
+                    <Labeled label="Theme name">
                         <Input value={track.theme} onChange={event => set('theme', event.target.value.trim())} className="w-56 font-mono" aria-label="Theme name" />
                     </Labeled>
                 </div>
             </Panel>
             <MenuItemText id={track.id} />
-            <Panel title="Premium" description="Bought from the track's window; its levels and prizes need it, and its owner's task points are multiplied by the boost." className="xl:col-span-2">
+            <Panel title="Premium" className="xl:col-span-2">
                 <div className="flex flex-col gap-4 p-4">
                     <Switch
                         label="Sold on this track"
@@ -141,7 +141,7 @@ export const TrackEditor = ({ id, isNew, actionTypes, onBack }: { id: string; is
     const header = (
         <PageHeader
             title={names.get(id) ?? id}
-            description={isNew ? 'A new track: nothing is made until you save it' : <span className="font-mono">{id}</span>}
+            description={!isNew && <span className="font-mono">{id}</span>}
             back={{ to: '/reward-tracks', label: 'Reward tracks' }}
             tabs={{ items: TABS.map(x => ({ ...x, to: `/reward-tracks/${encodeURIComponent(id)}/${x.value}` })), value: tab }}
         >
@@ -195,12 +195,12 @@ export const TrackEditor = ({ id, isNew, actionTypes, onBack }: { id: string; is
                 {tab === 'tasks' && <TasksEditor track={track} actionTypes={actionTypes} onChange={change} />}
                 {tab === 'prizes' && <PrizesEditor track={track} furni={furni} onPickFurni={(prize, name) => setPicked(previous => new Map(previous).set(prize, name))} onChange={change} />}
                 {tab === 'preview' && gamePreview && (
-                    <Panel title="As a player sees it" description="The track's window, drawn by the game client itself for a player with these points and nothing claimed yet. Unsaved changes show here too.">
+                    <Panel title="As a player sees it">
                         <div className="p-4"><GamePreview track={track} url={gamePreview} /></div>
                     </Panel>
                 )}
                 {tab === 'preview' && !gamePreview && (
-                    <Panel title="As a player sees it" description="The prize strip of the track's window, for a player with no points yet: the client's own positions and pages. Unsaved changes show here too. Set Turbo:Admin:ClientPreviewUrl (or ClientLoginUrl) to see the game's own window here.">
+                    <Panel title="As a player sees it" description="Set Turbo:Admin:ClientPreviewUrl (or ClientLoginUrl) to see the game's own window here.">
                         <div className="p-4"><StripPreview track={track} furni={furni} title={names.get(id) ?? null} /></div>
                     </Panel>
                 )}

@@ -9,10 +9,10 @@ type Op = Record<string, unknown>;
 
 const isObject = (value: unknown): value is Op => (typeof value === 'object') && (value !== null) && !Array.isArray(value);
 
-const Group = ({ title, hint, children }: { title: string; hint: string; children: React.ReactNode }) => (
+const Group = ({ title, hint, children }: { title: string; hint?: string | false; children: React.ReactNode }) => (
     <fieldset className="flex flex-col gap-2 border-t border-line pt-2">
         <legend className="text-xs font-medium">{title}</legend>
-        <p className="-mt-1 text-2xs text-muted">{hint}</p>
+        {hint && <p className="-mt-1 text-2xs text-muted">{hint}</p>}
         {children}
     </fieldset>
 );
@@ -47,7 +47,7 @@ export const MoreProperties = ({ editor }: { editor: WindowEditor }) => {
 
     return (
         <div className="flex flex-col gap-3 p-3 pt-0 text-sm" aria-label="More properties">
-            <Group title="Fill and opacity" hint="A plain fill in the element's colour behind it, and how see-through all of it is.">
+            <Group title="Fill and opacity">
                 <Switch label="Fill with its colour" checked={typeof values.background === 'boolean' ? values.background : false} disabled={disabled} onChange={on => editor.setValues({ background: on }, 'background')} />
                 <Labeled label="Dynamic style" hint="A look Flash works out from what is under it (brightness_and_shadow_under, ...). Empty: its own.">
                     <Input aria-label="Dynamic style" disabled={disabled} value={typeof values.dynamicStyle === 'string' ? values.dynamicStyle : ''} onChange={event => editor.setValues({ dynamicStyle: event.target.value || undefined }, 'dynamicStyle')} />
@@ -56,7 +56,7 @@ export const MoreProperties = ({ editor }: { editor: WindowEditor }) => {
                     <input type="range" aria-label="Opacity" min={0} max={1} step={0.05} disabled={disabled} value={typeof values.blend === 'number' ? values.blend : 1} onChange={event => editor.setValues({ blend: Number(event.target.value) }, 'blend')} className="w-full accent-[var(--color-accent)]" />
                 </Labeled>
             </Group>
-            <Group title="Size limits" hint="The smallest and largest it may be made as its window resizes. Empty: no limit.">
+            <Group title="Size limits" hint="Empty: no limit.">
                 <div className="grid grid-cols-2 gap-2">
                     {LIMITS.map((label, at) => (
                         <NumberField
@@ -74,7 +74,7 @@ export const MoreProperties = ({ editor }: { editor: WindowEditor }) => {
                     ))}
                 </div>
             </Group>
-            <Group title="When the window resizes" hint="Flash's layout flags: how the element follows what holds it and what it holds.">
+            <Group title="When the window resizes">
                 <Labeled label="Fits what it holds">
                     <Select aria-label="Fits what it holds" disabled={disabled} value={String(param('accommodate') ?? '')} onChange={event => setParam('accommodate', event.target.value || undefined)}>
                         <option value="">No: keeps its size</option>
@@ -89,8 +89,8 @@ export const MoreProperties = ({ editor }: { editor: WindowEditor }) => {
                 <Switch label="Cuts off what spills out" hint="Force clipping: its children are drawn only inside it." checked={!!param('forceClipping')} disabled={disabled} onChange={on => setParam('forceClipping', on)} />
                 <Switch label="Shows its parent's caption" checked={!!param('inheritCaption')} disabled={disabled} onChange={on => setParam('inheritCaption', on)} />
             </Group>
-            <Group title="Name, tags and mouse" hint={added ? 'This element is the theme\'s own: all of it can be set.' : 'Only on an element the theme added: the window\'s code finds its own elements by name and tag, so a theme leaves those.'}>
-                <Labeled label="Name" hint={added ? 'What later changes name it by.' : undefined}>
+            <Group title="Name, tags and mouse" hint={!added && 'Only on an element the theme added: the window\'s code finds its own elements by name and tag, so a theme leaves those.'}>
+                <Labeled label="Name">
                     <Input aria-label="Name" disabled={disabled || !added} value={shortName ?? ''} onChange={event => event.target.value && editor.setValues({ name: event.target.value }, 'name')} />
                 </Labeled>
                 <Labeled label="Tags" hint="Space between them.">

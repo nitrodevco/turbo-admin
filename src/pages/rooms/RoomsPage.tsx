@@ -69,9 +69,7 @@ export const RoomsPage = () => {
         <>
             <PageHeader
                 title="Rooms"
-                description={search.data
-                    ? `${search.data.total.toLocaleString()} ${search.data.total === 1 ? 'room' : 'rooms'}${text ? ` matching "${text}"` : ''}`
-                    : 'Every room, invisible ones too'}
+                description={search.data && `${search.data.total.toLocaleString()} ${search.data.total === 1 ? 'room' : 'rooms'}${text ? ` matching "${text}"` : ''}`}
             />
             <PageBody>
                 <Panel className="overflow-clip">

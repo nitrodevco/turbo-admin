@@ -107,7 +107,6 @@ export const SetupPage = () => {
                         value={deviceName}
                         onChange={event => setDeviceName(event.target.value)}
                         maxLength={64}
-                        hint="So you can tell your passkeys apart later."
                     />
                     <Button type="submit" className="w-full" disabled={busy || !passkeysSupported()}>
                         {busy ? 'Waiting for your passkey...' : 'Create passkey and sign in'}

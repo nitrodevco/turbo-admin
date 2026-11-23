@@ -52,7 +52,7 @@ const VIEWS = [
 /** One chart in a card, with a switch to the same figures as a table. */
 const ChartCard = ({ title, description, series, points, format, max, dimmed }: {
     title: string;
-    description: ReactNode;
+    description?: ReactNode;
     series: ChartSeries[];
     points: ChartPoint[];
     format: (value: number) => string;
@@ -147,9 +147,7 @@ export const PerformancePage = () => {
             <PageHeader
                 title="Overview"
                 tabs={tabs}
-                description={data?.recordingSinceUtc
-                    ? `This server, sampled every ${data.sampleSeconds} s since ${new Date(data.recordingSinceUtc).toLocaleString()}`
-                    : 'How this server is running'}
+                description={data?.recordingSinceUtc && `This server, sampled every ${data.sampleSeconds} s since ${new Date(data.recordingSinceUtc).toLocaleString()}`}
             />
             <PageBody>
                 <div className="flex flex-wrap items-center gap-3">
@@ -172,17 +170,16 @@ export const PerformancePage = () => {
                         </section>
 
                         <div className="grid gap-4 lg:grid-cols-2 lg:gap-6">
-                            <ChartCard title="CPU" description="Of every core, averaged over each point." series={[ { name: 'CPU', color: SERIES_1 } ]} points={pointsOf(points, x => x.cpuPercent)} format={percent} max={100} dimmed={dimmed} />
+                            <ChartCard title="CPU" series={[ { name: 'CPU', color: SERIES_1 } ]} points={pointsOf(points, x => x.cpuPercent)} format={percent} max={100} dimmed={dimmed} />
                             <ChartCard
                                 title="Memory"
-                                description="What the process holds, and the part of it that is the .NET heap."
                                 series={[ { name: 'Process', color: SERIES_1 }, { name: '.NET heap', color: SERIES_2 } ]}
                                 points={pointsOf(points, x => x.workingSetMb, x => x.heapMb)}
                                 format={megabytes}
                                 dimmed={dimmed}
                             />
-                            <ChartCard title="Players online" description="Open sessions on this server." series={[ { name: 'Players', color: SERIES_1 } ]} points={pointsOf(points, x => x.playersOnline)} format={number} dimmed={dimmed} />
-                            <ChartCard title="Rooms loaded" description="Rooms running in the hotel." series={[ { name: 'Rooms', color: SERIES_1 } ]} points={pointsOf(points, x => x.roomsLoaded)} format={number} dimmed={dimmed} />
+                            <ChartCard title="Players online" series={[ { name: 'Players', color: SERIES_1 } ]} points={pointsOf(points, x => x.playersOnline)} format={number} dimmed={dimmed} />
+                            <ChartCard title="Rooms loaded" series={[ { name: 'Rooms', color: SERIES_1 } ]} points={pointsOf(points, x => x.roomsLoaded)} format={number} dimmed={dimmed} />
                             <ChartCard
                                 title="Room entry time"
                                 description="From asking to enter a room to being in it, on the server."
@@ -193,10 +190,10 @@ export const PerformancePage = () => {
                             />
                             <ChartCard title="Room updates reaching players" description="From a room publishing an update to a player's session getting it, p95." series={[ { name: 'p95', color: SERIES_1 } ]} points={pointsOf(points, x => x.streamDelayP95Ms)} format={ms} dimmed={dimmed} />
                             <ChartCard title="Thread pool queue" description="Work waiting for a thread. A queue that stays up means the server is behind." series={[ { name: 'Waiting', color: SERIES_1 } ]} points={pointsOf(points, x => x.threadPoolQueue)} format={number} dimmed={dimmed} />
-                            <ChartCard title="Garbage collection pauses" description="Share of the time the process was paused to collect garbage." series={[ { name: 'Paused', color: SERIES_1 } ]} points={pointsOf(points, x => x.gcPausePercent)} format={percent} dimmed={dimmed} />
+                            <ChartCard title="Garbage collection pauses" series={[ { name: 'Paused', color: SERIES_1 } ]} points={pointsOf(points, x => x.gcPausePercent)} format={percent} dimmed={dimmed} />
                         </div>
 
-                        <Panel title="Room operations" description={`Every timed operation over the last ${RANGES.find(x => x.value === hours)?.label}. Medians and p95 come from a sample when there were many.`}>
+                        <Panel title="Room operations">
                             <StageTable stages={data.stages} />
                         </Panel>
                     </>

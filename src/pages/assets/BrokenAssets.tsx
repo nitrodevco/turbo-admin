@@ -295,7 +295,6 @@ export const BrokenAssets = ({ canManage, busy }: { canManage: boolean; busy: bo
         <>
             <Panel
                 title="Broken assets"
-                description="What players can't load, wherever it was found, and how to fix it."
                 actions={(
                     <Segmented
                         label="Show"

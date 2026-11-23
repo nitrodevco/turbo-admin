@@ -213,7 +213,7 @@ export const PageBuilder = ({ tree, page, open, onClose, onBuiltPage }: PageBuil
                                         {newIcon ? <PageIcon icon={newIcon} /> : <span className="text-2xs text-muted">icon</span>}
                                     </button>
                                 </Labeled>
-                                <Labeled label="Title" hint="The builder's name until you type one.">
+                                <Labeled label="Title">
                                     <Input value={newTitle} maxLength={50} onChange={event => typeTitle(event.target.value)} placeholder="New page" />
                                 </Labeled>
                                 <Labeled label="Under">
@@ -346,7 +346,7 @@ export const PageBuilder = ({ tree, page, open, onClose, onBuiltPage }: PageBuil
                                         />
                                     )}
                                     {data.createsPages && onPage && (
-                                        <Labeled label="The new pages are shown in" hint="Hidden lets you look them over before players do.">
+                                        <Labeled label="The new pages are shown in">
                                             <Select value={price.display} onChange={event => setPrice({ ...price, display: event.target.value as PageDisplay })}>
                                                 {([ 'invisible', 'regular', 'both', 'bc_only' ] as PageDisplay[]).map(x => <option key={x} value={x}>{DISPLAY_LABELS[x]}</option>)}
                                             </Select>

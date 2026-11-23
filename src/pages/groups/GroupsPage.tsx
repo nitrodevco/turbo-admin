@@ -52,9 +52,7 @@ export const GroupsPage = () => {
             <PageHeader
                 title="Groups"
                 tabs={tabs}
-                description={search.data
-                    ? `${search.data.total.toLocaleString()} ${search.data.total === 1 ? 'group' : 'groups'}${text ? ` matching "${text}"` : ''}`
-                    : 'Every group in the hotel'}
+                description={search.data && `${search.data.total.toLocaleString()} ${search.data.total === 1 ? 'group' : 'groups'}${text ? ` matching "${text}"` : ''}`}
             />
             <PageBody>
                 <Panel className="overflow-clip">

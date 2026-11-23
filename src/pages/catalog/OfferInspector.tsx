@@ -276,10 +276,10 @@ export const OfferInspector = ({ tree, pageId, offer, start, featured, onDone, o
                 <Switch label="Shown" hint="Hidden offers stay known to the client (furnidata links, search) but aren't listed." checked={draft.visible} onChange={value => set('visible', value)} disabled={!canManage} />
                 {!membership && !gift && (
                     <>
-                        <Switch label="Can be gifted" hint="The gift button, for one at a time." checked={draft.canGift} onChange={value => set('canGift', value)} disabled={!canManage} />
+                        <Switch label="Can be gifted" checked={draft.canGift} onChange={value => set('canGift', value)} disabled={!canManage} />
                         {givenOnce
                             ? <p className="text-xs text-muted">Bought one at a time: a badge, a pet or a bot is given once per purchase.</p>
-                            : <Switch label="Can be bought in bulk" hint="The amount spinner and bulk discount, where the client has them on." checked={draft.canBundle} onChange={value => set('canBundle', value)} disabled={!canManage} />}
+                            : <Switch label="Can be bought in bulk" checked={draft.canBundle} onChange={value => set('canBundle', value)} disabled={!canManage} />}
                     </>
                 )}
                 {normal && !membership && limited === null && (

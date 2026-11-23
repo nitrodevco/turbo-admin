@@ -28,7 +28,7 @@ const GroupsCard = ({ player }: { player: PlayerPermissions }) => {
     };
 
     return (
-        <Panel title="Groups" description="Held directly. Everyone holds default too.">
+        <Panel title="Groups" description="Held directly; everyone holds default too.">
             {player.groups.length === 0
                 ? <EmptyState>Only default.</EmptyState>
                 : (
@@ -117,7 +117,7 @@ const CheckCard = ({ playerId }: { playerId: number }) => {
     };
 
     return (
-        <Panel title="Check a node" description="Why the player does or does not hold it.">
+        <Panel title="Check a node">
             <form onSubmit={handleSubmit} className="flex gap-2 p-4">
                 <Input
                     value={node}
@@ -167,7 +167,7 @@ const HoldsCard = ({ player }: { player: PlayerPermissions }) => {
     const meta = Object.entries(player.resolvedMeta);
 
     return (
-        <Panel title={`Holds (${player.holds.filter(x => !x.startsWith('group.')).length})`} description="What it all resolves to.">
+        <Panel title={`Holds (${player.holds.filter(x => !x.startsWith('group.')).length})`}>
             <div className="border-b border-line px-4 py-3">
                 <Input type="search" value={filter} onChange={event => setFilter(event.target.value)} placeholder="Filter" aria-label="Filter held nodes" />
             </div>

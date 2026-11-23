@@ -75,7 +75,7 @@ export const ApprovalsPage = () => {
         <>
             <PageHeader
                 title="Approvals"
-                description={approvals.data ? `${plural(approvals.data.pending, 'request')} waiting for a yes` : 'What assistants, agents and plugins asked to do'}
+                description={approvals.data && `${plural(approvals.data.pending, 'request')} waiting for a yes`}
             />
             <PageBody>
                 <Panel className="overflow-clip">

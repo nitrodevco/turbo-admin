@@ -85,7 +85,7 @@ const DefinitionForm = ({ initial, all, canManage, onPublished }: { initial: Ach
                             <Input type="datetime-local" value={toInput(definition.ActiveUntilUtc)} onChange={event => set({ ActiveUntilUtc: fromInput(event.target.value) })} disabled={disabled} />
                         </Labeled>
                         <Labeled label="Order"><Input value={definition.Order} onChange={event => set({ Order: Number(event.target.value.replace(/[^-\d]/g, '')) || 0 })} inputMode="numeric" disabled={disabled} /></Labeled>
-                        <Labeled label="Counts" hint="What progress comes from: the source the server reports."><Input value={`${definition.Source} v${definition.SourceVersion}`} disabled /></Labeled>
+                        <Labeled label="Counts"><Input value={`${definition.Source} v${definition.SourceVersion}`} disabled /></Labeled>
                     </div>
                     <div className="flex flex-col gap-2">
                         <h3 className="text-sm font-semibold">Levels</h3>
@@ -133,7 +133,7 @@ const DefinitionForm = ({ initial, all, canManage, onPublished }: { initial: Ach
                 </>
             )}
             {raw !== null && (
-                <Labeled label="The definition, as the catalog keeps it" hint={rawProblem ?? 'Every field, the match and the rewards\' payloads included.'}>
+                <Labeled label="The definition, as the catalog keeps it" hint={rawProblem}>
                     <Textarea value={json} onChange={event => setRaw(event.target.value)} rows={24} className="font-mono" disabled={disabled} />
                 </Labeled>
             )}

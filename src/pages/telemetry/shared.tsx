@@ -17,7 +17,7 @@ const VIEWS = [
 /** One chart of days in a card, with a switch to the same figures as a table. */
 export const DayChartCard = ({ title, description, series, points, format, dimmed, empty = 'Nothing reported in this range.' }: {
     title: string;
-    description: ReactNode;
+    description?: ReactNode;
     series: ChartSeries[];
     points: ChartPoint[];
     format: (value: number) => string;

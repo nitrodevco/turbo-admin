@@ -124,7 +124,6 @@ export const TargetForm = ({ target, onClose }: { target: AssetTarget | null; on
                     value={input.publicUrl}
                     onChange={event => set({ publicUrl: event.target.value })}
                     placeholder="https://assets.example.com"
-                    hint="Where the client reaches it."
                     className="w-full font-mono"
                 />
 

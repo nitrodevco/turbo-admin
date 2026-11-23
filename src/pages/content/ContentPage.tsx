@@ -42,7 +42,6 @@ export const ContentPage = () => {
         <>
             <PageHeader
                 title="Content"
-                description="Achievements, badges, the navigator, pets, currencies, daily tasks, quests and room polls"
                 tabs={{ items: TABS, value: tab }}
             />
             <PageBody>
@@ -52,7 +51,7 @@ export const ContentPage = () => {
                 {tab === 'pets' && <PetsTab canManage={canManage} />}
                 {tab === 'currencies' && <CurrenciesTab canManage={canManage} />}
                 {tab === 'chat-styles' && (
-                    <Panel title="Chat styles" description="The chat bubbles are with the rest of the hotel's look now.">
+                    <Panel title="Chat styles">
                         <p className="p-4 text-sm">
                             {'Edit them, and see each drawn as the game draws it, under '}
                             <Link to="/appearance/chat-bubbles" className="font-medium text-accent hover:underline">Appearance &gt; Chat bubbles</Link>

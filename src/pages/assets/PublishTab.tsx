@@ -308,7 +308,6 @@ export const PublishTab = ({ canManage, busy }: { canManage: boolean; busy: bool
         <>
             <Panel
                 title="Publish targets"
-                description="A publish sends only what a target lacks or holds an older copy of, largest first, and picks up where it stopped."
                 actions={canManage && <Button icon={<Plus />} onClick={() => setEditing('new')}>Add target</Button>}
             >
                 {error && <div className="p-4"><ErrorNotice error={error} /></div>}

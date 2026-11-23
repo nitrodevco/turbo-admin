@@ -134,7 +134,6 @@ export const TelemetryRoomPage = () => {
         <>
             <PageHeader
                 title={data?.roomName ?? `Room ${roomId}`}
-                description="How clients ran in this room"
                 back={{ to: `/client-health?${params}`, label: 'Client health' }}
             >
                 <ButtonLink to={`/rooms/${roomId}`} icon={<House />}>Open the room</ButtonLink>
@@ -148,7 +147,6 @@ export const TelemetryRoomPage = () => {
                         <div className="grid gap-4 lg:grid-cols-2 lg:gap-6">
                             <DayChartCard
                                 title="Frame rate"
-                                description="From performance reports and frame rate events sent in the room."
                                 series={[ { name: 'Median', color: SERIES_1 }, { name: 'p95', color: SERIES_2 } ]}
                                 points={dayPoints(data.days, x => x.fpsP50 > 0 || x.fpsP95 > 0, x => x.fpsP50, x => x.fpsP95)}
                                 format={fps}
@@ -157,7 +155,6 @@ export const TelemetryRoomPage = () => {
                             />
                             <DayChartCard
                                 title="Chat lag warnings"
-                                description="Chat lines that came back late in the room."
                                 series={[ { name: 'Warnings', color: SERIES_1 } ]}
                                 points={dayPoints(data.days, () => data.days.some(x => x.lagWarnings > 0), x => x.lagWarnings)}
                                 format={number}
@@ -207,7 +204,6 @@ export const TelemetryPlayerPage = () => {
         <>
             <PageHeader
                 title={data?.playerName ?? `Player ${playerId}`}
-                description="This player's client reports"
                 back={{ to: `/client-health?${params}`, label: 'Client health' }}
             >
                 <ButtonLink to={`/players/${playerId}`} icon={<UserRound />}>Open the player</ButtonLink>

@@ -163,7 +163,7 @@ export const DatabasePage = () => {
 
     return (
         <>
-            <PageHeader title="Database" description="Back up the database's tables and download them as SQL" />
+            <PageHeader title="Database" />
             <PageBody>
                 <WarningNotice>
                     A backup holds everything in its tables: players&apos; private messages, login tickets and the settings&apos; secrets. Keep the file where only you can read it, and delete it from the server once you have it.

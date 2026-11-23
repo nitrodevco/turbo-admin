@@ -98,7 +98,7 @@ const VariableLink = ({ variable, variableKey, linking, canManage, onDone }: { v
                 {linkable.map(setting => <option key={setting.path} value={setting.path}>{setting.summary}</option>)}
             </datalist>
             {linking.files.length > 0 && (
-                <Labeled label="Or follow a gamedata file's address" hint="Its address by the current build, built again with the file.">
+                <Labeled label="Or follow a gamedata file's address">
                     <div className="flex flex-wrap gap-2">
                         <Select value={file} onChange={event => setFile(event.target.value)} className="w-full font-mono sm:max-w-72">
                             {linking.files.map(name => <option key={name} value={name}>{name}</option>)}
@@ -198,7 +198,7 @@ const ImportPanel = ({ initial, onDone }: { initial: string | null; onDone: () =
     return (
         <Panel
             title="Import a client config"
-            description="Paste a nitro-config.json, or open one. Its keys are added or changed; the hotel's other variables stay unless you remove them."
+            description="Its keys are added or changed; the hotel's other variables stay unless you remove them."
             actions={<Button variant="ghost" icon={<X />} onClick={onDone}>Close</Button>}
         >
             <div className="flex flex-col gap-3 p-4">
@@ -216,7 +216,7 @@ const ImportPanel = ({ initial, onDone }: { initial: string | null; onDone: () =
                 />
                 <Checkbox
                     label="Remove the hotel's variables the config doesn't have"
-                    hint="Variables that follow a setting or a file stay, and so do the ones the hotel keeps (renderer.petTypes) and the Hotel view's (landing.view.*). A config with no keys can't remove anything."
+                    hint="Variables that follow a setting or a file stay, and so do the hotel's own (renderer.petTypes, landing.view.*)."
                     checked={removeMissing}
                     onChange={(checked) => {
                         setRemoveMissing(checked);

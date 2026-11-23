@@ -83,9 +83,7 @@ export const ReceptionTab = ({ draft, part, onPart, promoCodes, backgroundCodes,
             <div className="grid items-start gap-4 lg:gap-6 xl:grid-cols-[minmax(0,1fr)_18rem]">
                 <Panel
                     title="As a player sees it"
-                    description={part === 'backgrounds'
-                        ? `With the background set you are editing: ${chosenSet || 'the default'}.`
-                        : 'On a 1600 by 900 window, scaled to fit, without the avatar and the toolbar. Click a slot or the backgrounds to edit them.'}
+                    description={part === 'backgrounds' ? `With the background set you are editing: ${chosenSet || 'the default'}.` : 'Click a slot or the backgrounds to edit them.'}
                 >
                     <div className="p-4">
                         <ReceptionPreview
@@ -98,7 +96,7 @@ export const ReceptionTab = ({ draft, part, onPart, promoCodes, backgroundCodes,
                         />
                     </div>
                 </Panel>
-                <Panel title="On the reception" description="Choose a part to edit it.">
+                <Panel title="On the reception">
                     <ul className="divide-y divide-line">
                         <PartRow
                             selected={part === 'backgrounds'}

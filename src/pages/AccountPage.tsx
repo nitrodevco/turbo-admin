@@ -156,7 +156,7 @@ export const AccountPage = () => {
                 {account.error && <ErrorNotice error={account.error} />}
                 {account.data && (
                     <div className="max-w-2xl space-y-4">
-                        <Panel title="Passkeys" description="How you sign in. Keep more than one, so losing a device does not lock you out.">
+                        <Panel title="Passkeys" description="Keep more than one, so losing a device does not lock you out.">
                             {account.data.passkeys.length === 0
                                 ? <EmptyState>You have no passkeys yet. Add one below so you can sign in again.</EmptyState>
                                 : (
@@ -173,7 +173,7 @@ export const AccountPage = () => {
                                     )}
                             <AddPasskey onAdded={refresh} />
                         </Panel>
-                        <Panel title="Sessions" description="Where you are signed in. A session lasts until it ends or you sign it out, through server restarts.">
+                        <Panel title="Sessions">
                             <ul className="divide-y divide-line">
                                 {account.data.sessions.toSorted((a, b) => Number(b.current) - Number(a.current)).map(session => (
                                     <SessionRow key={session.id} session={session} onEnded={refresh} />

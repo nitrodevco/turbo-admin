@@ -29,7 +29,7 @@ export const WidgetSettings = ({ draft, disabled }: { draft: HotelViewDraft; dis
 
     return (
         <>
-            <Panel title="Next limited rare" description="Counts down to the next limited series on sale, from the catalogue's limited section.">
+            <Panel title="Next limited rare">
                 <div className="p-4 sm:max-w-md">
                     <Switch
                         label="Turned off"
@@ -44,7 +44,6 @@ export const WidgetSettings = ({ draft, disabled }: { draft: HotelViewDraft; dis
                 <div className="grid gap-3 p-4 sm:grid-cols-2">
                     <Switch
                         label="Catalogue button"
-                        hint="Shows the button that opens the page below."
                         checked={draft.bool(WIDGET_SETTINGS.communityInteractive)}
                         onChange={checked => draft.setBool(WIDGET_SETTINGS.communityInteractive, checked)}
                         disabled={disabled}

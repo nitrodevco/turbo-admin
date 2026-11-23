@@ -55,7 +55,7 @@ const FurniturePicker = ({ id, name, onChange, disabled }: { id: number | null; 
     const icon = furniIconUrl(assets, name);
 
     return (
-        <Labeled label="Furniture" hint="Found by its name in the furniture definitions.">
+        <Labeled label="Furniture">
             <div className="flex flex-col gap-2">
                 <div className="flex items-center gap-3">
                     <span className="grid size-10 shrink-0 place-items-center rounded-lg border border-line bg-canvas">{icon && <img src={icon} alt="" className="max-h-8 max-w-8" />}</span>
@@ -117,7 +117,7 @@ const RewardFields = ({ draft, furnitureName, set, disabled }: { draft: VoucherD
                 <Labeled label="How many of it">
                     <Input value={draft.furnitureQuantity} onChange={event => set({ furnitureQuantity: digits(event.target.value) })} inputMode="numeric" disabled={disabled || draft.furnitureDefinitionId === null} />
                 </Labeled>
-                <Labeled label="Badge" hint="A badge code to give, such as ADM.">
+                <Labeled label="Badge" hint="Such as ADM.">
                     <Input value={draft.badgeCode ?? ''} onChange={event => set({ badgeCode: event.target.value.trim() || null })} className="font-mono" disabled={disabled} />
                 </Labeled>
             </div>
@@ -127,10 +127,10 @@ const RewardFields = ({ draft, furnitureName, set, disabled }: { draft: VoucherD
             <Labeled label="Expires (UTC)" hint="Empty: never.">
                 <Input type="datetime-local" value={isoToInput(draft.expiresAt)} onChange={event => set({ expiresAt: inputToIso(event.target.value) })} disabled={disabled} />
             </Labeled>
-            <Labeled label="Note" hint="For staff: what it was made for." className="sm:col-span-2">
+            <Labeled label="Note" className="sm:col-span-2">
                 <Input value={draft.note} onChange={event => set({ note: event.target.value })} maxLength={255} disabled={disabled} />
             </Labeled>
-            <Switch label="Redeemable" hint="Off: refused as if there were no such code." checked={draft.enabled} onChange={enabled => set({ enabled })} disabled={disabled} />
+            <Switch label="Redeemable" checked={draft.enabled} onChange={enabled => set({ enabled })} disabled={disabled} />
         </div>
     );
 };
@@ -291,7 +291,7 @@ export const VouchersPage = () => {
 
     return (
         <>
-            <PageHeader title="Catalog" tabs={catalogTabs('vouchers')} description={data ? `${data.total} voucher${data.total === 1 ? '' : 's'}` : 'Codes players redeem in the catalogue'}>
+            <PageHeader title="Catalog" tabs={catalogTabs('vouchers')} description={data && `${data.total} voucher${data.total === 1 ? '' : 's'}`}>
                 {canManage && (
                     <>
                         <Button variant="secondary" icon={<Sparkles />} onClick={() => setOpen('generate')} disabled={open === 'generate'}>Make many</Button>

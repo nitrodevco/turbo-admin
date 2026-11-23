@@ -60,7 +60,7 @@ const CloseActions = ({ detail, busy, onClose }: { detail: ReportDetailResponse;
     const these = count === 1 ? 'the report' : `these ${count} reports`;
 
     return (
-        <Panel title="Close it" description="The sender is told how it was closed, as the client's mod tool tells them.">
+        <Panel title="Close it" description="The sender is told how it was closed.">
             <div className="flex flex-col gap-3 p-4">
                 {related.length > 0 && (
                     <Checkbox
@@ -243,7 +243,7 @@ export const ReportPage = () => {
                                 </dl>
                             </Panel>
 
-                            <Panel title="History" description="Every report so far, this one included.">
+                            <Panel title="History">
                                 <dl>
                                     {detail.aboutReported && <History label={`About ${item.reportedName ?? 'them'}`} history={detail.aboutReported} />}
                                     <History label={`Sent by ${item.reporterName ?? 'the sender'}`} history={detail.bySender} sent />

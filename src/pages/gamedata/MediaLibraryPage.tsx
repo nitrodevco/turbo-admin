@@ -332,7 +332,7 @@ export const MediaLibraryPage = () => {
 
     return (
         <>
-            <PageHeader title="Media library" description="Every image the hotel can show: the image library, catalog pictures and icons, badges, furniture icons, the client's own images, plugins' images and uploads. Open one to copy what a field stores and see where it is shown." />
+            <PageHeader title="Media library" />
             <PageBody>
                 <div onDragOver={drop}>
                     <Panel title="Find" actions={<span className="text-xs text-muted">{isFetching ? 'Searching…' : data ? `${data.total} found` : ''}</span>}>

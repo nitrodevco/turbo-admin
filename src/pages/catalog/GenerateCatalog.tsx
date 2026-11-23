@@ -17,7 +17,7 @@ import { PageIcon } from './PageTree';
 const SECTIONS: { key: GenerateSection; title: string; blurb: string }[] = [
     { key: 'front', title: 'Front Page', blurb: 'Where the catalogue opens: the featured items and the voucher box.' },
     { key: 'club', title: 'Habbo Club', blurb: 'The club shop the client\'s club buttons open, and the club gifts.' },
-    { key: 'furni', title: 'Furni', blurb: 'A page per furni line, a family of lines (every Christmas) in one folder; spaces, posters, trophies and badge displays built as they should be.' },
+    { key: 'furni', title: 'Furni', blurb: 'A page per furni line, a family of lines in one folder; spaces, posters, trophies and badge displays.' },
     { key: 'wired', title: 'Wired', blurb: 'Triggers, effects, conditions, add-ons, selectors and variables.' },
     { key: 'pets', title: 'Pets', blurb: 'A page per pet to buy, the accessories, and pet care furni.' },
     { key: 'extras', title: 'Extras', blurb: 'Avatar effects, trax songs and bots.' },

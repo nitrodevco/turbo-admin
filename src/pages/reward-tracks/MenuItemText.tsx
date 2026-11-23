@@ -26,9 +26,7 @@ export const MenuItemText = ({ id }: { id: string }) => {
     return (
         <Panel
             title="Progression menu item"
-            description={(id === INTRODUCTION)
-                ? 'Introduction is the menu\'s own item: it is always there, and opens this track.'
-                : 'This track\'s item in the Progression menu, after Introduction and the live tracks above it in the list. It has Introduction\'s gift icon and this text, and shows how many of the track\'s prizes the player can claim.'}
+            description={id === INTRODUCTION && 'Introduction is the menu\'s own item: it is always there, and opens this track.'}
             className="xl:col-span-2"
         >
             <form

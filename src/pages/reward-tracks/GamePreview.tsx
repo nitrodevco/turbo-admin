@@ -62,7 +62,7 @@ export const GamePreview = ({ track, url }: { track: RewardTrack; url: string })
     return (
         <div className="flex flex-col gap-3">
             <div className="flex flex-wrap items-end gap-4">
-                <Labeled label="Player's points" hint="Prizes up to these points can be claimed.">
+                <Labeled label="Player's points">
                     <Input type="number" min={0} value={points} onChange={event => setPoints(Math.max(0, Math.floor(Number(event.target.value) || 0)))} className="w-32 font-mono" aria-label="Player's points" />
                 </Labeled>
                 {track.premium && <Switch label="Premium bought" checked={premium} onChange={setPremium} />}

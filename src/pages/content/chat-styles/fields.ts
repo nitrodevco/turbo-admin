@@ -12,13 +12,13 @@ export type FlagKey = 'clubOnly' | 'ambassadorOnly' | 'staffOnly' | 'purchasable
 export type Flags = Record<FlagKey, boolean>;
 
 export const FLAG_FIELDS: { key: FlagKey; label: string; hint: string; group: 'who' | 'how' }[] = [
-    { key: 'clubOnly', label: 'Club members only', hint: 'The picker offers it to club members, and only while they have the club may they speak with it.', group: 'who' },
-    { key: 'purchasable', label: 'Owners only', hint: 'Offered once a player owns it: bought, or an NFT style they hold. The server checks they do.', group: 'who' },
+    { key: 'clubOnly', label: 'Club members only', hint: 'Only while they have the club.', group: 'who' },
+    { key: 'purchasable', label: 'Owners only', hint: 'Bought, or an NFT style they hold.', group: 'who' },
     { key: 'ambassadorOnly', label: 'Ambassadors only', hint: 'Ambassadors, and staff.', group: 'who' },
-    { key: 'staffOnly', label: 'Staff only', hint: 'Only those who may use the staff bubble (chat.style.staff). The client offers it by its own rules.', group: 'who' },
-    { key: 'system', label: 'System', hint: 'The hotel\'s own - bots, notifications, wired: never offered, and no player may speak with it.', group: 'who' },
+    { key: 'staffOnly', label: 'Staff only', hint: 'Those who may use the staff bubble (chat.style.staff).', group: 'who' },
+    { key: 'system', label: 'System', hint: 'Bots, notifications, wired: no player may speak with it.', group: 'who' },
     { key: 'staffOverrideable', label: 'Staff may pick it anyway', hint: 'Staff are offered it whatever club or ambassador say.', group: 'who' },
-    { key: 'allowHtml', label: 'Formatted text', hint: 'Its text may carry markup, drawn as formatting rather than as words.', group: 'how' },
+    { key: 'allowHtml', label: 'Formatted text', hint: 'Markup in its text is drawn as formatting.', group: 'how' },
     { key: 'notification', label: 'Notification', hint: 'A notification bubble: [b], [red]... markup in its text, and its icon centred down the bubble.', group: 'how' },
 ];
 

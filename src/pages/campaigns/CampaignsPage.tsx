@@ -87,7 +87,7 @@ export const CampaignsPage = () => {
 
     return (
         <>
-            <PageHeader title="Campaigns" description="Gift calendars: a door a day, each with a gift">
+            <PageHeader title="Campaigns">
                 <Button icon={<Plus />} onClick={() => open('new')}>New calendar</Button>
             </PageHeader>
             <PageBody>

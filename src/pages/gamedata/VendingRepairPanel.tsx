@@ -122,7 +122,7 @@ export const VendingRepairPanel = ({ onClose }: { onClose: () => void }) => {
     return (
         <Panel
             title="Repair known vending"
-            description="Preview known floor vending definitions missing hand items. Rows needing manual correction are shown but cannot be selected."
+            description="Rows needing manual correction are shown but cannot be selected."
             actions={(
                 <>
                     <Button variant="secondary" icon={<RefreshCw />} disabled={preview.isFetching || repair.isPending} onClick={() => void refresh()}>Refresh preview</Button>

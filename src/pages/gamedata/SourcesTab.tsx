@@ -462,7 +462,7 @@ export const SourcesTab = ({ status, assets, canManage, categories }: { status: 
     const clientChecked = latest(client?.environments.map(x => x.checkedAt) ?? []);
 
     return (
-        <Panel title="Sources" description="Where Habbo updates come from. Open one for what it has, kind by kind, and what can be done with it.">
+        <Panel title="Sources">
             <div role="table" aria-label="Sources">
                 <SourceHeads />
 

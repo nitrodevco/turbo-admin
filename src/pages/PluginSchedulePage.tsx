@@ -72,7 +72,7 @@ export const PluginSchedulePage = () => {
 
     return (
         <>
-            <PageHeader title="Plugins" description="The plugins' scheduled tasks, each run once per cluster" tabs={tabs} />
+            <PageHeader title="Plugins" tabs={tabs} />
             <PageBody>
                 {error && <ErrorNotice error={error} />}
                 {!data && !error && <Loading />}

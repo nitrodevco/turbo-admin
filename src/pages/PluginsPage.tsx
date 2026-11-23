@@ -437,7 +437,7 @@ export const PluginsPage = () => {
 
     return (
         <>
-            <PageHeader title="Plugins" description="What the server loaded from its plugin folders, and what each added" tabs={tabs}>
+            <PageHeader title="Plugins" tabs={tabs}>
                 {data?.canManage && (
                     <Button variant="secondary" icon={<ScanSearch />} disabled={rescan.isPending} onClick={() => rescan.mutate(undefined, said)}>
                         Rescan

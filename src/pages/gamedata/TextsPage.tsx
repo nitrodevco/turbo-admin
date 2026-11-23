@@ -39,7 +39,6 @@ export const TextsPage = () => {
         <>
             <PageHeader
                 title="Texts & variables"
-                description="The product data, external texts and external variables the client reads"
                 tabs={{ items: TEXT_TABS, value: tab }}
             >
                 <Button variant="secondary" icon={<History />} onClick={() => setHistory(true)}>History</Button>

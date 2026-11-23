@@ -112,7 +112,7 @@ export const BadgesTab = ({ canManage }: { canManage: boolean }) => {
     return (
         <Panel
             title="Badges"
-            description="Every badge players hold or that has a pinned rarity, most held first; a hundred at most. A pinned rarity reaches the hotel within five minutes."
+            description="Most held first, a hundred at most. A pinned rarity reaches the hotel within five minutes."
             className="overflow-clip"
         >
             <div className="border-b border-line px-4 py-3">

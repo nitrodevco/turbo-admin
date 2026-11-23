@@ -48,7 +48,6 @@ export const CalendarEditor = ({ id, onBack, onSaved }: { id: number | null; onB
     const header = (
         <PageHeader
             title={calendar?.name || (isNew ? 'New calendar' : 'Calendar')}
-            description={isNew ? 'A new calendar: nothing is made until you save it' : 'One door a day, each with a gift'}
             back={{ to: '/campaigns', label: 'Campaigns' }}
         >
             {!isNew && calendar && (
@@ -98,13 +97,13 @@ export const CalendarEditor = ({ id, onBack, onSaved }: { id: number | null; onB
                     <span>{status.meaning}</span>
                     <span>· {calendar.rewards.length} of {calendar.days} doors have a gift</span>
                 </div>
-                <Panel title="Calendar" description="Players are sent the live calendar at login (the latest started when several are); the client opens it from the openView/calendar link.">
+                <Panel title="Calendar">
                     <div className="grid gap-4 p-4 sm:grid-cols-2 xl:grid-cols-4">
                         <Labeled label="Name" hint="Letters, digits, _ and -. Its title text is campaign.calendar.<name>.title.">
                             <Input value={calendar.name} onChange={event => set('name', event.target.value.trim())} placeholder="e.g. advent2026" maxLength={64} className={cx('font-mono', errorOf('name') && 'border-bad')} aria-label="Name" spellCheck={false} />
                             <FieldError message={errorOf('name')} />
                         </Labeled>
-                        <Labeled label="Image" hint="Sent with the calendar (campaignImage).">
+                        <Labeled label="Image">
                             <Input value={calendar.image} onChange={event => set('image', event.target.value.trim())} placeholder="e.g. xmas26.png" className={cx('font-mono', errorOf('image') && 'border-bad')} aria-label="Image" spellCheck={false} />
                             <FieldError message={errorOf('image')} />
                         </Labeled>
@@ -117,12 +116,12 @@ export const CalendarEditor = ({ id, onBack, onSaved }: { id: number | null; onB
                         </Labeled>
                     </div>
                     <div className="border-t border-line px-4 py-3">
-                        <Switch label="On" hint="Off, it is sent to nobody and no door opens." checked={calendar.enabled} onChange={value => set('enabled', value)} />
+                        <Switch label="On" checked={calendar.enabled} onChange={value => set('enabled', value)} />
                     </div>
                 </Panel>
                 <Panel
                     title="Doors"
-                    description={`Pick a door to give it a gift. A dashed door has none and gives nothing.${outside ? ` ${outside} gift${outside === 1 ? ' is' : 's are'} past the last day and will be refused.` : ''}`}
+                    description={outside ? `${outside} gift${outside === 1 ? ' is' : 's are'} past the last day and will be refused.` : undefined}
                 >
                     <DayGrid calendar={calendar} selected={selected} faulty={refusal?.dayIndex ?? null} onSelect={setSelected} />
                 </Panel>

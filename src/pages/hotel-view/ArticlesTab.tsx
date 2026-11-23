@@ -142,7 +142,7 @@ export const ArticlesTab = ({ draft, now, onOpenSlot, disabled }: { draft: Hotel
             <Placement draft={draft} widget="promoarticle" what="the promo articles" onOpenSlot={onOpenSlot} disabled={disabled} />
             <Panel
                 title="Promo articles"
-                description="The live ones, in this order, ten at most, as a carousel. Saved at once, each on its own."
+                description="Ten live at most, in this order. Each is saved at once."
                 actions={!disabled && <Button variant="secondary" icon={<Plus />} onClick={() => setOpen('new')} disabled={open === 'new'}>New article</Button>}
                 className="overflow-clip"
             >

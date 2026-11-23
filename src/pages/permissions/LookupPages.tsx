@@ -104,7 +104,7 @@ export const LogPage = () => {
 
     return (
         <>
-            <PageHeader title="Logs" tabs={tabs} description="Every change to a group or a player's permissions, and who made it" />
+            <PageHeader title="Logs" tabs={tabs} />
             <PageBody>
                 <Panel className="overflow-clip">
                     <ListToolbar
@@ -151,7 +151,7 @@ export const NodesPage = () => {
         <>
             <PermissionsHeader
                 section="nodes"
-                description={catalog.data ? `${catalog.data.nodes.length} nodes and ${catalog.data.metaKeys.length} meta keys are registered` : 'What exists to be granted'}
+                description={catalog.data && `${catalog.data.nodes.length} nodes and ${catalog.data.metaKeys.length} meta keys are registered`}
             />
             <PageBody className="grid gap-4 lg:gap-6 xl:grid-cols-[1fr_22rem]">
                 <div className="min-w-0">
@@ -201,7 +201,7 @@ export const NodesPage = () => {
                     </Panel>
                 </div>
                 {catalog.data && (
-                    <Panel title="Meta keys" description="Values a group or player may carry." className="self-start">
+                    <Panel title="Meta keys" className="self-start">
                         <ul className="divide-y divide-line text-sm">
                             {catalog.data.metaKeys.map(key => (
                                 <li key={key.key} className="px-4 py-2.5">

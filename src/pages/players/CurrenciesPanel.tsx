@@ -62,7 +62,7 @@ export const CurrenciesPanel = ({ player }: { player: PlayerDetailResponse }) =>
     const action = usePlayerAction(player);
 
     return (
-        <Panel title="Currencies" description={canGive ? 'Give adds to the balance; take removes from it.' : undefined}>
+        <Panel title="Currencies">
             {(action.act.error || action.act.data) && (
                 <div className="flex flex-col gap-2 border-b border-line p-4"><ActionAnswer action={action} /></div>
             )}

@@ -171,7 +171,6 @@ const HotelViewEditor = ({ variables, canManage }: { variables: VariableEntry[];
         <>
             <PageHeader
                 title="Hotel view"
-                description="The reception players land in: its backgrounds, widget slots and promos"
                 tabs={{
                     items: GROUPS.map(x => ({ value: x.value, label: x.label })),
                     value: group.value,
@@ -280,7 +279,7 @@ export const HotelViewPage = () => {
     if (!data)
         return (
             <>
-                <PageHeader title="Hotel view" description="The reception players land in" />
+                <PageHeader title="Hotel view" />
                 <PageBody>{error ? <ErrorNotice error={error} /> : <Loading />}</PageBody>
             </>
         );

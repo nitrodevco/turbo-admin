@@ -41,7 +41,6 @@ export const LibraryPage = () => {
         <>
             <PageHeader
                 title="Library"
-                description="Furniture, clothing, effects, pets and hand items: their data and artwork"
                 tabs={{ items: TABS, value: tab }}
             >
                 {state.canManage && <Button icon={<Upload />} onClick={() => setUploading(true)}>Upload</Button>}

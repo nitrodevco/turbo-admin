@@ -186,7 +186,7 @@ const GoalEditor = ({ goal, now, onDone, disabled }: { goal: CommunityGoal | nul
                             {Object.entries(GOAL_MODES).map(([ value, label ]) => <option key={value} value={value}>{label}</option>)}
                         </Select>
                     </Labeled>
-                    <Labeled label="Starts (UTC)" hint="The last goal started is the one players see.">
+                    <Labeled label="Starts (UTC)">
                         <Input type="datetime-local" value={isoToInput(draft.startsAt)} onChange={event => set({ startsAt: inputToIso(event.target.value) ?? draft.startsAt })} disabled={disabled} />
                     </Labeled>
                     <Labeled label="Ends (UTC)">

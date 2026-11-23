@@ -86,7 +86,6 @@ const Context = ({ id, onBack }: { id: number; onBack: () => void }) => {
         <Panel
             className="overflow-clip"
             title={line ? `In context: ${line.roomName ?? `room #${line.roomId}`}` : 'In context'}
-            description="What was said in the room around the line, newest first."
             actions={<Button variant="ghost" icon={<ChevronLeft />} onClick={onBack}>Back to the log</Button>}
         >
             {context.error && <div className="p-4"><ErrorNotice error={context.error} /></div>}
@@ -147,7 +146,7 @@ export const ChatlogPage = () => {
 
     return (
         <>
-            <PageHeader title="Logs" tabs={tabs} description="What players said in rooms, whispers included" />
+            <PageHeader title="Logs" tabs={tabs} />
             <PageBody>
                 {around
                     ? <Context id={around} onBack={() => go(filter, page)} />

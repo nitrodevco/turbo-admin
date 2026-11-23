@@ -86,7 +86,7 @@ export const SpeakerEditor = ({ name, onName, words, onWords, figure, onFigure, 
                     <Labeled label="What they say">
                         <Input value={words} onChange={event => onWords(event.target.value)} placeholder="Some words" className="w-full" />
                     </Labeled>
-                    <Labeled label="Their look" hint={unavailable ?? 'Their head is drawn in the bubble; their shirt tints a coloured one.'}>
+                    <Labeled label="Their look" hint={unavailable}>
                         <span className="flex items-center gap-1.5">
                             <Input
                                 key={figure}

@@ -60,7 +60,7 @@ export const Checks = () => {
     const { data, error, items } = useFoundChecks();
 
     return (
-        <Panel title="Checks" description="The bundles against the hotel's furniture, effects and pets.">
+        <Panel title="Checks">
             {error && <div className="p-4"><ErrorNotice error={error} /></div>}
             {!data && !error && <Loading />}
             {data && items.length === 0 && (

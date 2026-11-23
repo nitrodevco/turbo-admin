@@ -19,7 +19,6 @@ export const ChatBubblesPage = () => {
         <>
             <PageHeader
                 title="Chat bubbles"
-                description="The bubbles players speak in: their art, shape, words and who may use each, drawn as a room draws them. A theme plugin brings its own in its chatstyles folder."
             >
                 {canManage && <Button icon={<Upload />} onClick={() => setTakingIn(true)}>Take in</Button>}
             </PageHeader>

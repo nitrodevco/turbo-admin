@@ -34,7 +34,7 @@ const CampaignForm = ({ start, busy, onSave, onCancel }: { start: QuestCampaignI
                     <Input type="datetime-local" value={toInput(draft.endsAtUtc)} onChange={event => setDraft({ ...draft, endsAtUtc: fromInput(event.target.value) })} className="w-full font-mono" />
                 </Labeled>
             </div>
-            <Switch label="On" hint="Off, players don't see it." checked={draft.enabled} onChange={enabled => setDraft({ ...draft, enabled })} />
+            <Switch label="On" checked={draft.enabled} onChange={enabled => setDraft({ ...draft, enabled })} />
             <div className="flex flex-wrap gap-2 max-sm:flex-col-reverse">
                 <Button variant="secondary" onClick={onCancel}>Cancel</Button>
                 <Button type="submit" disabled={busy || draft.code.trim() === ''}>Save</Button>
@@ -59,7 +59,7 @@ const QuestForm = ({ start, counted, busy, onSave, onCancel }: { start: QuestInp
                 <Labeled label="Code" hint="Names quests.<campaign>.<code>.* texts.">
                     <Input value={draft.localizationCode} onChange={event => set({ localizationCode: event.target.value })} maxLength={64} spellCheck={false} className="w-full font-mono" required />
                 </Labeled>
-                <Labeled label="Type" hint={counted.includes(draft.type) ? 'Counted by the server.' : 'Not counted by the server: it never moves.'}>
+                <Labeled label="Type" hint={!counted.includes(draft.type) && 'Not counted by the server: it never moves.'}>
                     <Input value={draft.type} onChange={event => set({ type: event.target.value.toUpperCase() })} list="quest-types" maxLength={64} spellCheck={false} className="w-full font-mono" required />
                 </Labeled>
                 <Labeled label="Target" hint="The one value that counts, e.g. a badge code.">
@@ -74,7 +74,7 @@ const QuestForm = ({ start, counted, busy, onSave, onCancel }: { start: QuestInp
                 <Labeled label="Points number" hint="0 duckets, 5 diamonds.">
                     <Input type="number" min={0} value={draft.activityPointType} onChange={event => set({ activityPointType: Number(event.target.value) })} className="w-full font-mono" />
                 </Labeled>
-                <Labeled label="Order" hint="Quests are done in this order.">
+                <Labeled label="Order">
                     <Input type="number" value={draft.sortOrder} onChange={event => set({ sortOrder: Number(event.target.value) })} className="w-full font-mono" />
                 </Labeled>
                 <Labeled label="Image version">
@@ -83,7 +83,7 @@ const QuestForm = ({ start, counted, busy, onSave, onCancel }: { start: QuestInp
                 <Labeled label="Catalog page">
                     <Input value={draft.catalogPageName} onChange={event => set({ catalogPageName: event.target.value })} maxLength={64} className="w-full font-mono" />
                 </Labeled>
-                <Labeled label="Chain" hint="A seasonal quest's chain.">
+                <Labeled label="Chain">
                     <Input value={draft.chainCode} onChange={event => set({ chainCode: event.target.value })} maxLength={64} className="w-full font-mono" />
                 </Labeled>
             </div>
@@ -254,7 +254,7 @@ export const QuestsTab = () => {
         <>
             <Panel
                 title="Quest campaigns"
-                description={`Each campaign's quests are done in order, one at a time. The server counts ${data.countedTypes.join(', ')}.`}
+                description={`The server counts ${data.countedTypes.join(', ')}.`}
                 actions={data.canManage && !adding && <Button icon={<Plus />} onClick={() => setAdding(true)}>Add campaign</Button>}
                 className="overflow-clip"
             >

@@ -119,7 +119,7 @@ const GiveFields = ({ prize, furni, onChange, onPickFurni }: { prize: RewardTrac
         case 6:
             return (
                 <div className="flex flex-col gap-3">
-                    <Labeled label="Figure" hint="The look the bot wears (hd-180-1.ch-210-66…).">
+                    <Labeled label="Figure" hint="A figure string (hd-180-1.ch-210-66…).">
                         <Textarea value={prize.extraParams} onChange={event => set('extraParams', event.target.value.trim())} rows={2} className="font-mono" spellCheck={false} aria-label="Bot figure" />
                     </Labeled>
                     {name}
@@ -161,10 +161,10 @@ const PrizeRow = ({ prize, index, count, open, onOpen, furni, onChange, onPickFu
                     <Labeled label="Id">
                         <Input value={prize.id} onChange={event => onChange({ ...prize, id: event.target.value.trim() })} className="font-mono" maxLength={64} aria-label="Prize id" spellCheck={false} />
                     </Labeled>
-                    <Labeled label="Points" hint="Claimable once the track's points reach it.">
+                    <Labeled label="Points">
                         <Input type="number" min={0} value={prize.requiredPoints} onChange={event => onChange({ ...prize, requiredPoints: whole(event.target.value) })} className="font-mono" aria-label="Points needed" />
                     </Labeled>
-                    <Checkbox label="Premium" hint="On the premium row: only a player who bought premium can claim it." checked={prize.premium} onChange={value => onChange({ ...prize, premium: value })} />
+                    <Checkbox label="Premium" checked={prize.premium} onChange={value => onChange({ ...prize, premium: value })} />
                 </div>
                 <div className="flex flex-col gap-3">
                     <Labeled label="Gives">
@@ -194,7 +194,7 @@ export const PrizesEditor = ({ track, furni, onPickFurni, onChange }: { track: R
     return (
         <Panel
             title="Prizes"
-            description={`${track.prizes.filter(x => !x.premium).length} free, ${track.prizes.filter(x => x.premium).length} premium. The strip spaces them by the smallest gap between two of a row.`}
+            description={`${track.prizes.filter(x => !x.premium).length} free, ${track.prizes.filter(x => x.premium).length} premium`}
             actions={(
                 <>
                     {!sorted && <Button variant="ghost" icon={<ArrowDownWideNarrow />} onClick={() => setPrizes([ ...track.prizes ].sort((a, b) => a.requiredPoints - b.requiredPoints))}>Sort by points</Button>}

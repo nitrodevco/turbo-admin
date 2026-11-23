@@ -212,9 +212,7 @@ export const PageInspector = ({ tree, page, draft, onDraft, focus, onOpen }: Pag
                                 checked={draft.folderOnly ?? false}
                                 onChange={on => set('folderOnly', on)}
                                 disabled={!canManage}
-                                hint={draft.folderOnly
-                                    ? 'Clicking it opens and closes the pages under it and keeps the open page on show, as Habbo\'s "Hot now". Its layout and offers are never shown.'
-                                    : 'Turn on for a heading that only holds pages, with no page of its own.'}
+                                hint={draft.folderOnly ? 'Its layout and offers are never shown; a click opens and closes the pages under it.' : 'For a heading that only holds pages.'}
                             />
                         )}
                     </Section>

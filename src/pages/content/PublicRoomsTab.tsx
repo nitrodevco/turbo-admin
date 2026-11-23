@@ -133,8 +133,8 @@ const CategoryEditor = ({ category, canManage, onRemoved }: { category: PublicCa
                 <Labeled label="Rooms shown as">
                     <Segmented label="Rooms shown as" value={String(draft.viewMode)} onChange={value => set({ viewMode: Number(value) })} options={[ { value: '1', label: 'Thumbnails' }, { value: '0', label: 'List' } ]} disabled={!canManage} />
                 </Labeled>
-                <Switch label="Shown" hint="Hidden: kept here, not sent to players." checked={draft.visible} onChange={visible => set({ visible })} disabled={!canManage} />
-                <Switch label="Opens closed" hint="The block arrives collapsed every time; a click opens it." checked={draft.forceClosed} onChange={forceClosed => set({ forceClosed })} disabled={!canManage} />
+                <Switch label="Shown" checked={draft.visible} onChange={visible => set({ visible })} disabled={!canManage} />
+                <Switch label="Opens closed" checked={draft.forceClosed} onChange={forceClosed => set({ forceClosed })} disabled={!canManage} />
             </div>
             {canManage && (
                 <div className="flex flex-wrap items-center gap-2">
@@ -216,7 +216,7 @@ const Preview = () => {
     const { data, error } = usePublicPreview();
 
     return (
-        <Panel title="Public tab now" description="What players get with their next search, live user counts and a plugin's room order included." className="overflow-clip">
+        <Panel title="Public tab now" className="overflow-clip">
             {error && <div className="p-4"><ErrorNotice error={error} /></div>}
             {!data && !error && <Loading />}
             {data && data.blocks.length === 0 && <EmptyState>The Public tab is empty: no shown category has rooms.</EmptyState>}
@@ -306,7 +306,7 @@ export const PublicRoomsTab = () => {
             onDragCancel={() => setOver(null)}
         >
             <div className="grid gap-4 lg:gap-6 xl:grid-cols-[minmax(0,20rem)_minmax(0,1fr)_minmax(0,18rem)]">
-                <Panel title="Categories" description="Each is one block of the Public tab, in this order. Drag to order; drop a room on one to move it there." className="overflow-clip">
+                <Panel title="Categories" description="Drag to order; drop a room on one to move it there." className="overflow-clip">
                     <SortableContext items={categories.map(x => categoryKey(x.id))} strategy={verticalListSortingStrategy}>
                         <ul className="divide-y divide-line" aria-label="Public tab categories">
                             {categories.map(x => (
@@ -338,9 +338,7 @@ export const PublicRoomsTab = () => {
                     ? (
                             <Panel
                                 title={titleOf(category)}
-                                description={category.kind === 'staffpicks'
-                                    ? 'The staff-picked rooms, newest pick first. Pick a room from its room info in the client or on its page here.'
-                                    : 'Its rooms in the order the block lists them. Drag to order.'}
+                                description={category.kind === 'staffpicks' ? 'Newest pick first. Pick a room from its room info in the client or on its page here.' : 'Drag to order.'}
                                 className="overflow-clip"
                             >
                                 <CategoryEditor key={category.id} category={category} canManage={canManage} onRemoved={() => setPicked(null)} />

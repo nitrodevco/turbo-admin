@@ -114,7 +114,7 @@ export const CatalogHome = ({ tree, busy, compact, onOpenPage, onView, onCreateF
                     icon={<Star />}
                     title="Front page"
                     tone={front ? 'good' : 'warn'}
-                    blurb={front ? `${front.localization} is where the catalogue opens, with the featured items and the voucher box.` : 'There is no front page: the catalogue opens on its first tab. Make one, then pick its featured items.'}
+                    blurb={front ? `${front.localization} is where the catalogue opens.` : 'None: the catalogue opens on its first tab.'}
                     action={front
                         ? <Button variant="secondary" icon={<ArrowRight />} onClick={() => onOpenPage(front.id)}>Open it</Button>
                         : tree.canManage && <Button icon={<Star />} disabled={busy} onClick={onCreateFrontPage}>Make a front page</Button>}
@@ -124,7 +124,7 @@ export const CatalogHome = ({ tree, busy, compact, onOpenPage, onView, onCreateF
                     title="Furni not in the catalog"
                     value={missing.data?.total.toLocaleString() ?? '…'}
                     tone={missing.data && missing.data.total > 0 ? 'warn' : undefined}
-                    blurb="Floor and wall items no offer sells. Find them by line or category, and put them on a page in one go."
+                    blurb="Floor and wall items no offer sells."
                     action={<Button variant="secondary" icon={<ArrowRight />} onClick={() => onView('missing')}>Find them</Button>}
                 />
                 <Card
@@ -132,13 +132,13 @@ export const CatalogHome = ({ tree, busy, compact, onOpenPage, onView, onCreateF
                     title="Sold more than once"
                     value={duplicates.data ? duplicates.data.total.toLocaleString() : '…'}
                     tone={shownDuplicates ? 'warn' : undefined}
-                    blurb={shownDuplicates ? `${shownDuplicates} of them players can see on more than one page.` : 'Furni sold alone by more than one offer, with where each is.'}
+                    blurb={shownDuplicates ? `${shownDuplicates} of them players can see on more than one page.` : 'Furni sold alone by more than one offer.'}
                     action={<Button variant="secondary" icon={<ArrowRight />} onClick={() => onView('duplicates')}>Look at them</Button>}
                 />
                 <Card
                     icon={<Wand2 />}
                     title="Generate a catalog"
-                    blurb="A whole catalog from the hotel's furni, pets, effects and songs, with tabs that make sense and the right layout and icon on every page."
+                    blurb="A whole catalog from the hotel's furni, pets, effects and songs."
                     action={<Button variant="secondary" icon={<ArrowRight />} onClick={() => onView('generate')}>Plan one</Button>}
                 />
             </div>

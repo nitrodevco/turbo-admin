@@ -112,7 +112,6 @@ const FailedPlugins = ({ plugins, canManage }: { plugins: Plugin[]; canManage: b
     return (
         <Panel
             title={<span className="flex items-center gap-2 text-bad"><PlugZap className="size-4" />{`${plugins.length} ${plugins.length === 1 ? 'plugin' : 'plugins'} did not load`}</span>}
-            description="What a plugin adds is missing from the hotel until it loads."
             actions={<TextLink to="/plugins">Open plugins</TextLink>}
             className="border-bad-line"
         >
@@ -240,7 +239,7 @@ export const DashboardPage = () => {
             <PageHeader
                 title="Overview"
                 tabs={tabs}
-                description={data ? `Turbo ${data.version} · updated ${new Date(dataUpdatedAt).toLocaleTimeString()}` : 'The hotel right now'}
+                description={data && `Turbo ${data.version} · updated ${new Date(dataUpdatedAt).toLocaleTimeString()}`}
             >
                 <span className="max-sm:hidden"><LiveBadge live={live}>{live ? 'LIVE' : 'EVERY 10S'}</LiveBadge></span>
             </PageHeader>

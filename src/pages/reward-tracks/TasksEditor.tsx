@@ -80,7 +80,7 @@ const TaskRow = ({ task, index, count, open, onOpen, actionTypes, onChange, onMo
                         <Labeled label="Id" hint={<>Its texts: <span className="font-mono">reward_track.&lt;track&gt;.task.{task.id || '…'}.name</span>, .desc, .hint.desc</>}>
                             <Input value={task.id} onChange={event => onChange({ ...task, id: event.target.value.trim() })} className="font-mono" maxLength={64} aria-label="Task id" spellCheck={false} />
                         </Labeled>
-                        <Labeled label="What counts" hint={task.actionType.toLowerCase() === 'custom_wired_action' ? 'Only a wired Progress Reward Track box naming this task moves it.' : counted ? 'Counted by the server.' : 'The server does not count this type: the task never moves.'}>
+                        <Labeled label="What counts" hint={task.actionType.toLowerCase() === 'custom_wired_action' ? 'Only a wired Progress Reward Track box naming this task moves it.' : counted ? undefined : 'The server does not count this type: the task never moves.'}>
                             <Select value={types.find(x => x.toLowerCase() === task.actionType.toLowerCase())} onChange={event => onChange({ ...task, actionType: typeOf(event.target.value) })} className="font-mono" aria-label="Action type">
                                 {types.map(x => <option key={x} value={x}>{typeOf(x)}</option>)}
                             </Select>
@@ -88,7 +88,7 @@ const TaskRow = ({ task, index, count, open, onOpen, actionTypes, onChange, onMo
                         <Labeled label="Parameter" hint="Sent to the client with the task; Habbo's are all empty.">
                             <Input value={task.parameter} onChange={event => onChange({ ...task, parameter: event.target.value })} className="font-mono" aria-label="Task parameter" />
                         </Labeled>
-                        <Checkbox label="Premium only" hint="Counts only for a player who bought premium." checked={task.premium} onChange={value => onChange({ ...task, premium: value })} />
+                        <Checkbox label="Premium only" checked={task.premium} onChange={value => onChange({ ...task, premium: value })} />
                     </div>
                     <Levels levels={task.levels} onChange={levels => onChange({ ...task, levels })} />
                 </div>
@@ -105,7 +105,7 @@ export const TasksEditor = ({ track, actionTypes, onChange }: { track: RewardTra
     return (
         <Panel
             title="Tasks"
-            description="Each level reached gives its points; a task stops at its last level. The client's icon is reward_track_tasks_<track>_<task>, else the action type's."
+            description="The client's icon is reward_track_tasks_<track>_<task>, else the action type's."
             actions={(
                 <Button
                     icon={<Plus />}

@@ -81,7 +81,7 @@ export const GroupsPage = () => {
         <>
             <PermissionsHeader
                 section="groups"
-                description={data ? `${data.groups.length} groups. Players reach a group directly or through its children.` : 'Groups and what they hold'}
+                description={data && `${data.groups.length} groups`}
             />
             <PageBody className="grid gap-4 lg:gap-6 xl:grid-cols-[1fr_20rem]">
                 {error && <ErrorNotice error={error} />}

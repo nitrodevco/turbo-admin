@@ -100,7 +100,7 @@ export const ClientFiles = ({ status }: { status: GamedataStatus }) => {
     return (
         <Panel
             title="Files the client loads"
-            description="Built from the database whenever what they're made from changes. Each file's address is written into the external variables under its client setting; change the key here if your client reads another. The external variables themselves are loaded from the client's page by nitro.config.url."
+            description="Each file's address is written into the external variables under its key; change the key if your client reads another."
             actions={status.canManage && (
                 <Button
                     variant="secondary"

@@ -65,7 +65,7 @@ const MainSlotEditor = ({ slot, draft, codes, now, onOpenPromo, onOpenView, disa
                     <ContentLine type={type} onOpenView={onOpenView} />
                 </div>
                 {type === 'widgetcontainer' && (
-                    <Labeled label="Promos it shows, by time" hint="From each time on, the promo with that code shows, until the next starts.">
+                    <Labeled label="Promos it shows, by time">
                         <ScheduleEditor
                             value={draft.text(slotKey(slot, 'conf'))}
                             onChange={value => draft.setText(slotKey(slot, 'conf'), value)}

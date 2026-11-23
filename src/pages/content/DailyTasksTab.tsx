@@ -77,18 +77,18 @@ const DailyTaskForm = ({ start, busy, onSave, onCancel }: { start: DailyTaskInpu
                 <Labeled label={draft.rewardKind === 'badge' ? 'Badge code' : 'Points number'} hint={draft.rewardKind === 'badge' ? undefined : '0 duckets, 5 diamonds.'}>
                     <Input value={draft.rewardTypeId} onChange={event => set({ rewardTypeId: event.target.value })} maxLength={64} spellCheck={false} className="w-full font-mono" />
                 </Labeled>
-                <Labeled label="Amount" hint="0 gives nothing.">
+                <Labeled label="Amount">
                     <Input type="number" min={0} value={draft.rewardAmount} onChange={event => set({ rewardAmount: Number(event.target.value) })} className="w-full font-mono" />
                 </Labeled>
                 <Labeled label="Image version">
                     <Input value={draft.imageVersion} onChange={event => set({ imageVersion: event.target.value })} maxLength={32} className="w-full font-mono" />
                 </Labeled>
-                <Labeled label="Catalog page" hint="Where the client's button goes.">
+                <Labeled label="Catalog page">
                     <Input value={draft.catalogName} onChange={event => set({ catalogName: event.target.value })} maxLength={64} className="w-full font-mono" />
                 </Labeled>
             </div>
             <div className="flex flex-wrap gap-x-6 gap-y-2">
-                <Switch label="On" hint="Off, it is never given; one that can't be given yet may be kept off." checked={draft.enabled} onChange={enabled => set({ enabled })} />
+                <Switch label="On" checked={draft.enabled} onChange={enabled => set({ enabled })} />
                 <Switch label="Bonus" hint="Given once the day's other tasks are done." checked={draft.isBonus} onChange={isBonus => set({ isBonus })} />
             </div>
             <div className="flex flex-wrap gap-2 max-sm:flex-col-reverse">
@@ -168,7 +168,6 @@ export const DailyTasksTab = () => {
             {skipped > 0 && <WarningNotice>{plural(skipped, 'task is', 'tasks are')} on but can't be given; the hotel skips {skipped === 1 ? 'it' : 'them'}. Each says why.</WarningNotice>}
             <Panel
                 title="Daily tasks"
-                description="A few given to each player every day, at random; the bonus ones once those are done."
                 actions={data.canManage && editing !== 'new' && <Button icon={<Plus />} onClick={() => setEditing('new')}>Add task</Button>}
                 className="overflow-clip"
             >

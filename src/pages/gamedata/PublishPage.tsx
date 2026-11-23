@@ -35,7 +35,6 @@ export const PublishPage = () => {
         <>
             <PageHeader
                 title="Publish"
-                description="Where the bundles go, and the files the client loads"
                 tabs={{
                     items: [
                         { value: 'targets', label: 'Targets', to: '/gamedata/publish/targets' },

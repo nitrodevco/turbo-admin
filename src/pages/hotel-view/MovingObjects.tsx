@@ -71,7 +71,7 @@ export const MovingObjects = ({ code, draft, disabled }: { code: string; draft: 
     return (
         <Panel
             title="Moving objects"
-            description={`${code ? `The set ${code}'s` : 'The default set\'s'} pictures moving behind the widgets: along a line, wandering, in a spiral, or an animation. Twenty at most.`}
+            description={`${code ? `The set ${code}` : 'The default set'}: twenty at most.`}
             actions={!disabled && free !== undefined && (
                 <Button variant="secondary" icon={<Plus />} onClick={() => draft.setText(bgObjectKey(code, free), formatMovingObject({ image: '', type: 'line', args: [ '0', '-300', '0.05', '0' ] }))}>
                     Add an object

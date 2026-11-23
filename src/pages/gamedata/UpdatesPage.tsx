@@ -141,7 +141,7 @@ const WaitingTab = ({ categories, assets, canManage }: { categories: Category[];
 
             <Panel
                 title={total > 0 ? `${total.toLocaleString()} ${total === 1 ? 'update' : 'updates'} to take in` : 'Nothing to take in'}
-                description={total > 0 ? 'Pick one to look over; each is taken in on its own, and the data can be rolled back from the history.' : 'The hotel has everything Habbo serves that it was checked for.'}
+                description={total > 0 ? 'Each is taken in on its own, and can be rolled back from the history.' : 'The hotel has everything Habbo serves that it was checked for.'}
             >
                 <div className="grid items-start lg:grid-cols-[14rem_minmax(0,1fr)]">
                     <nav aria-label="What to update" className="flex flex-col gap-3 border-b border-line p-2 lg:border-r lg:border-b-0">
@@ -218,7 +218,7 @@ export const UpdatesPage = () => {
         <>
             <PageHeader
                 title="Habbo updates"
-                description={release ? `Habbo ${release.revision.replace(/^PRODUCTION-/, '')}, checked ${fromNow(release.checkedAt)}` : 'What Habbo has that the hotel hasn\'t taken in'}
+                description={release && `Habbo ${release.revision.replace(/^PRODUCTION-/, '')}, checked ${fromNow(release.checkedAt)}`}
                 tabs={{
                     items: [
                         { value: 'waiting', label: 'Waiting', to: '/gamedata/updates/waiting', ...(total > 0 ? { count: total } : {}) },

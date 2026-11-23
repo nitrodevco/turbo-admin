@@ -47,7 +47,7 @@ export const BackgroundsTab = ({ draft, codes, now, set: chosen, onSet: setSet, 
 
     return (
         <div className="flex flex-col gap-4">
-            <Panel title="Schedule" description="From each time on, its set of backgrounds shows, until the next starts. Before any, the default set.">
+            <Panel title="Schedule">
                 <div className="p-4">
                     <ScheduleEditor value={draft.text(BG_TIMING)} onChange={value => draft.setText(BG_TIMING, value)} codes={codes} now={now} emptyLabel="the default backgrounds show" onOpen={setSet} disabled={disabled} />
                 </div>
@@ -97,7 +97,6 @@ export const BackgroundsTab = ({ draft, codes, now, set: chosen, onSet: setSet, 
                                 <ImageField label={label} hint={hint} value={draft.text(uri)} onChange={value => draft.setText(uri, value)} accept={BACKGROUND_IMAGE} resolve={resolve} changed={draft.changed(uri)} disabled={disabled} />
                                 <Switch
                                     label="Shown"
-                                    hint="Hidden, the layer is not drawn at all while this set shows."
                                     checked={draft.text(visible) !== 'false'}
                                     onChange={checked => draft.setJson(visible, checked ? null : 'false')}
                                     disabled={disabled}

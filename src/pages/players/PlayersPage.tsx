@@ -70,9 +70,7 @@ export const PlayersPage = () => {
         <>
             <PageHeader
                 title="Players"
-                description={search.data
-                    ? `${search.data.total.toLocaleString()} ${search.data.total === 1 ? 'player' : 'players'}${text ? ` matching "${text}"` : ''} · ${search.data.onlineNow.toLocaleString()} online now`
-                    : 'Everyone in the hotel'}
+                description={search.data && `${search.data.total.toLocaleString()} ${search.data.total === 1 ? 'player' : 'players'}${text ? ` matching "${text}"` : ''} · ${search.data.onlineNow.toLocaleString()} online now`}
             >
                 {canCreate && !creating && <Button icon={<UserPlus />} onClick={() => setCreating(true)}>New player</Button>}
             </PageHeader>

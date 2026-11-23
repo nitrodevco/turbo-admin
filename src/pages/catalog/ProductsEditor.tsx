@@ -91,7 +91,7 @@ export const PetPicker = ({ value, onChange, disabled }: { value: string; onChan
     const names = useMemo(() => new Map((data ?? []).map(x => [ Number(x.code.slice('a0 pet'.length)), x.name ])), [ data ]);
 
     return (
-        <Labeled label="Pet type" hint="The buyer picks the breed and colour and names it. Its offer's name key should be a0 pet<type>, which the pet page reads.">
+        <Labeled label="Pet type" hint="Its offer's name key should be a0 pet<type>, which the pet page reads.">
             <div className="flex gap-2">
                 <Input type="number" min={0} value={value} onChange={event => onChange(String(Math.max(0, Math.floor(Number(event.target.value) || 0))))} disabled={disabled} className="w-20 font-mono" aria-label="Pet type number" />
                 <Select value={value} onChange={event => onChange(event.target.value)} disabled={disabled} aria-label="Pet type" className="min-w-0 flex-1">
@@ -169,7 +169,7 @@ const ProductFields = ({ product, onChange, disabled, locked }: { product: Produ
             return <PetPicker value={product.extraParam ?? '0'} onChange={value => set('extraParam', value)} disabled={disabled} />;
         case 'robot':
             return (
-                <Labeled label="Figure" hint="The look the bot wears, as a figure string (hr-100-61.hd-180-1…). It is named after its furni, or the hotel's default bot name.">
+                <Labeled label="Figure" hint="A figure string (hr-100-61.hd-180-1…).">
                     <Textarea value={product.extraParam ?? ''} onChange={event => set('extraParam', event.target.value.trim() || null)} rows={2} placeholder="hd-180-1.ch-210-66.lg-270-82.sh-290-91" disabled={disabled} className="font-mono" spellCheck={false} />
                 </Labeled>
             );

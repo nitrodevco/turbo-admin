@@ -19,7 +19,7 @@ export const DiscordCard = ({ playerId, playerName, discord, canManage }: { play
     const unlink = useMutation({ mutationFn: () => unlinkDiscord(playerId), onSettled: refresh });
 
     return (
-        <Panel title="Discord" description="How they sign in to the public site.">
+        <Panel title="Discord">
             <dl>
                 <Kv label="Username">@{discord.username}</Kv>
                 <Kv label="Discord id"><span className="font-mono text-xs">{discord.id}</span></Kv>

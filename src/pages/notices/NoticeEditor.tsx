@@ -104,9 +104,7 @@ export const NoticeEditor = ({ notice, onChange, disabled }: { notice: Notice; o
             <Section title="Closing">
                 <Labeled
                     label="The player can close it"
-                    hint={type === 'normal'
-                        ? 'Habbo\'s: Close takes it down until the player next logs in.'
-                        : 'Habbo\'s: a promo\'s close button only shows once it has been clicked open (a countdown\'s from the start), and takes it down until the next login.'}
+                    hint={type === 'normal' ? 'Close takes it down until the player next logs in.' : 'A promo\'s close button shows once it has been clicked open (a countdown\'s from the start).'}
                 >
                     <span className="flex items-center">
                         <Segmented label="The player can close it" value={notice.fields.close} onChange={value => set('close', value)} options={CLOSE_OPTIONS} />

@@ -73,7 +73,7 @@ const SongEditor = ({ song, canManage, onSaved, onDeleted }: { song: SongDetail 
                     value={draft.code ?? ''}
                     onChange={event => set('code', event.target.value.trim() || null)}
                     placeholder="optional, e.g. habbo_theme"
-                    hint="The catalog names a disc by product data SONG <code> (Gamedata → Products), so give it a code and that product to show its name there. It can't start with a digit; the disc itself carries the song's number."
+                    hint="Product data SONG <code> names the disc in the catalog. It can't start with a digit."
                     maxLength={50}
                     spellCheck={false}
                     disabled={!canManage}
@@ -83,7 +83,7 @@ const SongEditor = ({ song, canManage, onSaved, onDeleted }: { song: SongDetail 
             <Labeled label="Track" hint="The song in the client's trax format, as the trax machine writes it (1:0,4;2:0,4;…).">
                 <Textarea value={draft.track} onChange={event => set('track', event.target.value)} rows={5} required spellCheck={false} disabled={!canManage} className="font-mono" />
             </Labeled>
-            <Switch label="Official" hint="An official song can be sold on song discs in the catalog; the Song discs builder offers these." checked={draft.official} onChange={value => set('official', value)} disabled={!canManage} />
+            <Switch label="Official" hint="Only official songs are sold on song discs." checked={draft.official} onChange={value => set('official', value)} disabled={!canManage} />
             {(save.error ?? remove.error) && <ErrorNotice error={save.error ?? remove.error} />}
             {canManage && (
                 <div className="flex flex-wrap items-center gap-2">
@@ -139,7 +139,7 @@ export const SongsPage = () => {
 
     return (
         <>
-            <PageHeader title="Catalog" tabs={catalogTabs('songs')} description={songs.data ? `${songs.data.songs.length} songs · ${songs.data.songs.filter(x => x.official).length} official` : 'What jukeboxes play'}>
+            <PageHeader title="Catalog" tabs={catalogTabs('songs')} description={songs.data && `${songs.data.songs.length} songs · ${songs.data.songs.filter(x => x.official).length} official`}>
                 {canManage && <Button icon={<Plus />} onClick={() => open('new')}>New song</Button>}
             </PageHeader>
             <PageBody className="grid items-start gap-4 lg:gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.2fr)]">

@@ -46,7 +46,7 @@ export const UsagePage = () => {
 
     return (
         <>
-            <PageHeader title="Overview" tabs={tabs} description="What players use, from the events their clients log" />
+            <PageHeader title="Overview" tabs={tabs} />
             <PageBody>
                 <div className="flex flex-wrap items-center gap-2">
                     <RangePicker days={days} setDays={setDays} />

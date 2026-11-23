@@ -37,7 +37,7 @@ export const PlayersPage = () => {
 
     return (
         <>
-            <PermissionsHeader section="players" description="Any player's groups, nodes and meta, and why they hold what they hold" />
+            <PermissionsHeader section="players" />
             <PageBody className="grid gap-4 lg:gap-6">
                 <Panel title="Find a player">
                     <form onSubmit={handleSubmit} className="flex flex-wrap gap-2 p-4">
@@ -47,7 +47,7 @@ export const PlayersPage = () => {
                     {error !== null && <div className="px-4 pb-4"><ErrorNotice error={error} /></div>}
                 </Panel>
 
-                <Panel title="In a group" description="Everyone in a group besides default, heaviest group first." className="overflow-hidden">
+                <Panel title="In a group" className="overflow-hidden">
                     {staff.isPending && <Loading />}
                     {staff.error && <div className="p-4"><ErrorNotice error={staff.error} /></div>}
                     {staff.data && (staff.data.length === 0

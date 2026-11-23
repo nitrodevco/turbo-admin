@@ -74,13 +74,13 @@ export const StaffPage = () => {
 
     return (
         <>
-            <PermissionsHeader section="passkeys" description="Setup and reset links for other staff's passkeys" />
+            <PermissionsHeader section="passkeys" />
             {/* The page's full width, as under the other access tabs, with the form kept to a readable column. */}
             <PageBody>
                 <div className="grid max-w-2xl gap-5">
                     <Panel
                         title="Set up or reset a passkey"
-                        description="A one-time link for a staff member to create their passkey. For someone who already has one, it replaces them all, for a lost device. Only for players whose permissions you all hold yourself."
+                        description="A one-time link to create a passkey. For someone who already has one, it replaces them all. Only for players whose permissions you all hold yourself."
                     >
                         <form onSubmit={handleSubmit} className="space-y-3 p-4">
                             {error !== null && <ErrorNotice error={error} />}

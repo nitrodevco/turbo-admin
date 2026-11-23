@@ -40,7 +40,7 @@ const Decide = ({ approval }: { approval: ApprovalItem }) => {
     return (
         <Panel title="Decide" description="Approving carries it out at once, once, whoever else presses approve.">
             <div className="flex flex-col gap-3 p-4">
-                <Labeled label="Note" hint="Kept with your decision, for whoever reads it later.">
+                <Labeled label="Note">
                     <Textarea value={note} onChange={event => setNote(event.target.value)} maxLength={500} rows={2} />
                 </Labeled>
                 <div className="flex flex-wrap gap-2">
@@ -89,7 +89,7 @@ export const ApprovalPage = () => {
                 {approval && (
                     <div className="grid items-start gap-4 lg:gap-6 lg:grid-cols-[minmax(0,1fr)_22rem]">
                         <div className="flex min-w-0 flex-col gap-4">
-                            <Panel title="What it will do" description="The handler of its kind is given these arguments.">
+                            <Panel title="What it will do">
                                 <p className="px-4 pt-3 text-sm wrap-anywhere whitespace-pre-wrap">{approval.summary}</p>
                                 <pre className="m-4 overflow-x-auto rounded-lg border border-line bg-canvas p-3 font-mono text-xs wrap-anywhere whitespace-pre-wrap">
                                     {JSON.stringify(approval.arguments, null, 2)}

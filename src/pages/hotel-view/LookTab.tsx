@@ -42,7 +42,7 @@ export const LookTab = ({ draft, disabled }: { draft: HotelViewDraft; disabled?:
 
     return (
         <div className="flex flex-col gap-4">
-            <Panel title="Widget text" description="Every widget's headings and words take these, so they read against the backgrounds.">
+            <Panel title="Widget text">
                 <div className="grid gap-4 p-4 sm:grid-cols-3">
                     <ColorField label="Colour" hint="Empty is black." colorKey={COMMON.textColor} draft={draft} fallback="#000000" disabled={disabled} />
                     <ColorField label="Etching" hint="The one-pixel line beside each letter. Empty is white." colorKey={COMMON.etchingColor} draft={draft} fallback="#ffffff" disabled={disabled} />

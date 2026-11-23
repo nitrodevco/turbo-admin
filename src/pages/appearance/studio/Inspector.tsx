@@ -32,7 +32,7 @@ const ElementPicker = () => {
     const value = studio.selection?.key === undefined || studio.selection.key === null ? '' : `${studio.selection.template}|${studio.selection.key}`;
 
     return (
-        <Labeled label="Element" hint="Click it in the window, or pick it here (hidden ones too). Esc picks nothing.">
+        <Labeled label="Element">
             <Select
                 aria-label="Element"
                 value={value}
@@ -215,7 +215,7 @@ export const Inspector = () => {
                         onCaption={value => set('caption', value)}
                     />
                     {isPicture(tag) && (
-                        <Labeled label="Picture" hint="An image of the theme's, or one uploaded into it here: drawn in the preview at once.">
+                        <Labeled label="Picture">
                             <ImageInput
                                 value={typeof picture === 'string' ? picture : ''}
                                 disabled={disabled}

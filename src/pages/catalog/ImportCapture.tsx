@@ -283,8 +283,8 @@ export const ImportCapture = ({ tree }: { tree: CatalogTree }) => {
                     </section>
                 )}
 
-                <Switch label="Take the other pages out" hint="Pages here that the capture does not have leave its catalogue: out of the Builders Club (a page in both stays in the normal one), or hidden in the normal catalogue (but for those that lead to Builders Club pages). Off, they stay." checked={takeOthersOut} onChange={changeTakeOthersOut} />
-                <Switch label="Publish when imported" hint="Reloads the catalogue and tells every client online. Off, it waits for you to publish." checked={publish} onChange={setPublish} />
+                <Switch label="Take the other pages out" hint="Pages here the capture doesn't have leave its catalogue: out of the Builders Club, or hidden in the normal one. Off, they stay." checked={takeOthersOut} onChange={changeTakeOthersOut} />
+                <Switch label="Publish when imported" hint="Reloads the catalogue and tells every client online." checked={publish} onChange={setPublish} />
 
                 {plan.error && <ErrorNotice error={plan.error} />}
                 <Button icon={<Sparkles />} disabled={!ready || plan.isPending} onClick={() => plan.mutate()}>

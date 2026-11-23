@@ -194,7 +194,7 @@ export const CurrenciesTab = ({ canManage }: { canManage: boolean }) => {
     return (
         <Panel
             title="Currencies"
-            description="What wallets hold, what the catalog prices in and what vouchers give. A currency in use keeps its kind; turn it off instead of deleting it."
+            description="A currency in use keeps its kind; turn it off instead of deleting it."
             actions={canManage && editing !== 'new' && <Button icon={<Plus />} onClick={() => setEditing('new')}>Add currency</Button>}
             className="overflow-clip"
         >

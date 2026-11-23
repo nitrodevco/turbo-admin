@@ -67,7 +67,7 @@ export const ReportsPage = () => {
             <PageHeader
                 title="Moderation"
                 tabs={tabs}
-                description={counts ? `${plural(counts.open, 'open report')}, ${counts.picked.toLocaleString()} picked by a moderator` : 'The calls for help players send'}
+                description={counts && `${plural(counts.open, 'open report')}, ${counts.picked.toLocaleString()} picked by a moderator`}
             />
             <PageBody>
                 <Panel className="overflow-clip">
