@@ -12,7 +12,7 @@ export const WindowPick = ({ name, id, picked, onPick, tag }: { name: string; id
         aria-current={picked ? 'true' : undefined}
         title={id}
         onClick={onPick}
-        className={cx('flex w-full min-w-0 flex-col px-3 py-1.5 text-left hover:bg-subtle', picked && 'bg-subtle')}
+        className={cx('flex w-full min-w-0 flex-col px-4 py-1.5 text-left hover:bg-subtle', picked && 'bg-subtle')}
     >
         <span className={cx('flex min-w-0 items-center gap-2 text-ui', picked && 'text-accent')}>
             <span className="truncate">{name}</span>

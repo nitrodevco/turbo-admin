@@ -212,7 +212,7 @@ const SkinsTab = () => {
         <>
             {skins && replacing?.canManage && <SkinSetUpload skins={skins} target={target} canManage={replacing.canManage} />}
             <Panel className="overflow-clip">
-                <div className="flex flex-wrap items-center gap-2 border-b border-line p-3">
+                <div className="flex flex-wrap items-center gap-2 border-b border-line px-4 py-3">
                     <SearchInput
                         value={text}
                         onValueChange={(value) => {
@@ -229,7 +229,7 @@ const SkinsTab = () => {
                 {error && <div className="p-4"><ErrorNotice error={error} /></div>}
                 {overlaysError && <div className="p-4"><ErrorNotice error={overlaysError} /></div>}
                 {sheetError && <div className="p-4"><ErrorNotice error={sheetError} /></div>}
-                {assets && !assets.templates && <p className="border-b border-line p-3 text-xs text-muted">The sprites aren&apos;t drawn: the hotel&apos;s external variables name no asset.bundles.templates, where the client loads its theme sheet.</p>}
+                {assets && !assets.templates && <p className="border-b border-line px-4 py-3 text-xs text-muted">The sprites aren&apos;t drawn: the hotel&apos;s external variables name no asset.bundles.templates, where the client loads its theme sheet.</p>}
                 {!skins && !error && <Loading />}
                 {skins && found.length === 0 && <EmptyState>No skin has those words.</EmptyState>}
                 <ul className="divide-y divide-line">{found.slice(0, LIST_LIMIT).map(([ id, skin ]) => <li key={id}><SkinCard id={id} skin={skin} sheet={sheet} replacing={replacing} /></li>)}</ul>
@@ -331,7 +331,7 @@ const WindowsTab = () => {
     return (
         <div className="grid items-start gap-4 lg:gap-6 lg:grid-cols-[minmax(16rem,24rem)_1fr]">
             <Panel ref={fillList} className="flex flex-col overflow-clip lg:sticky lg:top-4 lg:max-h-(--fill-height)">
-                <div className="flex flex-col gap-1 border-b border-line p-3">
+                <div className="flex flex-col gap-1 border-b border-line px-4 py-3">
                     <SearchInput value={text} onValueChange={setText} placeholder="Window, element, text key or shown text" aria-label="Find windows" />
                     {index && <span className="text-xs text-muted">{`${found.length} of ${ids.length} windows${shown.size ? `, ${shown.size} text(s) show those words` : ''}`}</span>}
                 </div>

@@ -90,7 +90,7 @@ const ByWindow = ({ index }: { index: TemplateIndex }) => {
     return (
         <div className="grid items-start gap-4 lg:gap-6 lg:grid-cols-[22rem_1fr]">
             <Panel ref={fillList} title="Windows" description={`${found.length} window(s) showing texts`} className="flex flex-col overflow-clip lg:sticky lg:top-4 lg:max-h-(--fill-height)">
-                <div className="border-b border-line p-3"><SearchInput value={text} onValueChange={setText} placeholder="A window, its file, or a text key" aria-label="Find a window" /></div>
+                <div className="border-b border-line px-4 py-3"><SearchInput value={text} onValueChange={setText} placeholder="A window, its file, or a text key" aria-label="Find a window" /></div>
                 <ul className="max-h-[60dvh] min-h-0 overflow-y-auto lg:max-h-none">
                     {found.slice(0, LIST_LIMIT).map(each => (
                         <li key={each.id}>
@@ -98,7 +98,7 @@ const ByWindow = ({ index }: { index: TemplateIndex }) => {
                         </li>
                     ))}
                 </ul>
-                {found.length > LIST_LIMIT && <p className="border-t border-line p-3 text-xs text-muted">{`${found.length - LIST_LIMIT} more: narrow the search.`}</p>}
+                {found.length > LIST_LIMIT && <p className="border-t border-line px-4 py-3 text-xs text-muted">{`${found.length - LIST_LIMIT} more: narrow the search.`}</p>}
             </Panel>
             {id
                 ? (
@@ -127,7 +127,7 @@ const ByShown = ({ index }: { index: TemplateIndex }) => {
 
     return (
         <Panel title="Texts">
-            <div className="p-3">
+            <div className="px-4 py-3">
                 <SearchInput
                     value={text}
                     onValueChange={(next) => {

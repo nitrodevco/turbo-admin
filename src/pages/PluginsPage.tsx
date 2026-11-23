@@ -7,7 +7,7 @@ import { useMe } from '#/api/queries';
 import { ask } from '#/components/confirm';
 import { Tabs } from '#/components/Tabs';
 import { toast, toastError } from '#/components/toast';
-import { Badge, Button, ButtonLink, EmptyState, ErrorNotice, Loading, PageBody, PageHeader, Panel, WarningNotice } from '#/components/ui';
+import { Badge, Button, ButtonLink, EmptyState, ErrorNotice, FileButton, Loading, PageBody, PageHeader, Panel, WarningNotice } from '#/components/ui';
 import { useHubTabs } from '#/layout/nav';
 import { cx } from '#/lib/cx';
 import { fromNow } from '#/lib/time';
@@ -309,30 +309,22 @@ const InstallButton = ({ maxBytes, code }: { maxBytes: number; code: boolean }) 
     const install = useInstallPlugin();
 
     return (
-        <label className={cx('inline-flex h-10 cursor-pointer items-center gap-1.5 rounded-lg border border-line px-3 text-sm font-medium text-ink hover:bg-subtle sm:h-8 sm:text-ui [&>svg]:size-4', install.isPending && 'pointer-events-none opacity-60')}>
-            <Upload />
+        <FileButton
+            accept=".zip,application/zip"
+            icon={<Upload />}
+            busy={install.isPending}
+            onFile={file =>
+                ask(
+                    {
+                        title: `Install ${file.name}?`,
+                        body: `${code ? 'A plugin is server code: it runs with the hotel\'s own access.' : `Only a data plugin installs without ${INSTALL}: a theme, texts, patches and images, no C# source.`} One with the same key is replaced. Up to ${Math.floor(maxBytes / (1024 * 1024))} MB.`,
+                        confirm: 'Install',
+                    },
+                    () => install.mutate(file, said),
+                )}
+        >
             Install
-            <input
-                type="file"
-                accept=".zip,application/zip"
-                className="sr-only"
-                onChange={(event) => {
-                    const file = event.target.files?.[0];
-
-                    if (file)
-                        ask(
-                            {
-                                title: `Install ${file.name}?`,
-                                body: `${code ? 'A plugin is server code: it runs with the hotel\'s own access.' : `Only a data plugin installs without ${INSTALL}: a theme, texts, patches and images, no C# source.`} One with the same key is replaced. Up to ${Math.floor(maxBytes / (1024 * 1024))} MB.`,
-                                confirm: 'Install',
-                            },
-                            () => install.mutate(file, said),
-                        );
-
-                    event.target.value = '';
-                }}
-            />
-        </label>
+        </FileButton>
     );
 };
 
