@@ -2,28 +2,21 @@ import { Download, ExternalLink, History, Link2, Palette, Pencil, Power, PowerOf
 import { type ReactNode, useState } from 'react';
 import { Link } from 'react-router';
 
-import { type Plugin, type PluginActionResponse, type PluginSource, type PluginSourceActionResponse, type PluginState, useCheckPluginSource, useInstallPlugin, usePluginContributions, usePlugins, useReloadPlugin, useRemovePluginSource, useRescanPlugins, useRollbackPlugin, useSetPluginEnabled, useUpdatePluginSource } from '#/api/plugins';
+import { type Plugin, type PluginActionResponse, type PluginSource, type PluginSourceActionResponse, useCheckPluginSource, useInstallPlugin, usePluginContributions, usePlugins, useReloadPlugin, useRemovePluginSource, useRescanPlugins, useRollbackPlugin, useSetPluginEnabled, useUpdatePluginSource } from '#/api/plugins';
 import { useMe } from '#/api/queries';
 import { ask } from '#/components/confirm';
 import { Tabs } from '#/components/Tabs';
 import { toast, toastError } from '#/components/toast';
-import { Badge, type BadgeTone, Button, ButtonLink, EmptyState, ErrorNotice, Loading, PageBody, PageHeader, Panel, WarningNotice } from '#/components/ui';
+import { Badge, Button, ButtonLink, EmptyState, ErrorNotice, Loading, PageBody, PageHeader, Panel, WarningNotice } from '#/components/ui';
 import { useHubTabs } from '#/layout/nav';
 import { cx } from '#/lib/cx';
 import { fromNow } from '#/lib/time';
 import { JobPanel } from '#/pages/assets/JobPanel';
 import { OpenRow } from '#/pages/gamedata/parts';
 
+import { PLUGIN_STATES } from './plugins/pluginStates';
 import { PluginSourceForm } from './PluginSourceForm';
 import { PluginUninstall } from './PluginUninstall';
-
-const STATES: Record<PluginState, { label: string; tone: BadgeTone }> = {
-    loaded: { label: 'loaded', tone: 'green' },
-    failed: { label: 'failed', tone: 'red' },
-    rejected: { label: 'refused', tone: 'red' },
-    disabled: { label: 'off', tone: 'amber' },
-    not_loaded: { label: 'not loaded', tone: 'neutral' },
-};
 
 /** What an action came to, as a toast: a refusal or a failed load is thrown with why. */
 const said = {
@@ -444,7 +437,7 @@ export const PluginsPage = () => {
                     </Button>
                 )}
                 {/* Themes, style properties, windows, patches, images and texts are all under Appearance. */}
-                <ButtonLink to="/appearance" icon={<Palette />}>Appearance</ButtonLink>
+                <ButtonLink to="/appearance/studio" icon={<Palette />}>Appearance</ButtonLink>
                 {data && (canLink
                     ? (
                             <Button variant="secondary" icon={<Link2 />} onClick={() => setEditing('new')}>
@@ -505,7 +498,7 @@ export const PluginsPage = () => {
                                             <span className="flex flex-wrap gap-1.5 sm:justify-end">
                                                 {sourceOf(plugin.key)?.updateAvailable && <Badge tone="accent">update available</Badge>}
                                                 {plugin.dev && <Badge>dev</Badge>}
-                                                <Badge tone={STATES[plugin.state].tone}>{STATES[plugin.state].label}</Badge>
+                                                <Badge tone={PLUGIN_STATES[plugin.state].tone}>{PLUGIN_STATES[plugin.state].label}</Badge>
                                             </span>
                                         </div>
                                     )}

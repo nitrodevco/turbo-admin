@@ -1,5 +1,5 @@
 import { lazy, Suspense } from 'react';
-import { Navigate, Route, Routes, useParams } from 'react-router';
+import { Navigate, Route, Routes } from 'react-router';
 
 import { LoginPage } from '#/auth/LoginPage';
 import { RequireSession } from '#/auth/RequireSession';
@@ -11,7 +11,6 @@ import { AccountPage } from '#/pages/AccountPage';
 import { AppearanceTextsPage } from '#/pages/appearance/AppearanceTextsPage';
 import { ChatBubblesPage } from '#/pages/appearance/ChatBubblesPage';
 import { ImagesPage } from '#/pages/appearance/ImagesPage';
-import { OutdatedPage } from '#/pages/appearance/OutdatedPage';
 import { ThemeStudioPage } from '#/pages/appearance/studio/ThemeStudioPage';
 import { ThemesPage } from '#/pages/appearance/ThemesPage';
 import { ApprovalPage } from '#/pages/approvals/ApprovalPage';
@@ -74,28 +73,6 @@ const UsagePage = lazy(() => import('#/pages/telemetry/UsagePage').then(x => ({ 
 const TelemetryRoomPage = lazy(() => import('#/pages/telemetry/TelemetryDrillPages').then(x => ({ default: x.TelemetryRoomPage })));
 const TelemetryPlayerPage = lazy(() => import('#/pages/telemetry/TelemetryDrillPages').then(x => ({ default: x.TelemetryPlayerPage })));
 
-/** Where a theme's style properties were (Plugins, then Appearance > Style properties): its Theme settings in the studio. */
-const OldThemePage = () => {
-    const { key } = useParams();
-
-    return <Navigate to={`/appearance/studio?${new URLSearchParams({ tab: 'settings', ...(key ? { theme: key } : {}) })}`} replace />;
-};
-
-/**
- * Where Windows & skins was (Plugins, then Appearance): a window opens in the studio, which shows a
- * part in the window drawing it; the skins are under Advanced.
- */
-const OldWindowsPage = () => {
-    const { tab } = useParams();
-    const params = new URLSearchParams(window.location.search);
-
-    if (tab === 'skins') return <Navigate to={`/appearance/advanced/windows/skins${window.location.search}`} replace />;
-
-    const id = params.get('id');
-
-    return <Navigate to={`/appearance/studio${id ? `?${new URLSearchParams({ window: id })}` : ''}`} replace />;
-};
-
 export const App = () => (
     <Routes>
         <Route path="/login" element={<LoginPage />} />
@@ -129,7 +106,6 @@ export const App = () => (
             <Route path="catalog/vouchers" element={<VouchersPage />} />
             <Route path="catalog/songs" element={<SongsPage />} />
             <Route path="catalog/discounts" element={<DiscountsPage />} />
-            <Route path="gamedata" element={<ToTab to="updates/waiting" />} />
             <Route path="gamedata/updates/:tab?" element={<UpdatesPage />} />
             <Route path="gamedata/library/:tab?" element={<LibraryPage />} />
             <Route path="gamedata/media" element={<MediaLibraryPage />} />
@@ -149,20 +125,13 @@ export const App = () => (
             <Route path="plugins" element={<PluginsPage />} />
             <Route path="plugins/schedule" element={<PluginSchedulePage />} />
             <Route path="plugins/ai" element={<PluginAiPage />} />
-            <Route path="plugins/patches" element={<Navigate to="/appearance/patches" replace />} />
-            <Route path="plugins/windows/:tab?" element={<OldWindowsPage />} />
-            <Route path="plugins/:key/theme" element={<OldThemePage />} />
-            <Route path="appearance" element={<Navigate to="/appearance/studio" replace />} />
             <Route path="appearance/studio" element={<ThemeStudioPage />} />
             <Route path="appearance/themes" element={<ThemesPage />} />
-            <Route path="appearance/styles/:key?" element={<OldThemePage />} />
-            <Route path="appearance/windows/:tab?" element={<OldWindowsPage />} />
-            <Route path="appearance/advanced/windows/:tab?" element={<WindowsPage />} />
+            <Route path="appearance/windows/:tab?" element={<WindowsPage />} />
             <Route path="appearance/patches" element={<PatchesPage />} />
             <Route path="appearance/images/:key?" element={<ImagesPage />} />
             <Route path="appearance/texts/:tab?" element={<AppearanceTextsPage />} />
             <Route path="appearance/chat-bubbles" element={<ChatBubblesPage />} />
-            <Route path="appearance/outdated" element={<OutdatedPage />} />
             <Route path="plugin/:key/:page" element={<PluginPage />} />
             <Route path="plugin/:key/:page/:id" element={<PluginPage />} />
             <Route path="command-log" element={<CommandLogPage />} />

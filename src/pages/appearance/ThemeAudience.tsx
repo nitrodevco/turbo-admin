@@ -1,141 +1,118 @@
-import { Eye, Star, Users } from 'lucide-react';
+import { Users } from 'lucide-react';
 import { useState } from 'react';
 
-import { type ThemeAudience, type ThemeAudienceChange, type ThemeStatus, useSetThemeAudience, useThemeAudiences } from '#/api/appearance';
-import { useClientAssets } from '#/api/assets';
+import { type ThemeAudience, type ThemeAudienceChange, type ThemeStatus, useSetThemeAudience } from '#/api/appearance';
+import { HOTEL } from '#/appearance/workingOn';
+import { Modal, ModalActions } from '#/components/Modal';
 import { useSaved } from '#/components/SaveFeedback';
-import { toastError } from '#/components/toast';
-import { Badge, Button, Checkbox, Input, Select } from '#/components/ui';
+import { Button, Chip, ErrorNotice, Input, Labeled, Segmented, Switch } from '#/components/ui';
 
-export const STATUS_LABEL: Record<ThemeStatus, string> = { live: 'Live', development: 'In development', off: 'Off' };
-
-// A theme no one set (one just made or installed) is in development: no player gets it until it is set Live.
-
-/** The client page staff open a theme in for one load: the preview host's page without `?preview`, with `?theme=`. */
-export const previewLink = (preview: string | undefined, key: string) => {
-    if (!preview) return null;
-
-    try {
-        const url = new URL(preview);
-
-        url.searchParams.delete('preview');
-        url.searchParams.set('theme', key);
-
-        return url.toString();
-    } catch {
-        return null;
-    }
-};
+import { STATUS_LABEL } from './themes';
 
 /** A comma separated list as its trimmed entries. */
 const listOf = (text: string) => text.split(',').map(x => x.trim()).filter(x => x.length > 0);
 
-/**
- * Who gets a theme (XenForo's style options): Live / In development / Off, the hotel's default, whether
- * players may choose it, and while in development the players and permission groups that get it; and
- * a "Preview as" link that opens the client drawing it once, for staff who may preview themes.
- */
-export const ThemeAudienceControls = ({ themeKey }: { themeKey: string }) => {
-    const { data } = useThemeAudiences();
-    const assets = useClientAssets();
-    const theme = data?.themes.find(x => x.key === themeKey);
+const STATUSES = (Object.keys(STATUS_LABEL) as ThemeStatus[]).map(status => ({ value: status, label: STATUS_LABEL[status] }));
 
-    if (!data || !theme) return null;
-
-    const link = previewLink(assets?.preview, theme.key);
-
-    return (
-        <span className="flex flex-wrap items-center gap-2" data-theme-audience={theme.key}>
-            {theme.isDefault && <Badge tone="green"><Star className="mr-1 inline size-3" />default</Badge>}
-            {theme.status !== 'live' && <Badge tone={theme.status === 'development' ? 'amber' : 'neutral'}>{STATUS_LABEL[theme.status]}</Badge>}
-            {theme.selectable && <Badge>players may choose</Badge>}
-            {theme.status === 'development' && (
-                <span className="text-xs text-muted">
-                    <Users className="mr-1 inline size-3" />
-                    {[ ...theme.players.map(x => x.name ?? `#${x.id}`), ...theme.groups.map(x => `group ${x}`) ].join(', ') || 'no audience yet'}
-                </span>
-            )}
-            {link && theme.status !== 'off' && (
-                <a href={link} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 px-2 text-sm text-accent hover:underline">
-                    <Eye className="size-4" />
-                    Preview as this theme
-                </a>
-            )}
-            {data.canManage && <ThemeAudienceEditor theme={theme} groups={data.groups} />}
-        </span>
-    );
+/** What each status does, said under the choice. */
+const STATUS_HINT: Record<ThemeStatus, string> = {
+    live: 'Players draw it when it is the default, or when they chose it.',
+    development: 'Only the players and groups below draw it, and staff who may preview themes.',
+    off: 'No player draws it. Its files stay installed: turn the plugin off to unload them.',
 };
 
-const ThemeAudienceEditor = ({ theme, groups }: { theme: ThemeAudience; groups: string[] }) => {
-    const [ open, setOpen ] = useState(false);
-    const [ players, setPlayers ] = useState('');
-    const [ chosenGroups, setChosenGroups ] = useState<string[]>([]);
+/**
+ * Who gets a theme (XenForo's style options), as one form: Live, In development or Off; while
+ * Live, whether it is the hotel's default and whether players may choose it; while in development,
+ * the players and permission groups that get it. Saved as one change. The hotel's own theme is
+ * always Live (every theme ends in it), and so is the default, until another is made the default.
+ */
+export const ThemeAudienceDialog = ({ audience, name, groups, onClose }: { audience: ThemeAudience; name: string; groups: string[]; onClose: () => void }) => {
+    const [ status, setStatus ] = useState(audience.status);
+    const [ selectable, setSelectable ] = useState(audience.selectable);
+    const [ makeDefault, setMakeDefault ] = useState(audience.isDefault);
+    const [ players, setPlayers ] = useState(audience.players.map(x => x.name ?? String(x.id)).join(', '));
+    const [ chosen, setChosen ] = useState(audience.groups);
     const set = useSetThemeAudience();
-
     const saved = useSaved();
-    const save = (change: ThemeAudienceChange, said: string) => set.mutate({ key: theme.key, change }, { onSuccess: () => saved(said), onError: toastError });
+    const fixed = audience.key === HOTEL
+        ? 'The hotel\'s own theme is always Live: every theme ends in it.'
+        : audience.isDefault ? 'The default theme stays Live: make another theme the default to change it.' : null;
 
-    const start = () => {
-        setPlayers(theme.players.map(x => x.name ?? String(x.id)).join(', '));
-        setChosenGroups(theme.groups);
-        setOpen(true);
+    const save = () => {
+        const change: ThemeAudienceChange = {
+            status,
+            ...(status === 'live' ? { selectable } : {}),
+            ...(status === 'live' && makeDefault && !audience.isDefault ? { isDefault: true } : {}),
+            ...(status === 'development' ? { players: listOf(players), groups: chosen } : {}),
+        };
+
+        set.mutate({ key: audience.key, change }, {
+            onSuccess: () => {
+                saved(`Saved who gets ${name}`);
+                onClose();
+            },
+        });
     };
 
-    if (!open) return <Button variant="ghost" onClick={start}>Who gets it</Button>;
-
     return (
-        <span className="flex w-full flex-col gap-2 rounded-lg border border-line p-3" data-theme-editor={theme.key}>
-            <span className="flex flex-wrap items-center gap-3">
-                <label className="flex items-center gap-2 text-sm">
-                    Status
-                    <Select
-                        aria-label="Status"
-                        value={theme.status}
-                        disabled={theme.key === 'hotel'}
-                        title={theme.key === 'hotel' ? 'The hotel\'s own theme is always Live: every theme ends in it' : undefined}
-                        onChange={event => save({ status: event.target.value as ThemeStatus }, `${theme.key} is ${STATUS_LABEL[event.target.value as ThemeStatus]}`)}
-                    >
-                        {(Object.keys(STATUS_LABEL) as ThemeStatus[]).map(status => <option key={status} value={status}>{STATUS_LABEL[status]}</option>)}
-                    </Select>
-                </label>
-                <Checkbox
-                    label="Players may choose it"
-                    checked={theme.selectable}
-                    onChange={checked => save({ selectable: checked }, checked ? `Players may choose ${theme.key}` : `${theme.key} can no longer be chosen`)}
-                />
-                <Button
-                    variant="ghost"
-                    icon={<Star />}
-                    disabled={theme.isDefault || theme.status !== 'live'}
-                    title={theme.status !== 'live' ? 'Only a Live theme can be the default' : undefined}
-                    onClick={() => save({ isDefault: true }, `${theme.key} is the hotel's default`)}
-                >
-                    Make default
-                </Button>
-            </span>
-            <span className="flex flex-wrap items-end gap-3">
-                <label className="flex min-w-64 flex-1 flex-col gap-1 text-sm">
-                    Players who get it while in development (names, comma separated)
-                    <Input aria-label="Audience players" value={players} onChange={event => setPlayers(event.target.value)} placeholder="Name, Another name" />
-                </label>
-                <label className="flex flex-col gap-1 text-sm">
-                    Permission groups
-                    <Select
-                        aria-label="Audience groups"
-                        multiple
-                        value={chosenGroups}
-                        onChange={event => setChosenGroups([ ...event.target.selectedOptions ].map(x => x.value))}
-                        className="h-24"
-                    >
-                        {groups.map(group => <option key={group} value={group}>{group}</option>)}
-                    </Select>
-                </label>
-                <Button onClick={() => save({ players: listOf(players), groups: chosenGroups }, `Saved who gets ${theme.key}`)}>Save audience</Button>
-                <Button variant="ghost" onClick={() => setOpen(false)}>Close</Button>
-            </span>
-            <span className="text-xs text-muted">
-                Staff with appearance.themes.preview may draw any theme in development (the client&apos;s Other settings, or Preview as). Players online draw a change as it is saved.
-            </span>
-        </span>
+        <Modal title={`Who gets ${name}`} open onClose={onClose} className="sm:h-fit! sm:max-w-lg">
+            <form
+                className="flex flex-col gap-4 p-4 sm:p-5"
+                data-theme-editor={audience.key}
+                onSubmit={(event) => {
+                    event.preventDefault();
+                    save();
+                }}
+            >
+                <div className="flex flex-col gap-1.5">
+                    <span className="text-xs font-medium text-muted">Status</span>
+                    <Segmented label="Status" value={status} onChange={value => setStatus(value as ThemeStatus)} options={STATUSES} disabled={!!fixed} />
+                    <span className="text-xs text-muted">{fixed ?? STATUS_HINT[status]}</span>
+                </div>
+                {status === 'live' && (
+                    <div className="flex flex-col divide-y divide-line rounded-lg border border-line px-3">
+                        <Switch
+                            label="The hotel's default"
+                            hint={!audience.isDefault && 'Every player who chose no other theme draws it, in place of the default now.'}
+                            checked={makeDefault}
+                            disabled={audience.isDefault}
+                            onChange={setMakeDefault}
+                        />
+                        <Switch label="Players may choose it" hint="In the client's settings, beside the default." checked={selectable} onChange={setSelectable} />
+                    </div>
+                )}
+                {status === 'development' && (
+                    <>
+                        <Labeled label="Players" hint="Names, comma separated.">
+                            <Input aria-label="Audience players" value={players} onChange={event => setPlayers(event.target.value)} placeholder="Name, Another name" />
+                        </Labeled>
+                        <div className="flex flex-col gap-1.5">
+                            <span id="audience-groups" className="text-xs font-medium text-muted">Permission groups</span>
+                            {groups.length > 0
+                                ? (
+                                        <div role="group" aria-labelledby="audience-groups" className="flex flex-wrap gap-1.5">
+                                            {groups.map(group => (
+                                                <Chip key={group} active={chosen.includes(group)} onClick={() => setChosen(chosen.includes(group) ? chosen.filter(x => x !== group) : [ ...chosen, group ])}>
+                                                    {group}
+                                                </Chip>
+                                            ))}
+                                        </div>
+                                    )
+                                : <span className="text-xs text-muted">The hotel has no permission groups.</span>}
+                        </div>
+                        <p className="flex items-start gap-2 text-xs text-muted">
+                            <Users className="mt-0.5 size-3.5 shrink-0" aria-hidden />
+                            Staff with appearance.themes.preview may draw any theme in development too: in the client&apos;s Other settings, or with Preview as.
+                        </p>
+                    </>
+                )}
+                {set.error && <ErrorNotice error={set.error} />}
+                <ModalActions>
+                    <Button variant="ghost" onClick={onClose}>Cancel</Button>
+                    <Button type="submit" disabled={set.isPending}>{set.isPending ? 'Saving...' : 'Save'}</Button>
+                </ModalActions>
+            </form>
+        </Modal>
     );
 };

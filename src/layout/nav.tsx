@@ -1,4 +1,4 @@
-import { Activity, AppWindow, Armchair, BellRing, Bug, CalendarClock, CalendarDays, ChartColumn, CloudDownload, Coins, DatabaseBackup, Disc3, DoorOpen, Flag, FunnelX, Gauge, History, House, ImageIcon, Images, KeyRound, Landmark, Languages, Layers, Mail, MessageCircle, MessagesSquare, Milestone, MonitorSmartphone, PackagePlus, Palette, Plug, Puzzle, ScrollText, Send, Shield, ShieldCheck, SlidersHorizontal, SquareTerminal, Stamp, Store, SwatchBook, Ticket, Timer, TriangleAlert, Type, UserRound, Users } from 'lucide-react';
+import { Activity, AppWindow, Armchair, BellRing, Bug, CalendarClock, CalendarDays, ChartColumn, CloudDownload, Coins, DatabaseBackup, Disc3, DoorOpen, Flag, FunnelX, Gauge, History, House, ImageIcon, Images, KeyRound, Landmark, Languages, Layers, Mail, MessageCircle, MessagesSquare, Milestone, MonitorSmartphone, PackagePlus, Palette, Plug, Puzzle, ScrollText, Send, Shield, ShieldCheck, SlidersHorizontal, SquareTerminal, Stamp, Store, SwatchBook, Ticket, Timer, Type, UserRound, Users } from 'lucide-react';
 import type { ReactNode } from 'react';
 import { useLocation } from 'react-router';
 
@@ -54,12 +54,11 @@ const PAGES = {
     publish: { to: '/gamedata/publish', label: 'Publish', icon: <Send />, end: false, key: 'n', needs: 'canViewGamedata' },
     themes: { to: '/appearance/themes', label: 'Themes', icon: <Palette />, end: false, key: 'z', needs: 'canViewPlugins', words: 'look design styles extends habbo theme.json' },
     studio: { to: '/appearance/studio', label: 'Theme studio', icon: <SwatchBook />, end: false, needs: 'canViewPlugins', words: 'design windows skins elements style properties colours colors fonts frame art purse catalogue position loading screen inspector changes undo' },
-    windows: { to: '/appearance/advanced/windows', label: 'Windows & skins', icon: <AppWindow />, end: false, needs: 'canViewPlugins', words: 'templates elements keys sprites overlays nine-slice raw list' },
-    patches: { to: '/appearance/patches', label: 'Template patches', icon: <Layers />, end: false, needs: 'canViewPlugins', words: 'template modifications ops applied unmatched ineffective' },
+    windows: { to: '/appearance/windows', label: 'Windows & skins', icon: <AppWindow />, end: false, needs: 'canViewPlugins', words: 'templates elements keys sprites overlays nine-slice raw list' },
+    patches: { to: '/appearance/patches', label: 'Template patches', icon: <Layers />, end: false, needs: 'canViewPlugins', words: 'template modifications ops applied unmatched ineffective outdated client update broken missing elements' },
     images: { to: '/appearance/images', label: 'Images', icon: <ImageIcon />, end: false, needs: 'canViewPlugins', words: 'upload art icons pictures styles folder' },
     chatBubbles: { to: '/appearance/chat-bubbles', label: 'Chat bubbles', icon: <MessageCircle />, end: false, needs: 'canViewContent', words: 'chat styles speech bubbles chatstyles club staff art reg points' },
     appearanceTexts: { to: '/appearance/texts', label: 'Texts', icon: <Type />, end: false, needs: 'canViewGamedata', words: 'captions labels shown text window phrases' },
-    outdated: { to: '/appearance/outdated', label: 'Outdated patches', icon: <TriangleAlert />, end: false, needs: 'canViewPlugins', words: 'client update broken missing elements' },
     permissions: { to: '/permissions', label: 'Permissions', icon: <KeyRound />, end: false, key: 'k', needs: 'canViewPermissions' },
     staff: { to: '/staff', label: 'Staff passkeys', icon: <ShieldCheck />, end: false, key: 's', needs: 'canResetPasskeys' },
     commandLog: { to: '/command-log', label: 'Command log', icon: <ScrollText />, end: false, key: 'l', needs: 'canViewCommandLog' },
@@ -108,6 +107,7 @@ const MODERATION: NavEntry = { label: 'Moderation', icon: <Flag />, pages: [ 're
 const GROUPS: NavEntry = { label: 'Groups', icon: <Shield />, pages: [ 'groups', 'badgeParts' ], hint: 'Groups, their members, and badge parts' };
 const PLUGINS: NavEntry = { label: 'Plugins', icon: <Plug />, pages: [ 'plugins', 'pluginSchedule', 'pluginAi' ], hint: 'What the server loaded, turning it off or on, its scheduled tasks and AI' };
 const ACCESS: NavEntry = { label: 'Access', icon: <KeyRound />, pages: [ 'permissions', 'staff' ], hint: 'Groups, nodes and staff passkeys' };
+const THEMES: NavEntry = { label: 'Themes', icon: <Palette />, pages: [ 'studio', 'themes', 'patches', 'images', 'appearanceTexts', 'windows' ], hint: 'The theme studio, every theme and who gets it, and its patches, images, texts, windows and skins' };
 
 const SECTIONS: NavSection[] = [
     { label: null, entries: [ OVERVIEW ] },
@@ -136,13 +136,11 @@ const SECTIONS: NavSection[] = [
         ],
     },
     {
-        // Everything a designer changes, in one place: the studio first, then the themes, the chat bubbles, and the raw editors under Advanced.
+        // Everything a designer changes, in one place: the themes (the studio first, then the list of them and the raw editors, as tabs) and the chat bubbles.
         label: 'Appearance',
         entries: [
-            { label: 'Theme studio', icon: <SwatchBook />, pages: [ 'studio' ], hint: 'Pick a window, click what to change, see it as players will' },
-            { label: 'Themes', icon: <Palette />, pages: [ 'themes' ], hint: 'Every theme under the one it extends, and who gets it' },
+            THEMES,
             { label: 'Chat bubbles', icon: <MessageCircle />, pages: [ 'chatBubbles' ], hint: 'The bubbles players speak in, drawn as the game draws them' },
-            { label: 'Advanced', icon: <Layers />, pages: [ 'patches', 'images', 'appearanceTexts', 'outdated', 'windows' ], hint: 'Template patches, images, texts, outdated patches and the raw list of windows and skins' },
         ],
     },
     {
@@ -264,10 +262,10 @@ export const useIsActive = () => {
  * The tabs of an entry that holds several pages, for its pages' headers: each a link to its page,
  * the one open now chosen. Only the pages the viewer may open; none at all when that is one.
  */
-export const useHubTabs = (hub: 'overview' | 'logs' | 'groups' | 'moderation' | 'plugins'): { items: TabItem[]; value: string } | undefined => {
+export const useHubTabs = (hub: 'overview' | 'logs' | 'groups' | 'moderation' | 'plugins' | 'themes'): { items: TabItem[]; value: string } | undefined => {
     const { data: me } = useMe();
     const { pathname } = useLocation();
-    const entry = { overview: OVERVIEW, logs: LOGS, groups: GROUPS, moderation: MODERATION, plugins: PLUGINS }[hub];
+    const entry = { overview: OVERVIEW, logs: LOGS, groups: GROUPS, moderation: MODERATION, plugins: PLUGINS, themes: THEMES }[hub];
     const pages = entry.pages.map(name => PAGES[name] as NavItem).filter(page => allowed(me, page));
 
     if (pages.length < 2)

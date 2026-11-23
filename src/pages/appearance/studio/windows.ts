@@ -70,6 +70,12 @@ const wordsOf = (id: string) => {
     return asset.charAt(0).toUpperCase() + asset.slice(1);
 };
 
+/**
+ * What staff call a template, a window or a part: the client's window map's name for it, else its
+ * file's as words (`purse_xml`, Purse). For a list of templates by id, where the id alone is a file path.
+ */
+export const windowName = (index: TemplateIndex, id: string) => index.windows?.[id]?.name || index.parts?.[id]?.name || UNFRAMED_WINDOWS[id] || wordsOf(id);
+
 /** The room screen as a window of the list: its parts are the HUD's windows the client has. */
 const hudWindow = (index: TemplateIndex): StudioWindow => ({ id: HUD_WINDOW, name: 'Room screen (HUD)', area: 'Room', parts: HUD_PARTS.filter(part => part in index.templates), states: [], template: undefined });
 

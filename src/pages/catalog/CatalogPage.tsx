@@ -696,8 +696,8 @@ const CatalogEditor = ({ view }: { view: View }) => {
 };
 
 /**
- * The catalog at `/catalog/<view>`: a path that names no view goes to the editor, or the audit's
- * first view for `audit`, keeping the page and offer it had open.
+ * The catalog at `/catalog/<view>`: a path that names no view goes to the editor, keeping the page
+ * and offer it had open.
  */
 export const CatalogPage = () => {
     const path = useParams();
@@ -705,7 +705,7 @@ export const CatalogPage = () => {
     const view = VIEWS.find(x => VIEW_PATHS[x] === [ path.view, path.sub ].filter(Boolean).join('/'));
 
     if (!view)
-        return <Navigate to={{ pathname: `/catalog/${VIEW_PATHS[path.view === 'audit' ? 'missing' : 'editor']}`, search }} replace />;
+        return <Navigate to={{ pathname: `/catalog/${VIEW_PATHS.editor}`, search }} replace />;
 
     return <CatalogEditor view={view} />;
 };

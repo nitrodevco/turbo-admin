@@ -15,10 +15,11 @@ import { ImagePicker } from '#/components/ImagePicker';
 import { useSaved } from '#/components/SaveFeedback';
 import { Tabs } from '#/components/Tabs';
 import { toastError } from '#/components/toast';
-import { Badge, Button, ErrorNotice, IconButton, Loading, PageBody, PageHeader, Segmented, Select } from '#/components/ui';
+import { Badge, Button, ErrorNotice, IconButton, Loading, PageBody, PageHeader, Segmented, Select, TextLink } from '#/components/ui';
+import { useHubTabs } from '#/layout/nav';
 import { useFillHeight } from '#/lib/fillHeight';
-import { previewLink, STATUS_LABEL } from '#/pages/appearance/ThemeAudience';
-import { themeName, themeTree } from '#/pages/appearance/themes';
+import { hasLiveDefault, previewLink, reachOf, themeName, themeTree } from '#/pages/appearance/themes';
+import { DefaultTag, ReachLine, StatusPill } from '#/pages/appearance/ThemeTags';
 import { PackageDialog } from '#/pages/plugins/PackageDialog';
 import { type DesignDraft, DesignPreview, type DesignPreviewControls, type DesignRects, type DesignState } from '#/preview/DesignPreview';
 
@@ -102,24 +103,17 @@ const ThemeBar = ({ unsaved, onPick }: { unsaved: number; onPick: (key: string) 
             </label>
             <span className="font-mono text-xs text-muted" title="Save writes here">{folderOf(working.key)}</span>
             {audience && (
-                <span className="inline-flex items-center gap-1.5" data-theme-status={audience.status}>
-                    <Badge tone={audience.status === 'live' ? 'green' : audience.status === 'development' ? 'amber' : 'neutral'}>{STATUS_LABEL[audience.status]}</Badge>
-                    {audience.isDefault && <Badge tone="green">default</Badge>}
-                    {audience.status === 'development' && (
-                        <span className="text-xs text-muted">{[ ...audience.players.map(player => player.name ?? `#${player.id}`), ...audience.groups.map(group => `group ${group}`) ].join(', ') || 'no one yet'}</span>
-                    )}
-                    <Link to="/appearance/themes" className="text-xs text-accent hover:underline">Who gets it</Link>
+                <span className="inline-flex min-w-0 items-center gap-2" data-theme-status={audience.status}>
+                    <StatusPill status={audience.status} />
+                    {audience.isDefault && <DefaultTag />}
+                    <ReachLine words={reachOf(audience, hasLiveDefault(audiences?.themes))} />
+                    <TextLink to="/appearance/themes">Who gets it</TextLink>
                 </span>
             )}
-            {data?.canManage && (
-                <Link to="/appearance/themes?new=1" className="inline-flex items-center gap-1 text-xs text-accent hover:underline">
-                    <Plus className="size-3.5" />
-                    New theme
-                </Link>
-            )}
+            {data?.canManage && <TextLink to="/appearance/themes?new=1"><Plus aria-hidden />New theme</TextLink>}
             {link && audience?.status !== 'off' && (
-                <a href={link} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 text-xs text-accent hover:underline" title="Opens the client drawing this theme once, its saved changes">
-                    <Eye className="size-3.5" />
+                <a href={link} target="_blank" rel="noreferrer" className="inline-flex items-center gap-0.5 rounded text-xs font-medium text-accent hover:underline [&>svg]:size-3.5" title="Opens the client drawing this theme once, its saved changes">
+                    <Eye aria-hidden />
                     Preview as
                 </a>
             )}
@@ -136,6 +130,7 @@ const ThemeBar = ({ unsaved, onPick }: { unsaved: number; onPick: (key: string) 
  */
 export const ThemeStudioPage = () => {
     const [ params, setParams ] = useSearchParams();
+    const hubTabs = useHubTabs('themes');
     const working = useWorkingOn();
     const theme = working.key;
     const intoTheme = !working.hotel;
@@ -149,7 +144,7 @@ export const ThemeStudioPage = () => {
     const ownWindows = usePluginWindows(theme).data?.windows;
     const index = useMemo(() => (gameIndex ? withOwnWindows(gameIndex, theme, ownWindows, draft.windows) : undefined), [ gameIndex, theme, ownWindows, draft.windows ]);
     const windows = useMemo(() => (index ? studioWindows(index) : []), [ index ]);
-    // A part asked for (an old link to badgeGridItem) is shown in the window it is drawn inside.
+    // A part asked for (a link from Texts or Template patches names the template) is shown in the window it is drawn inside.
     const windowId = asked && index && !windows.some(window => window.id === asked)
         ? (index.parts?.[asked]?.windows[0] ?? windows.find(window => window.parts.includes(asked))?.id ?? asked)
         : asked;
@@ -211,7 +206,7 @@ export const ThemeStudioPage = () => {
         return next;
     }, { replace: true });
 
-    // An old Style properties link names its theme: work on it.
+    // A link names the theme to work on (the Themes page's Edit, a plugin's Theme settings): work on it.
     const linkedTheme = params.get('theme');
 
     useEffect(() => {
@@ -423,7 +418,7 @@ export const ThemeStudioPage = () => {
 
     return (
         <StudioContext value={studio}>
-            <PageHeader wide title="Theme studio" description={`Pick a window, click what to change, Save: it is written into ${folderOf(theme)} and the players drawing it see it as it is saved.`} />
+            <PageHeader wide title="Theme studio" tabs={hubTabs} description={`Saves into ${folderOf(theme)}; players see a change as it is saved.`} />
             <PageBody wide still>
                 <div className="card flex flex-wrap items-center gap-x-4 gap-y-2 px-3 py-2">
                     <ThemeBar unsaved={unsaved} onPick={pickTheme} />

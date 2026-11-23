@@ -37,10 +37,13 @@ export const useThemes = () => useQuery({
     queryFn: () => api<PluginThemesResponse>('/plugins/themes'),
 });
 
-export const usePluginTemplatePatches = (key: string) => useQuery({
+/** A plugin's `wwwroot/template-patches.json` as its clients are given it: one plugin's (`usePluginTemplatePatches`), or several at once (`useQueries`). */
+export const pluginTemplatePatchesQuery = (key: string) => ({
     queryKey: [ 'plugins', key, 'template-patches' ],
     queryFn: () => api<{ key: string; patches: PluginTemplatePatch[] }>(`/plugins/${encodeURIComponent(key)}/template-patches`),
 });
+
+export const usePluginTemplatePatches = (key: string) => useQuery(pluginTemplatePatchesQuery(key));
 
 /** Who a theme reaches (`docs/plugin-data.md`, "Who gets which theme"). */
 export type ThemeStatus = 'live' | 'development' | 'off';

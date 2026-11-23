@@ -1,40 +1,39 @@
 import { useQueryClient } from '@tanstack/react-query';
 import { Copy, Plus, RefreshCw, RotateCcw, Upload } from 'lucide-react';
 import { type ReactNode, useMemo, useState } from 'react';
-import { Link, useSearchParams } from 'react-router';
+import { Link, useNavigate, useSearchParams } from 'react-router';
 
 import { useClientAssets } from '#/api/assets';
 import { useTextSearch } from '#/api/gamedata';
 import { type HotelPatch, type PluginStyle, uploadPluginImage, useHotelOverlays, useOverlayChange, usePatches, usePluginStyles, useStyleChange } from '#/api/noCode';
 import { type Plugin, usePluginContributions, usePlugins } from '#/api/plugins';
-import { readWindowsAgain, type SkinEntry, type SkinMap, type SkinSprite, type TemplateIndex, type ThemeSheet, useSkinMap, useTemplateIndex, useThemeSheet, type WindowElement, windowOf } from '#/api/windows';
+import { readWindowsAgain, type SkinEntry, type SkinMap, type SkinSprite, type TemplateIndex, type ThemeSheet, useSkinMap, useTemplateIndex, useThemeSheet, windowOf } from '#/api/windows';
 import { useWorkingOn } from '#/appearance/workingOn';
 import { WorkingOnPicker } from '#/appearance/WorkingOnPicker';
 import { useSaved } from '#/components/SaveFeedback';
 import { SearchInput } from '#/components/SearchInput';
 import { toast, toastError } from '#/components/toast';
-import { Badge, Button, EmptyState, ErrorNotice, Loading, PageBody, PageHeader, Panel } from '#/components/ui';
+import { Badge, Button, EmptyState, ErrorNotice, FileButton, Label, Loading, PageBody, PageHeader, Panel, Segmented, TextLink } from '#/components/ui';
+import { useHubTabs } from '#/layout/nav';
 import { useDebounced } from '#/lib/debounce';
 import { useFillHeight } from '#/lib/fillHeight';
 import { usePathTab } from '#/lib/tabs';
+import { flatElements, windowName } from '#/pages/appearance/studio/windows';
+import { WindowPick } from '#/pages/appearance/WindowPick';
 import { DesignPreview } from '#/preview/DesignPreview';
 
-import { PatchEditor } from './PatchesPage';
+import { PatchEditor, PatchRow } from './PatchesPage';
+import { ReportCounts, ReportWords } from './PatchReports';
+import { patchIssues } from './reportKinds';
 import { SkinSetUpload } from './SkinSetUpload';
 import { WindowTree } from './WindowTree';
 
 const TABS = [
-    { value: 'windows', label: 'Windows', to: '/appearance/advanced/windows/windows' },
-    { value: 'skins', label: 'Skins', to: '/appearance/advanced/windows/skins' },
+    { value: 'windows', label: 'Windows', to: '/appearance/windows/windows' },
+    { value: 'skins', label: 'Skins', to: '/appearance/windows/skins' },
 ];
 
-/** How a patch stands in players' clients, by the reports' kinds (as on Template patches). */
-const TONES: Record<string, 'green' | 'amber' | 'red'> = { 'patch.applied': 'green', 'patch.unmatched': 'amber', 'patch.conflict': 'amber', 'patch.ineffective': 'amber', 'module.failed': 'red' };
-
 const LIST_LIMIT = 200;
-
-/** Every element of a tree, depth first. */
-const flat = (elements: readonly WindowElement[]): WindowElement[] => elements.flatMap(element => [ element, ...flat(element.children ?? []) ]);
 
 /** The skins each element of a window draws, by its key. */
 const skinsByKey = (skins: SkinMap | undefined, id: string) => {
@@ -55,7 +54,7 @@ const matches = (index: TemplateIndex, id: string, words: string, shown: Readonl
 
     const found = windowOf(index, id);
 
-    return !!found && (found.name.toLowerCase().includes(words) || flat(found.elements).some(element => [ element.key, element.name, element.caption, ...(element.texts ?? []) ].some(value => value?.toLowerCase().includes(words))
+    return !!found && (found.name.toLowerCase().includes(words) || flatElements(found.elements).some(element => [ element.key, element.name, element.caption, ...(element.texts ?? []) ].some(value => value?.toLowerCase().includes(words))
         || element.texts?.some(text => shown.has(text))));
 };
 
@@ -134,26 +133,11 @@ const SpriteReplacement = ({ sprite, replacing }: { sprite: SkinSprite; replacin
                 </span>
             )}
             {replacing.canManage && (
-                <label className={`inline-flex items-center gap-1 text-sm text-accent ${busy ? 'opacity-50' : 'cursor-pointer hover:underline'}`}>
-                    <Upload className="size-4" />
+                <FileButton small accept={IMAGE_TYPES} icon={<Upload />} busy={busy} title={`A replacement for ${sprite.sprite}: PNG, GIF, JPEG or WebP, at most 2 MB`} onFile={file => void upload(file)}>
                     {busy ? 'Uploading...' : 'Upload replacement'}
-                    <input
-                        type="file"
-                        accept={IMAGE_TYPES}
-                        aria-label={`Upload a replacement for ${sprite.sprite}`}
-                        className="sr-only"
-                        disabled={busy}
-                        onChange={(event) => {
-                            const file = event.target.files?.[0];
-
-                            event.target.value = '';
-
-                            if (file) void upload(file);
-                        }}
-                    />
-                </label>
+                </FileButton>
             )}
-            {current && replacing.canManage && <Button variant="ghost" icon={<RotateCcw />} disabled={busy} onClick={() => void giveBack()}>Remove</Button>}
+            {current && replacing.canManage && <Button small variant="ghost" icon={<RotateCcw />} disabled={busy} onClick={() => void giveBack()}>Habbo&apos;s again</Button>}
         </>
     );
 };
@@ -178,6 +162,7 @@ const SkinCard = ({ id, skin, sheet, replacing }: { id: string; skin: SkinEntry;
                         {sprite.width !== undefined && <span className="text-xs">{`${sprite.width}x${sprite.height}`}</span>}
                         {sprite.slice && <span className="text-xs text-muted">{`nine-slice ${sprite.slice.left} ${sprite.slice.top} ${sprite.slice.right} ${sprite.slice.bottom}`}</span>}
                         <Button
+                            small
                             variant="ghost"
                             icon={<Copy />}
                             title="Copy the asset.overlays entry: replaces this sprite, at its size, in every window drawing it"
@@ -193,7 +178,7 @@ const SkinCard = ({ id, skin, sheet, replacing }: { id: string; skin: SkinEntry;
                 <p className="flex flex-wrap gap-x-3 gap-y-1 text-xs">
                     <span className="text-muted">Drawn by:</span>
                     {windows.map(([ win, keys ]) => (
-                        <Link key={win} to={`/appearance/advanced/windows/windows?${new URLSearchParams({ id: win })}`} className="font-mono text-accent hover:underline">{`${win} ${keys.map(key => `'${key}'`).join(' ')}`}</Link>
+                        <Link key={win} to={`/appearance/windows/windows?${new URLSearchParams({ id: win })}`} className="font-mono text-accent hover:underline">{`${win} ${keys.map(key => `'${key}'`).join(' ')}`}</Link>
                     ))}
                 </p>
             )}
@@ -257,19 +242,21 @@ const SkinsTab = () => {
 const PluginWindowPatches = ({ plugin, id }: { plugin: Plugin; id: string }) => {
     const { data } = usePluginContributions(plugin.key);
     const patches = data?.items.filter(item => item.kind === 'template-patch' && item.name === id) ?? [];
-    const issues = data?.clientIssues.filter(issue => issue.kind.startsWith('patch.') && issue.subject === id) ?? [];
+    const issues = patchIssues(data?.clientIssues).filter(issue => issue.subject === id);
 
     if (patches.length === 0 && issues.length === 0) return null;
 
     return (
-        <li className="flex flex-col gap-1 py-1.5 text-sm">
-            <div className="flex flex-wrap items-center gap-2">
+        <li className="flex flex-col gap-1 py-2.5">
+            <div className="flex flex-wrap items-center gap-x-3 gap-y-1.5">
                 <span className="font-medium">{plugin.name ?? plugin.key}</span>
                 {patches.map(patch => <span key={patch.name} className="text-xs text-muted">{patch.detail}</span>)}
-                {issues.map(issue => <Badge key={issue.kind} tone={TONES[issue.kind] ?? 'neutral'}>{`${issue.kind.slice('patch.'.length)} - ${issue.clients} client(s)`}</Badge>)}
-                <Link to={`/appearance/studio?${new URLSearchParams({ tab: 'settings', theme: plugin.key })}`} className="ml-auto text-xs text-accent hover:underline">Theme</Link>
+                <span className="ml-auto flex items-center gap-2">
+                    <ReportCounts issues={issues} />
+                    <TextLink to={`/appearance/studio?${new URLSearchParams({ tab: 'settings', theme: plugin.key })}`}>Theme</TextLink>
+                </span>
             </div>
-            {issues.filter(issue => issue.kind !== 'patch.applied').map(issue => <p key={issue.kind} className="text-xs text-warn">{issue.message}</p>)}
+            <ReportWords issues={issues} />
         </li>
     );
 };
@@ -278,6 +265,7 @@ const PluginWindowPatches = ({ plugin, id }: { plugin: Plugin; id: string }) => 
 const WindowDetail = ({ index, skins, id }: { index: TemplateIndex; skins: SkinMap | undefined; id: string }) => {
     const found = windowOf(index, id);
     const { data: hotel } = usePatches(useWorkingOn().key);
+    const hotelIssues = patchIssues(usePluginContributions(hotel?.key ?? '').data?.clientIssues);
     const { data: plugins } = usePlugins();
     const [ draft, setDraft ] = useState<HotelPatch | null>(null);
     const [ editing, setEditing ] = useState<string | null>(null);
@@ -286,7 +274,6 @@ const WindowDetail = ({ index, skins, id }: { index: TemplateIndex; skins: SkinM
     const bySkin = useMemo(() => skinsByKey(skins, id), [ skins, id ]);
     const own = hotel?.patches.filter(patch => patch.template === id) ?? [];
     const others = plugins?.plugins.filter(plugin => plugin.state === 'loaded' && plugin.key !== hotel?.key) ?? [];
-    const hotelPlugin = plugins?.plugins.find(plugin => plugin.key === hotel?.key);
     const start = (key: string) => setDraft({ id: '', name: `${id.split('/').pop() ?? id} ${key || 'window'}`, template: id, order: null, ops: [ { element: key, set: {} } ], disabled: false });
 
     if (!found) return <EmptyState>{`The client has no window ${id}.`}</EmptyState>;
@@ -294,29 +281,26 @@ const WindowDetail = ({ index, skins, id }: { index: TemplateIndex; skins: SkinM
     return (
         <div className="flex flex-col gap-4">
             <Panel
-                title={id}
-                description={index.templates[id] ? `${found.name}, ${found.width}x${found.height}. Pick an element's key for a new patch on it, a text to edit it, a skin for its sprites.` : 'Drawn by Nitro itself, not a template: a patch reaches its root \'\' (frame colour, style and position).'}
+                title={windowName(index, id)}
+                description={(
+                    <>
+                        <span className="font-mono">{id}</span>
+                        {index.templates[id] ? ` · ${found.width}x${found.height}` : ' · drawn by Nitro itself, not a template: a patch reaches its root \'\' (frame colour, style and position).'}
+                    </>
+                )}
                 actions={hotel?.canManage && <Button icon={<Plus />} onClick={() => start('')}>New patch</Button>}
             >
                 <div className="flex flex-col gap-3 p-4">
-                    {draft && <div className="rounded-lg border border-line p-3"><PatchEditor key={JSON.stringify(draft.ops)} patch={draft} onDone={() => setDraft(null)} /></div>}
+                    {draft && <div className="rounded-lg border border-line bg-canvas/50 p-3 sm:p-4"><PatchEditor key={JSON.stringify(draft.ops)} patch={draft} onDone={() => setDraft(null)} /></div>}
                     <div>
-                        <h3 className="mb-1 font-mono text-2xs font-medium tracking-[0.08em] text-muted uppercase">Patches on this window</h3>
-                        {own.length === 0 && others.length === 0 && <p className="text-xs text-muted">None.</p>}
-                        <ul className="divide-y divide-line">
+                        <Label as="h3">Patches on this window</Label>
+                        <ul className="divide-y divide-line text-sm">
                             {own.map(patch => (
-                                <li key={patch.id} className="flex flex-col gap-1 py-1.5 text-sm">
-                                    <div className="flex flex-wrap items-center gap-2">
-                                        <button type="button" className="font-medium hover:text-accent" onClick={() => setEditing(editing === patch.id ? null : patch.id)}>{patch.name}</button>
-                                        <span className="text-xs text-muted">{`this hotel's, ${Array.isArray(patch.ops) ? patch.ops.length : 0} op(s)`}</span>
-                                        {patch.disabled ? <Badge>off</Badge> : <Badge tone="green">on</Badge>}
-                                    </div>
-                                    {editing === patch.id && <PatchEditor patch={patch} onDone={() => setEditing(null)} />}
-                                </li>
+                                <PatchRow key={patch.id} patch={patch} issues={hotelIssues} canManage={!!hotel?.canManage} open={editing === patch.id} onToggle={() => setEditing(editing === patch.id ? null : patch.id)} onWindow={false} className="px-0 py-2.5" />
                             ))}
-                            {hotelPlugin && <PluginWindowPatches plugin={hotelPlugin} id={id} />}
                             {others.map(plugin => <PluginWindowPatches key={plugin.key} plugin={plugin} id={id} />)}
                         </ul>
+                        {own.length === 0 && <p className="py-2 text-xs text-muted">{`No patch of ${hotel ? 'yours' : 'the theme you work on'} changes this window yet: pick an element's key below to start one.`}</p>}
                     </div>
                     {/* One client at a time: an open editor has its own preview, with its draft. */}
                     {!draft && !editing && <DesignPreview template={id} highlight={hovered} onSelect={selection => setPicked(selection.key)} />}
@@ -354,16 +338,15 @@ const WindowsTab = () => {
                 {error && <div className="p-4"><ErrorNotice error={error} /></div>}
                 {!index && !error && <Loading />}
                 <ul className="max-h-[60dvh] min-h-0 overflow-y-auto lg:max-h-none">
-                    {found.slice(0, LIST_LIMIT).map(each => (
+                    {index && found.slice(0, LIST_LIMIT).map(each => (
                         <li key={each}>
-                            <button
-                                type="button"
-                                className={`block w-full truncate px-3 py-1 text-left font-mono text-xs hover:bg-subtle ${each === id ? 'bg-subtle text-accent' : ''}`}
-                                onClick={() => setParams(previous => ({ ...Object.fromEntries(previous), id: each }))}
-                            >
-                                {each}
-                                {index?.frames[each] && <span className="ml-2 text-muted">nitro</span>}
-                            </button>
+                            <WindowPick
+                                name={windowName(index, each)}
+                                id={each}
+                                picked={each === id}
+                                onPick={() => setParams(previous => ({ ...Object.fromEntries(previous), id: each }))}
+                                tag={index.frames[each] && <Badge>nitro</Badge>}
+                            />
                         </li>
                     ))}
                 </ul>
@@ -382,6 +365,8 @@ const WindowsTab = () => {
  */
 export const WindowsPage = () => {
     const [ tab, toTab ] = usePathTab(TABS.map(x => x.value));
+    const hubTabs = useHubTabs('themes');
+    const navigate = useNavigate();
     const queryClient = useQueryClient();
 
     if (toTab) return toTab;
@@ -392,12 +377,17 @@ export const WindowsPage = () => {
         <>
             <PageHeader
                 title="Windows & skins"
-                description="Every window of the client with the names a patch uses, and every skin with its sprites"
-                tabs={{ items: TABS, value: tab }}
+                tabs={hubTabs}
             >
                 <Button variant="secondary" icon={<RefreshCw />} title="Read the client's files again, after a new client is deployed" onClick={() => void readWindowsAgain(queryClient).catch(toastError)}>Read again</Button>
             </PageHeader>
-            <PageBody>{tabs[tab]}</PageBody>
+            <PageBody>
+                {/* The header's tabs are the themes' pages: windows or skins is chosen here. */}
+                <div className="self-start">
+                    <Segmented label="Show" value={tab} onChange={value => void navigate(TABS.find(x => x.value === value)!.to, { replace: true })} options={TABS} />
+                </div>
+                {tabs[tab]}
+            </PageBody>
         </>
     );
 };

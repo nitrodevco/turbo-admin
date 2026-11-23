@@ -396,6 +396,41 @@ export const ButtonLink = ({ to, icon, small, children }: { to: string; icon: Re
 );
 
 /**
+ * A button that opens the file chooser, drawn as a `Button` of its `variant`: the file chosen is
+ * handed to `onFile`, and the chooser is cleared so the same file can be chosen again. `busy` dims
+ * it while that file is taken in; `title` says what it takes (the kinds, the most bytes).
+ */
+export const FileButton = ({ accept, onFile, icon, variant = 'secondary', small, busy, title, children }: {
+    accept: string;
+    onFile: (file: File) => void;
+    icon?: ReactNode;
+    variant?: ButtonVariant;
+    small?: boolean;
+    busy?: boolean;
+    title?: string;
+    children: ReactNode;
+}) => (
+    // The input is the label's, so a click anywhere on it opens the chooser; its focus ring is drawn on the label.
+    <label title={title} className={cx(buttonClass(variant, small), 'cursor-pointer focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-accent', busy && 'pointer-events-none opacity-50')}>
+        {icon}
+        {children}
+        <input
+            type="file"
+            accept={accept}
+            disabled={busy}
+            className="sr-only"
+            onChange={(event) => {
+                const file = event.target.files?.[0];
+
+                event.target.value = '';
+
+                if (file) onFile(file);
+            }}
+        />
+    </label>
+);
+
+/**
  * A button that is only an icon: named for screen readers and on hover. `small` for a dense row
  * (an item in a list inside a card), still a thumb's size on a phone. `tone="bad"` deletes: muted
  * until pointed at, then red.
