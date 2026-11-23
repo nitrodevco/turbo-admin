@@ -307,8 +307,8 @@ export const PatchesPage = () => {
                     Theme studio
                 </Link>
             </PageHeader>
-            <PageBody className="flex flex-col gap-4 lg:gap-5">
-                <WorkingOnPicker className="rounded-xl border border-line bg-surface px-4 py-2.5" />
+            <PageBody>
+                <WorkingOnPicker className="card px-4 py-2.5" />
                 {error && <ErrorNotice error={error} />}
                 <HotelPatches />
                 <Panel title="Plugins" description="From each plugin's wwwroot/template-patches.json, by plugin.">

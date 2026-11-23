@@ -99,7 +99,7 @@ const STAGE_KEYS: SortKeys<PerformanceStage> = {
 
 /** One figure of an operation: a column of the table from a tablet up, a labelled figure in its row on a phone. */
 const StageFigure = ({ label, children }: { label: string; children: ReactNode }) => (
-    <span className="font-mono text-[13px] tabular-nums sm:text-right sm:text-sm">
+    <span className="font-mono text-ui tabular-nums sm:text-right sm:text-sm">
         <PhoneLabel>{`${label} `}</PhoneLabel>
         {children}
     </span>
@@ -115,7 +115,7 @@ const StageTable = ({ stages }: { stages: PerformanceStage[] }) => (
                         <Row key={stage.stage}>
                             <div>
                                 <div className="font-medium">{STAGES[stage.stage] ?? stage.stage}</div>
-                                <div className="truncate font-mono text-[11px] text-muted">{stage.stage}</div>
+                                <div className="truncate font-mono text-2xs text-muted">{stage.stage}</div>
                             </div>
                             <StageFigure label="Times">{stage.count.toLocaleString()}</StageFigure>
                             <StageFigure label="Median">{ms(stage.p50Ms)}</StageFigure>
@@ -151,7 +151,7 @@ export const PerformancePage = () => {
                     ? `This server, sampled every ${data.sampleSeconds} s since ${new Date(data.recordingSinceUtc).toLocaleString()}`
                     : 'How this server is running'}
             />
-            <PageBody className="flex flex-col gap-4 lg:gap-5">
+            <PageBody>
                 <div className="flex flex-wrap items-center gap-3">
                     <Segmented label="Range" value={hours} onChange={setHours} options={RANGES} />
                     {every && <span className="text-xs text-muted">each point is {every}</span>}

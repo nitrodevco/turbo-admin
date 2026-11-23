@@ -350,7 +350,7 @@ export const VariablesTab = ({ status, adding, onAdded }: { status: GamedataStat
                                 onToggle={() => setOpen(open === item.key ? null : item.key)}
                                 summary={(
                                     <div className="grid items-center gap-x-4 gap-y-0.5 sm:grid-cols-[minmax(12rem,22rem)_1fr_minmax(0,16rem)]">
-                                        <span className="truncate font-mono text-[13px]">{item.key}</span>
+                                        <span className="truncate font-mono text-ui">{item.key}</span>
                                         <Value value={item.value} />
                                         <span className="min-w-0 max-sm:hidden sm:justify-self-end">
                                             {(item.setting ?? item.file) && <Badge tone="accent" className="max-w-64 truncate normal-case!"><Link2 className="size-3" /> {item.setting ?? item.file}</Badge>}

@@ -92,7 +92,7 @@ export const CalendarEditor = ({ id, onBack, onSaved }: { id: number | null; onB
     return (
         <>
             {header}
-            <PageBody className="flex flex-col gap-4 lg:gap-5">
+            <PageBody>
                 <div className="flex flex-wrap items-center gap-2 text-xs text-muted">
                     <Badge tone={status.tone}>{status.label}</Badge>
                     <span>{status.meaning}</span>
@@ -156,7 +156,7 @@ export const CalendarEditor = ({ id, onBack, onSaved }: { id: number | null; onB
                     <TodayPreview calendar={calendar} today={shownDay} />
                 </Panel>
                 {(dirty || isNew || save.isError) && (
-                    <div className="sticky bottom-3 z-20 rounded-xl border border-accent/40 bg-surface/95 shadow-lg backdrop-blur">
+                    <div className="save-bar">
                         <div className="flex flex-wrap items-center gap-3 px-4 py-3">
                             <span className="text-sm">{isNew ? 'A new calendar, not saved' : 'Changes not saved'}</span>
                             {refusal && <span className="text-xs text-bad">{refusal.dayIndex !== null ? `Door ${refusal.dayIndex + 1}: ` : ''}{refusal.message}</span>}

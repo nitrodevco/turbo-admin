@@ -55,7 +55,7 @@ const PerformanceRows = ({ rows, params }: { rows: ClientPerformanceRow[]; param
                 <SortedRowList columns="auto minmax(0,1fr) minmax(0,1fr) minmax(0,1fr) repeat(3,auto)" headers={PERFORMANCE_COLUMNS} rows={rows} keys={PERFORMANCE_KEYS} initial={NEWEST}>
                     {(x, index) => (
                         <Row key={`${x.at}-${index}`}>
-                            <span className="font-mono text-[12px] text-muted">{when(x.at)}</span>
+                            <span className="font-mono text-xs text-muted">{when(x.at)}</span>
                             <Who playerId={x.playerId} playerName={x.playerName} params={params} />
                             <Where roomId={x.roomId} roomName={x.roomName} params={params} />
                             <span className="truncate" title={x.userAgent}>{`${x.browser}, ${x.os}, ${x.device}`}</span>
@@ -86,7 +86,7 @@ const LatencyRows = ({ rows, params }: { rows: ClientLatencyRow[]; params: strin
                 <SortedRowList columns="auto minmax(0,1fr) minmax(0,1fr) repeat(3,auto)" headers={LATENCY_COLUMNS} rows={rows} keys={LATENCY_KEYS} initial={NEWEST}>
                     {(x, index) => (
                         <Row key={`${x.at}-${index}`}>
-                            <span className="font-mono text-[12px] text-muted">{when(x.at)}</span>
+                            <span className="font-mono text-xs text-muted">{when(x.at)}</span>
                             <Who playerId={x.playerId} playerName={x.playerName} params={params} />
                             <Where roomId={x.roomId} roomName={x.roomName} params={params} />
                             <Figure label="Average">{ms(x.averageMs)}</Figure>
@@ -114,7 +114,7 @@ const LagRows = ({ rows, params }: { rows: ClientLagRow[]; params: string }) => 
                 <SortedRowList columns="auto minmax(0,1fr) minmax(0,1fr) auto" headers={LAG_COLUMNS} rows={rows} keys={LAG_KEYS} initial={NEWEST}>
                     {(x, index) => (
                         <Row key={`${x.at}-${index}`}>
-                            <span className="font-mono text-[12px] text-muted">{when(x.at)}</span>
+                            <span className="font-mono text-xs text-muted">{when(x.at)}</span>
                             <Who playerId={x.playerId} playerName={x.playerName} params={params} />
                             <Where roomId={x.roomId} roomName={x.roomName} params={params} />
                             <Figure label="Warnings">{number(x.warnings)}</Figure>
@@ -139,7 +139,7 @@ export const TelemetryRoomPage = () => {
             >
                 <HeaderLink to={`/rooms/${roomId}`} icon={<House />}>Open the room</HeaderLink>
             </PageHeader>
-            <PageBody className="flex flex-col gap-4 lg:gap-5">
+            <PageBody>
                 <div className="flex"><RangePicker days={days} setDays={setDays} /></div>
                 {error && <ErrorNotice error={error} />}
                 {isPending && <Loading />}
@@ -212,7 +212,7 @@ export const TelemetryPlayerPage = () => {
             >
                 <HeaderLink to={`/players/${playerId}`} icon={<UserRound />}>Open the player</HeaderLink>
             </PageHeader>
-            <PageBody className="flex flex-col gap-4 lg:gap-5">
+            <PageBody>
                 <div className="flex"><RangePicker days={days} setDays={setDays} /></div>
                 {error && <ErrorNotice error={error} />}
                 {isPending && <Loading />}
@@ -230,13 +230,13 @@ export const TelemetryPlayerPage = () => {
                                         <SortedRowList columns="auto minmax(0,1fr) minmax(0,1fr) minmax(0,1fr)" headers={EVENT_COLUMNS} rows={data.events} keys={EVENT_KEYS} initial={NEWEST}>
                                             {(x, index) => (
                                                 <Row key={`${x.at}-${index}`}>
-                                                    <span className="font-mono text-[12px] text-muted">{when(x.at)}</span>
+                                                    <span className="font-mono text-xs text-muted">{when(x.at)}</span>
                                                     <div className="min-w-0">
                                                         <div className="truncate font-medium">{x.action || x.type}</div>
-                                                        <div className="truncate font-mono text-[11px] text-muted">{[ x.category, x.type ].filter(Boolean).join(' / ')}</div>
+                                                        <div className="truncate font-mono text-2xs text-muted">{[ x.category, x.type ].filter(Boolean).join(' / ')}</div>
                                                     </div>
                                                     <Where roomId={x.roomId} roomName={x.roomName} params={params} />
-                                                    <span className="truncate font-mono text-[12px]">{[ x.extraString, x.extraInt ? String(x.extraInt) : '' ].filter(Boolean).join(', ') || '-'}</span>
+                                                    <span className="truncate font-mono text-xs">{[ x.extraString, x.extraInt ? String(x.extraInt) : '' ].filter(Boolean).join(', ') || '-'}</span>
                                                 </Row>
                                             )}
                                         </SortedRowList>
@@ -249,7 +249,7 @@ export const TelemetryPlayerPage = () => {
                                         <SortedRowList columns="auto minmax(0,1fr) auto" headers={LOGIN_COLUMNS} rows={data.logins} keys={LOGIN_KEYS} initial={NEWEST}>
                                             {(x, index) => (
                                                 <Row key={`${x.at}-${index}`}>
-                                                    <span className="font-mono text-[12px] text-muted">{when(x.at)}</span>
+                                                    <span className="font-mono text-xs text-muted">{when(x.at)}</span>
                                                     <span>{LOGIN_STEPS[x.step] ?? x.step}</span>
                                                     <Figure label="After connecting">{ms(x.msSinceConnect)}</Figure>
                                                 </Row>

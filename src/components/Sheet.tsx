@@ -15,10 +15,10 @@ export const Sheet = ({ title, open, onClose, children }: { title: ReactNode; op
     return (
         <dialog
             {...dialog}
-            className="mx-0 mt-auto mb-0 w-full max-w-none animate-sheet rounded-t-2xl border border-line bg-surface p-0 text-ink sm:m-auto sm:max-w-sm sm:animate-rise sm:rounded-2xl sm:shadow-2xl"
+            className="mx-0 mt-auto mb-0 w-full max-w-none animate-sheet rounded-t-2xl border border-line bg-surface p-0 text-ink sm:m-auto sm:max-w-sm sm:animate-rise sm:rounded-2xl sm:shadow-overlay"
         >
             <div aria-hidden className="mx-auto mt-2 h-1 w-10 rounded-full bg-line sm:hidden" />
-            <div className="px-5 pt-3 pb-1 text-sm font-semibold">{title}</div>
+            <div className="px-5 pt-3 pb-1 text-base font-semibold">{title}</div>
             <div className="flex flex-col px-2 pb-[calc(0.75rem+env(safe-area-inset-bottom))]">{children}</div>
         </dialog>
     );
@@ -30,7 +30,7 @@ export const SheetItem = ({ icon, tone, className, children, ...button }: Button
         type="button"
         {...button}
         className={cx(
-            'flex min-h-12 w-full items-center gap-3 rounded-xl px-3 text-left text-[15px] transition-colors hover:bg-subtle disabled:opacity-50 [&>svg]:size-5 [&>svg]:shrink-0',
+            'flex min-h-12 w-full items-center gap-3 rounded-xl px-3 text-left text-base transition-colors hover:bg-subtle disabled:opacity-50 [&>svg]:size-5 [&>svg]:shrink-0',
             tone === 'bad' ? 'text-bad' : 'text-ink',
             className,
         )}

@@ -170,7 +170,7 @@ const SkinCard = ({ id, skin, sheet, replacing }: { id: string; skin: SkinEntry;
             </div>
             <ul className="flex flex-col gap-2">
                 {skin.sprites.map(sprite => (
-                    <li key={sprite.part} className="flex flex-wrap items-center gap-3 text-[13px]">
+                    <li key={sprite.part} className="flex flex-wrap items-center gap-3 text-ui">
                         <Sprite sheet={sheet} sprite={sprite.sprite} rect={sprite.rect} />
                         <span className="text-muted">{sprite.part}</span>
                         <span className="font-mono text-xs">{sprite.sprite}</span>
@@ -395,7 +395,7 @@ export const WindowsPage = () => {
             >
                 <Button variant="secondary" icon={<RefreshCw />} title="Read the client's files again, after a new client is deployed" onClick={() => void readWindowsAgain(queryClient).catch(toastError)}>Read again</Button>
             </PageHeader>
-            <PageBody className="flex flex-col gap-4 lg:gap-5">{tabs[tab]}</PageBody>
+            <PageBody>{tabs[tab]}</PageBody>
         </>
     );
 };

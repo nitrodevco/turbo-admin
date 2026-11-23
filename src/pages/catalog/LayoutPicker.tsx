@@ -47,7 +47,7 @@ export const LayoutPicker = ({ value, open, extra, onPick, onClose }: { value: s
                                             type="button"
                                             onClick={() => pick(layout.code)}
                                             className={cx(
-                                                'flex h-full w-full flex-col gap-1.5 rounded-xl border p-3 text-left transition hover:-translate-y-0.5 hover:border-accent hover:shadow-md',
+                                                'flex h-full w-full flex-col gap-1.5 rounded-xl border p-3 text-left transition hover:-translate-y-0.5 hover:border-accent hover:shadow-pop',
                                                 layout.code === value ? 'border-accent bg-accent-soft' : 'border-line bg-canvas',
                                             )}
                                         >
@@ -56,7 +56,7 @@ export const LayoutPicker = ({ value, open, extra, onPick, onClose }: { value: s
                                                 {layout.code === value && <Check className="size-4 shrink-0 text-accent" />}
                                             </span>
                                             <span className="text-xs leading-snug text-muted">{layout.blurb}</span>
-                                            <span className="mt-auto flex items-center gap-3 pt-1 text-[11px] text-muted">
+                                            <span className="mt-auto flex items-center gap-3 pt-1 text-2xs text-muted">
                                                 <span className="font-mono">{layout.code}</span>
                                                 <span className="ml-auto flex items-center gap-1" title="Pictures"><Image className="size-3" />{layout.images.length}</span>
                                                 <span className="flex items-center gap-1" title="Texts"><Type className="size-3" />{layout.texts.length}</span>

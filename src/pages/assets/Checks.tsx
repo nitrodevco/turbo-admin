@@ -39,14 +39,14 @@ export const CheckCard = ({ check }: { check: AssetCheck }) => {
                         </Link>
                     )}
                 </div>
-                <p className="text-[13px] text-muted">{check.detail}</p>
+                <p className="text-ui text-muted">{check.detail}</p>
                 {check.samples.length > 0 && (
                     <div className="flex flex-wrap gap-1">
                         {check.samples.map(sample => (
-                            <span key={sample} className="max-w-full truncate rounded-md border border-line bg-surface px-1.5 py-0.5 font-mono text-[11px]">{sample}</span>
+                            <span key={sample} className="max-w-full truncate rounded-md border border-line bg-surface px-1.5 py-0.5 font-mono text-2xs">{sample}</span>
                         ))}
                         {check.count > check.samples.length && (
-                            <span className="px-1 py-0.5 font-mono text-[11px] text-muted">{`+${(check.count - check.samples.length).toLocaleString()} more`}</span>
+                            <span className="px-1 py-0.5 font-mono text-2xs text-muted">{`+${(check.count - check.samples.length).toLocaleString()} more`}</span>
                         )}
                     </div>
                 )}

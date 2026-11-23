@@ -39,7 +39,7 @@ const Row = ({ element, skinsOf, onPick, selected, onHover, depth }: { element: 
         <li>
             <div
                 ref={row}
-                className={cx('flex flex-wrap items-baseline gap-x-2 gap-y-0.5 py-0.5 text-[13px]', element.added && 'text-good', element.moved && 'text-accent', element.set && 'bg-warn/10', isSelected && 'bg-accent/15', onHover && (key !== undefined) && 'hover:bg-subtle')}
+                className={cx('flex flex-wrap items-baseline gap-x-2 gap-y-0.5 py-0.5 text-ui', element.added && 'text-good', element.moved && 'text-accent', element.set && 'bg-warn/10', isSelected && 'bg-accent/15', onHover && (key !== undefined) && 'hover:bg-subtle')}
                 style={{ paddingLeft: `${(depth ?? 0) * 1.1}rem` }}
                 onMouseEnter={onHover && (key !== undefined) ? () => onHover(key) : undefined}
                 onMouseLeave={onHover && (key !== undefined) ? () => onHover(null) : undefined}
@@ -58,7 +58,7 @@ const Row = ({ element, skinsOf, onPick, selected, onHover, depth }: { element: 
                 {element.texts?.map(text => <Link key={text} to={textLink(text)} className="font-mono text-xs text-accent hover:underline" title="Edit this text">{`text: ${text}`}</Link>)}
                 {skins.map(skin => <Link key={skin} to={skinLink(skin)} className="text-xs text-accent hover:underline" title="This skin's sprites">{`skin ${skin}`}</Link>)}
                 {element.hidden && <span className="text-xs text-muted">hidden</span>}
-                <span className="text-[11px] text-muted">{element.rect.join(', ')}</span>
+                <span className="text-2xs text-muted">{element.rect.join(', ')}</span>
                 {element.added && <span className="text-xs">new</span>}
                 {element.moved && <span className="text-xs">moved</span>}
                 {element.set && <span className="font-mono text-xs text-warn">{`set ${JSON.stringify(element.set)}`}</span>}

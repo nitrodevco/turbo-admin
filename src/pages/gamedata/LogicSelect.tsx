@@ -114,18 +114,18 @@ export const LogicSelect = ({ value, logics, onChange, disabled }: { value: stri
                 aria-controls={`${id}-list`}
                 onClick={() => (open ? setOpen(false) : show())}
                 className={cx(
-                    'flex h-10 w-full items-center gap-2 rounded-lg border bg-canvas px-2.5 text-left text-[15px] sm:h-8 sm:text-[13px]',
+                    'flex h-10 w-full items-center gap-2 rounded-lg border bg-canvas px-2.5 text-left text-base sm:h-8 sm:text-ui',
                     'focus:border-accent focus:ring-2 focus:ring-accent/25 focus:outline-none disabled:opacity-60',
-                    open ? 'border-accent' : 'border-line hover:border-muted/50',
+                    open ? 'border-accent' : 'border-line hover:border-line-strong',
                 )}
             >
                 <span className={cx('min-w-0 flex-1 truncate font-mono', !value && 'text-muted')}>{value || 'Pick a logic'}</span>
-                {!registered && <span className="shrink-0 rounded bg-warn-soft px-1.5 text-[11px] font-medium text-warn">not registered</span>}
+                {!registered && <span className="shrink-0 rounded bg-warn-soft px-1.5 text-2xs font-medium text-warn">not registered</span>}
                 <ChevronDown className={cx('size-4 shrink-0 text-muted transition-transform', open && 'rotate-180')} aria-hidden />
             </button>
 
             {open && (
-                <div className="absolute inset-x-0 top-full z-20 mt-1 overflow-hidden rounded-xl border border-line bg-surface shadow-xl">
+                <div className="absolute inset-x-0 top-full z-20 mt-1 overflow-hidden rounded-xl border border-line bg-surface shadow-pop">
                     <div className="flex items-center gap-2 border-b border-line px-3">
                         <Search className="size-4 shrink-0 text-muted" aria-hidden />
                         <input
@@ -149,7 +149,7 @@ export const LogicSelect = ({ value, logics, onChange, disabled }: { value: stri
                         {shown.map((option, index) => (
                             <li key={`${option.group}:${option.value}`} role="presentation">
                                 {(index === 0 || shown[index - 1]!.group !== option.group) && (
-                                    <div className="px-3 pt-2 pb-1 font-mono text-[10.5px] font-medium tracking-[0.08em] text-muted uppercase">{option.group}</div>
+                                    <div className="px-3 pt-2 pb-1 font-mono text-2xs font-medium tracking-[0.08em] text-muted uppercase">{option.group}</div>
                                 )}
                                 <div
                                     id={`${id}-${index}`}
@@ -159,7 +159,7 @@ export const LogicSelect = ({ value, logics, onChange, disabled }: { value: stri
                                     onPointerEnter={() => setActive(index)}
                                     onClick={() => pick(option)}
                                     className={cx(
-                                        'mx-1 flex cursor-pointer items-center gap-2 rounded-md px-2 py-1.5 font-mono text-[13px]',
+                                        'mx-1 flex cursor-pointer items-center gap-2 rounded-md px-2 py-1.5 font-mono text-ui',
                                         index === active ? 'bg-accent-soft text-accent' : 'text-ink',
                                     )}
                                 >

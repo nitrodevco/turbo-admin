@@ -43,12 +43,12 @@ const PageRow = ({ page, top }: { page: ImportPageChange; top: number }) => {
     const depth = Math.max(0, page.path.split('/').length - top);
 
     return (
-        <li className="flex min-h-8 items-center gap-2 rounded-lg pr-2 text-[13px] hover:bg-subtle" style={{ paddingLeft: `${8 + depth * 18}px` }}>
-            <span className={cx('w-16 shrink-0 rounded px-1.5 py-0.5 text-center font-mono text-[10px] uppercase', action.tone)}>{action.label}</span>
-            <span className="min-w-0 flex-1 truncate">{page.title}<span className="ml-2 font-mono text-[11px] text-muted">{page.name}</span></span>
-            {page.fields.length > 0 && <span className="font-mono text-[11px] text-muted">{page.fields.join(', ')}</span>}
+        <li className="flex min-h-8 items-center gap-2 rounded-lg pr-2 text-ui hover:bg-subtle" style={{ paddingLeft: `${8 + depth * 18}px` }}>
+            <span className={cx('w-16 shrink-0 rounded px-1.5 py-0.5 text-center font-mono text-2xs uppercase', action.tone)}>{action.label}</span>
+            <span className="min-w-0 flex-1 truncate">{page.title}<span className="ml-2 font-mono text-2xs text-muted">{page.name}</span></span>
+            {page.fields.length > 0 && <span className="font-mono text-2xs text-muted">{page.fields.join(', ')}</span>}
             {(page.offersAdded > 0 || page.offersChanged > 0) && (
-                <span className="font-mono text-[11px] text-muted tabular-nums">
+                <span className="font-mono text-2xs text-muted tabular-nums">
                     {page.offersAdded > 0 && `+${page.offersAdded}`}
                     {page.offersAdded > 0 && page.offersChanged > 0 && ' '}
                     {page.offersChanged > 0 && `~${page.offersChanged}`}
@@ -89,7 +89,7 @@ const MissingPictures = ({ names, canManage }: { names: string[]; canManage: boo
                     </Button>
                 )}
             </summary>
-            <p className="px-3 pb-2 font-mono text-[11px] break-words text-muted">{names.join(' · ')}</p>
+            <p className="px-3 pb-2 font-mono text-2xs break-words text-muted">{names.join(' · ')}</p>
         </details>
     );
 };
@@ -128,7 +128,7 @@ const PlanView = ({ plan, canManage }: { plan: ImportPlan; canManage: boolean })
                 </ul>
             )}
             {plan.missingPictures.length > 0 && <MissingPictures names={plan.missingPictures} canManage={canManage} />}
-            <div className="rounded-xl border border-line bg-surface">
+            <div className="card">
                 <div className="border-b border-line px-3 py-2 text-xs text-muted">Pages</div>
                 <ul className="max-h-[32rem] overflow-y-auto p-1.5">
                     {plan.pages.map(x => <PageRow key={x.path} page={x} top={builders ? 3 : 2} />)}
@@ -136,15 +136,15 @@ const PlanView = ({ plan, canManage }: { plan: ImportPlan; canManage: boolean })
                 </ul>
             </div>
             {(plan.skipped.length > 0 || plan.missingClasses.length > 0) && (
-                <details className="rounded-xl border border-line bg-surface">
+                <details className="card">
                     <summary className="cursor-pointer px-3 py-2 text-xs text-muted">
                         Left out: {plan.skipped.length.toLocaleString()}{plan.missingClasses.length > 0 && `, ${plan.missingClasses.length.toLocaleString()} furni with no furniture here`}
                     </summary>
-                    {plan.missingClasses.length > 0 && <p className="px-3 pb-2 font-mono text-[11px] break-words text-muted">{plan.missingClasses.join(' · ')}</p>}
+                    {plan.missingClasses.length > 0 && <p className="px-3 pb-2 font-mono text-2xs break-words text-muted">{plan.missingClasses.join(' · ')}</p>}
                     <ul className="max-h-80 overflow-y-auto px-3 pb-2 text-xs">
                         {plan.skipped.map(x => (
                             <li key={`${x.what}-${x.reason}`} className="flex gap-2 py-0.5">
-                                <span className="min-w-0 flex-1 truncate font-mono text-[11px]">{x.what}</span>
+                                <span className="min-w-0 flex-1 truncate font-mono text-2xs">{x.what}</span>
                                 <span className="text-muted">{x.reason}{x.offers > 1 && ` (${x.offers} offers)`}</span>
                             </li>
                         ))}
@@ -159,7 +159,7 @@ const LogInput = ({ label, file, onPick }: { label: string; file: File | null; o
     <section className="flex flex-col gap-1.5">
         <Label as="h3">{label}</Label>
         <input type="file" accept={LOG_ACCEPT} aria-label={label} onChange={event => onPick(event.target.files?.[0] ?? null)} className={FILE_INPUT} />
-        {file && <span className="font-mono text-[11px] text-muted">{file.name} · {(file.size / (1024 * 1024)).toFixed(1)} MB</span>}
+        {file && <span className="font-mono text-2xs text-muted">{file.name} · {(file.size / (1024 * 1024)).toFixed(1)} MB</span>}
     </section>
 );
 
@@ -255,7 +255,7 @@ export const ImportCapture = ({ tree }: { tree: CatalogTree }) => {
 
     return (
         <div className="grid items-start gap-4 xl:grid-cols-[24rem_minmax(0,1fr)]">
-            <div className="flex flex-col gap-4 rounded-xl border border-line bg-surface p-4 xl:sticky xl:top-4">
+            <div className="card flex flex-col gap-4 p-4 xl:sticky xl:top-4">
                 <div className="flex items-start gap-3">
                     <span className="grid size-10 shrink-0 place-items-center rounded-xl bg-accent-soft text-accent"><FileUp className="size-5" /></span>
                     <div>
@@ -278,7 +278,7 @@ export const ImportCapture = ({ tree }: { tree: CatalogTree }) => {
                     <section className="flex flex-col gap-1.5">
                         <Label as="h3">Builders Club capture</Label>
                         <input type="file" accept=".json,application/json" aria-label="Capture file" onChange={event => void pickCapture(event.target.files?.[0])} className={FILE_INPUT} />
-                        {capture && <span className="font-mono text-[11px] text-muted">{capture.name}</span>}
+                        {capture && <span className="font-mono text-2xs text-muted">{capture.name}</span>}
                         {readError && <span className="text-xs text-warn">{readError}</span>}
                     </section>
                 )}
@@ -300,7 +300,7 @@ export const ImportCapture = ({ tree }: { tree: CatalogTree }) => {
                 )}
                 {data && plansOf(data).map(x => <PlanView key={x.catalog} plan={x} canManage={tree.canManage} />)}
                 {data && tree.canManage && data.changes && (
-                    <div className="sticky bottom-3 z-20 flex flex-wrap items-center gap-3 rounded-xl border border-accent/50 bg-surface/95 p-3 shadow-xl backdrop-blur">
+                    <div className="save-bar flex flex-wrap items-center gap-3 p-3">
                         <span className="mr-auto text-xs text-muted">{publish ? 'Live as soon as it is saved.' : 'Nothing goes live until you publish.'}</span>
                         <Button icon={<Hammer />} disabled={run.isPending} onClick={event => apply(event.currentTarget)}>
                             {run.isPending ? 'Importing…' : 'Import'}

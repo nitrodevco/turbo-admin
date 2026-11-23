@@ -80,13 +80,13 @@ export const NotificationsBell = ({ align = 'end' }: { align?: 'start' | 'end' }
             >
                 <Bell />
                 {unread > 0 && (
-                    <span className="absolute top-0.5 right-0.5 grid h-4 min-w-4 place-items-center rounded-full bg-bad px-1 font-mono text-[10px] leading-none font-semibold text-white">
+                    <span className="absolute top-0.5 right-0.5 grid h-4 min-w-4 place-items-center rounded-full bg-bad px-1 font-mono text-2xs leading-none font-semibold text-canvas">
                         {unread > 9 ? '9+' : unread}
                     </span>
                 )}
             </button>
             {open && (
-                <div className={cx('fixed inset-x-2 top-16 z-40 animate-rise rounded-xl border border-line bg-surface shadow-xl sm:absolute sm:inset-x-auto sm:top-full sm:mt-2 sm:w-[24rem]', align === 'start' ? 'sm:left-0' : 'sm:right-0')}>
+                <div className={cx('fixed inset-x-2 top-16 z-40 animate-rise rounded-xl border border-line bg-surface shadow-pop sm:absolute sm:inset-x-auto sm:top-full sm:mt-2 sm:w-[24rem]', align === 'start' ? 'sm:left-0' : 'sm:right-0')}>
                     <div className="flex items-center justify-between gap-2 border-b border-line px-4 py-2.5">
                         <Label>Notifications</Label>
                         {unread > 0 && (
@@ -125,7 +125,7 @@ export const NotificationsBell = ({ align = 'end' }: { align?: 'start' | 'end' }
                                     <span className="min-w-0 flex-1">
                                         <span className="block text-sm leading-snug">{item.title}</span>
                                         {item.detail && <span className="mt-0.5 line-clamp-2 block font-mono text-xs break-words text-muted">{item.detail}</span>}
-                                        <span className="mt-0.5 block text-[11px] text-muted" title={new Date(item.atUtc).toLocaleString()}>{fromNow(item.atUtc)}</span>
+                                        <span className="mt-0.5 block text-2xs text-muted" title={new Date(item.atUtc).toLocaleString()}>{fromNow(item.atUtc)}</span>
                                     </span>
                                     {fresh && <span aria-label="New" className="mt-2 size-2 shrink-0 rounded-full bg-accent" />}
                                 </button>

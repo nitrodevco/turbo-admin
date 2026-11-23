@@ -129,7 +129,7 @@ export const BadgesTab = ({ canManage }: { canManage: boolean }) => {
                                 <span className="grid size-10 shrink-0 place-items-center rounded-lg border border-line bg-canvas">
                                     {badgeUrl(assets, badge.code) && <img src={badgeUrl(assets, badge.code)!} alt="" className="max-h-full max-w-full [image-rendering:pixelated]" />}
                                 </span>
-                                <span className="truncate font-mono text-[13px]">{badge.code}</span>
+                                <span className="truncate font-mono text-ui">{badge.code}</span>
                                 <span className="text-xs text-muted">{badge.holders === 0 ? 'held by no one' : `${badge.holders} hold it`}</span>
                             </button>
                             <Select

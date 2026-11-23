@@ -60,7 +60,7 @@ const ImageField = ({ id, label, hint, role, value, onChange, disabled, highligh
             <div className="flex min-w-0 flex-1 flex-col gap-1">
                 <label htmlFor={id} className="text-xs font-medium text-muted">{label}</label>
                 <ImageInput id={id} value={value} onChange={onChange} accept={{ ...CATALOG_PICTURE, usedIn: `catalog.${role ?? 'image'}` }} title={label} preview={false} disabled={disabled} />
-                {hint && <span className="text-[11px] text-muted">{hint}</span>}
+                {hint && <span className="text-2xs text-muted">{hint}</span>}
             </div>
         </div>
     );
@@ -150,7 +150,7 @@ export const PageInspector = ({ tree, page, draft, onDraft, focus, onOpen }: Pag
                                 title="Change the icon"
                                 className="grid size-10 shrink-0 place-items-center rounded-lg border border-line bg-canvas transition hover:scale-105 hover:border-accent disabled:pointer-events-none sm:size-8"
                             >
-                                {draft.icon > 0 ? <PageIcon icon={draft.icon} /> : <span className="text-[10px] text-muted">icon</span>}
+                                {draft.icon > 0 ? <PageIcon icon={draft.icon} /> : <span className="text-2xs text-muted">icon</span>}
                             </button>
                             <div className="min-w-0 flex-1">
                                 <Field label="Title" name="page-title" value={draft.localization} onChange={event => set('localization', event.target.value)} maxLength={50} required disabled={!canManage} />
@@ -191,7 +191,7 @@ export const PageInspector = ({ tree, page, draft, onDraft, focus, onOpen }: Pag
                                         onClick={() => set('display', x.value)}
                                         className={cx(
                                             'flex items-center gap-2 rounded-lg border px-2.5 py-2 text-left text-xs transition [&>svg]:size-4 [&>svg]:shrink-0',
-                                            draft.display === x.value ? 'border-accent bg-accent-soft text-accent' : 'border-line text-muted hover:border-muted/50 hover:text-ink',
+                                            draft.display === x.value ? 'border-accent bg-accent-soft text-accent' : 'border-line text-muted hover:border-line-strong hover:text-ink',
                                             'disabled:opacity-40',
                                         )}
                                     >
@@ -250,13 +250,13 @@ export const PageInspector = ({ tree, page, draft, onDraft, focus, onOpen }: Pag
                             type="button"
                             onClick={() => setLayoutOpen(true)}
                             disabled={!canManage}
-                            className="flex items-start gap-3 rounded-xl border border-line bg-canvas p-3 text-left transition hover:border-accent hover:shadow-sm disabled:pointer-events-none"
+                            className="flex items-start gap-3 rounded-xl border border-line bg-canvas p-3 text-left transition hover:border-accent hover:shadow-card disabled:pointer-events-none"
                         >
                             <span className="grid size-9 shrink-0 place-items-center rounded-lg bg-accent-soft text-accent"><LayoutTemplate className="size-5" /></span>
                             <span className="min-w-0 flex-1">
                                 <span className="block text-sm font-semibold">{spec.title}</span>
                                 <span className="block text-xs text-muted">{spec.blurb}</span>
-                                <span className="mt-1 block font-mono text-[11px] text-muted">{draft.layout}{!isKnownLayout(draft.layout) && ' · unknown to the client'}</span>
+                                <span className="mt-1 block font-mono text-2xs text-muted">{draft.layout}{!isKnownLayout(draft.layout) && ' · unknown to the client'}</span>
                             </span>
                             {canManage && <span className="text-xs font-medium text-accent">Change</span>}
                         </button>
@@ -349,7 +349,7 @@ export const PageInspector = ({ tree, page, draft, onDraft, focus, onOpen }: Pag
                                     </Labeled>
                                 </div>
                             ))}
-                            <p className="text-[11px] text-muted">The client reads simple HTML in these: &lt;b&gt;, &lt;i&gt;, &lt;br&gt; and &lt;a href&gt;.</p>
+                            <p className="text-2xs text-muted">The client reads simple HTML in these: &lt;b&gt;, &lt;i&gt;, &lt;br&gt; and &lt;a href&gt;.</p>
                         </Section>
                     )}
 

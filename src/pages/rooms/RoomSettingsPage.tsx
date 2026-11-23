@@ -217,8 +217,8 @@ const SettingsForm = ({ room }: { room: RoomDetailResponse }) => {
             </div>
 
             {/* At the foot of the window while there is more page below it: never scrolled away from. */}
-            <div className="sticky bottom-[calc(0.75rem+env(safe-area-inset-bottom))] z-20 flex items-center gap-3 rounded-xl border border-line bg-chrome/95 px-4 py-3 shadow-2xl backdrop-blur lg:bottom-4">
-                <span className="min-w-0 flex-1 text-[13px] text-muted">
+            <div className="save-bar flex items-center gap-3 px-4 py-3">
+                <span className="min-w-0 flex-1 text-ui text-muted">
                     <span aria-hidden className={cx('mr-2', changes > 0 ? 'text-warn' : 'text-good')}>●</span>
                     {changes === 0 ? 'No unsaved changes' : changes === 1 ? '1 unsaved change' : `${changes} unsaved changes`}
                 </span>
@@ -239,7 +239,7 @@ export const RoomSettingsPage = () => {
     return (
         <>
             <RoomHeader id={id} room={room} tab="settings" />
-            <PageBody className="flex flex-col gap-4 lg:gap-5">
+            <PageBody>
                 {isPending && <Loading />}
                 {error && <ErrorNotice error={error} />}
                 {room && !room.can.editSettings && (

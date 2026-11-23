@@ -76,7 +76,7 @@ export const PlayersPage = () => {
             >
                 {canCreate && !creating && <Button icon={<UserPlus />} onClick={() => setCreating(true)}>New player</Button>}
             </PageHeader>
-            <PageBody className="flex flex-col gap-4 lg:gap-5">
+            <PageBody>
                 {creating && <NewPlayerPanel onClose={() => setCreating(false)} />}
                 <Panel className="overflow-clip">
                     <ListToolbar
@@ -121,7 +121,7 @@ export const PlayersPage = () => {
                                                         <Avatar id={player.id} name={player.name} figure={player.figure} />
                                                         <div className="min-w-0 flex-1">
                                                             <div className="truncate font-medium">{player.name}</div>
-                                                            <div className="truncate font-mono text-[11px] text-muted">#{player.id}{player.discordUsername ? ` · @${player.discordUsername}` : player.motto ? ` · ${player.motto}` : ''}</div>
+                                                            <div className="truncate font-mono text-2xs text-muted">#{player.id}{player.discordUsername ? ` · @${player.discordUsername}` : player.motto ? ` · ${player.motto}` : ''}</div>
                                                         </div>
                                                         <Seen player={player} />
                                                     </Link>
@@ -147,7 +147,7 @@ export const PlayersPage = () => {
                                                                     <span className="min-w-0">
                                                                         <span className="block font-medium hover:text-accent">
                                                                             {player.name}
-                                                                            <span className="ml-2 font-mono text-[11px] font-normal text-muted">#{player.id}</span>
+                                                                            <span className="ml-2 font-mono text-2xs font-normal text-muted">#{player.id}</span>
                                                                             {player.discordUsername && <Badge tone="accent" className="ml-2">discord</Badge>}
                                                                         </span>
                                                                         {player.motto && <span className="block max-w-80 truncate text-xs text-muted">{player.motto}</span>}

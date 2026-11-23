@@ -105,13 +105,13 @@ const TrackList = ({ tracks, onOpen }: { tracks: RewardTrackListItem[]; onOpen: 
                                         <span className="size-4 shrink-0 rounded border border-black/10" style={{ background: css(themeOf(track.theme).dark) }} title={`Theme ${track.theme || 'blue'}`} />
                                         <span className="min-w-0">
                                             {names.has(track.id) && <span className="block truncate font-medium">{names.get(track.id)}</span>}
-                                            <span className={cx('block font-mono', names.has(track.id) ? 'text-[11px] text-muted' : 'text-sm')}>{track.id}</span>
+                                            <span className={cx('block font-mono', names.has(track.id) ? 'text-2xs text-muted' : 'text-sm')}>{track.id}</span>
                                         </span>
                                     </button>
                                 </Td>
                                 <Td>
                                     <span className="block text-xs">{menuNames.get(track.id) ?? <span className="font-mono text-muted">{menuTextKey(track.id)}</span>}</span>
-                                    {track.id === INTRODUCTION && <span className="block text-[11px] text-muted">Always in the menu</span>}
+                                    {track.id === INTRODUCTION && <span className="block text-2xs text-muted">Always in the menu</span>}
                                 </Td>
                                 <Td><span title={status.meaning}><Badge tone={status.tone}>{status.label}</Badge></span></Td>
                                 <Td>
@@ -192,7 +192,7 @@ export const RewardTracksPage = ({ importing = false }: { importing?: boolean })
                     </>
                 )}
             </PageHeader>
-            <PageBody className="flex flex-col gap-4 lg:gap-5">
+            <PageBody>
                 {error && <ErrorNotice error={error} />}
                 {!data && !error && <Loading />}
                 {data && importing && <ImportTracks onOpen={open} />}

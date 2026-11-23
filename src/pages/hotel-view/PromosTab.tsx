@@ -240,7 +240,7 @@ export const PromosTab = ({ draft, codes, now, open, onOpen, onOpenSlot, disable
                                         onClick={() => onOpen(code)}
                                         className={cx('flex w-full flex-col gap-1 px-3 py-2.5 text-left hover:bg-subtle', selected === code && 'bg-accent-soft/50')}
                                     >
-                                        <span className="flex items-center gap-2 font-mono text-[13px]">
+                                        <span className="flex items-center gap-2 font-mono text-ui">
                                             <span className="truncate">{code}</span>
                                             <Changed on={[ 'widget', 'conf', 'layout' ].some(x => draft.changed(codeKey(code, x as 'widget')))} />
                                         </span>

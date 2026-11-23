@@ -16,7 +16,7 @@ const Levels = ({ levels, onChange }: { levels: RewardTrackLevel[]; onChange: (l
 
     return (
         <div className="flex flex-col gap-1.5">
-            <div className="grid grid-cols-[3rem_1fr_1fr_6rem_2rem] gap-2 px-1 font-mono text-[10px] tracking-[0.08em] text-muted uppercase">
+            <div className="grid grid-cols-[3rem_1fr_1fr_6rem_2rem] gap-2 px-1 font-mono text-2xs tracking-[0.08em] text-muted uppercase">
                 <span>Level</span><span>Count</span><span>Points</span><span>Premium</span><span />
             </div>
             {levels.map((level, index) => (
@@ -65,7 +65,7 @@ const TaskRow = ({ task, index, count, open, onOpen, actionTypes, onChange, onMo
                 <button type="button" onClick={onOpen} className="flex min-w-0 flex-1 items-center gap-2 text-left" aria-expanded={open}>
                     <ChevronRight className={cx('size-4 shrink-0 text-muted transition', open && 'rotate-90')} />
                     <span className="min-w-0 truncate font-mono text-sm">{task.id}</span>
-                    <span className="truncate font-mono text-[11px] text-muted">{typeOf(task.actionType)}</span>
+                    <span className="truncate font-mono text-2xs text-muted">{typeOf(task.actionType)}</span>
                     {!counted && <Badge tone="amber">not counted</Badge>}
                     {task.premium && <Badge tone="accent">premium</Badge>}
                 </button>

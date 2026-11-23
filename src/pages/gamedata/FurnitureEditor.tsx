@@ -177,15 +177,15 @@ interface FileInfo {
 
 const Fact = ({ label, children }: { label: string; children: ReactNode }) => (
     <div className="flex items-baseline justify-between gap-3 py-2">
-        <dt className="text-[13px] text-muted">{label}</dt>
+        <dt className="text-ui text-muted">{label}</dt>
         <dd className="min-w-0 truncate text-right font-mono text-xs">{children}</dd>
     </div>
 );
 
 const Card = ({ title, children, actions }: { title: string; children: ReactNode; actions?: ReactNode }) => (
-    <section className="flex min-w-0 flex-col rounded-xl border border-line bg-surface">
+    <section className="card flex min-w-0 flex-col">
         <header className="flex min-h-10 items-center justify-between gap-2 border-b border-line px-4">
-            <h3 className="text-[13px] font-semibold">{title}</h3>
+            <h3 className="text-ui font-semibold">{title}</h3>
             {actions}
         </header>
         <div className="flex-1 px-4 py-1">{children}</div>
@@ -225,7 +225,7 @@ const BundleCard = ({ definition, canManage }: { definition: FurnitureDefinition
         >
             {!data && !error && <Loading />}
             {error && !missing && <div className="py-2"><ErrorNotice error={error} /></div>}
-            {missing && <p className="py-3 text-[13px] text-bad">{`There is no bundle named ${name}: the client draws a placeholder.`}</p>}
+            {missing && <p className="py-3 text-ui text-bad">{`There is no bundle named ${name}: the client draws a placeholder.`}</p>}
             {data && (
                 <dl className="divide-y divide-line">
                     <Fact label="Name">{name}</Fact>
@@ -268,7 +268,7 @@ const Overview = ({ definition, item, draft, differing, canManage, onUseHabbo, o
         <div className="flex flex-col gap-4">
             {wrongLogic && (
                 <section className="flex flex-col gap-2 rounded-xl border border-bad-line bg-bad-soft px-4 py-3 sm:flex-row sm:items-center sm:justify-between">
-                    <p className="text-[13px] text-bad">
+                    <p className="text-ui text-bad">
                         {'The server runs it with '}
                         <span className="font-mono">{logic}</span>
                         {', but has '}
@@ -278,12 +278,12 @@ const Overview = ({ definition, item, draft, differing, canManage, onUseHabbo, o
                     {canManage && <Button variant="secondary" icon={<Wrench />} className="h-8 shrink-0 px-2.5 text-xs" onClick={() => onUseLogic(definition.matchingLogic!)}>{`Use ${definition.matchingLogic}`}</Button>}
                 </section>
             )}
-            <section className="flex flex-col gap-4 rounded-xl border border-line bg-surface p-4 sm:flex-row sm:items-start">
+            <section className="card flex flex-col gap-4 p-4 sm:flex-row sm:items-start">
                 <Icon className={definition.className} size="lg" />
                 <div className="flex min-w-0 flex-1 flex-col gap-2">
                     <div className="min-w-0">
                         <h3 className="truncate text-base font-semibold">{name}</h3>
-                        {description && <p className="mt-0.5 line-clamp-2 text-[13px] text-muted">{description}</p>}
+                        {description && <p className="mt-0.5 line-clamp-2 text-ui text-muted">{description}</p>}
                     </div>
                     <div className="flex flex-wrap gap-1.5">
                         <Badge>{FURNITURE_KINDS[definition.productType] ?? 'furniture'}</Badge>
@@ -503,7 +503,7 @@ const EditorBody = ({ definition, canManage, section, onSection, onUnsaved, save
                         >
                             {target.icon}
                             <span className="flex-1">{target.title}</span>
-                            {unsavedIn(target) > 0 && <span className="rounded-full bg-accent px-1.5 text-[11px] font-semibold text-on-accent tabular-nums">{unsavedIn(target)}</span>}
+                            {unsavedIn(target) > 0 && <span className="rounded-full bg-accent px-1.5 text-2xs font-semibold text-on-accent tabular-nums">{unsavedIn(target)}</span>}
                             {unsavedIn(target) === 0 && differingIn(target) && <span className="size-1.5 rounded-full bg-warn" title="Differs from Habbo" />}
                         </button>
                     ))}
@@ -511,8 +511,8 @@ const EditorBody = ({ definition, canManage, section, onSection, onUnsaved, save
 
                 <div className="min-w-0 p-4 sm:p-6">
                     <header className="mb-5">
-                        <h3 className="text-[15px] font-semibold">{shown.title}</h3>
-                        <p className="mt-0.5 text-[13px] text-muted">{shown.about}</p>
+                        <h3 className="text-base font-semibold">{shown.title}</h3>
+                        <p className="mt-0.5 text-ui text-muted">{shown.about}</p>
                     </header>
 
                     {shown.id === 'overview' && (
@@ -559,7 +559,7 @@ const EditorBody = ({ definition, canManage, section, onSection, onUnsaved, save
             </div>
 
             <footer className="sticky bottom-0 z-10 flex flex-wrap items-center gap-x-4 gap-y-2 border-t border-line bg-surface/95 px-4 py-3 backdrop-blur sm:static sm:px-6">
-                <div className="min-w-0 flex-1 text-[13px]">
+                <div className="min-w-0 flex-1 text-ui">
                     {update.error
                         ? <span className="text-bad">{update.error instanceof Error ? update.error.message : 'It could not be saved.'}</span>
                         : changed.length > 0

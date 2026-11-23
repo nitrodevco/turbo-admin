@@ -40,9 +40,9 @@ const IdChanges = ({ label, added, changed, removed }: { label: string; added: s
     return (
         <div className="flex flex-col gap-1 text-xs">
             <span className="font-medium">{label}</span>
-            {added.length > 0 && <p className="font-mono text-[11px] break-words text-good">+ {added.join(' ')}</p>}
-            {changed.length > 0 && <p className="font-mono text-[11px] break-words text-warn">~ {changed.join(' ')}</p>}
-            {removed.length > 0 && <p className="font-mono text-[11px] break-words text-bad">- {removed.join(' ')}</p>}
+            {added.length > 0 && <p className="font-mono text-2xs break-words text-good">+ {added.join(' ')}</p>}
+            {changed.length > 0 && <p className="font-mono text-2xs break-words text-warn">~ {changed.join(' ')}</p>}
+            {removed.length > 0 && <p className="font-mono text-2xs break-words text-bad">- {removed.join(' ')}</p>}
         </div>
     );
 };
@@ -51,7 +51,7 @@ const TrackChange = ({ change, onOpen }: { change: RewardTrackImportChange; onOp
     const action = ACTIONS[change.action];
 
     return (
-        <li className="flex flex-col gap-3 rounded-xl border border-line bg-surface p-4">
+        <li className="card flex flex-col gap-3 p-4">
             <div className="flex flex-wrap items-center gap-2">
                 <Badge tone={action.tone}>{action.label}</Badge>
                 <button type="button" onClick={() => onOpen(change.id)} className="font-mono text-sm font-semibold hover:underline">{change.id}</button>
@@ -70,7 +70,7 @@ const TrackChange = ({ change, onOpen }: { change: RewardTrackImportChange; onOp
                         <TriangleAlert className="size-3.5" />
                         {change.warnings.length} things this hotel cannot do of it
                     </summary>
-                    <ul className="px-3 pb-2 font-mono text-[11px] leading-relaxed">{change.warnings.map(x => <li key={x}>{x}</li>)}</ul>
+                    <ul className="px-3 pb-2 font-mono text-2xs leading-relaxed">{change.warnings.map(x => <li key={x}>{x}</li>)}</ul>
                 </details>
             )}
         </li>
@@ -148,7 +148,7 @@ export const ImportTracks = ({ onOpen }: { onOpen: (id: string) => void }) => {
 
     return (
         <div className="grid items-start gap-4 xl:grid-cols-[24rem_minmax(0,1fr)]">
-            <div className="flex flex-col gap-4 rounded-xl border border-line bg-surface p-4 xl:sticky xl:top-4">
+            <div className="card flex flex-col gap-4 p-4 xl:sticky xl:top-4">
                 <div className="flex items-start gap-3">
                     <span className="grid size-10 shrink-0 place-items-center rounded-xl bg-accent-soft text-accent"><FileUp className="size-5" /></span>
                     <div>
@@ -160,7 +160,7 @@ export const ImportTracks = ({ onOpen }: { onOpen: (id: string) => void }) => {
                 <section className="flex flex-col gap-1.5">
                     <Label as="h3">Capture</Label>
                     <input type="file" accept=".json,application/json" aria-label="Capture file" onChange={event => void pick(event.target.files?.[0])} className="text-xs file:mr-3 file:rounded-lg file:border-0 file:bg-subtle file:px-3 file:py-1.5 file:text-xs" />
-                    {capture && <span className="font-mono text-[11px] text-muted">{capture.name}</span>}
+                    {capture && <span className="font-mono text-2xs text-muted">{capture.name}</span>}
                     {readError && <span className="text-xs text-warn">{readError}</span>}
                 </section>
 
@@ -205,7 +205,7 @@ export const ImportTracks = ({ onOpen }: { onOpen: (id: string) => void }) => {
                         {!data.changes && <p className="text-xs text-muted">Nothing to do: the hotel's tracks are in line with the capture.</p>}
                         <ul className="flex flex-col gap-3">{data.tracks.map(x => <TrackChange key={x.id} change={x} onOpen={onOpen} />)}</ul>
                         {data.changes && (
-                            <div className="sticky bottom-3 z-20 flex flex-wrap items-center gap-3 rounded-xl border border-accent/50 bg-surface/95 p-3 shadow-xl backdrop-blur">
+                            <div className="save-bar flex flex-wrap items-center gap-3 p-3">
                                 <span className="mr-auto text-xs text-muted">Live as soon as it is saved: everyone online is sent the tracks again.</span>
                                 <Button icon={<Hammer />} disabled={run.isPending} onClick={event => apply(event.currentTarget)}>
                                     {run.isPending ? 'Importing…' : 'Import'}

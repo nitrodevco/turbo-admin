@@ -145,11 +145,11 @@ export const CurrencyLogPage = () => {
                                                         {entry.amount > 0 ? '+' : '−'}{Math.abs(entry.amount).toLocaleString()} <span className="font-sans text-xs text-muted">{entry.currency}</span>
                                                     </span>
                                                     <span className="min-w-0 truncate">
-                                                        <button type="button" onClick={() => go({ ...filter, cause: entry.cause })} className="font-mono text-[13px] hover:text-accent" title="Only this cause">{entry.cause}</button>
+                                                        <button type="button" onClick={() => go({ ...filter, cause: entry.cause })} className="font-mono text-ui hover:text-accent" title="Only this cause">{entry.cause}</button>
                                                         {entry.causeRef && <span className="ml-1.5 font-mono text-xs text-muted" title={entry.causeRef}>{entry.causeRef}</span>}
                                                     </span>
-                                                    <span className="min-w-0 truncate text-[13px]"><Other entry={entry} /></span>
-                                                    <span className="min-w-0 truncate text-[13px]">
+                                                    <span className="min-w-0 truncate text-ui"><Other entry={entry} /></span>
+                                                    <span className="min-w-0 truncate text-ui">
                                                         <PhoneLabel>by </PhoneLabel>
                                                         {entry.actorId ? <PlayerLink id={entry.actorId} name={entry.actorName} /> : <span className="text-muted">the server</span>}
                                                     </span>

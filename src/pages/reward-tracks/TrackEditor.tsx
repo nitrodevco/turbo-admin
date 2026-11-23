@@ -175,7 +175,7 @@ export const TrackEditor = ({ id, isNew, actionTypes, onBack }: { id: string; is
     return (
         <>
             {header}
-            <PageBody className="flex flex-col gap-4 lg:gap-5">
+            <PageBody>
                 <div className="flex flex-wrap items-center gap-2 text-xs text-muted">
                     <Badge tone={STATUS[statusOf(track)].tone}>{STATUS[statusOf(track)].label}</Badge>
                     <span>{track.tasks.length} tasks · {track.tasks.reduce((sum, x) => sum + x.levels.length, 0)} levels · {trackPoints(track).toLocaleString()} points to earn · {track.prizes.length} prizes</span>
@@ -186,7 +186,7 @@ export const TrackEditor = ({ id, isNew, actionTypes, onBack }: { id: string; is
                             <TriangleAlert className="size-4" />
                             {data.warnings.length} things this hotel cannot do of the saved track
                         </summary>
-                        <ul className="px-4 pb-3 font-mono text-[11px] leading-relaxed">
+                        <ul className="px-4 pb-3 font-mono text-2xs leading-relaxed">
                             {data.warnings.map(x => <li key={x}>{x}</li>)}
                         </ul>
                     </details>
@@ -205,7 +205,7 @@ export const TrackEditor = ({ id, isNew, actionTypes, onBack }: { id: string; is
                     </Panel>
                 )}
                 {(dirty || isNew || save.isError) && (
-                    <div className="sticky bottom-3 z-20 rounded-xl border border-accent/40 bg-surface/95 shadow-lg backdrop-blur">
+                    <div className="save-bar">
                         <div className="flex flex-wrap items-center gap-3 px-4 py-3">
                             <span className="text-sm">{isNew ? 'A new track, not saved' : 'Changes not saved'}<span className="text-muted max-sm:hidden"> · sent to everyone online when saved</span></span>
                             {problems.length > 0 && <ul className="w-full text-xs text-warn sm:order-last">{problems.map(x => <li key={x}>{x}</li>)}</ul>}

@@ -68,8 +68,8 @@ const Changes = ({ set }: { set: ChangeSet }) => {
             {shown.map(change => (
                 <li key={`${change.recordType}:${change.recordId}:${change.label}`} className="grid gap-x-4 gap-y-1 px-4 py-2.5 text-sm sm:grid-cols-[minmax(10rem,16rem)_1fr] sm:pl-11">
                     <div className="flex min-w-0 flex-wrap items-center gap-2">
-                        <span className="truncate font-mono text-[13px]">{change.label}</span>
-                        <span className="text-[11px] text-muted">{RECORD_TYPES[change.recordType]}</span>
+                        <span className="truncate font-mono text-ui">{change.label}</span>
+                        <span className="text-2xs text-muted">{RECORD_TYPES[change.recordType]}</span>
                     </div>
                     <div className="min-w-0">
                         {change.before === null && <Badge tone="green">made</Badge>}
@@ -141,7 +141,7 @@ const ChangeSets = ({ scope, canManage, page, query: { data, error, isFetching }
                                         {open === set.id ? <ChevronDown /> : <ChevronRight />}
                                         <Badge tone={KIND_TONES[kind] ?? 'neutral'} className="justify-center sm:min-w-24">{kind}</Badge>
                                         <span className={cx('min-w-0 flex-[1_1_16rem] truncate', set.rolledBackById !== null && 'text-muted line-through decoration-muted/50')}>{set.summary}</span>
-                                        <span className="font-mono text-[11px] text-muted tabular-nums">#{set.id} · {set.changeCount.toLocaleString()} rows · {fromNow(set.createdAt)}</span>
+                                        <span className="font-mono text-2xs text-muted tabular-nums">#{set.id} · {set.changeCount.toLocaleString()} rows · {fromNow(set.createdAt)}</span>
                                     </button>
                                     {(set.rolledBackById !== null || canRollBack) && (
                                         // On a phone the actions go under the summary, in line with it.

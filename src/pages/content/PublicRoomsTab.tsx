@@ -50,7 +50,7 @@ const CategoryRow = ({ category, selected, onSelect, canManage, dropping }: { ca
         <li
             ref={setNodeRef}
             style={{ transform: CSS.Transform.toString(transform), transition }}
-            className={cx('flex items-center gap-1 pr-3', selected && 'bg-accent/10', dropping && 'ring-2 ring-accent ring-inset', isDragging && 'z-10 bg-surface shadow-lg')}
+            className={cx('flex items-center gap-1 pr-3', selected && 'bg-accent/10', dropping && 'ring-2 ring-accent ring-inset', isDragging && 'z-10 bg-surface shadow-pop')}
             data-category={category.id}
         >
             {canManage ? <Grip attributes={attributes} listeners={listeners} label={`Move ${titleOf(category)}`} /> : <span className="w-3" />}
@@ -83,7 +83,7 @@ const RoomRow = ({ room, index, category, others, canManage, onMove, onRemove }:
         <li
             ref={setNodeRef}
             style={{ transform: CSS.Transform.toString(transform), transition }}
-            className={cx('flex flex-wrap items-center gap-2 py-2 pr-3', !movable && 'pl-3', isDragging && 'z-10 bg-surface shadow-lg')}
+            className={cx('flex flex-wrap items-center gap-2 py-2 pr-3', !movable && 'pl-3', isDragging && 'z-10 bg-surface shadow-pop')}
             data-room={room.roomId}
         >
             {movable && <Grip attributes={attributes} listeners={listeners} label={`Move ${room.name}`} />}
@@ -224,7 +224,7 @@ const Preview = () => {
                 {data?.blocks.map(block => (
                     <li key={block.searchCode} className="px-4 py-2.5" data-block={block.searchCode}>
                         <div className="flex items-center gap-2">
-                            <span className="min-w-0 flex-1 truncate text-[13px] font-semibold">{block.text || (block.searchCode === 'staffpicks' ? 'Staff Picks' : block.searchCode)}</span>
+                            <span className="min-w-0 flex-1 truncate text-ui font-semibold">{block.text || (block.searchCode === 'staffpicks' ? 'Staff Picks' : block.searchCode)}</span>
                             {block.forceClosed && <span className="text-xs text-muted">opens closed</span>}
                             <span className="text-xs text-muted">{block.viewMode === 1 ? 'thumbnails' : 'list'}</span>
                         </div>

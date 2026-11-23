@@ -452,7 +452,7 @@ const CatalogEditor = ({ view }: { view: View }) => {
                 }}
             />
             {/* Without the rising entrance: a transformed parent would move the drag overlay. */}
-            <PageBody still className="flex flex-col gap-4 lg:gap-5">
+            <PageBody still>
                 {tree.error && <ErrorNotice error={tree.error} />}
                 {tree.isPending && <Loading />}
                 {data?.canManage && (
@@ -512,7 +512,7 @@ const CatalogEditor = ({ view }: { view: View }) => {
                                             ref={fillTree}
                                             aria-label="Pages"
                                             className={cx(
-                                                'flex flex-col overflow-hidden rounded-xl border border-line bg-surface lg:sticky lg:top-6 lg:max-h-(--fill-height)',
+                                                'card flex flex-col overflow-hidden lg:sticky lg:top-6 lg:max-h-(--fill-height)',
                                                 selected !== null && 'max-lg:hidden',
                                             )}
                                         >
@@ -545,7 +545,7 @@ const CatalogEditor = ({ view }: { view: View }) => {
                                                 )
                                             : (
                                                     <div className="flex min-w-0 flex-col gap-3">
-                                                        <div className="overflow-hidden rounded-xl border border-line bg-surface">
+                                                        <div className="card overflow-hidden">
                                                             <div className="flex min-w-0 items-center gap-2 px-2 py-2">
                                                                 <Button variant="ghost" icon={<ArrowLeft />} onClick={() => openPage(null)} className="lg:hidden">Pages</Button>
                                                                 {draft && <PageIcon icon={draft.icon} className="ml-1 size-7 max-lg:hidden" />}
@@ -620,12 +620,12 @@ const CatalogEditor = ({ view }: { view: View }) => {
                                                             </div>
                                                         )}
                                                         {page.data && draft && shownTab === 'settings' && (
-                                                            <div role="tabpanel" id={tabIds.panel('settings')} aria-labelledby={tabIds.tab('settings')} className="overflow-clip rounded-xl border border-line bg-surface">
+                                                            <div role="tabpanel" id={tabIds.panel('settings')} aria-labelledby={tabIds.tab('settings')} className="card overflow-clip">
                                                                 <PageInspector tree={data} page={page.data} draft={draft} onDraft={setDraft} focus={focus} onOpen={openPage} />
                                                             </div>
                                                         )}
                                                         {page.data && shownTab === 'featured' && (
-                                                            <div role="tabpanel" id={tabIds.panel('featured')} aria-labelledby={tabIds.tab('featured')} className="overflow-clip rounded-xl border border-line bg-surface">
+                                                            <div role="tabpanel" id={tabIds.panel('featured')} aria-labelledby={tabIds.tab('featured')} className="card overflow-clip">
                                                                 {featured.data && <FeaturedEditor key={JSON.stringify(featured.data.items)} tree={data} items={featured.data.items} offers={page.data.offers} />}
                                                                 {featured.error && <div className="p-4"><ErrorNotice error={featured.error} /></div>}
                                                             </div>
@@ -637,12 +637,12 @@ const CatalogEditor = ({ view }: { view: View }) => {
                                     {createPortal(
                                         <DragOverlay dropAnimation={{ duration: 180, easing: 'cubic-bezier(0.2, 0.8, 0.3, 1)' }} zIndex={60}>
                                             {draggedPage && (
-                                                <div className="flex h-10 w-72 items-center gap-2 rounded-lg border border-accent bg-surface px-3 text-[13px] shadow-2xl ring-4 ring-accent-soft">
+                                                <div className="flex h-10 w-72 items-center gap-2 rounded-lg border border-accent bg-surface px-3 text-ui shadow-overlay ring-4 ring-accent-soft">
                                                     <PageRowBody page={draggedPage} />
                                                 </div>
                                             )}
                                             {draggedOffer && (
-                                                <div className="flex w-24 -rotate-2 flex-col items-center gap-1 rounded-xl border border-accent bg-surface p-1.5 shadow-2xl ring-4 ring-accent-soft">
+                                                <div className="flex w-24 -rotate-2 flex-col items-center gap-1 rounded-xl border border-accent bg-surface p-1.5 shadow-overlay ring-4 ring-accent-soft">
                                                     <OfferFace offer={draggedOffer} tree={data} />
                                                 </div>
                                             )}

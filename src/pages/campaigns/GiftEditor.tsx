@@ -107,7 +107,7 @@ export const GiftEditor = ({ gift, currencies, errorOf, onChange, onRemove }: {
                     {image && (
                         <div className="flex items-center gap-3 rounded-lg border border-line bg-subtle/40 p-2">
                             <img src={image} alt="" className="max-h-16 max-w-24 [image-rendering:pixelated]" />
-                            <span className="min-w-0 truncate font-mono text-[11px] text-muted">{image}</span>
+                            <span className="min-w-0 truncate font-mono text-2xs text-muted">{image}</span>
                         </div>
                     )}
                     <FieldError message={errorOf('dayIndex')} />

@@ -24,12 +24,12 @@ export const Modal = ({ title, open, onClose, children, className, leave }: { ti
             {open && (
                 <div
                     className={cx(
-                        'flex h-full animate-rise flex-col overflow-clip bg-surface sm:mx-auto sm:h-auto sm:max-w-3xl sm:rounded-2xl sm:border sm:border-line sm:shadow-2xl',
+                        'flex h-full animate-rise flex-col overflow-clip bg-surface sm:mx-auto sm:h-auto sm:max-w-3xl sm:rounded-2xl sm:border sm:border-line sm:shadow-overlay',
                         className,
                     )}
                 >
                     <div className="flex items-center justify-between gap-3 border-b border-line bg-surface px-5 pt-[max(0.75rem,env(safe-area-inset-top))] pb-3">
-                        <h2 className="min-w-0 truncate text-sm font-semibold">{title}</h2>
+                        <h2 className="min-w-0 truncate text-base font-semibold">{title}</h2>
                         <button type="button" onClick={() => closeOrAsk(onClose, leave)} aria-label="Close" className="grid size-10 shrink-0 place-items-center rounded-lg text-muted hover:bg-subtle hover:text-ink sm:size-8">
                             <X className="size-4" />
                         </button>

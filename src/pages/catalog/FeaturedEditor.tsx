@@ -48,7 +48,7 @@ const ItemCard = ({ item, index, tree, offers, onChange, onRemove, disabled }: {
     const named = tree.pages.filter(x => x.name).sort((a, b) => (a.name ?? '').localeCompare(b.name ?? ''));
 
     return (
-        <li ref={setNodeRef} style={{ transform: CSS.Transform.toString(transform), transition }} className={cx('rounded-xl border border-line bg-canvas', isDragging && 'z-10 shadow-lg')}>
+        <li ref={setNodeRef} style={{ transform: CSS.Transform.toString(transform), transition }} className={cx('rounded-xl border border-line bg-canvas', isDragging && 'z-10 shadow-pop')}>
             <div className="flex items-center gap-2 border-b border-line px-3 py-2">
                 {!disabled && (
                     <span {...attributes} {...listeners} aria-label="Move it" className="grid size-10 cursor-grab touch-none place-items-center rounded text-muted hover:bg-subtle hover:text-ink active:cursor-grabbing sm:size-7">

@@ -128,7 +128,7 @@ const Detail = ({ id, canManage, onGone }: { id: string; canManage: boolean; onG
                 <Kv label="Changed">{image.modifiedUtc ? new Date(image.modifiedUtc).toLocaleString() : 'unknown'}</Kv>
             </div>
             <div className="flex flex-col gap-1">
-                <h3 className="text-xs font-semibold uppercase tracking-wide text-muted">What a field stores</h3>
+                <h3 className="font-mono text-2xs font-medium tracking-[0.08em] text-muted uppercase">What a field stores</h3>
                 {VALUE_LABELS.filter(([ key ]) => image.values[key] !== null && image.values[key] !== '').map(([ key, label ]) => (
                     <div key={key} className="flex items-center gap-2 text-sm">
                         <span className="w-44 shrink-0 text-muted">{label}</span>
@@ -138,7 +138,7 @@ const Detail = ({ id, canManage, onGone }: { id: string; canManage: boolean; onG
                 ))}
             </div>
             <div className="flex flex-col gap-1">
-                <h3 className="text-xs font-semibold uppercase tracking-wide text-muted">Shown on</h3>
+                <h3 className="font-mono text-2xs font-medium tracking-[0.08em] text-muted uppercase">Shown on</h3>
                 {(image.usedOn ?? []).length === 0 ? <span className="text-sm text-muted">Nothing shows it.</span> : <UsedOnList uses={image.usedOn!} />}
             </div>
             {canManage && (
@@ -333,7 +333,7 @@ export const MediaLibraryPage = () => {
     return (
         <>
             <PageHeader title="Media library" description="Every image the hotel can show: the image library, catalog pictures and icons, badges, furniture icons, the client's own images, plugins' images and uploads. Open one to copy what a field stores and see where it is shown." />
-            <PageBody className="flex flex-col gap-4">
+            <PageBody>
                 <div onDragOver={drop}>
                     <Panel title="Find" actions={<span className="text-xs text-muted">{isFetching ? 'Searching…' : data ? `${data.total} found` : ''}</span>}>
                         <div className="flex flex-col gap-3 px-4 py-3">
@@ -425,7 +425,7 @@ export const MediaLibraryPage = () => {
                                         >
                                             <MediaThumb image={image} className="h-24 w-full" />
                                             <span className="truncate text-xs">{image.name}</span>
-                                            <span className="truncate text-[11px] text-muted">{image.usedCount ? `Used ${image.usedCount}x` : 'Not used'}</span>
+                                            <span className="truncate text-2xs text-muted">{image.usedCount ? `Used ${image.usedCount}x` : 'Not used'}</span>
                                         </button>
                                     </li>
                                 ))}

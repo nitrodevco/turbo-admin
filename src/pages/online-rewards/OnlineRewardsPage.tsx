@@ -360,7 +360,7 @@ const OnlineRewardsForm = ({ settings, canManage }: { settings: Record<Name, Ser
                 </div>
             </Panel>
             {canManage && (
-                <Panel className="sticky bottom-3 z-10 shadow-lg">
+                <Panel className="save-bar">
                     <div className="flex flex-col gap-3 p-3 sm:flex-row sm:items-center">
                         <div className="min-w-0 flex-1 text-xs">
                             {changed.length === 0
@@ -409,7 +409,7 @@ export const OnlineRewardsPage = () => {
     return (
         <>
             <PageHeader title="Online rewards" description="Currency paid to players for time online" />
-            <PageBody className="flex flex-col gap-4 lg:gap-5">
+            <PageBody>
                 {error && <ErrorNotice error={error} />}
                 {!error && !data && <Loading />}
                 {data && !settings && <ErrorNotice error={new Error(`The server has no ${SECTION} settings: it is older than this panel.`)} />}

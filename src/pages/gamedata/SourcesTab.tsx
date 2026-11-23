@@ -161,10 +161,10 @@ const Tile = ({ label, value, unit, detail, when }: { label: string; value: numb
         <div className="truncate text-xs text-muted">{label}</div>
         <div className="mt-0.5 flex items-baseline gap-1">
             <span className="text-base font-semibold tabular-nums">{value === null ? '–' : value.toLocaleString()}</span>
-            {unit && value !== null && <span className="truncate text-[11px] text-muted">{unit}</span>}
+            {unit && value !== null && <span className="truncate text-2xs text-muted">{unit}</span>}
         </div>
-        {detail && <div className="truncate text-[11px]">{detail}</div>}
-        {when && <div className="truncate text-[11px] text-muted">{when}</div>}
+        {detail && <div className="truncate text-2xs">{detail}</div>}
+        {when && <div className="truncate text-2xs text-muted">{when}</div>}
     </div>
 );
 
@@ -195,7 +195,7 @@ const Fact = ({ label, children }: { label: string; children: ReactNode }) => (
 /** The sources' columns, as a grid: the ones a narrower screen hides fold into each dropdown. */
 const COLUMNS = 'grid grid-cols-[minmax(0,1fr)_9rem_2.75rem] md:grid-cols-[minmax(0,1fr)_9rem_minmax(0,14rem)_2.75rem] lg:grid-cols-[minmax(0,1fr)_9rem_minmax(0,14rem)_8rem_12rem_11rem_2.75rem]';
 
-const HEAD = 'px-4 py-2 font-mono text-[11px] font-medium tracking-[0.08em] text-muted uppercase';
+const HEAD = 'px-4 py-2 font-mono text-2xs font-medium tracking-[0.08em] text-muted uppercase';
 
 const CELL = 'min-w-0 px-4 py-2.5';
 
@@ -241,7 +241,7 @@ const SourceRow = ({ icon, name, host, status, serves, plain, checked, changed, 
                 <span className="grid size-8 shrink-0 place-items-center rounded-lg bg-accent-soft text-accent [&>svg]:size-4">{icon}</span>
                 <span className="min-w-0">
                     <span className="block truncate font-medium">{name}</span>
-                    {host && <span className="block truncate font-mono text-[11px] text-muted">{host}</span>}
+                    {host && <span className="block truncate font-mono text-2xs text-muted">{host}</span>}
                 </span>
             </span>
             <span className={CELL}><StatusBadge status={status} /></span>
@@ -283,7 +283,7 @@ const GamedataFiles = ({ files, waiting }: { files: GamedataFile[]; waiting: (id
                 <tr key={x.id}>
                     <Cell>
                         <div className="font-medium">{x.label}</div>
-                        <div className="font-mono text-[11px] text-muted">{x.name}</div>
+                        <div className="font-mono text-2xs text-muted">{x.name}</div>
                     </Cell>
                     <Cell>
                         <div className="flex items-center gap-2">
@@ -346,7 +346,7 @@ const Environments = ({ client }: { client: HabboClientStatus }) => (
                 <Cell>
                     <span className="font-medium capitalize">{x.environment}</span>
                     {x.environment === client.follow && <Badge tone="accent" className="ml-2">built from</Badge>}
-                    <div className="font-mono text-[11px] text-muted">{x.host}</div>
+                    <div className="font-mono text-2xs text-muted">{x.host}</div>
                 </Cell>
                 <Cell><StatusBadge status={environmentStatus(x)} /></Cell>
                 <Cell className="font-mono text-xs">{x.liveVersion ?? '-'}</Cell>

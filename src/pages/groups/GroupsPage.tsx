@@ -94,7 +94,7 @@ export const GroupsPage = () => {
                                                     <Link to={`/groups/${group.id}`} className="flex min-h-16 items-center gap-3 px-4 py-2.5 active:bg-subtle">
                                                         <div className="min-w-0 flex-1">
                                                             <div className="truncate font-medium">{group.name}</div>
-                                                            <div className="truncate font-mono text-[11px] text-muted">#{group.id} · {group.ownerName} · {(GROUP_TYPES[group.type] ?? String(group.type)).toLowerCase()}</div>
+                                                            <div className="truncate font-mono text-2xs text-muted">#{group.id} · {group.ownerName} · {(GROUP_TYPES[group.type] ?? String(group.type)).toLowerCase()}</div>
                                                         </div>
                                                         <span className="shrink-0 font-mono text-sm tabular-nums">{group.members}</span>
                                                     </Link>
@@ -118,7 +118,7 @@ export const GroupsPage = () => {
                                                         <tr key={group.id} className="hover:bg-subtle/60">
                                                             <Td>
                                                                 <Link to={`/groups/${group.id}`} className="font-medium hover:text-accent">{group.name}</Link>
-                                                                <span className="ml-2 font-mono text-[11px] text-muted">#{group.id}</span>
+                                                                <span className="ml-2 font-mono text-2xs text-muted">#{group.id}</span>
                                                             </Td>
                                                             <Td><Link to={`/players/${group.ownerId}`} className="text-muted hover:text-accent">{group.ownerName}</Link></Td>
                                                             <Td><Link to={`/rooms/${group.roomId}`} className="text-muted hover:text-accent">{group.roomName}</Link></Td>

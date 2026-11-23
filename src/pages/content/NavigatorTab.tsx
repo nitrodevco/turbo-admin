@@ -85,7 +85,7 @@ const SimpleList = ({ list, title, description, rows, placeholder, canManage }: 
             <ul className="divide-y divide-line">
                 {rows.map(row => (
                     <li key={row.id} className="flex items-center gap-3 px-4 py-2">
-                        <span className="min-w-0 flex-1 truncate font-mono text-[13px]">{row.name}</span>
+                        <span className="min-w-0 flex-1 truncate font-mono text-ui">{row.name}</span>
                         {row.detail && <span className="text-xs text-muted">{row.detail}</span>}
                         {!row.visible && <Badge>Hidden</Badge>}
                         {canManage && (

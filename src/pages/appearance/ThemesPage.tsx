@@ -37,7 +37,7 @@ export const ThemesPage = () => {
             <PageHeader title="Themes" description="Every theme the hotel runs, under the one it extends. Players draw the default theme, or one they chose; a theme in development (a new one too) reaches only the players and groups you give it. The one you work on is where every appearance editor saves.">
                 {data?.canManage && <Button icon={<Plus />} onClick={() => setParams({ new: '1' }, { replace: true })}>New theme</Button>}
             </PageHeader>
-            <PageBody className="flex flex-col gap-4 lg:gap-5">
+            <PageBody>
                 {error && <ErrorNotice error={error} />}
                 {!data && !error && <Loading />}
                 {data && (

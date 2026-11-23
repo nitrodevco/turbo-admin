@@ -39,7 +39,7 @@ export const Toasts = () => {
                     type="button"
                     onClick={() => dismiss(x.id)}
                     className={cx(
-                        'pointer-events-auto flex max-w-md animate-rise items-center gap-2 rounded-xl border px-3.5 py-2.5 text-left text-sm shadow-lg [&>svg]:size-4 [&>svg]:shrink-0',
+                        'pointer-events-auto flex max-w-md animate-rise items-center gap-2 rounded-xl border px-3.5 py-2.5 text-left text-sm shadow-pop [&>svg]:size-4 [&>svg]:shrink-0',
                         x.tone === 'good' ? 'border-good-line bg-good-soft text-good' : 'border-bad-line bg-bad-soft text-bad',
                     )}
                 >

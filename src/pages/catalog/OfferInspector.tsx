@@ -181,7 +181,7 @@ export const OfferInspector = ({ tree, pageId, offer, start, featured, onDone, o
                 </span>
                 <div className="min-w-0 flex-1">
                     <div className="truncate text-sm font-semibold">{offer ? (draft.localizationId || givesOf({ products: offer.products })) : 'New offer'}</div>
-                    <div className="truncate font-mono text-[11px] text-muted">{offer ? `#${offer.id} · ${givesOf({ products: offer.products })}` : `on ${page?.localization ?? 'this page'}`}</div>
+                    <div className="truncate font-mono text-2xs text-muted">{offer ? `#${offer.id} · ${givesOf({ products: offer.products })}` : `on ${page?.localization ?? 'this page'}`}</div>
                 </div>
             </div>
 
@@ -263,8 +263,8 @@ export const OfferInspector = ({ tree, pageId, offer, start, featured, onDone, o
                                 disabled={!canManage}
                                 onClick={() => set('clubLevel', x.value)}
                                 className={cx(
-                                    'flex h-9 flex-1 items-center justify-center gap-1.5 rounded-md text-[13px] font-medium transition-colors sm:h-7',
-                                    draft.clubLevel === x.value ? 'bg-subtle text-ink shadow-[0_0_0_1px_var(--color-line)]' : 'text-muted hover:text-ink',
+                                    'flex h-9 flex-1 items-center justify-center gap-1.5 rounded-md text-ui font-medium transition-colors sm:h-7',
+                                    draft.clubLevel === x.value ? 'bg-surface text-ink shadow-[0_0_0_1px_var(--color-line),var(--elevation-card)]' : 'text-muted hover:text-ink',
                                 )}
                             >
                                 {x.icon}

@@ -58,10 +58,10 @@ export const PageRowBody = ({ page, needle = '', path, strong }: { page: Catalog
             <span title={page.localization} className={cx('line-clamp-2 leading-snug break-words', strong && 'font-semibold', (page.display === 'invisible' || page.display === 'bc_only') && 'opacity-60')}>
                 <Highlight text={page.localization} needle={needle} />
             </span>
-            {path && <span className="truncate text-[11px] text-muted">{path}</span>}
+            {path && <span className="truncate text-2xs text-muted">{path}</span>}
         </span>
         <Marks page={page} />
-        {page.offerCount > 0 && <span className="rounded-full bg-subtle px-1.5 font-mono text-[10px] leading-4 text-muted tabular-nums">{page.offerCount}</span>}
+        {page.offerCount > 0 && <span className="rounded-full bg-subtle px-1.5 font-mono text-2xs leading-4 text-muted tabular-nums">{page.offerCount}</span>}
     </>
 );
 
@@ -228,7 +228,7 @@ export const PageTree = ({ tree, rows, open, selected, projection, onToggle, onS
                                         <button
                                             type="button"
                                             onClick={() => onSelect(page.id)}
-                                            className={cx('flex min-h-10 w-full items-center gap-2 rounded-lg px-2 py-1 text-left text-[13px] sm:min-h-8', selected === page.id ? 'bg-accent-soft text-accent' : 'hover:bg-subtle')}
+                                            className={cx('flex min-h-10 w-full items-center gap-2 rounded-lg px-2 py-1 text-left text-ui sm:min-h-8', selected === page.id ? 'bg-accent-soft text-accent' : 'hover:bg-subtle')}
                                         >
                                             <PageRowBody page={page} needle={needle} path={ancestorsOf(tree, page.id).map(x => x.localization).reverse().join(' / ') || 'Tab'} />
                                         </button>
@@ -258,7 +258,7 @@ export const PageTree = ({ tree, rows, open, selected, projection, onToggle, onS
                         )}
             </div>
             {tree.canManage && !searching && rows.length > 0 && (
-                <p className="border-t border-line px-3 py-2 text-[11px] leading-snug text-muted">
+                <p className="border-t border-line px-3 py-2 text-2xs leading-snug text-muted">
                     Drag a page by its grip to move it, and sideways to go in or out a level. On a touch screen, hold it a moment first.
                 </p>
             )}

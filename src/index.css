@@ -8,10 +8,26 @@
  * IBM Plex Mono. Components use these tokens through Tailwind (`bg-surface`, `text-muted`,
  * `border-line`, `text-good`), so the look is changed here, for both themes: light below, dark
  * (the default) under `.dark`.
+ *
+ * One scale for each of type, corners and depth, so pages agree without thinking about it:
+ *   type     text-2xs 11 (labels, tags, keys) · text-xs 12 (hints, meta) · text-ui 13 (controls
+ *            and dense rows from a tablet up) · text-sm 14 (reading) · text-base 16 (dialog
+ *            titles, phone controls) · text-lg 18 (page titles) · text-2xl 24 (figures)
+ *   corners  rounded-md (tags, keys) · rounded-lg (controls, inner boxes) · rounded-xl (cards)
+ *            · rounded-2xl (dialogs and sheets)
+ *   depth    shadow-card (a card on the page) · shadow-pop (a menu or popover over it) ·
+ *            shadow-overlay (a dialog over everything); `card` is a card's whole look
+ *   spacing  4px steps; a card's content sits 16px (px-4) from its edge, and cards are 16px
+ *            apart (gap-4), 20px from a laptop up (lg:gap-5)
  */
 @theme {
     --font-sans: "IBM Plex Sans", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
     --font-mono: "IBM Plex Mono", ui-monospace, "Cascadia Code", Consolas, monospace;
+
+    --text-2xs: 0.6875rem;
+    --text-2xs--line-height: 1rem;
+    --text-ui: 0.8125rem;
+    --text-ui--line-height: 1.25rem;
 
     /* Where the page sits, the cards on it, a raised or hovered area, and their borders. */
     --color-canvas: #f3f5f8;
@@ -19,6 +35,8 @@
     --color-surface: #ffffff;
     --color-subtle: #eef1f5;
     --color-line: #dce2e9;
+    /* A border pointed at: a control or a card under the mouse. */
+    --color-line-strong: #c3ccd7;
     --color-ink: #0e141b;
     --color-muted: #566272;
 
@@ -54,6 +72,17 @@
     --animate-drawer: drawer 0.22s ease-out both;
 }
 
+/*
+ * Depth, for both themes: barely lifted (a card on the page), floating over the page (a menu, a
+ * popover, a bar that sticks), and over everything (a dialog). Plain variables rather than theme
+ * shadows, which Tailwind writes into its utilities and so could not change for the dark theme.
+ */
+:root {
+    --elevation-card: 0 1px 2px 0 rgb(16 24 40 / 0.05);
+    --elevation-pop: 0 12px 28px -6px rgb(16 24 40 / 0.16), 0 2px 6px -2px rgb(16 24 40 / 0.08);
+    --elevation-overlay: 0 24px 56px -12px rgb(16 24 40 / 0.28);
+}
+
 .dark {
     color-scheme: dark;
 
@@ -62,6 +91,7 @@
     --color-surface: #11171f;
     --color-subtle: #161e28;
     --color-line: #1f2a37;
+    --color-line-strong: #314052;
     --color-ink: #e6edf3;
     --color-muted: #8d9aab;
 
@@ -85,6 +115,26 @@
     --color-bad: #ff8a8a;
     --color-bad-soft: #1f1215;
     --color-bad-line: #5a2a2e;
+
+    /* On a dark page a shadow hardly shows: a card is lifted by a faint light along its top edge. */
+    --elevation-card: inset 0 1px 0 0 rgb(255 255 255 / 0.03);
+    --elevation-pop: 0 16px 36px -8px rgb(0 0 0 / 0.6), 0 2px 8px -2px rgb(0 0 0 / 0.4);
+    --elevation-overlay: 0 32px 72px -12px rgb(0 0 0 / 0.75);
+}
+
+@utility shadow-card {
+    --tw-shadow: var(--elevation-card);
+    box-shadow: var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow);
+}
+
+@utility shadow-pop {
+    --tw-shadow: var(--elevation-pop);
+    box-shadow: var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow);
+}
+
+@utility shadow-overlay {
+    --tw-shadow: var(--elevation-overlay);
+    box-shadow: var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow);
 }
 
 /*
@@ -132,6 +182,24 @@
 body {
     @apply bg-canvas text-ink antialiased;
     font-size: 14px;
+}
+
+/*
+ * Scrollbars and selected text in the theme's own colours, rather than the system's grey and blue;
+ * the scrollbars thin, without the arrows Windows draws at their ends.
+ */
+:root {
+    scrollbar-color: var(--color-line-strong) transparent;
+}
+
+@layer base {
+    * {
+        scrollbar-width: thin;
+    }
+}
+
+::selection {
+    background-color: color-mix(in srgb, var(--color-accent) 28%, transparent);
 }
 
 /* A hand over whatever does something when clicked; Tailwind 4 leaves buttons with the arrow. */
@@ -202,8 +270,38 @@ select option {
     }
 }
 
+/*
+ * A card: the panel's one container, whatever it holds (a `Panel`, a stat, a list, an editor).
+ * A tone or a size is added beside it (`card border-bad-line`); this sits before the utilities so
+ * those win.
+ */
+@layer components {
+    .card {
+        border-radius: var(--radius-xl);
+        border: 1px solid var(--color-line);
+        background-color: var(--color-surface);
+        box-shadow: var(--elevation-card);
+    }
+
+    /*
+     * The bar that floats at the bottom of an editor while it has unsaved changes: what changed,
+     * and saving or throwing it away.
+     */
+    .save-bar {
+        position: sticky;
+        bottom: calc(0.75rem + env(safe-area-inset-bottom));
+        z-index: 20;
+        border-radius: var(--radius-xl);
+        border: 1px solid color-mix(in srgb, var(--color-accent) 45%, transparent);
+        background-color: color-mix(in srgb, var(--color-surface) 94%, transparent);
+        box-shadow: var(--elevation-pop);
+        backdrop-filter: blur(8px);
+    }
+}
+
 dialog::backdrop {
     background: rgb(5 8 12 / 0.6);
+    backdrop-filter: blur(2px);
 }
 
 /* While a dialog is open the page behind it stays put: only the dialog scrolls. */

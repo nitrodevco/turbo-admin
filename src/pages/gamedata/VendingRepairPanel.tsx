@@ -48,7 +48,7 @@ const RepairRow = ({ item, checked, useDefault, disabled, onCheck, onDefault }: 
                 </label>
                 <div className="min-w-0 flex-1">
                     <div className="flex flex-wrap items-baseline gap-x-2 gap-y-1">
-                        <strong className="break-all font-mono text-[13px]">{item.className}</strong>
+                        <strong className="break-all font-mono text-ui">{item.className}</strong>
                         <span className="font-mono text-xs text-muted">ID {item.id}</span>
                         {item.animates && <span className="text-xs text-muted">Animates</span>}
                     </div>

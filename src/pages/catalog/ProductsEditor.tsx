@@ -72,7 +72,7 @@ export const ItemPicker = ({ type, value, onPick, disabled }: { type: 'floor' | 
                                     >
                                         <ProductIcon type={item.type} name={item.name} className="size-7" />
                                         <span className="min-w-0 flex-1 truncate font-mono">{item.name}</span>
-                                        <span className="font-mono text-[11px] text-muted">#{item.id}</span>
+                                        <span className="font-mono text-2xs text-muted">#{item.id}</span>
                                     </button>
                                 </li>
                             ))}
@@ -239,7 +239,7 @@ export const ProductsEditor = ({ products, onChange, disabled, locked, allowed }
                             <div className="mb-2 flex items-center gap-2">
                                 <ProductIcon type={product.type} name={product.type === 'badge' ? product.extraParam : product.definitionName} className="size-7" />
                                 <span className="text-xs font-semibold">{kind?.label ?? product.type}</span>
-                                {products.length > 1 && <span className="font-mono text-[11px] text-muted">{i + 1} of {products.length}</span>}
+                                {products.length > 1 && <span className="font-mono text-2xs text-muted">{i + 1} of {products.length}</span>}
                                 {canEdit && products.length > 1 && (
                                     <IconButton label="Remove it" icon={<Trash2 />} tone="bad" small onClick={() => onChange(products.filter(x => x.key !== product.key))} className="ml-auto" />
                                 )}

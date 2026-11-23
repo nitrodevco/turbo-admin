@@ -13,7 +13,7 @@ const TONES = {
 };
 
 const Card = ({ icon, title, value, blurb, action, tone }: { icon: ReactNode; title: string; value?: ReactNode; blurb: string; action: ReactNode; tone?: 'warn' | 'good' }) => (
-    <div className="flex flex-col gap-3 rounded-xl border border-line bg-surface p-4">
+    <div className="card flex flex-col gap-3 p-4">
         <div className="flex items-start gap-3">
             <span className={cx('grid size-10 shrink-0 place-items-center rounded-xl [&>svg]:size-5', TONES[tone ?? 'none'])}>{icon}</span>
             <div className="min-w-0 flex-1">
@@ -70,11 +70,11 @@ export const CatalogHome = ({ tree, busy, compact, onOpenPage, onView, onCreateF
 
     if (compact) {
         return (
-            <section aria-label="The catalog at a glance" className="overflow-hidden rounded-xl border border-line bg-surface">
+            <section aria-label="The catalog at a glance" className="card overflow-hidden">
                 <dl className="grid grid-cols-4 border-b border-line">
                     {stats.map(x => (
                         <div key={x.label} className="border-l border-line px-2 py-2 text-center first:border-l-0">
-                            <dt className="truncate font-mono text-[10px] tracking-[0.08em] text-muted uppercase">{x.short ?? x.label}</dt>
+                            <dt className="truncate font-mono text-2xs tracking-[0.08em] text-muted uppercase">{x.short ?? x.label}</dt>
                             <dd className="font-mono text-base font-semibold tabular-nums">{x.value.toLocaleString()}</dd>
                         </div>
                     ))}

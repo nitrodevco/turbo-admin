@@ -139,7 +139,7 @@ export const TargetForm = ({ target, onClose }: { target: AssetTarget | null; on
 
                 <fieldset className="flex flex-col gap-3 border-t border-line pt-4">
                     <legend className="mb-1 text-sm font-medium">Cloudflare</legend>
-                    <p className="-mt-1 text-[13px] text-muted">Optional. After each publish, Cloudflare is asked to purge exactly the addresses sent, so a file that was missing is not served from its cache as missing.</p>
+                    <p className="-mt-1 text-ui text-muted">Optional. After each publish, Cloudflare is asked to purge exactly the addresses sent, so a file that was missing is not served from its cache as missing.</p>
                     <div className="grid gap-3 sm:grid-cols-2">
                         <Field
                             label="Zone ID"

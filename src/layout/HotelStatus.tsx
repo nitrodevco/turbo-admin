@@ -50,12 +50,12 @@ export const HotelStatusCard = () => {
             disabled={!canControl}
             onClick={() => setOpen(true)}
             title={canControl ? 'Hotel controls' : undefined}
-            className="group mx-3 flex items-center gap-3 rounded-xl border border-line bg-surface px-3 py-2.5 text-left transition-colors enabled:hover:border-muted/50"
+            className="card group mx-3 flex items-center gap-3 px-3 py-2.5 text-left transition-colors enabled:hover:border-line-strong"
         >
             <Dot tone={phase.tone} pulse={phase.tone !== 'good' || live} />
             <span className="min-w-0 flex-1">
-                <span className={cx('block text-[13px] leading-snug font-medium text-pretty', TEXT[phase.tone])}>{phase.label}</span>
-                <span className="block truncate font-mono text-[11px] text-muted tabular-nums">
+                <span className={cx('block text-ui leading-snug font-medium text-pretty', TEXT[phase.tone])}>{phase.label}</span>
+                <span className="block truncate font-mono text-2xs text-muted tabular-nums">
                     {data.playersOnline.toLocaleString()} online
                 </span>
             </span>
@@ -108,7 +108,7 @@ export const HotelSheet = () => {
         <dialog
             {...dialog}
             aria-label="Hotel controls"
-            className="mx-0 mt-auto mb-0 max-h-[92dvh] w-full max-w-none animate-sheet overflow-y-auto rounded-t-2xl border border-line bg-surface p-0 text-ink shadow-2xl sm:m-auto sm:max-w-lg sm:animate-rise sm:rounded-2xl"
+            className="mx-0 mt-auto mb-0 max-h-[92dvh] w-full max-w-none animate-sheet overflow-y-auto rounded-t-2xl border border-line bg-surface p-0 text-ink shadow-overlay sm:m-auto sm:max-w-lg sm:animate-rise sm:rounded-2xl"
         >
             {open && data && phase && (
                 <div className="flex flex-col gap-3 px-3 pt-2 pb-[calc(0.75rem+env(safe-area-inset-bottom))] sm:p-4">
@@ -116,7 +116,7 @@ export const HotelSheet = () => {
                     <div className="flex items-center gap-3 px-1">
                         <Dot tone={phase.tone} pulse={phase.tone !== 'good'} />
                         <div className="min-w-0 flex-1">
-                            <h2 className="text-[15px] font-semibold">Hotel controls</h2>
+                            <h2 className="text-base font-semibold">Hotel controls</h2>
                             <p className={cx('text-xs', TEXT[phase.tone])}>
                                 {phase.label}
                                 {data.availabilityAtUtc && ` at ${new Date(data.availabilityAtUtc).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`}

@@ -173,7 +173,7 @@ export const ReportPage = () => {
                                     : (
                                             <RowList columns="max-content minmax(0,9rem) minmax(0,1fr)" headers={[ { label: 'When' }, { label: 'Who' }, { label: 'Said' } ]}>
                                                 {detail.lines.map((line, index) => (
-                                                    <Row key={index} className={cx(line.reported && 'bg-red-500/8 hover:bg-red-500/12')}>
+                                                    <Row key={index} className={cx(line.reported && 'bg-bad-soft hover:bg-bad-soft')}>
                                                         <span className="text-xs whitespace-nowrap text-muted sm:text-sm" title={formatDateTime(line.atUtc)}>{timeOf(line.atUtc)}</span>
                                                         <span className="truncate"><PlayerLink id={line.playerId} name={line.playerName} linked={linked} /></span>
                                                         <span className="basis-full wrap-anywhere sm:basis-auto">{line.text}</span>
@@ -250,7 +250,7 @@ export const ReportPage = () => {
                                     {detail.defaultSanction && item.reportedId !== null && <Kv label="Next sanction">{sanctionLabel(detail.defaultSanction)}</Kv>}
                                 </dl>
                                 {item.reportedId !== null && (
-                                    <div className="border-t border-line px-4 py-2.5 text-[13px]">
+                                    <div className="border-t border-line px-4 py-2.5 text-ui">
                                         <TextLink to={`/reports?state=all&player=${item.reportedId}`}>Every report by or about {item.reportedName ?? 'them'}</TextLink>
                                     </div>
                                 )}

@@ -18,13 +18,13 @@ export const OfferFace = ({ offer, tree }: { offer: CatalogOffer; tree: CatalogT
             <span className="relative grid h-14 w-full place-items-center">
                 {first && <ProductIcon type={first.type} name={first.definitionName ?? first.extraParam} className={cx('size-12', !offer.visible && 'opacity-40 grayscale')} />}
                 {offer.products.length > 1 && (
-                    <span className="absolute right-0 bottom-0 flex items-center gap-0.5 rounded-full bg-accent px-1.5 text-[10px] font-semibold text-on-accent" title={`${offer.products.length} things`}>
+                    <span className="absolute right-0 bottom-0 flex items-center gap-0.5 rounded-full bg-accent px-1.5 text-2xs font-semibold text-on-accent" title={`${offer.products.length} things`}>
                         <Layers className="size-2.5" />
                         {offer.products.length}
                     </span>
                 )}
                 {(first?.quantity ?? 1) > 1 && offer.products.length === 1 && (
-                    <span className="absolute right-0 bottom-0 rounded-full bg-ink/80 px-1.5 text-[10px] font-semibold text-canvas">×{first!.quantity}</span>
+                    <span className="absolute right-0 bottom-0 rounded-full bg-ink/80 px-1.5 text-2xs font-semibold text-canvas">×{first!.quantity}</span>
                 )}
                 <span className="absolute top-0 left-0 flex flex-col gap-0.5">
                     {!offer.visible && <EyeOff className="size-3.5 text-muted" aria-label="hidden" />}
@@ -37,8 +37,8 @@ export const OfferFace = ({ offer, tree }: { offer: CatalogOffer; tree: CatalogT
                     </span>
                 )}
             </span>
-            <span className="w-full truncate text-center text-[11px] leading-4 text-muted" title={givesOf(offer)}>{givesOf(offer)}</span>
-            <span className={cx('w-full truncate text-center font-mono text-[11px] leading-4', offer.costCredits + offer.costCurrency === 0 ? 'text-good' : 'text-ink')}>
+            <span className="w-full truncate text-center text-2xs leading-4 text-muted" title={givesOf(offer)}>{givesOf(offer)}</span>
+            <span className={cx('w-full truncate text-center font-mono text-2xs leading-4', offer.costCredits + offer.costCurrency === 0 ? 'text-good' : 'text-ink')}>
                 {offer.isClubGift ? 'gift' : priceOf(offer, tree)}
             </span>
         </>
@@ -73,8 +73,8 @@ export const OfferTile = ({ offer, tree, selected, flagged, onSelect }: { offer:
                         : selected
                             ? 'border-accent bg-accent-soft shadow-[0_0_0_3px_var(--color-accent-soft)]'
                             : flagged
-                                ? 'border-warn-line bg-warn-soft/50 hover:-translate-y-0.5 hover:shadow-md'
-                                : 'border-line bg-canvas hover:-translate-y-0.5 hover:border-muted/50 hover:shadow-md',
+                                ? 'border-warn-line bg-warn-soft/50 hover:-translate-y-0.5 hover:shadow-pop'
+                                : 'border-line bg-canvas hover:-translate-y-0.5 hover:border-line-strong hover:shadow-pop',
                 )}
             >
                 <OfferFace offer={offer} tree={tree} />

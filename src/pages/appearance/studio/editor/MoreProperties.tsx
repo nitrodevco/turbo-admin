@@ -12,7 +12,7 @@ const isObject = (value: unknown): value is Op => (typeof value === 'object') &&
 const Group = ({ title, hint, children }: { title: string; hint: string; children: React.ReactNode }) => (
     <fieldset className="flex flex-col gap-2 border-t border-line pt-2">
         <legend className="text-xs font-medium">{title}</legend>
-        <p className="-mt-1 text-[11px] text-muted">{hint}</p>
+        <p className="-mt-1 text-2xs text-muted">{hint}</p>
         {children}
     </fieldset>
 );

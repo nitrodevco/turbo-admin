@@ -133,7 +133,7 @@ const Chip = ({ on, onChange, disabled, children }: { on: boolean; onChange: (on
         disabled={disabled}
         onClick={() => onChange(!on)}
         className={cx(
-            'h-10 rounded-lg border px-3 text-[13px] font-medium transition-colors disabled:opacity-60 sm:h-8',
+            'h-10 rounded-lg border px-3 text-ui font-medium transition-colors disabled:opacity-60 sm:h-8',
             on ? 'border-accent/50 bg-accent-soft text-accent' : 'border-line text-muted hover:text-ink',
         )}
     >
@@ -211,14 +211,14 @@ const PieceSummary = ({ entry }: { entry: FigureEntry }) => {
     const habbo = read<Piece>(entry.habboData);
 
     if (!piece)
-        return <span className="font-mono text-[13px]">{entry.group}-{entry.key}</span>;
+        return <span className="font-mono text-ui">{entry.group}-{entry.key}</span>;
 
     const types = [ ...new Set(piece.parts.map(x => x.type)) ];
     const layers = Math.max(0, ...piece.parts.map(x => x.colorindex));
 
     return (
         <div className="grid items-center gap-x-4 gap-y-1 sm:grid-cols-[7rem_4.5rem_minmax(9rem,1fr)_minmax(8rem,1.2fr)_5.5rem]">
-            <span className="font-mono text-[13px] font-medium">{entry.group}-{entry.key}</span>
+            <span className="font-mono text-ui font-medium">{entry.group}-{entry.key}</span>
             <span className="text-xs text-muted">{GENDERS.find(x => x.value === piece.gender)?.label ?? piece.gender}</span>
             <span className="flex flex-wrap gap-1">
                 {piece.club > 0 && <Badge tone="accent">{piece.club === 2 ? 'vip' : 'club'}</Badge>}
@@ -227,8 +227,8 @@ const PieceSummary = ({ entry }: { entry: FigureEntry }) => {
                 {!entry.fromHabbo && <Badge tone="green">hotel's own</Badge>}
                 {habbo && JSON.stringify(habbo) !== JSON.stringify(piece) && <Badge tone="amber">changed</Badge>}
             </span>
-            <span className="truncate font-mono text-[11px] text-muted max-sm:hidden" title={types.join(' ')}>{types.join(' ')}</span>
-            <span className="font-mono text-[11px] text-muted max-sm:hidden">{piece.colorable && layers > 0 ? `${layers} ${layers === 1 ? 'colour' : 'colours'}` : 'no colour'}</span>
+            <span className="truncate font-mono text-2xs text-muted max-sm:hidden" title={types.join(' ')}>{types.join(' ')}</span>
+            <span className="font-mono text-2xs text-muted max-sm:hidden">{piece.colorable && layers > 0 ? `${layers} ${layers === 1 ? 'colour' : 'colours'}` : 'no colour'}</span>
         </div>
     );
 };
@@ -254,7 +254,7 @@ const PartsTable = ({ parts, onChange, disabled }: { parts: Part[]; onChange: (p
 
     return (
         <div className="rounded-lg border border-line">
-            <div aria-hidden className={cx('grid gap-x-3 px-3 py-2 font-mono text-[11px] font-medium tracking-[0.08em] text-muted uppercase max-sm:hidden', PART_COLUMNS)}>
+            <div aria-hidden className={cx('grid gap-x-3 px-3 py-2 font-mono text-2xs font-medium tracking-[0.08em] text-muted uppercase max-sm:hidden', PART_COLUMNS)}>
                 <span>Asset id</span>
                 <span>Part</span>
                 <span>Layer</span>
@@ -588,7 +588,7 @@ export const ClothingEditor = ({ canManage }: { canManage: boolean }) => {
                             >
                                 <span className="w-7 font-mono text-xs text-muted">{entry.key}</span>
                                 <span className="min-w-0 flex-1 truncate">{labelOf(entry.key)}</span>
-                                <span className="font-mono text-[11px] text-muted tabular-nums">{pieces.toLocaleString()}</span>
+                                <span className="font-mono text-2xs text-muted tabular-nums">{pieces.toLocaleString()}</span>
                             </button>
                         </li>
                     ))}

@@ -25,7 +25,7 @@ const typing = (target: EventTarget | null) => {
 };
 
 export const Key = ({ children }: { children: ReactNode }) => (
-    <kbd className="inline-grid min-w-6 place-items-center rounded-md border border-line bg-subtle px-1.5 py-0.5 font-mono text-[11px] font-semibold text-ink shadow-[0_1px_0_var(--color-line)]">{children}</kbd>
+    <kbd className="inline-grid min-w-6 place-items-center rounded-md border border-line bg-subtle px-1.5 py-0.5 font-mono text-2xs font-semibold text-ink shadow-[0_1px_0_var(--color-line)]">{children}</kbd>
 );
 
 const Sheet = ({ onClose }: { onClose: () => void }) => {
@@ -42,7 +42,7 @@ const Sheet = ({ onClose }: { onClose: () => void }) => {
             aria-labelledby="shortcuts-title"
             onClose={onClose}
             onClick={event => event.target === dialog.current && onClose()}
-            className="m-auto w-[720px] max-w-[92vw] animate-rise rounded-xl border border-line bg-surface p-0 text-ink shadow-2xl backdrop:bg-[rgb(5_8_12/0.6)]"
+            className="m-auto w-[720px] max-w-[92vw] animate-rise rounded-2xl border border-line bg-surface p-0 text-ink shadow-overlay backdrop:bg-[rgb(5_8_12/0.6)]"
         >
             <header className="flex items-center gap-2 border-b border-line px-5 py-4">
                 <Keyboard className="size-5 text-accent" />

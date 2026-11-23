@@ -1,4 +1,4 @@
-import { ChevronRight, Cpu, PlugZap, SlidersHorizontal } from 'lucide-react';
+import { ChevronRight, Cpu, CupSoda, PlugZap, SlidersHorizontal } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router';
 
@@ -121,7 +121,7 @@ const FailedPlugins = ({ plugins, canManage }: { plugins: Plugin[]; canManage: b
                     <li key={plugin.key} className="flex flex-wrap items-center gap-3 border-t border-line px-4 py-2.5 first:border-t-0">
                         <div className="min-w-0 flex-[1_1_16rem]">
                             <span className="block truncate font-medium">{plugin.name ?? plugin.folder}</span>
-                            <span className="block truncate font-mono text-[11px] text-bad" title={plugin.error ?? undefined}>{plugin.error ?? 'Its manifest could not be read.'}</span>
+                            <span className="block truncate font-mono text-2xs text-bad" title={plugin.error ?? undefined}>{plugin.error ?? 'Its manifest could not be read.'}</span>
                             <span className="block text-xs text-muted">{fixFor(plugin)}</span>
                         </div>
                         {canManage && plugin.name && plugin.state !== 'rejected' && (
@@ -153,7 +153,7 @@ const LogicAlert = () => {
     return count > 0 && (
         <section className="flex flex-wrap items-center justify-between gap-x-4 gap-y-2 rounded-xl border border-bad-line bg-surface px-4 py-3">
             <div className="min-w-0 flex-[1_1_16rem]">
-                <h2 className="flex items-center gap-2 text-[13px] font-semibold tracking-wide text-bad"><Cpu className="size-4" />{`${count} furniture ${count === 1 ? 'runs' : 'run'} with the wrong logic`}</h2>
+                <h2 className="flex items-center gap-2 text-sm font-semibold text-bad"><Cpu className="size-4" />{`${count} furniture ${count === 1 ? 'runs' : 'run'} with the wrong logic`}</h2>
                 <div className="mt-0.5 text-xs text-muted">The server has a logic for each, but runs it as plain furniture: in a room it does nothing of its own.</div>
             </div>
             <TextLink to="/gamedata/library/furniture?tag=logic-mismatch">Fix in the library</TextLink>
@@ -168,7 +168,7 @@ const VendingConfigAlert = () => {
     return count > 0 && (
         <section className="flex flex-wrap items-center justify-between gap-x-4 gap-y-2 rounded-xl border border-warn-line bg-surface px-4 py-3">
             <div className="min-w-0 flex-[1_1_16rem]">
-                <h2 className="text-[13px] font-semibold tracking-wide text-warn">{`${count} vending ${count === 1 ? 'machine needs' : 'machines need'} hand items`}</h2>
+                <h2 className="flex items-center gap-2 text-sm font-semibold text-warn"><CupSoda className="size-4" />{`${count} vending ${count === 1 ? 'machine needs' : 'machines need'} hand items`}</h2>
                 <div className="mt-0.5 text-xs text-muted">Choose the items each machine gives in its furniture settings.</div>
             </div>
             <TextLink to="/gamedata/library/furniture?tag=vending-config-missing">Review vending machines</TextLink>
@@ -204,7 +204,7 @@ const RecentCommands = () => {
                                         ? <Link to={`/players/${entry.playerId}`} className="hover:text-accent">{entry.playerName ?? `#${entry.playerId}`}</Link>
                                         : entry.playerName ?? `#${entry.playerId}`}
                             </span>
-                            <span className="min-w-0 flex-1 truncate font-mono text-[13px]">
+                            <span className="min-w-0 flex-1 truncate font-mono text-ui">
                                 :{entry.command}
                                 {entry.arguments && <span className="text-muted"> {entry.arguments}</span>}
                             </span>
@@ -244,7 +244,7 @@ export const DashboardPage = () => {
             >
                 <span className="max-sm:hidden"><LiveBadge live={live}>{live ? 'LIVE' : 'EVERY 10S'}</LiveBadge></span>
             </PageHeader>
-            <PageBody className="flex flex-col gap-4 lg:gap-5">
+            <PageBody>
                 {error && <ErrorNotice error={error} />}
                 {canViewPlugins && <PluginAlerts />}
                 {canViewGamedata && <LogicAlert />}
@@ -276,7 +276,7 @@ export const DashboardPage = () => {
                                                                 {canViewRooms
                                                                     ? <Link to={`/rooms/${room.id}`} className="block truncate font-medium hover:text-accent">{room.name}</Link>
                                                                     : <span className="block truncate font-medium">{room.name}</span>}
-                                                                <span className="block truncate font-mono text-[11px] text-muted">#{room.id} · {room.ownerName}</span>
+                                                                <span className="block truncate font-mono text-2xs text-muted">#{room.id} · {room.ownerName}</span>
                                                             </div>
                                                             <span className="shrink-0 font-mono text-sm tabular-nums">
                                                                 {room.population}

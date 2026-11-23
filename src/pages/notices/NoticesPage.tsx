@@ -226,7 +226,7 @@ const Notices = ({ server, canManage, save }: { server: NoticeData; canManage: b
                     {canManage && <Button variant="danger" icon={<Trash2 />} disabled={save.isPending} onClick={() => deleteNotice(key)}>Delete</Button>}
                 </PageHeader>
                 {habboModal}
-                <PageBody className="flex flex-col gap-4 lg:gap-5">
+                <PageBody>
                     {notices}
                     <div className="grid items-start gap-4 lg:grid-cols-[minmax(0,1fr)_22rem] lg:gap-5">
                         <Panel title="Notice" description="What it says and shows, where a click goes, how it closes, and when it shows and to whom.">
@@ -261,7 +261,7 @@ const Notices = ({ server, canManage, save }: { server: NoticeData; canManage: b
                         </aside>
                     </div>
                     {canManage && (changed || isNew(key)) && (
-                        <div className="sticky bottom-3 z-20 rounded-xl border border-accent/40 bg-surface/95 shadow-lg backdrop-blur">
+                        <div className="save-bar">
                             <div className="flex flex-wrap items-center gap-3 px-4 py-3">
                                 <span className="text-sm" data-testid="notice-state">
                                     {isNew(key) ? 'A new notice, not saved' : 'Changes to this notice not saved'}
@@ -298,7 +298,7 @@ const Notices = ({ server, canManage, save }: { server: NoticeData; canManage: b
                 {canManage && <Button icon={<Plus />} onClick={() => setMaking(x => !x)} aria-pressed={making}>New notice</Button>}
             </PageHeader>
             {habboModal}
-            <PageBody className="flex flex-col gap-4 lg:gap-5">
+            <PageBody>
                 {notices}
                 {save.isSuccess && count === 0 && (
                     <SuccessNotice>

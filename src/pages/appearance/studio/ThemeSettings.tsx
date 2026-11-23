@@ -27,7 +27,7 @@ const StyleControl = ({ style, fonts, onFocus }: { style: PluginStyle; fonts: re
 
     return (
         <li className="flex flex-col gap-1.5 px-3 py-2" onFocusCapture={onFocus}>
-            <span className="flex items-center gap-2 text-[13px] font-medium">
+            <span className="flex items-center gap-2 text-ui font-medium">
                 {label}
                 {unsaved ? <Badge tone="amber">unsaved</Badge> : style.changed && <Badge>changed</Badge>}
                 {(style.changed || unsaved) && studio.canManage && (

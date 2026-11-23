@@ -137,7 +137,7 @@ export const RoomVisitsPage = () => {
                                                     </span>
                                                     <Who entry={entry} />
                                                     <Where entry={entry} linked={canViewRooms} />
-                                                    <span className="font-mono text-[11px] text-muted max-sm:ml-auto sm:text-right">#{entry.roomId}</span>
+                                                    <span className="font-mono text-2xs text-muted max-sm:ml-auto sm:text-right">#{entry.roomId}</span>
                                                 </Row>
                                             ))}
                                         </RowList>

@@ -49,7 +49,7 @@ const ReleaseRow = ({ release, followed, canManage }: { release: HabboClientRele
                     />
                 )}
             </div>
-            {open && <p className="mt-2 font-mono text-[11px] leading-5 text-muted">{release.libraries.map(x => x.replace(/^.*\//, '').replace(/\.hab$/, '')).join(' · ')}</p>}
+            {open && <p className="mt-2 font-mono text-2xs leading-5 text-muted">{release.libraries.map(x => x.replace(/^.*\//, '').replace(/\.hab$/, '')).join(' · ')}</p>}
         </li>
     );
 };
@@ -100,7 +100,7 @@ export const HabboClientDetails = ({ client, build, canManage }: { client: Habbo
                     <button type="button" className="text-muted hover:text-accent" onClick={() => setShowProblems(!showProblems)}>
                         {`${build.problems.length} template ${build.problems.length === 1 ? 'problem' : 'problems'}: a bitmap no library has, or a layout the client would refuse`}
                     </button>
-                    {showProblems && <ul className="mt-1 font-mono text-[11px] leading-5 text-muted">{build.problems.map(x => <li key={x}>{x}</li>)}</ul>}
+                    {showProblems && <ul className="mt-1 font-mono text-2xs leading-5 text-muted">{build.problems.map(x => <li key={x}>{x}</li>)}</ul>}
                 </div>
             )}
         </div>

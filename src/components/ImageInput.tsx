@@ -40,13 +40,13 @@ export const ImageInput = ({ id, value, onChange, accept, disabled, resolve, pre
                 onClick={() => setOpen(true)}
                 data-testid="image-input"
                 className={cx(
-                    'flex min-h-10 min-w-0 flex-1 items-center gap-2 rounded-lg border border-line bg-canvas px-2 py-1 text-left text-[15px] sm:min-h-8 sm:text-[13px]',
-                    'hover:border-muted/50 focus:border-accent focus:ring-2 focus:ring-accent/25 focus:outline-none disabled:opacity-60',
+                    'flex min-h-10 min-w-0 flex-1 items-center gap-2 rounded-lg border border-line bg-canvas px-2 py-1 text-left text-base sm:min-h-8 sm:text-ui',
+                    'hover:border-line-strong focus:border-accent focus:ring-2 focus:ring-accent/25 focus:outline-none disabled:opacity-60',
                 )}
             >
                 <Images className="size-4 shrink-0 text-muted" aria-hidden />
                 <span className={cx('min-w-0 flex-1 truncate font-mono text-xs', !text && 'font-sans text-muted')} data-testid="image-input-value">{text || 'Pick a picture'}</span>
-                {text && found.data === null && <span className="shrink-0 rounded bg-warn-soft px-1.5 text-[11px] font-medium text-warn">not in the media library</span>}
+                {text && found.data === null && <span className="shrink-0 rounded bg-warn-soft px-1.5 text-2xs font-medium text-warn">not in the media library</span>}
             </button>
             {text && !disabled && (
                 <button type="button" onClick={() => onChange('')} aria-label="No picture" title="No picture" className="grid size-8 shrink-0 place-items-center rounded-lg text-muted hover:bg-subtle hover:text-ink">

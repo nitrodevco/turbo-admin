@@ -43,7 +43,7 @@ const Figure = ({ figure }: { figure: string }) => (
                 <li key={index}><Badge className="normal-case!">{part}</Badge></li>
             ))}
         </ul>
-        <p className="mt-2 font-mono text-[11px] break-all text-muted select-all">{figure}</p>
+        <p className="mt-2 font-mono text-2xs break-all text-muted select-all">{figure}</p>
     </details>
 );
 
@@ -55,7 +55,7 @@ const PlayerCard = ({ player }: { player: PlayerDetailResponse }) => {
     const ban = activeBan(player);
 
     return (
-        <section aria-label={player.name} className="overflow-clip rounded-xl border border-line bg-surface">
+        <section aria-label={player.name} className="card overflow-clip">
             <div className="flex items-center gap-4 px-4 py-4">
                 <Avatar id={player.id} name={player.name} figure={player.figure} large className="size-20 rounded-xl text-base sm:size-20" />
                 <div className="min-w-0 flex-1">
@@ -66,7 +66,7 @@ const PlayerCard = ({ player }: { player: PlayerDetailResponse }) => {
                         {player.tradeLocked && <Badge tone="amber">trade locked</Badge>}
                     </div>
                     <p className="truncate text-sm text-muted">{player.motto ?? 'No motto'}</p>
-                    <p className="mt-1 truncate font-mono text-[11px] text-muted">
+                    <p className="mt-1 truncate font-mono text-2xs text-muted">
                         {player.isOnline
                             ? player.currentRoom ? `in ${player.currentRoom.name}` : 'online, in no room'
                             : player.lastLoginUtc ? `last seen ${fromNow(player.lastLoginUtc)}` : 'never logged in'}
@@ -111,10 +111,10 @@ const Standing = ({ player }: { player: PlayerDetailResponse }) => {
                                     <div className="flex flex-wrap items-center gap-2">
                                         <Badge tone="amber">{sanction.kind}</Badge>
                                         <SanctionState sanction={sanction} />
-                                        <span className="ml-auto font-mono text-[11px] text-muted">{formatDateTime(sanction.issuedUtc)}</span>
+                                        <span className="ml-auto font-mono text-2xs text-muted">{formatDateTime(sanction.issuedUtc)}</span>
                                     </div>
                                     <p className="text-sm">{sanction.reason}</p>
-                                    <p className="font-mono text-[11px] text-muted">
+                                    <p className="font-mono text-2xs text-muted">
                                         by {sanction.issuerName ?? 'the console'}
                                         {sanction.expiresUtc ? ` · until ${formatDateTime(sanction.expiresUtc)}` : ' · permanent'}
                                         {sanction.revokedUtc && ` · lifted ${formatDateTime(sanction.revokedUtc)}${sanction.revokedByName ? ` by ${sanction.revokedByName}` : ''}`}
@@ -255,7 +255,7 @@ export const PlayerPage = () => {
                     <HeaderLink to={`/permissions/players/${player.id}`} icon={<KeyRound />}>Permissions</HeaderLink>
                 )}
             </PageHeader>
-            <PageBody className="flex flex-col gap-4 lg:gap-5">
+            <PageBody>
                 {isPending && <Loading />}
                 {error && <ErrorNotice error={error} />}
                 {player && (

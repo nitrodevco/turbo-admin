@@ -72,14 +72,14 @@ export const SpeakerEditor = ({ name, onName, words, onWords, figure, onFigure, 
                 aria-label="Who says it, and what"
                 aria-expanded={open}
                 className={cx(
-                    'grid size-10 place-items-center rounded-lg border bg-surface/90 shadow-sm backdrop-blur transition-colors sm:size-8 [&>svg]:size-4',
+                    'grid size-10 place-items-center rounded-lg border bg-surface/90 shadow-card backdrop-blur transition-colors sm:size-8 [&>svg]:size-4',
                     open ? 'border-accent text-accent' : 'border-line text-muted hover:text-ink',
                 )}
             >
                 <Pencil />
             </button>
             {open && (
-                <div className="absolute top-full right-0 z-20 mt-2 flex w-80 max-w-[calc(100vw-3rem)] animate-rise flex-col gap-3 rounded-xl border border-line bg-surface p-3 shadow-xl">
+                <div className="absolute top-full right-0 z-20 mt-2 flex w-80 max-w-[calc(100vw-3rem)] animate-rise flex-col gap-3 rounded-xl border border-line bg-surface p-3 shadow-pop">
                     <Labeled label="Who says it">
                         <Input value={name} onChange={event => onName(event.target.value)} placeholder="A name" className="w-full" autoFocus />
                     </Labeled>

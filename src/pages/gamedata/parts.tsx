@@ -99,12 +99,12 @@ export const HabboUpdate = ({ title, version, preview, error, extra, file, canMa
             <div className="flex flex-wrap items-center gap-x-4 gap-y-2 px-4 py-3">
                 <div className="min-w-0 flex-[1_1_16rem]">
                     <div className="flex flex-wrap items-center gap-2">
-                        <h2 className="text-[13px] font-semibold tracking-wide">Habbo's {title}</h2>
+                        <h2 className="text-sm font-semibold">Habbo's {title}</h2>
                         {!preview && !error && <Badge>checking</Badge>}
                         {upToDate && <Badge tone="green">up to date</Badge>}
                         {preview && !upToDate && <Badge tone="amber">{version.importedAt ? 'changes waiting' : 'not taken in'}</Badge>}
                     </div>
-                    <div className="mt-0.5 truncate font-mono text-[11px] text-muted">
+                    <div className="mt-0.5 truncate font-mono text-2xs text-muted">
                         {version.name} · {version.holds} · found {fromNow(version.foundAt)}{version.importedAt ? ` · taken in ${fromNow(version.importedAt)}` : ''}
                     </div>
                 </div>

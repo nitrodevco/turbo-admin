@@ -1,4 +1,4 @@
-import { CheckCircle2, Menu, XCircle } from 'lucide-react';
+import { CheckCircle2, Menu, TriangleAlert, XCircle } from 'lucide-react';
 import { type ButtonHTMLAttributes, type InputHTMLAttributes, type ReactNode, type Ref, type SelectHTMLAttributes, type TextareaHTMLAttributes, useState } from 'react';
 import { Link } from 'react-router';
 
@@ -49,7 +49,7 @@ export const PageHeader = ({ title, description, back, tabs, children }: PageHea
                 <div data-title className="min-w-0 flex-1">
                     <h1 className="truncate text-base leading-7 font-semibold tracking-tight lg:text-lg">{title}</h1>
                     {description && (
-                        <p className="truncate text-[13px] leading-5 text-muted" title={typeof description === 'string' ? description : undefined}>
+                        <p className="truncate text-ui leading-5 text-muted" title={typeof description === 'string' ? description : undefined}>
                             {description}
                         </p>
                     )}
@@ -109,18 +109,20 @@ const HeaderPage = ({ title }: { title: string }) => (
  * chat, commands, permissions or profile.
  */
 export const HeaderLink = ({ to, icon, children }: { to: string; icon: ReactNode; children: ReactNode }) => (
-    <Link to={to} className="inline-flex h-10 items-center gap-1.5 rounded-lg border border-line bg-subtle px-3 text-sm font-medium hover:border-muted/50 sm:h-8 sm:text-[13px] [&>svg]:size-4">
+    <Link to={to} className="inline-flex h-10 items-center gap-1.5 rounded-lg border border-line bg-subtle px-3 text-sm font-medium hover:border-line-strong sm:h-8 sm:text-ui [&>svg]:size-4">
         {icon}
         {children}
     </Link>
 );
 
 /**
- * The page under its header, to the same width. `still` leaves out its rising entrance, for a page
- * with drag and drop: a transformed parent would move the drag overlay.
+ * The page under its header, to the same width: its cards one under another, 16px apart (20px from
+ * a laptop up), unless `className` lays them out otherwise (a grid of columns). `still` leaves out
+ * its rising entrance, for a page with drag and drop: a transformed parent would move the drag
+ * overlay.
  */
 export const PageBody = ({ children, className, still }: { children: ReactNode; className?: string; still?: boolean }) => (
-    <div className={cx(PAGE_WIDTH, !still && 'animate-rise', 'px-3 py-4 sm:px-4 lg:px-6 lg:py-6', className)}>{children}</div>
+    <div className={cx(PAGE_WIDTH, !still && 'animate-rise', 'px-3 py-4 sm:px-4 lg:px-6 lg:py-6', className ?? 'flex flex-col gap-4 lg:gap-5')}>{children}</div>
 );
 
 interface PanelProps {
@@ -134,12 +136,12 @@ interface PanelProps {
 }
 
 export const Panel = ({ title, description, actions, children, className, ref }: PanelProps) => (
-    <section ref={ref} className={cx('rounded-xl border border-line bg-surface', className)}>
+    <section ref={ref} className={cx('card', className)}>
         {(title || actions) && (
             <header className="flex flex-wrap items-center justify-between gap-x-4 gap-y-2 border-b border-line px-4 py-3">
                 {/* Shrinks to 8rem, its description wrapping, before the actions drop below it. */}
                 <div className="min-w-0 flex-[1_1_8rem]">
-                    {title && <h2 className="text-[13px] font-semibold tracking-wide">{title}</h2>}
+                    {title && <h2 className="text-sm font-semibold">{title}</h2>}
                     {description && <div className="mt-0.5 text-xs text-muted">{description}</div>}
                 </div>
                 {actions && <div className="flex flex-wrap items-center gap-2">{actions}</div>}
@@ -154,7 +156,7 @@ export const Panel = ({ title, description, actions, children, className, ref }:
  * heading over a group of fields, rows or tiles.
  */
 export const Label = ({ as: Tag = 'span', children, className }: { as?: 'span' | 'div' | 'h3'; children: ReactNode; className?: string }) => (
-    <Tag className={cx('font-mono text-[11px] font-medium tracking-[0.08em] text-muted uppercase', className)}>{children}</Tag>
+    <Tag className={cx('font-mono text-2xs font-medium tracking-[0.08em] text-muted uppercase', className)}>{children}</Tag>
 );
 
 /**
@@ -163,7 +165,7 @@ export const Label = ({ as: Tag = 'span', children, className }: { as?: 'span' |
  * figures inside a tool (what a plan would make), smaller than a page's own.
  */
 export const Stat = ({ label, value, detail, meter, tone, icon, compact }: { label: string; value: ReactNode; detail?: ReactNode; meter?: number; tone?: 'warn' | 'bad'; icon?: ReactNode; compact?: boolean }) => (
-    <div className={cx('rounded-xl border border-line bg-surface', compact ? 'px-3 py-2.5' : 'px-4 py-3.5')}>
+    <div className={cx('card', compact ? 'px-3 py-2.5' : 'px-4 py-3.5')}>
         <Label className="flex items-center gap-1 [&>svg]:size-3">{icon}{label}</Label>
         <div className={cx('font-mono font-semibold tabular-nums', compact ? 'mt-0.5 text-xl' : 'mt-1.5 text-2xl', tone === 'warn' && 'text-warn', tone === 'bad' && 'text-bad')}>{value}</div>
         {meter !== undefined && (
@@ -187,7 +189,7 @@ const BADGE_TONES: Record<BadgeTone, string> = {
 
 /** A tag, in the mono face: a role, a state, a short fact. */
 export const Badge = ({ tone = 'neutral', children, className }: { tone?: BadgeTone; children: ReactNode; className?: string }) => (
-    <span className={cx('inline-flex items-center gap-1.5 rounded-md border px-1.5 py-0.5 font-mono text-[11px] font-medium whitespace-nowrap uppercase', BADGE_TONES[tone], className)}>
+    <span className={cx('inline-flex items-center gap-1.5 rounded-md border px-1.5 py-0.5 font-mono text-2xs font-medium whitespace-nowrap uppercase', BADGE_TONES[tone], className)}>
         {children}
     </span>
 );
@@ -200,25 +202,27 @@ export const LiveBadge = ({ live, children }: { live: boolean; children: ReactNo
     </span>
 );
 
+const NOTICE_TONES = {
+    bad: { box: 'border-bad-line bg-bad-soft text-bad', icon: <XCircle /> },
+    good: { box: 'border-good-line bg-good-soft text-good', icon: <CheckCircle2 /> },
+    warn: { box: 'border-warn-line bg-warn-soft text-warn', icon: <TriangleAlert /> },
+};
+
+/** A line in a tone across the page or a card: its icon, so the colour is never all that says it, and the words. */
+const Notice = ({ tone, role, children }: { tone: keyof typeof NOTICE_TONES; role?: 'alert' | 'status'; children: ReactNode }) => (
+    <div role={role} className={cx('flex items-start gap-2.5 rounded-xl border px-4 py-3 text-sm [&>svg]:mt-0.5 [&>svg]:size-4 [&>svg]:shrink-0', NOTICE_TONES[tone].box)}>
+        {NOTICE_TONES[tone].icon}
+        <div className="min-w-0 flex-1">{children}</div>
+    </div>
+);
+
 export const ErrorNotice = ({ error }: { error: unknown }) => (
-    <div role="alert" className="flex items-start gap-2.5 rounded-xl border border-bad-line bg-bad-soft px-4 py-3 text-sm text-bad">
-        <XCircle className="mt-0.5 size-4 shrink-0" />
-        <span>{error instanceof Error ? error.message : 'Something went wrong.'}</span>
-    </div>
+    <Notice tone="bad" role="alert">{error instanceof Error ? error.message : 'Something went wrong.'}</Notice>
 );
 
-export const SuccessNotice = ({ children }: { children: ReactNode }) => (
-    <div role="status" className="flex items-start gap-2.5 rounded-xl border border-good-line bg-good-soft px-4 py-3 text-sm text-good">
-        <CheckCircle2 className="mt-0.5 size-4 shrink-0" />
-        <div className="min-w-0">{children}</div>
-    </div>
-);
+export const SuccessNotice = ({ children }: { children: ReactNode }) => <Notice tone="good" role="status">{children}</Notice>;
 
-export const WarningNotice = ({ children }: { children: ReactNode }) => (
-    <div className="rounded-xl border border-warn-line bg-warn-soft px-4 py-3 text-sm text-warn">
-        {children}
-    </div>
-);
+export const WarningNotice = ({ children }: { children: ReactNode }) => <Notice tone="warn">{children}</Notice>;
 
 export const Loading = () => (
     <div className="flex items-center justify-center gap-2.5 py-16 text-sm text-muted">
@@ -235,7 +239,7 @@ export const Loading = () => (
  * The look every text box and drop-down shares. Every control (a button, a field, a segmented
  * row) is one height: 40px on a phone, a thumb's size, and 32px from a tablet up.
  */
-export const FIELD_CLASS = 'h-10 sm:h-8 rounded-lg border border-line bg-canvas px-2.5 text-[15px] sm:text-[13px] text-ink placeholder:text-muted/70 focus:border-accent focus:outline-none focus:ring-2 focus:ring-accent/25 disabled:opacity-60';
+export const FIELD_CLASS = 'h-10 sm:h-8 rounded-lg border border-line bg-canvas px-2.5 text-base sm:text-ui text-ink placeholder:text-muted/70 transition-[border-color,box-shadow] hover:border-line-strong focus:border-accent focus:outline-none focus:ring-3 focus:ring-accent/20 disabled:opacity-60 disabled:hover:border-line';
 
 /** A ref, given, is the input's: React 19 passes it on as a prop. */
 export const Input = ({ className, ...input }: InputHTMLAttributes<HTMLInputElement> & { ref?: Ref<HTMLInputElement> }) => (
@@ -314,8 +318,8 @@ export const Segmented = ({ label, value, onChange, options, disabled }: { label
                 disabled={disabled}
                 onClick={() => onChange(option.value)}
                 className={cx(
-                    'h-9 flex-auto rounded-md px-2.5 text-[13px] font-medium whitespace-nowrap transition-colors sm:h-7',
-                    option.value === value ? 'bg-subtle text-ink shadow-[0_0_0_1px_var(--color-line)]' : 'text-muted hover:text-ink',
+                    'h-9 flex-auto rounded-md px-2.5 text-ui font-medium whitespace-nowrap transition-colors sm:h-7',
+                    option.value === value ? 'bg-surface text-ink shadow-[0_0_0_1px_var(--color-line),var(--elevation-card)]' : 'text-muted hover:text-ink',
                 )}
             >
                 {option.label}
@@ -345,7 +349,7 @@ type ButtonVariant = 'primary' | 'secondary' | 'ghost' | 'danger';
 
 const BUTTON_VARIANTS: Record<ButtonVariant, string> = {
     primary: 'border border-accent bg-accent font-semibold text-on-accent hover:border-accent-hover hover:bg-accent-hover',
-    secondary: 'border border-line bg-subtle text-ink hover:border-muted/50',
+    secondary: 'border border-line bg-subtle text-ink hover:border-line-strong',
     ghost: 'border border-transparent text-muted hover:border-line hover:bg-subtle hover:text-ink',
     danger: 'border border-bad-line bg-bad-soft text-bad hover:border-bad/60',
 };
@@ -355,7 +359,7 @@ export const Button = ({ variant = 'primary', icon, className, children, ...butt
         type="button"
         {...button}
         className={cx(
-            'inline-flex h-10 items-center justify-center gap-1.5 rounded-lg px-3 text-sm font-medium whitespace-nowrap transition active:scale-[0.98] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent disabled:pointer-events-none disabled:opacity-50 sm:h-8 sm:text-[13px] [&>svg]:size-4',
+            'inline-flex h-10 items-center justify-center gap-1.5 rounded-lg px-3 text-sm font-medium whitespace-nowrap transition active:scale-[0.98] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent disabled:pointer-events-none disabled:opacity-50 sm:h-8 sm:text-ui [&>svg]:size-4',
             BUTTON_VARIANTS[variant],
             className,
         )}
@@ -418,7 +422,7 @@ export const Chip = ({ active, className, children, ...button }: ButtonHTMLAttri
 
 /** A fact and its value on one line; `mono` for a value that is code (a hash, a path, an id). */
 export const Kv = ({ label, mono, children }: { label: string; mono?: boolean; children: ReactNode }) => (
-    <div className="flex items-baseline justify-between gap-4 border-t border-line px-4 py-2.5 text-[13px] first:border-t-0">
+    <div className="flex items-baseline justify-between gap-4 border-t border-line px-4 py-2.5 text-ui first:border-t-0">
         <dt className="shrink-0 text-muted">{label}</dt>
         <dd className={cx('min-w-0 text-right', mono && 'font-mono')}>{children}</dd>
     </div>
@@ -431,7 +435,7 @@ export const Kv = ({ label, mono, children }: { label: string; mono?: boolean; c
 export const Th = ({ children, className, sort, first, sorting }: { children?: ReactNode; className?: string; sort?: string; first?: SortDir; sorting?: Sorting }) => (
     <th
         aria-sort={sort && sorting?.order?.sort === sort ? (sorting.order.dir === 'asc' ? 'ascending' : 'descending') : undefined}
-        className={cx('border-b border-line px-4 py-2 text-left font-mono text-[11px] font-medium tracking-[0.08em] text-muted uppercase', className)}
+        className={cx('border-b border-line px-4 py-2 text-left font-mono text-2xs font-medium tracking-[0.08em] text-muted uppercase', className)}
     >
         {sort && sorting ? <SortButton label={children} sort={sort} first={first} sorting={sorting} /> : children}
     </th>

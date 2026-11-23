@@ -18,11 +18,11 @@ const keeperOf = (duplicate: Duplicate) => duplicate.offers.find(x => x.shown) ?
 const OfferRow = ({ tree, offer, busy, onOpen, onDelete, onKeepOnly }: { tree: CatalogTree; offer: DuplicateOffer; busy: boolean; onOpen: () => void; onDelete: () => void; onKeepOnly: () => void }) => (
     <li className="flex flex-wrap items-center gap-x-3 gap-y-1 px-3 py-2">
         <button type="button" onClick={onOpen} className="min-w-0 flex-1 text-left hover:text-accent" title="Open it in the editor">
-            <span className="block truncate text-[13px] font-medium">{offer.pageTitle}</span>
-            <span className="block truncate text-[11px] text-muted">{offer.pagePath || 'Tab'} · offer {offer.offerId}</span>
+            <span className="block truncate text-ui font-medium">{offer.pageTitle}</span>
+            <span className="block truncate text-2xs text-muted">{offer.pagePath || 'Tab'} · offer {offer.offerId}</span>
         </button>
         {!offer.shown && (
-            <span className="flex items-center gap-1 rounded-full bg-subtle px-2 py-0.5 text-[11px] text-muted" title={offer.visible ? 'On a page players can\'t reach' : 'The offer is hidden'}>
+            <span className="flex items-center gap-1 rounded-full bg-subtle px-2 py-0.5 text-2xs text-muted" title={offer.visible ? 'On a page players can\'t reach' : 'The offer is hidden'}>
                 <EyeOff className="size-3" />
                 {offer.visible ? 'page hidden' : 'hidden'}
             </span>
@@ -77,7 +77,7 @@ export const Duplicates = ({ tree, onOpen }: { tree: CatalogTree; onOpen: (pageI
 
     return (
         <div className="flex flex-col gap-3">
-            <div className="flex flex-wrap items-center gap-3 rounded-xl border border-line bg-surface p-3">
+            <div className="card flex flex-wrap items-center gap-3 p-3">
                 <span className="flex items-center gap-2 text-sm font-medium">
                     <Copy className="size-4 text-accent" />
                     {duplicates.data ? `${all.length.toLocaleString()} furni sold more than once` : '…'}
@@ -101,17 +101,17 @@ export const Duplicates = ({ tree, onOpen }: { tree: CatalogTree; onOpen: (pageI
 
             <ul className="grid gap-3 xl:grid-cols-2">
                 {shown.slice(0, 200).map(duplicate => (
-                    <li key={`${duplicate.furni.id}:${duplicate.extraParam ?? ''}`} className="overflow-hidden rounded-xl border border-line bg-surface">
+                    <li key={`${duplicate.furni.id}:${duplicate.extraParam ?? ''}`} className="card overflow-hidden">
                         <div className="flex items-center gap-3 border-b border-line bg-subtle/50 px-3 py-2">
                             <ProductIcon type={duplicate.furni.type} name={duplicate.furni.name} className="size-9" />
                             <div className="min-w-0 flex-1">
                                 <div className="truncate text-sm font-semibold">{duplicate.furni.publicName ?? duplicate.furni.name}</div>
-                                <div className="truncate font-mono text-[11px] text-muted">
+                                <div className="truncate font-mono text-2xs text-muted">
                                     {duplicate.furni.name}
                                     {duplicate.extraParam && ` · ${duplicate.extraParam}`}
                                 </div>
                             </div>
-                            <span className={cx('rounded-full px-2 py-0.5 font-mono text-[11px] font-semibold', duplicate.offers.filter(x => x.shown).length > 1 ? 'bg-warn-soft text-warn' : 'bg-subtle text-muted')}>
+                            <span className={cx('rounded-full px-2 py-0.5 font-mono text-2xs font-semibold', duplicate.offers.filter(x => x.shown).length > 1 ? 'bg-warn-soft text-warn' : 'bg-subtle text-muted')}>
                                 ×{duplicate.offers.length}
                             </span>
                         </div>

@@ -79,7 +79,7 @@ export const AllTab = ({ draft, disabled }: { draft: HotelViewDraft; disabled?: 
                 {keys.map(key => (
                     <li key={key} className="grid items-center gap-x-3 gap-y-1 px-4 py-2 sm:grid-cols-[minmax(14rem,24rem)_1fr_auto]">
                         <span className="flex min-w-0 items-center gap-2">
-                            <span className="truncate font-mono text-[13px]" title={key}>{key.slice(PREFIX.length)}</span>
+                            <span className="truncate font-mono text-ui" title={key}>{key.slice(PREFIX.length)}</span>
                             <Changed on={draft.changed(key)} />
                             {draft.follows(key) && !draft.changed(key) && <Badge tone="accent" className="max-w-40 truncate"><Link2 className="size-3" /> {draft.follows(key)}</Badge>}
                         </span>

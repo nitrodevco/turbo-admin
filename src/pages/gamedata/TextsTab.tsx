@@ -156,7 +156,7 @@ export const TextsTab = ({ status, adding, onAdded }: { status: GamedataStatus; 
                                 onToggle={() => setOpen(open === item.key ? null : item.key)}
                                 summary={(
                                     <div className="grid items-center gap-x-4 gap-y-0.5 sm:grid-cols-[minmax(12rem,22rem)_1fr_7rem]">
-                                        <span className="truncate font-mono text-[13px]">{item.key}</span>
+                                        <span className="truncate font-mono text-ui">{item.key}</span>
                                         <span className="truncate text-muted">{item.value || '""'}</span>
                                         <span className="max-sm:hidden sm:justify-self-end">
                                             {item.plugin && item.pluginValue !== item.value && <Badge tone="amber">changed from {item.plugin}</Badge>}

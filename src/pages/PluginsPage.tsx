@@ -89,7 +89,7 @@ const PluginInspector = ({ pluginKey }: { pluginKey: string }) => {
                                 <dl className="grid gap-x-4 gap-y-1.5 sm:grid-cols-[9rem_1fr]">
                                     {[ ...kinds ].map(([ kind, items ]) => (
                                         <div key={kind} className="contents">
-                                            <dt className={cx('text-muted', kind === 'override' && 'font-medium text-amber-700')}>{kind}</dt>
+                                            <dt className={cx('text-muted', kind === 'override' && 'font-medium text-warn')}>{kind}</dt>
                                             <dd className="flex flex-wrap gap-1.5">
                                                 {items.map(item => (
                                                     <code key={`${item.name} ${item.detail ?? ''}`} className="rounded bg-subtle px-1.5 py-0.5" title={item.detail ?? undefined}>
@@ -316,7 +316,7 @@ const InstallButton = ({ maxBytes, code }: { maxBytes: number; code: boolean }) 
     const install = useInstallPlugin();
 
     return (
-        <label className={cx('inline-flex h-10 cursor-pointer items-center gap-1.5 rounded-lg border border-line px-3 text-sm font-medium text-ink hover:bg-subtle sm:h-8 sm:text-[13px] [&>svg]:size-4', install.isPending && 'pointer-events-none opacity-60')}>
+        <label className={cx('inline-flex h-10 cursor-pointer items-center gap-1.5 rounded-lg border border-line px-3 text-sm font-medium text-ink hover:bg-subtle sm:h-8 sm:text-ui [&>svg]:size-4', install.isPending && 'pointer-events-none opacity-60')}>
             <Upload />
             Install
             <input
@@ -459,7 +459,7 @@ export const PluginsPage = () => {
                     ? <InstallButton maxBytes={data.maxUploadBytes} code={data.canInstall} />
                     : <NeedsNode icon={<Upload />} label="Install" need={data.uploadEnabled ? `Needs ${MANAGE}` : uploadOff} />)}
             </PageHeader>
-            <PageBody className="flex flex-col gap-4 lg:gap-5">
+            <PageBody>
                 {error && <ErrorNotice error={error} />}
                 {!data && !error && <Loading />}
                 {data && !data.uploadEnabled && (

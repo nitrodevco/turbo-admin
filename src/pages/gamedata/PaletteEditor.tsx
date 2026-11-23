@@ -128,7 +128,7 @@ const Inspector = ({ colour, index, count, canManage, onChange, onMove, onRemove
                 <span className="size-14 shrink-0 rounded-xl border border-black/15" style={{ background: `#${colour.hex}` }} />
                 <div className="min-w-0">
                     <div className="font-mono text-lg font-semibold">#{colour.hex}</div>
-                    <div className="font-mono text-[11px] text-muted">id {colour.id} · {index + 1} of {count}</div>
+                    <div className="font-mono text-2xs text-muted">id {colour.id} · {index + 1} of {count}</div>
                 </div>
             </div>
             <div className="grid grid-cols-[2.75rem_1fr] items-end gap-2">
@@ -301,12 +301,12 @@ export const PaletteEditor = ({ canManage }: { canManage: boolean }) => {
                                 >
                                     <span className="flex items-center justify-between gap-2 text-sm">
                                         <span className="font-medium">Palette {id}</span>
-                                        <span className="font-mono text-[11px] text-muted">{of ? of.colors.length : 0}</span>
+                                        <span className="font-mono text-2xs text-muted">{of ? of.colors.length : 0}</span>
                                     </span>
                                     <span className="flex h-3 overflow-hidden rounded">
                                         {preview.length ? preview.map(c => <span key={c.id} className="flex-1" style={{ background: `#${c.hex}` }} />) : <span className="flex-1 bg-line" />}
                                     </span>
-                                    <span className="truncate font-mono text-[11px] text-muted">{of?.usedBy.length ? of.usedBy.join(' ') : 'no clothing uses it'}</span>
+                                    <span className="truncate font-mono text-2xs text-muted">{of?.usedBy.length ? of.usedBy.join(' ') : 'no clothing uses it'}</span>
                                 </button>
                             </li>
                         );
@@ -367,7 +367,7 @@ export const PaletteEditor = ({ canManage }: { canManage: boolean }) => {
                                                     ))}
                                                 </div>
                                             )}
-                                    <div className="mt-4 flex flex-wrap items-center gap-x-4 gap-y-1 text-[11px] text-muted">
+                                    <div className="mt-4 flex flex-wrap items-center gap-x-4 gap-y-1 text-2xs text-muted">
                                         <span className="flex items-center gap-1.5"><span className="rounded bg-accent px-1 font-mono text-[9px] leading-[14px] font-bold text-on-accent">HC</span> club only</span>
                                         <span className="flex items-center gap-1.5"><span className="size-3 rounded bg-[repeating-linear-gradient(135deg,var(--color-line)_0_3px,transparent_3px_5px)]" /> hidden</span>
                                         <span className="flex items-center gap-1.5"><span className="size-2 rounded-full bg-warn" /> changed from Habbo's</span>

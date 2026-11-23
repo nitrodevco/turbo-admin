@@ -116,7 +116,7 @@ export const TakeInDialog = ({ open, onClose }: { open: boolean; onClose: () => 
                         }}
                     />
                 </label>
-                <div className="flex items-center gap-3 font-mono text-[11px] tracking-[0.08em] text-muted uppercase" aria-hidden>
+                <div className="flex items-center gap-3 font-mono text-2xs tracking-[0.08em] text-muted uppercase" aria-hidden>
                     <span className="h-px flex-1 bg-line" />
                     or
                     <span className="h-px flex-1 bg-line" />
@@ -144,7 +144,7 @@ export const TakeInDialog = ({ open, onClose }: { open: boolean; onClose: () => 
                     <ul className="divide-y divide-line rounded-xl border border-line">
                         {attempts.map(attempt => (
                             <li key={attempt.id} className="flex flex-col gap-1.5 px-3 py-2.5">
-                                <span className="min-w-0 truncate font-mono text-[13px]" title={attempt.what}>{attempt.what}</span>
+                                <span className="min-w-0 truncate font-mono text-ui" title={attempt.what}>{attempt.what}</span>
                                 <Outcome attempt={attempt} />
                             </li>
                         ))}

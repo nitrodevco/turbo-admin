@@ -45,11 +45,11 @@ const PageChoice = ({ tree, label, pageIds, value, onChange }: { tree: CatalogTr
                     onClick={() => onChange(id)}
                     className={cx(
                         'flex min-h-10 flex-col items-start rounded-lg border px-3 py-1.5 text-left transition',
-                        value === id ? 'border-accent bg-accent-soft' : 'border-line hover:border-muted/50',
+                        value === id ? 'border-accent bg-accent-soft' : 'border-line hover:border-line-strong',
                     )}
                 >
-                    <span className={cx('text-[13px] font-medium', value === id && 'text-accent')}>{tree.pages.find(x => x.id === id)?.localization ?? `Page ${id}`}</span>
-                    <span className="text-[11px] text-muted">{pathOf(tree, id)} · page {id} · {plural(tree.pages.find(x => x.id === id)?.offerCount ?? 0, 'offer', 'offers')}</span>
+                    <span className={cx('text-ui font-medium', value === id && 'text-accent')}>{tree.pages.find(x => x.id === id)?.localization ?? `Page ${id}`}</span>
+                    <span className="text-2xs text-muted">{pathOf(tree, id)} · page {id} · {plural(tree.pages.find(x => x.id === id)?.offerCount ?? 0, 'offer', 'offers')}</span>
                 </button>
             ))}
         </div>
@@ -130,7 +130,7 @@ export const MergePagesDialog = ({ tree, pageIds, keepId, onClose, onMerged }: M
                         </p>
                         {data.duplicates.length > 0 && (
                             <div className="overflow-hidden rounded-xl border border-line">
-                                <div className="grid grid-cols-[minmax(0,1fr)_auto_auto] gap-x-4 border-b border-line bg-subtle/50 px-3 py-1.5 text-[11px] font-semibold text-muted">
+                                <div className="grid grid-cols-[minmax(0,1fr)_auto_auto] gap-x-4 border-b border-line bg-subtle/50 px-3 py-1.5 text-2xs font-semibold text-muted">
                                     <span>Sold twice</span>
                                     <span className="text-right">Stays</span>
                                     <span className="text-right">Deleted</span>
@@ -141,13 +141,13 @@ export const MergePagesDialog = ({ tree, pageIds, keepId, onClose, onMerged }: M
                                             <span className="truncate font-mono">{x.name}</span>
                                             <span className="text-right" title={`Offer ${x.kept.offerId} on ${title(x.kept.pageId)}`}>
                                                 <span className="font-mono tabular-nums text-good">{priceOf(x.kept, tree)}</span>
-                                                <span className="block text-[10px] text-muted">{title(x.kept.pageId)}</span>
+                                                <span className="block text-2xs text-muted">{title(x.kept.pageId)}</span>
                                             </span>
                                             <span className="text-right">
                                                 {x.dropped.map(d => (
                                                     <span key={d.offerId} className="block" title={`Offer ${d.offerId} on ${title(d.pageId)}`}>
                                                         <span className="font-mono tabular-nums text-muted line-through">{priceOf(d, tree)}</span>
-                                                        <span className="block text-[10px] text-muted">{title(d.pageId)}</span>
+                                                        <span className="block text-2xs text-muted">{title(d.pageId)}</span>
                                                     </span>
                                                 ))}
                                             </span>

@@ -416,7 +416,7 @@ export const PluginPage = () => {
                 description={page.description ?? `From the plugin ${plugin.name} ${plugin.version}`}
                 back={parent ? { to: `/plugin/${plugin.key}/${parent.id}`, label: parent.title } : undefined}
             />
-            <PageBody className="flex flex-col gap-4 lg:gap-5">
+            <PageBody>
                 {page.blocks.map((block, i) => <Block key={`${plugin.revision}-${i}`} block={block} context={{ plugin, id, back: parent && `/plugin/${plugin.key}/${parent.id}` }} item={item} />)}
             </PageBody>
         </>

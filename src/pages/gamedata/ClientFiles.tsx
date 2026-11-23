@@ -126,7 +126,7 @@ export const ClientFiles = ({ status }: { status: GamedataStatus }) => {
                         <Row key={row.file.file}>
                             <span className="min-w-0">
                                 <span className="block font-medium">{row.what}</span>
-                                <span className="block truncate font-mono text-[11px] text-muted">/gamedata/{row.file.file}/0</span>
+                                <span className="block truncate font-mono text-2xs text-muted">/gamedata/{row.file.file}/0</span>
                             </span>
                             {keys
                                 ? <FileKey file={row.file.file} keys={keys} fallback={row.setting} canManage={status.canManage} />

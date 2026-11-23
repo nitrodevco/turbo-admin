@@ -128,7 +128,7 @@ export const HeaderActions = ({ children }: { children: ReactNode }) => {
                     {open && (
                         <div
                             onClick={() => setOpen(false)}
-                            className="absolute top-full right-0 z-40 mt-2 flex min-w-48 animate-rise flex-col items-stretch gap-1.5 rounded-xl border border-line bg-surface p-1.5 shadow-xl [&>a]:justify-start [&>button]:justify-start"
+                            className="absolute top-full right-0 z-40 mt-2 flex min-w-48 animate-rise flex-col items-stretch gap-1.5 rounded-xl border border-line bg-surface p-1.5 shadow-pop [&>a]:justify-start [&>button]:justify-start"
                         >
                             {hidden}
                         </div>

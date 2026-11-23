@@ -40,7 +40,7 @@ const JobLog = ({ log, running }: { log: string[]; running: boolean }) => {
 
                 following.current = element.scrollHeight - element.scrollTop - element.clientHeight < 24;
             }}
-            className="max-h-72 overflow-auto rounded-lg border border-line bg-canvas px-3 py-2 font-mono text-[11.5px] leading-5 whitespace-pre-wrap text-muted"
+            className="max-h-72 overflow-auto rounded-lg border border-line bg-canvas px-3 py-2 font-mono text-xs leading-5 whitespace-pre-wrap text-muted"
         >
             {log.length > 0 ? log.join('\n') : 'Nothing logged yet.'}
         </pre>

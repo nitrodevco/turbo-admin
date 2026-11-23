@@ -48,7 +48,7 @@ const BundleRow = ({ bundle, pending, showsFile, onOpen }: { bundle: AssetBundle
                 <BundleIcon kind={bundle.kind} name={bundle.name} ids={bundle.ids} />
                 <span className="flex min-w-0 flex-1 flex-col gap-0.5">
                     <span className="flex min-w-0 flex-wrap items-center gap-1.5">
-                        <span className={cx('truncate font-mono text-[13px] font-medium', !bundle.used && 'text-muted')}>{bundle.name}</span>
+                        <span className={cx('truncate font-mono text-ui font-medium', !bundle.used && 'text-muted')}>{bundle.name}</span>
                         {bundle.source === 'upload' && <Badge tone="accent">upload</Badge>}
                         {bundle.error && <Badge tone="red">failed</Badge>}
                         {!bundle.used && <Badge tone="amber">unused</Badge>}
@@ -57,7 +57,7 @@ const BundleRow = ({ bundle, pending, showsFile, onOpen }: { bundle: AssetBundle
                     {bundle.error
                         ? <span className="truncate text-xs text-bad" title={bundle.error}>{bundle.error}</span>
                         : (
-                                <span className="truncate font-mono text-[11px] text-muted">
+                                <span className="truncate font-mono text-2xs text-muted">
                                     <span className="md:hidden">{(showsFile ? [ bundle.revision !== null ? `rev ${bundle.revision}` : null, ids, formatBytes(bundle.size) ] : [ ids ]).filter(Boolean).join(' · ')}</span>
                                     <span className="max-md:hidden">{ids ?? (bundle.source === 'upload' ? 'uploaded' : 'from Habbo')}</span>
                                 </span>
@@ -95,7 +95,7 @@ export const BundleList = ({ kind, canManage }: { kind: BundleKind; canManage: b
     const showsFile = SHOWS_FILE.has(kind);
 
     return (
-        <section className="overflow-clip rounded-xl border border-line bg-surface">
+        <section className="card overflow-clip">
             <ListToolbar
                 watch={[ kind, filter, q, page ]}
                 page={{ offset: page * pageSize, limit: pageSize, total: data?.total, onChange: offset => setPage(Math.round(offset / pageSize)) }}
@@ -131,7 +131,7 @@ export const BundleList = ({ kind, canManage }: { kind: BundleKind; canManage: b
             )}
             {data && data.items.length > 0 && (
                 <>
-                    <div className="hidden items-center gap-3 border-b border-line px-4 py-2 font-mono text-[11px] font-medium tracking-[0.08em] text-muted uppercase md:flex">
+                    <div className="hidden items-center gap-3 border-b border-line px-4 py-2 font-mono text-2xs font-medium tracking-[0.08em] text-muted uppercase md:flex">
                         <span className="w-10 shrink-0" />
                         <span className="flex-1">Bundle</span>
                         {showsFile && (

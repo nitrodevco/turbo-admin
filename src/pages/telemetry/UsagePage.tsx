@@ -47,7 +47,7 @@ export const UsagePage = () => {
     return (
         <>
             <PageHeader title="Overview" tabs={tabs} description="What players use, from the events their clients log" />
-            <PageBody className="flex flex-col gap-4 lg:gap-5">
+            <PageBody>
                 <div className="flex flex-wrap items-center gap-2">
                     <RangePicker days={days} setDays={setDays} />
                 </div>
@@ -93,7 +93,7 @@ export const UsagePage = () => {
                                                         <Row key={key}>
                                                             <div className="min-w-0">
                                                                 <div className="truncate font-medium">{x.action || x.type || '-'}</div>
-                                                                <div className="truncate font-mono text-[11px] text-muted">{[ x.category, x.type ].filter(Boolean).join(' / ')}</div>
+                                                                <div className="truncate font-mono text-2xs text-muted">{[ x.category, x.type ].filter(Boolean).join(' / ')}</div>
                                                             </div>
                                                             <Figure label="Times">{number(x.count)}</Figure>
                                                             <Figure label="Player days">{number(x.playerDays)}</Figure>

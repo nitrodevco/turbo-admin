@@ -85,7 +85,7 @@ const InsideRow = ({ room, player, run, busy, onMore, linked }: { room: RoomDeta
                         : <span className="truncate text-sm font-medium">{player.name}</span>}
                     {role !== 'visitor' && <Badge tone={role === 'owner' ? 'accent' : 'neutral'}>{role}</Badge>}
                 </div>
-                <div className="font-mono text-[11px] text-muted">#{player.id}</div>
+                <div className="font-mono text-2xs text-muted">#{player.id}</div>
             </div>
             {actionable && (
                 <>
@@ -183,7 +183,7 @@ const Rights = ({ room, run, busy }: { room: RoomDetailResponse; run: Run; busy:
                         <Avatar id={player.id} name={player.name} figure={player.figure} />
                         <div className="min-w-0 flex-1 truncate text-sm">
                             {player.name}
-                            <span className="ml-2 font-mono text-[11px] text-muted">#{player.id}</span>
+                            <span className="ml-2 font-mono text-2xs text-muted">#{player.id}</span>
                         </div>
                         {room.can.manageRights && <Button variant="ghost" icon={<Trash2 />} className="row-actions" disabled={busy} onClick={() => run(() => calls.removeRights(player.id))}>Remove</Button>}
                     </li>
@@ -256,7 +256,7 @@ const Bans = ({ room, run, busy }: { room: RoomDetailResponse; run: Run; busy: b
                                     <Avatar id={ban.playerId} name={ban.name} figure={ban.figure} />
                                     <div className="min-w-0 flex-1">
                                         <div className="truncate text-sm">{ban.name}</div>
-                                        <div className="font-mono text-[11px] text-warn">until {formatDateTime(ban.expiresAtUtc)}</div>
+                                        <div className="font-mono text-2xs text-warn">until {formatDateTime(ban.expiresAtUtc)}</div>
                                     </div>
                                     {room.can.moderate && <Button variant="ghost" className="row-actions" disabled={busy} onClick={() => run(() => calls.unban(ban.playerId))}>Lift</Button>}
                                 </li>
@@ -309,7 +309,7 @@ export const RoomPage = () => {
                     <HeaderLink to={`/chatlog?${new URLSearchParams({ room: String(id) })}`} icon={<MessagesSquare />}>Chat</HeaderLink>
                 )}
             </RoomHeader>
-            <PageBody className="flex flex-col gap-4 lg:gap-5">
+            <PageBody>
                 {isPending && <Loading />}
                 {error && <ErrorNotice error={error} />}
                 <ActionOutcome message={action.data?.message} error={action.error} />

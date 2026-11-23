@@ -422,7 +422,7 @@ export const ThemeStudioPage = () => {
         <StudioContext value={studio}>
             <PageHeader title="Theme studio" description={`Pick a window, click what to change, Save: it is written into ${folderOf(theme)} and the players drawing it see it as it is saved.`} />
             <div className="flex w-full flex-col gap-3 px-3 py-3 lg:px-4">
-                <div className="flex flex-wrap items-center gap-x-4 gap-y-2 rounded-xl border border-line bg-surface px-3 py-2">
+                <div className="card flex flex-wrap items-center gap-x-4 gap-y-2 px-3 py-2">
                     <ThemeBar unsaved={unsaved} onPick={pickTheme} />
                     <span className="ml-auto flex flex-wrap items-center gap-2">
                         <IconButton label="Undo (Ctrl+Z)" icon={<Undo2 />} disabled={!history.canUndo} onClick={undo} />
@@ -438,11 +438,11 @@ export const ThemeStudioPage = () => {
                 {!index && !error && <Loading />}
                 {index && (
                     <div className="grid gap-3 xl:h-[calc(100vh-11rem)] xl:grid-cols-[19rem_minmax(0,1fr)_20rem]">
-                        <section aria-label="Windows and settings" className="flex min-h-[24rem] flex-col overflow-clip rounded-xl border border-line bg-surface">
+                        <section aria-label="Windows and settings" className="card flex min-h-[24rem] flex-col overflow-clip">
                             <Tabs value={tab} tabs={TABS} onChange={value => setParam({ tab: value === 'windows' ? null : value })} label="Studio" className="shrink-0 px-2" />
                             {left[tab]}
                         </section>
-                        <section aria-label="The window" className="flex min-w-0 flex-col gap-2 overflow-y-auto rounded-xl border border-line bg-surface p-3">
+                        <section aria-label="The window" className="card flex min-w-0 flex-col gap-2 overflow-y-auto p-3">
                             <div className="flex flex-wrap items-center gap-2">
                                 <h2 className="text-base font-semibold">{shownWindow?.name ?? windowId ?? 'Pick a window'}</h2>
                                 {shownWindow && <Badge>{shownWindow.area}</Badge>}
@@ -527,7 +527,7 @@ export const ThemeStudioPage = () => {
                                     : <p className="p-6 text-center text-sm text-muted">Pick a window on the left: the catalogue, the purse, the navigator...</p>}
                             </div>
                         </section>
-                        <section aria-label="Inspector" className="min-h-[16rem] overflow-y-auto rounded-xl border border-line bg-surface">
+                        <section aria-label="Inspector" className="card min-h-[16rem] overflow-y-auto">
                             {windowId && editor.trees.length > 0 && (
                                 <details open className="border-b border-line">
                                     <summary className="cursor-pointer px-3 py-2 text-xs font-medium">Hierarchy</summary>

@@ -150,7 +150,7 @@ export const GroupPage = () => {
                     </>
                 )}
             </PageHeader>
-            <PageBody className="flex flex-col gap-4 lg:gap-5">
+            <PageBody>
                 {isPending && <Loading />}
                 {error && <ErrorNotice error={error} />}
                 {act.isSuccess && <SuccessNotice>Done: the owner's group window and the home room show it now.</SuccessNotice>}

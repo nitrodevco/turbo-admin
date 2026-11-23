@@ -30,9 +30,9 @@ const Change = ({ entry, text }: { entry: HotelViewHabboEntry; text?: boolean })
 
 const Section = ({ title, count, children }: { title: string; count: number; children: ReactNode }) => (
     <section className="flex flex-col">
-        <h3 className="flex items-center gap-2 border-b border-line bg-canvas/60 px-4 py-2 font-mono text-[11px] font-medium tracking-[0.08em] text-muted uppercase">
+        <h3 className="flex items-center gap-2 border-b border-line bg-canvas/60 px-4 py-2 font-mono text-2xs font-medium tracking-[0.08em] text-muted uppercase">
             {title}
-            <span className="rounded-full bg-subtle px-1.5 text-[11px] tabular-nums">{count.toLocaleString()}</span>
+            <span className="rounded-full bg-subtle px-1.5 text-2xs tabular-nums">{count.toLocaleString()}</span>
         </h3>
         <ul className="divide-y divide-line">{children}</ul>
     </section>
@@ -73,7 +73,7 @@ export const HabboPull = ({ open, onClose, draft }: { open: boolean; onClose: ()
             {!preview && !error && <Loading />}
             {preview && (
                 <div className="flex flex-col">
-                    <p className="px-4 py-3 text-[13px] text-muted sm:px-5">
+                    <p className="px-4 py-3 text-ui text-muted sm:px-5">
                         What Habbo's reception has that yours doesn't. Taking it puts it among your changes: look at it in the preview, then save it as any edit, or discard it.
                     </p>
                     <div className="max-h-[55dvh] overflow-y-auto border-y border-line">

@@ -100,7 +100,7 @@ export const ClientHealthPage = () => {
     return (
         <>
             <PageHeader title="Overview" tabs={tabs} description="How the players' clients run, from what they report" />
-            <PageBody className="flex flex-col gap-4 lg:gap-5">
+            <PageBody>
                 <div className="flex flex-wrap items-center gap-2">
                     <RangePicker days={days} setDays={setDays} />
                     {data && (
@@ -184,7 +184,7 @@ export const ClientHealthPage = () => {
                                                 <Row key={`${x.browser}/${x.os}/${x.device}`}>
                                                     <div>
                                                         <div className="font-medium">{x.browser}</div>
-                                                        <div className="truncate text-[11px] text-muted">{`${x.os}, ${x.device}`}</div>
+                                                        <div className="truncate text-2xs text-muted">{`${x.os}, ${x.device}`}</div>
                                                     </div>
                                                     <Figure label="Reports">{number(x.reports)}</Figure>
                                                     <Figure label="FPS median">{x.fpsP50 ? fps(x.fpsP50) : '-'}</Figure>
@@ -208,7 +208,7 @@ export const ClientHealthPage = () => {
                                                     <Row key={x.roomId}>
                                                         <Link to={`/client-health/rooms/${x.roomId}?${params}`} className="min-w-0 hover:underline">
                                                             <div className="truncate font-medium">{x.roomName ?? `Room ${x.roomId}`}</div>
-                                                            <div className="font-mono text-[11px] text-muted">{x.roomId}</div>
+                                                            <div className="font-mono text-2xs text-muted">{x.roomId}</div>
                                                         </Link>
                                                         <Figure label="Chat lag">{number(x.lagWarnings)}</Figure>
                                                         <Figure label="FPS median">{x.fpsSamples ? fps(x.fpsP50) : '-'}</Figure>
@@ -228,7 +228,7 @@ export const ClientHealthPage = () => {
                                                     <Row key={x.step}>
                                                         <div>
                                                             <div className="font-medium">{LOGIN_STEPS[x.step] ?? x.step}</div>
-                                                            <div className="truncate font-mono text-[11px] text-muted">{x.step}</div>
+                                                            <div className="truncate font-mono text-2xs text-muted">{x.step}</div>
                                                         </div>
                                                         <Figure label="Logins">{number(x.sessions)}</Figure>
                                                         <Figure label="Of the first">{`${Math.round((x.sessions / firstStep) * 100)}%`}</Figure>

@@ -105,7 +105,7 @@ export const Backups = ({ tree }: { tree: CatalogTree }) => {
         <div className="flex flex-col gap-3">
             {tree.canManage && (
                 <form
-                    className="flex flex-wrap items-center gap-3 rounded-xl border border-line bg-surface p-3"
+                    className="card flex flex-wrap items-center gap-3 p-3"
                     onSubmit={(event) => {
                         event.preventDefault();
                         doTake();
@@ -131,7 +131,7 @@ export const Backups = ({ tree }: { tree: CatalogTree }) => {
                 <EmptyState framed icon={<DatabaseBackup className="text-muted" />}>No backups yet.</EmptyState>
             )}
             {items.length > 0 && (
-                <ul className="divide-y divide-line overflow-hidden rounded-xl border border-line bg-surface">
+                <ul className="card divide-y divide-line overflow-hidden">
                     {items.map(backup => (
                         <BackupRow
                             key={backup.id}

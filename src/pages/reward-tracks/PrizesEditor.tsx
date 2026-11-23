@@ -70,7 +70,7 @@ const GiveFields = ({ prize, furni, onChange, onPickFurni }: { prize: RewardTrac
                         <div className="min-w-0 flex-1">
                             <div className="mb-1.5 truncate font-mono text-sm">
                                 {current ?? <span className="text-warn">{prize.rewardTypeId ? `No ${type} furni of sprite ${prize.rewardTypeId} here` : 'Pick an item'}</span>}
-                                {prize.furnitureDefinitionId !== null && <span className="ml-2 text-[11px] text-muted">#{prize.furnitureDefinitionId}</span>}
+                                {prize.furnitureDefinitionId !== null && <span className="ml-2 text-2xs text-muted">#{prize.furnitureDefinitionId}</span>}
                             </div>
                             <ItemPicker
                                 type={type}

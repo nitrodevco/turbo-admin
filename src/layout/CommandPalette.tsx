@@ -164,7 +164,7 @@ const Palette = ({ onClose }: { onClose: () => void }) => {
             aria-label="Search"
             onClose={onClose}
             onClick={event => event.target === dialog.current && onClose()}
-            className="m-auto mt-[12vh] w-[640px] max-w-[92vw] animate-rise rounded-xl border border-line bg-surface p-0 text-ink shadow-2xl backdrop:bg-[rgb(5_8_12/0.6)]"
+            className="m-auto mt-[12vh] w-[640px] max-w-[92vw] animate-rise rounded-2xl border border-line bg-surface p-0 text-ink shadow-overlay backdrop:bg-[rgb(5_8_12/0.6)]"
         >
             <div className="flex items-center gap-3 border-b border-line px-4">
                 <Search className="size-4 shrink-0 text-muted" />
@@ -189,10 +189,10 @@ const Palette = ({ onClose }: { onClose: () => void }) => {
                     }}
                     placeholder="Search players, rooms, the catalog, gamedata and commands"
                     aria-label="Search players, rooms, the catalog, gamedata and commands"
-                    className="h-12 min-w-0 flex-1 bg-transparent text-[15px] outline-none placeholder:text-muted sm:text-sm"
+                    className="h-12 min-w-0 flex-1 bg-transparent text-base outline-none placeholder:text-muted sm:text-sm"
                 />
                 {loading && <span className="font-mono text-xs text-muted">...</span>}
-                <kbd className="rounded border border-line px-1.5 font-mono text-[10px] text-muted max-sm:hidden">Esc</kbd>
+                <kbd className="rounded-md border border-line bg-subtle px-1.5 font-mono text-2xs text-muted max-sm:hidden">Esc</kbd>
             </div>
             <div ref={list} className="max-h-[60vh] overflow-y-auto overscroll-contain py-2">
                 {hits.length === 0 && (
@@ -226,9 +226,9 @@ const Palette = ({ onClose }: { onClose: () => void }) => {
                                         {hit.subtitle && <span className="block truncate text-xs text-muted">{hit.subtitle}</span>}
                                     </span>
                                     {hit.shortcut && (
-                                        <span className="flex shrink-0 gap-1 font-mono text-[10px] text-muted max-sm:hidden">
-                                            <kbd className="rounded border border-line px-1.5">g</kbd>
-                                            <kbd className="rounded border border-line px-1.5">{hit.shortcut}</kbd>
+                                        <span className="flex shrink-0 gap-1 font-mono text-2xs text-muted max-sm:hidden">
+                                            <kbd className="rounded-md border border-line bg-subtle px-1.5">g</kbd>
+                                            <kbd className="rounded-md border border-line bg-subtle px-1.5">{hit.shortcut}</kbd>
                                         </span>
                                     )}
                                 </button>
@@ -237,7 +237,7 @@ const Palette = ({ onClose }: { onClose: () => void }) => {
                     </div>
                 ))}
             </div>
-            <div className="flex gap-4 border-t border-line px-4 py-2 font-mono text-[11px] text-muted max-sm:hidden">
+            <div className="flex gap-4 border-t border-line px-4 py-2 font-mono text-2xs text-muted max-sm:hidden">
                 <span>↑↓ to move</span>
                 <span>Enter to open</span>
                 <span>Esc to close</span>
@@ -279,11 +279,11 @@ export const SearchButton = ({ onOpen }: { onOpen?: () => void }) => {
                 setOpen(true);
             }}
             aria-label="Search everything"
-            className="flex h-8 min-w-0 flex-1 items-center gap-2 rounded-lg border border-line bg-surface px-2.5 text-left text-[13px] text-muted transition-colors hover:border-muted/50"
+            className="flex h-8 min-w-0 flex-1 items-center gap-2 rounded-lg border border-line bg-surface px-2.5 text-left text-ui text-muted transition-colors hover:border-line-strong"
         >
             <Search className="size-4 shrink-0" />
             <span className="min-w-0 flex-1 truncate">Search</span>
-            <kbd className="rounded border border-line px-1.5 font-mono text-[10px]">Ctrl K</kbd>
+            <kbd className="rounded-md border border-line bg-subtle px-1.5 font-mono text-2xs">Ctrl K</kbd>
         </button>
     );
 };

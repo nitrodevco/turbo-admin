@@ -86,7 +86,7 @@ const RailTheme = () => {
                 {current.icon}
             </button>
             {open && (
-                <div role="radiogroup" aria-label="Theme options" className="absolute right-0 bottom-full z-40 mb-2 flex gap-1 rounded-lg border border-line bg-surface p-1 shadow-xl">
+                <div role="radiogroup" aria-label="Theme options" className="absolute right-0 bottom-full z-40 mb-2 flex gap-1 rounded-lg border border-line bg-surface p-1 shadow-pop">
                     {THEMES.map(entry => (
                         <button
                             key={entry.value}
@@ -134,7 +134,7 @@ const ApprovalCount = () => {
     const pending = useApprovalCount().data?.pending ?? 0;
 
     return pending > 0
-        ? <span className="grid h-4 min-w-4 place-items-center rounded-full bg-accent px-1 font-mono text-[10px] leading-none font-semibold text-white" aria-label={`${pending} waiting`}>{pending > 99 ? '99+' : pending}</span>
+        ? <span className="grid h-4 min-w-4 place-items-center rounded-full bg-accent px-1 font-mono text-2xs leading-none font-semibold text-on-accent" aria-label={`${pending} waiting`}>{pending > 99 ? '99+' : pending}</span>
         : null;
 };
 
@@ -166,7 +166,7 @@ const RailBody = ({ onPick }: { onPick?: () => void }) => {
             <div className="no-scrollbar flex flex-1 flex-col gap-3 overflow-y-auto px-3 py-3">
                 {sections.map(section => (
                     <div key={section.label ?? 'top'} className="flex flex-col gap-0.5">
-                        {section.label && <span className="px-3 pb-1 font-mono text-[10px] font-medium tracking-[0.12em] text-muted/70 uppercase">{section.label}</span>}
+                        {section.label && <span className="px-3 pb-1.5 font-mono text-2xs font-medium tracking-[0.08em] text-muted uppercase">{section.label}</span>}
                         {section.entries.map(entry => <RailLink key={entry.label} entry={entry} active={isActive(entry)} onPick={onPick} />)}
                     </div>
                 ))}
@@ -176,9 +176,9 @@ const RailBody = ({ onPick }: { onPick?: () => void }) => {
                     to="/account"
                     onClick={onPick}
                     title="Your account"
-                    className={({ isActive: open }) => cx('flex h-9 min-w-0 flex-1 items-center gap-2 rounded-lg px-1.5 text-[13px] transition-colors', open ? 'bg-subtle text-ink' : 'text-muted hover:bg-subtle hover:text-ink')}
+                    className={({ isActive: open }) => cx('flex h-9 min-w-0 flex-1 items-center gap-2 rounded-lg px-1.5 text-ui transition-colors', open ? 'bg-subtle text-ink' : 'text-muted hover:bg-subtle hover:text-ink')}
                 >
-                    <span className="grid size-6 shrink-0 place-items-center rounded-md bg-warn font-mono text-[10px] font-semibold text-canvas">{player?.name.slice(0, 2).toUpperCase()}</span>
+                    <span className="grid size-6 shrink-0 place-items-center rounded-md bg-warn font-mono text-2xs font-semibold text-canvas">{player?.name.slice(0, 2).toUpperCase()}</span>
                     <span className="truncate">{player?.name}</span>
                 </NavLink>
                 {!inMenu && (
@@ -216,7 +216,7 @@ const MenuDrawer = () => {
         <dialog
             {...dialog}
             aria-label="Menu"
-            className="m-0 h-dvh max-h-none w-72 max-w-[85vw] animate-drawer border-r border-line bg-chrome p-0 text-ink shadow-2xl lg:hidden"
+            className="m-0 h-dvh max-h-none w-72 max-w-[85vw] animate-drawer border-r border-line bg-chrome p-0 text-ink shadow-overlay lg:hidden"
         >
             {open && (
                 <nav aria-label="Main" className="flex h-full flex-col pt-[env(safe-area-inset-top)]">

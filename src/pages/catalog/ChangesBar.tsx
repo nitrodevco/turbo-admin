@@ -26,7 +26,7 @@ const IconAction = ({ label, title, disabled, onClick, children }: { label: stri
         disabled={disabled}
         aria-label={label}
         title={title}
-        className="grid size-10 place-items-center rounded-lg border border-line bg-subtle text-ink transition hover:border-muted/50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent disabled:pointer-events-none disabled:opacity-50 sm:size-8 [&>svg]:size-4"
+        className="grid size-10 place-items-center rounded-lg border border-line bg-subtle text-ink transition hover:border-line-strong focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent disabled:pointer-events-none disabled:opacity-50 sm:size-8 [&>svg]:size-4"
     >
         {children}
     </button>
@@ -100,14 +100,14 @@ export const ChangesBar = ({ history, unpublished, busy, onUndo, onRedo, onDisca
                         onClick={() => setOpen(!open)}
                         disabled={undo.length + redo.length === 0}
                         aria-expanded={open}
-                        className="flex h-10 items-center gap-1 rounded-lg border border-line bg-subtle px-2.5 text-sm text-ink sm:text-[13px] transition hover:border-muted/50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent disabled:pointer-events-none disabled:opacity-50 sm:h-8 [&>svg]:size-4"
+                        className="flex h-10 items-center gap-1 rounded-lg border border-line bg-subtle px-2.5 text-sm text-ink sm:text-ui transition hover:border-line-strong focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent disabled:pointer-events-none disabled:opacity-50 sm:h-8 [&>svg]:size-4"
                     >
                         <History />
                         <span className="max-sm:hidden">History</span>
                         <ChevronDown className="!size-3.5 text-muted" />
                     </button>
                     {open && (
-                        <div className="absolute top-full right-0 z-40 mt-2 w-[min(24rem,calc(100vw-2rem))] animate-rise overflow-hidden rounded-xl border border-line bg-surface shadow-xl">
+                        <div className="absolute top-full right-0 z-40 mt-2 w-[min(24rem,calc(100vw-2rem))] animate-rise overflow-hidden rounded-xl border border-line bg-surface shadow-pop">
                             <div className="max-h-[50dvh] overflow-y-auto py-1">
                                 {[ ...redo ].reverse().map((item, i, list) => (
                                     <button
@@ -123,7 +123,7 @@ export const ChangesBar = ({ history, unpublished, busy, onUndo, onRedo, onDisca
                                     >
                                         <Redo2 className="mt-0.5 size-3.5 shrink-0" />
                                         <span className="min-w-0 flex-1 truncate line-through decoration-muted/50">{stepLabel(item)}</span>
-                                        <span className="shrink-0 text-[11px]">undone</span>
+                                        <span className="shrink-0 text-2xs">undone</span>
                                     </button>
                                 ))}
                                 {undo.map((item, i) => (
@@ -141,7 +141,7 @@ export const ChangesBar = ({ history, unpublished, busy, onUndo, onRedo, onDisca
                                         <Undo2 className="mt-0.5 size-3.5 shrink-0 text-muted" />
                                         <span className="min-w-0 flex-1">
                                             <span className="block truncate">{stepLabel(item)}</span>
-                                            <span className="block text-[11px] text-muted">
+                                            <span className="block text-2xs text-muted">
                                                 {ago(item.atUtc)}
                                                 {item.edits > 1 && ` · ${item.edits} edits`}
                                             </span>
@@ -149,7 +149,7 @@ export const ChangesBar = ({ history, unpublished, busy, onUndo, onRedo, onDisca
                                     </button>
                                 ))}
                             </div>
-                            {history?.truncated && <p className="border-t border-line px-3 py-2 text-[11px] text-muted">Older steps were let go and can't be undone.</p>}
+                            {history?.truncated && <p className="border-t border-line px-3 py-2 text-2xs text-muted">Older steps were let go and can't be undone.</p>}
                         </div>
                     )}
                 </div>

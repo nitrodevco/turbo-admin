@@ -66,7 +66,7 @@ export const BundleUpdate = ({ kind, canManage, defaultOpen = false }: { kind: B
             <div className="flex flex-wrap items-center gap-x-4 gap-y-2 px-4 py-3">
                 <div className="min-w-0 flex-[1_1_16rem]">
                     <div className="flex flex-wrap items-center gap-2">
-                        <h2 className="text-[13px] font-semibold tracking-wide">Habbo's {one} bundles</h2>
+                        <h2 className="text-sm font-semibold">Habbo's {one} bundles</h2>
                         {!preview && !error && <Badge>checking</Badge>}
                         {error !== null && error !== undefined && <Badge tone="red">can't read Habbo</Badge>}
                         {entry && !entry.listed && <Badge tone="amber">list unreadable</Badge>}
@@ -74,7 +74,7 @@ export const BundleUpdate = ({ kind, canManage, defaultOpen = false }: { kind: B
                         {pending > 0 && <Badge tone="amber">{`${pending.toLocaleString()} to download`}</Badge>}
                     </div>
                     {preview && entry && (
-                        <div className="mt-0.5 truncate font-mono text-[11px] text-muted">
+                        <div className="mt-0.5 truncate font-mono text-2xs text-muted">
                             {preview.revision.replace(/^PRODUCTION-/, '')} · {entry.habboLibraries.toLocaleString()} libraries · {entry.upToDate.toLocaleString()} up to date
                             {entry.uploads > 0 && ` · ${entry.uploads.toLocaleString()} uploads kept`} · listed {fromNow(preview.listedAt)}
                         </div>

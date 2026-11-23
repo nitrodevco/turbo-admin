@@ -299,7 +299,7 @@ export const VouchersPage = () => {
                     </>
                 )}
             </PageHeader>
-            <PageBody className="flex flex-col gap-4 lg:gap-5">
+            <PageBody>
                 {open === 'generate' && <Panel title="Make many vouchers" description="Each its own random code, giving the same."><div className="p-4"><Generator onDone={() => setOpen(null)} /></div></Panel>}
                 <Panel className="overflow-clip">
                     <ListToolbar watch={[ text, page ]} page={{ offset: page * (data?.pageSize ?? 50), limit: data?.pageSize ?? 50, total: data?.total, onChange: offset => setPage(Math.floor(offset / (data?.pageSize ?? 50))) }}>

@@ -225,7 +225,7 @@ const ExtrasEditor = ({ thresholds, max, disabled, onChange }: { thresholds: num
                                 <li key={quantity}>
                                     <span className={cx('inline-flex h-7 items-center gap-1 rounded-full border pr-1 pl-2.5 font-mono text-xs', quantity > max ? 'border-dashed border-line text-muted' : 'border-line')} title={quantity > max ? `Past the most at once (${max}): never reached` : `Buying ${quantity} or more gives ${count} more free`}>
                                         {quantity}
-                                        {count > 1 && <span className="rounded bg-accent-soft px-1 text-[11px] text-accent">+{count}</span>}
+                                        {count > 1 && <span className="rounded bg-accent-soft px-1 text-2xs text-accent">+{count}</span>}
                                         {!disabled && (
                                             <button type="button" onClick={() => removeOne(quantity)} aria-label={count > 1 ? `Take one of the ${count} at ${quantity}` : `Take out ${quantity}`} className="grid size-5 place-items-center rounded-full text-muted hover:bg-subtle hover:text-ink">
                                                 <X className="size-3" />
@@ -333,14 +333,14 @@ const FreeChart = ({ ruleset, quantity, onPick }: { ruleset: Ruleset; quantity: 
                 </div>
                 {hover !== null && (
                     <div
-                        className="pointer-events-none absolute -top-2 z-10 rounded-md border border-line bg-surface px-2 py-1 text-xs whitespace-nowrap shadow-sm"
+                        className="pointer-events-none absolute -top-2 z-10 rounded-md border border-line bg-surface px-2 py-1 text-xs whitespace-nowrap shadow-pop"
                         style={{ left: `${((hover - 0.5) / top) * 100}%`, transform: `translate(${hover / top > 0.7 ? '-100%' : hover / top < 0.3 ? '0' : '-50%'}, -100%)` }}
                     >
                         Buy <strong className="font-mono">{shown}</strong>, get <strong className="font-mono">{values[shown - 1]}</strong> free
                     </div>
                 )}
             </div>
-            <div className="flex justify-between font-mono text-[11px] text-muted">
+            <div className="flex justify-between font-mono text-2xs text-muted">
                 <span>1</span>
                 <span>{top}{ruleset.maxPurchaseSize > CHART_LIMIT ? ` of ${ruleset.maxPurchaseSize}` : ''}</span>
             </div>
@@ -517,7 +517,7 @@ const DiscountForm = ({ settings, canManage }: { settings: Record<Name, ServerSe
                     </div>
                 </Panel>
                 {canManage && (
-                    <Panel className="sticky bottom-3 z-10 shadow-lg">
+                    <Panel className="save-bar">
                         <div className="flex flex-col gap-3 p-3 sm:flex-row sm:items-center">
                             <div className="min-w-0 flex-1 text-xs">
                                 {changed.length === 0
@@ -572,7 +572,7 @@ export const DiscountsPage = () => {
     return (
         <>
             <PageHeader title="Catalog" tabs={catalogTabs('discounts')} description="Bulk buying and the free items it gives" />
-            <PageBody className="flex flex-col gap-4 lg:gap-5">
+            <PageBody>
                 {error && <ErrorNotice error={error} />}
                 {!error && !data && <Loading />}
                 {data && !settings && <ErrorNotice error={new Error(`The server has no ${SECTION} settings.`)} />}

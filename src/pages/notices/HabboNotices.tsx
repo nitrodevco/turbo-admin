@@ -55,7 +55,7 @@ export const HabboNotices = ({ open, onClose, current, dirty, onTake, onTakeOne 
             {!habbo && !error && <Loading />}
             {habbo && (
                 <div className="flex flex-col">
-                    <p className="px-4 py-3 text-[13px] text-muted sm:px-5">
+                    <p className="px-4 py-3 text-ui text-muted sm:px-5">
                         What Habbo shows now, in its order. Take one notice or the whole set: either goes among your unsaved changes, to look at and save, or discard.
                     </p>
                     <div className="max-h-[55dvh] overflow-y-auto border-y border-line">

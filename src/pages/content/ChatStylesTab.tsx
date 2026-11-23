@@ -130,7 +130,7 @@ const StyleCard = ({ style, selected, onPick }: { style: ChatStyle; selected: bo
             </span>
             <span className="flex min-w-0 flex-col gap-0.5 px-2 py-1.5">
                 <span className="truncate font-mono text-xs font-medium" title={style.assetId}>{style.assetId || 'unnamed'}</span>
-                <span className="flex items-center justify-between gap-1 text-[11px] text-muted">
+                <span className="flex items-center justify-between gap-1 text-2xs text-muted">
                     <span className="tabular-nums">
                         {`#${style.clientStyleId}`}
                         {style.changedHere && <span className="ml-1 text-accent" title="Changed here since it was taken from Habbo's client">changed</span>}
@@ -375,7 +375,7 @@ export const ChatStylesTab = ({ canManage }: { canManage: boolean }) => {
                     onBackdrop={setBackdrop}
                     corner={<SpeakerEditor name={name} onName={setName} words={words} onWords={setWords} figure={figure} onFigure={setFigure} unavailable={unavailable} />}
                     empty={(
-                        <div className="rounded-xl bg-surface/90 px-6 py-5 text-center shadow-sm">
+                        <div className="rounded-xl bg-surface/90 px-6 py-5 text-center shadow-card">
                             <Sparkles className="mx-auto mb-2 size-6 text-accent" />
                             <div className="text-sm font-medium">{regPoints && !base ? 'Drawing it...' : 'Nothing to draw'}</div>
                             <div className="text-xs text-muted">{current && !current.drawable ? 'It has no look yet: change it below to give it one.' : 'Pick a style with a look.'}</div>
@@ -529,7 +529,7 @@ export const ChatStylesTab = ({ canManage }: { canManage: boolean }) => {
                 )}
                 {/* Only once there is something to save: in sight wherever the editor is scrolled to. */}
                 {editing && (changed || borrowing) && (
-                    <div className="sticky bottom-3 z-20 rounded-xl border border-accent/40 bg-surface/95 shadow-lg backdrop-blur">
+                    <div className="save-bar">
                         <div className="flex flex-wrap items-center gap-3 px-4 py-3">
                             <span className="min-w-0 text-sm">
                                 {editing.id === null

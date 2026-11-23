@@ -143,7 +143,7 @@ const Thumb = ({ targetId, item, entry, side, label }: { targetId: number; item:
             <div className="grid size-16 place-items-center rounded-md border border-line bg-[repeating-conic-gradient(var(--color-subtle)_0_25%,transparent_0_50%)] bg-[length:12px_12px]">
                 {url && <img src={url} alt={`${entry.name} (${label})`} className="max-h-full max-w-full [image-rendering:pixelated]" />}
             </div>
-            <figcaption className="text-[10px] text-muted">{label}</figcaption>
+            <figcaption className="text-2xs text-muted">{label}</figcaption>
         </figure>
     );
 };

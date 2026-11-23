@@ -118,7 +118,7 @@ const Row = ({ asset, canManage, busy, selected, onSelect, onIgnore, onUploadLib
                 {canManage && <Checkbox label={<span className="sr-only">{`Select ${asset.title}`}</span>} checked={selected} onChange={onSelect} />}
                 <div className="flex min-w-0 flex-1 flex-col gap-1">
                     <div className="flex min-w-0 flex-wrap items-center gap-2">
-                        <span className="min-w-0 truncate font-mono text-[13px] font-medium" title={asset.title}>{asset.title}</span>
+                        <span className="min-w-0 truncate font-mono text-ui font-medium" title={asset.title}>{asset.title}</span>
                         {asset.kind && <Badge>{asset.kind}</Badge>}
                         {asset.count > 1 && <Badge tone="amber">{`x${asset.count.toLocaleString()}`}</Badge>}
                         {asset.link && (
@@ -127,7 +127,7 @@ const Row = ({ asset, canManage, busy, selected, onSelect, onIgnore, onUploadLib
                             </a>
                         )}
                     </div>
-                    <p className="text-[13px] text-muted">{asset.detail}</p>
+                    <p className="text-ui text-muted">{asset.detail}</p>
                     {asset.ignored && (
                         <p className="text-xs text-muted">
                             {`Ignored ${fromNow(asset.ignored.ignoredAt)}${asset.ignored.playerName ? ` by ${asset.ignored.playerName}` : ''}`}
@@ -199,7 +199,7 @@ const SourceChip = ({ source, active, onPick }: { source: BrokenAssetSource; act
                 active && 'ring-2 ring-accent',
             )}
         >
-            <span className="flex items-center gap-2 text-[13px] font-medium">
+            <span className="flex items-center gap-2 text-ui font-medium">
                 {source.title}
                 {source.read && <span className="font-mono text-xs">{source.count.toLocaleString()}</span>}
             </span>
@@ -362,7 +362,7 @@ export const BrokenAssets = ({ canManage, busy }: { canManage: boolean; busy: bo
                     </ul>
                 )}
                 {items.length > limit && (
-                    <div className="flex items-center justify-center gap-3 border-t border-line px-4 py-3 text-[13px] text-muted">
+                    <div className="flex items-center justify-center gap-3 border-t border-line px-4 py-3 text-ui text-muted">
                         {`${limit.toLocaleString()} of ${items.length.toLocaleString()} shown`}
                         <Button variant="secondary" className="h-8 px-2.5 text-xs" onClick={() => setLimit(current => current + PAGE)}>Show more</Button>
                     </div>

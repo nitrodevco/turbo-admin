@@ -172,7 +172,7 @@ interface SheetProps {
 const ActionButton = ({ icon, label, holds, onClick, disabled, danger }: { icon: ReactNode; label: string; holds?: string; onClick: () => void; disabled?: boolean; danger?: boolean }) => (
     <Button variant={danger ? 'danger' : 'secondary'} icon={icon} onClick={onClick} disabled={disabled} className="max-sm:flex-[1_1_9rem]">
         {label}
-        {holds && <Badge tone="amber" className="ml-0.5 px-1 py-0 text-[10px]">{holds}</Badge>}
+        {holds && <Badge tone="amber" className="ml-0.5 px-1 py-0 text-2xs">{holds}</Badge>}
     </Button>
 );
 

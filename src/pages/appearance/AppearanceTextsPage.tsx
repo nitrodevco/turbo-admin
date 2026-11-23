@@ -154,7 +154,7 @@ export const AppearanceTextsPage = () => {
             <PageHeader title="Texts" description="Every text a window shows, by window or by what it says. Players online see a change as it is saved." tabs={{ items: TABS, value: tab }}>
                 <Link to="/gamedata/texts" className="inline-flex items-center gap-1 rounded-lg border border-line px-3 py-1.5 text-sm hover:bg-subtle">All texts</Link>
             </PageHeader>
-            <PageBody className="flex flex-col gap-4 lg:gap-5">
+            <PageBody>
                 {error && <ErrorNotice error={error} />}
                 {!index && !error && <Loading />}
                 {index && (tab === 'windows' ? <ByWindow index={index} /> : <ByShown index={index} />)}

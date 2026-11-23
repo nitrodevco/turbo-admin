@@ -25,7 +25,7 @@ export const ToolChoice = <T extends string | number>({ label, value, options, o
                 onClick={() => onChange(option.value)}
                 className={cx(
                     'flex h-7 min-w-7 items-center justify-center rounded px-2 text-xs font-medium transition-colors',
-                    option.value === value ? 'bg-subtle text-ink shadow-[0_0_0_1px_var(--color-line)]' : 'text-muted hover:text-ink',
+                    option.value === value ? 'bg-surface text-ink shadow-[0_0_0_1px_var(--color-line),var(--elevation-card)]' : 'text-muted hover:text-ink',
                 )}
             >
                 {option.label}
@@ -65,7 +65,7 @@ export const Stage = ({ paint, zoom, onZoom, backdrop, onBackdrop, tools, corner
     }, [ paint ]);
 
     return (
-        <div className={cx('relative overflow-hidden rounded-xl border border-line bg-surface', className)}>
+        <div className={cx('card relative overflow-hidden', className)}>
             {corner && <div className="absolute top-3 right-3 z-10">{corner}</div>}
             <div className="flex min-h-72 overflow-auto p-3" style={BACKDROPS.find(x => x.value === backdrop)?.style}>
                 {paint

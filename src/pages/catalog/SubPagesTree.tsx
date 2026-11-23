@@ -4,8 +4,8 @@ import { cx } from '#/lib/cx';
 const PlanChip = ({ page }: { page: AddFurniPage }) => (
     <span className="flex items-center gap-1 rounded-full bg-subtle px-2 py-0.5 text-xs">
         {page.title}
-        <span className="font-mono text-[11px] text-muted tabular-nums">{page.count}</span>
-        {page.pageId === null && <span className="text-[10px] text-accent uppercase">new</span>}
+        <span className="font-mono text-2xs text-muted tabular-nums">{page.count}</span>
+        {page.pageId === null && <span className="text-2xs text-accent uppercase">new</span>}
     </span>
 );
 

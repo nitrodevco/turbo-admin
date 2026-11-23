@@ -92,7 +92,7 @@ export const ChangesTab = ({ index, windows, patches, draft, onJump }: { index: 
                     </div>
                     <ul className="divide-y divide-line">
                         {groups.get(window)!.map(change => (
-                            <li key={change.id} className="flex items-center gap-2 px-3 py-1.5 text-[13px]" data-change={change.id}>
+                            <li key={change.id} className="flex items-center gap-2 px-3 py-1.5 text-ui" data-change={change.id}>
                                 <span className="flex min-w-0 flex-1 flex-col">
                                     <span className="flex items-center gap-1.5">
                                         <span className="truncate">{change.what}</span>

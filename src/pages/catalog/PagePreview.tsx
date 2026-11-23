@@ -173,7 +173,7 @@ export const PagePreview = ({ tree, page, draft, featured, selectedOffer, onSele
         );
 
     return (
-        <div className="overflow-hidden rounded-2xl border border-line bg-canvas shadow-sm">
+        <div className="overflow-hidden rounded-2xl border border-line bg-canvas shadow-card">
             {/* The header: the banner behind, the icon and the title over it. */}
             <div className="relative min-h-20 border-b border-line bg-gradient-to-r from-[#1e3a5f] to-[#2b5876] text-white">
                 {header && (banner
@@ -183,7 +183,7 @@ export const PagePreview = ({ tree, page, draft, featured, selectedOffer, onSele
                             </button>
                         )
                     : (
-                            <button type="button" onClick={() => onEditSlot({ list: 'image', index: 0 })} className="absolute top-2 right-2 flex items-center gap-1 rounded-md border border-dashed border-white/40 px-2 py-1 text-[11px] text-white/80 hover:border-white hover:text-white">
+                            <button type="button" onClick={() => onEditSlot({ list: 'image', index: 0 })} className="absolute top-2 right-2 flex items-center gap-1 rounded-md border border-dashed border-white/40 px-2 py-1 text-2xs text-white/80 hover:border-white hover:text-white">
                                 <ImagePlus className="size-3.5" />
                                 Header banner
                             </button>

@@ -46,7 +46,7 @@ export const LibraryPage = () => {
             >
                 {state.canManage && <Button icon={<Upload />} onClick={() => setUploading(true)}>Upload</Button>}
             </PageHeader>
-            <PageBody className="flex flex-col gap-4 lg:gap-5">
+            <PageBody>
                 <GamedataLoaded state={state}>
                     {status => (
                         <>

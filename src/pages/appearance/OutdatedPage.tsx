@@ -46,7 +46,7 @@ export const OutdatedPage = () => {
     return (
         <>
             <PageHeader title="Outdated patches" description="Patches naming a window or an element the client the hotel runs no longer has: a client update renamed or took it out. Fix the key (Windows & skins has the current ones) or remove the patch." />
-            <PageBody className="flex flex-col gap-4 lg:gap-5">
+            <PageBody>
                 {error && <ErrorNotice error={error} />}
                 {loading && !error && <Loading />}
                 {!loading && (

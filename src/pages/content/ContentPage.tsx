@@ -45,7 +45,7 @@ export const ContentPage = () => {
                 description="Achievements, badges, the navigator, pets, currencies, daily tasks, quests and room polls"
                 tabs={{ items: TABS, value: tab }}
             />
-            <PageBody className="flex flex-col gap-4 lg:gap-5">
+            <PageBody>
                 {tab === 'achievements' && <AchievementsTab />}
                 {tab === 'badges' && <BadgesTab canManage={canManage} />}
                 {tab === 'navigator' && <NavigatorTab canManage={canManage} />}

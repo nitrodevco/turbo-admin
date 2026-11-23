@@ -50,19 +50,19 @@ const ItemRow = ({ item, open, onToggle, canPickUp, linkPlayers, onPickUp, picki
             <Icon className={item.className} />
             <span className="min-w-0 flex-1">
                 <span className="flex min-w-0 items-baseline gap-2">
-                    <span className="truncate font-mono text-[13px] font-medium">{item.className}</span>
+                    <span className="truncate font-mono text-ui font-medium">{item.className}</span>
                     <span className="truncate text-sm text-muted max-sm:hidden">{item.name}</span>
                 </span>
                 <span className="block truncate text-xs text-muted">{`#${item.id} · ${item.ownerName}`}</span>
             </span>
-            <span className="hidden w-40 shrink-0 truncate font-mono text-[11px] text-muted md:block" title={item.logic}>{item.logic}</span>
-            <span className="hidden w-32 shrink-0 text-right font-mono text-[11px] text-muted tabular-nums sm:block">
+            <span className="hidden w-40 shrink-0 truncate font-mono text-2xs text-muted md:block" title={item.logic}>{item.logic}</span>
+            <span className="hidden w-32 shrink-0 text-right font-mono text-2xs text-muted tabular-nums sm:block">
                 {item.wall ? <Badge>wall</Badge> : `${item.x}, ${item.y}, ${item.z.toFixed(2)} · ${item.rotation}`}
             </span>
             <ChevronDown className={cx('size-4 shrink-0 text-muted transition-transform', open && 'rotate-180')} aria-hidden />
         </button>
         {open && (
-            <div className="flex flex-col gap-3 border-t border-line bg-canvas/50 px-4 py-3 text-[13px]">
+            <div className="flex flex-col gap-3 border-t border-line bg-canvas/50 px-4 py-3 text-ui">
                 <dl className="grid gap-x-6 gap-y-1.5 sm:grid-cols-2">
                     <div className="flex justify-between gap-3"><dt className="text-muted">Owner</dt><dd>{linkPlayers ? <Link to={`/players/${item.ownerId}`} className="text-accent hover:underline">{item.ownerName}</Link> : item.ownerName}</dd></div>
                     <div className="flex justify-between gap-3">
@@ -74,7 +74,7 @@ const ItemRow = ({ item, open, onToggle, canPickUp, linkPlayers, onPickUp, picki
                 </dl>
                 <div>
                     <span className="text-xs font-medium text-muted">Data</span>
-                    <pre className="mt-1 max-h-60 overflow-auto rounded-lg border border-line bg-surface p-2.5 font-mono text-[11px] whitespace-pre-wrap">{item.extraData ? readable(item.extraData) : '(none)'}</pre>
+                    <pre className="mt-1 max-h-60 overflow-auto rounded-lg border border-line bg-surface p-2.5 font-mono text-2xs whitespace-pre-wrap">{item.extraData ? readable(item.extraData) : '(none)'}</pre>
                 </div>
                 {canPickUp && (
                     <div>
@@ -110,7 +110,7 @@ export const RoomFurniturePage = () => {
     return (
         <>
             <RoomHeader id={id} room={room} tab="furniture" />
-            <PageBody className="flex flex-col gap-4">
+            <PageBody>
                 <ActionOutcome message={action.data?.message} error={action.error} />
                 {isPending && <Loading />}
                 {error && <ErrorNotice error={error} />}

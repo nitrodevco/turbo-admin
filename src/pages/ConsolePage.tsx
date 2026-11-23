@@ -75,7 +75,7 @@ const CommandList = ({ commands, picked, onPick }: { commands: CommandInfo[]; pi
                 {groups.length === 0 && <p className="p-2 text-sm text-muted">No command matches.</p>}
                 {groups.map(([ category, list ]) => (
                     <div key={category} className="mb-3">
-                        <div className="px-2 py-1 text-xs font-semibold tracking-wide text-muted uppercase">{category}</div>
+                        <div className="px-2 py-1 font-mono text-2xs font-medium tracking-[0.08em] text-muted uppercase">{category}</div>
                         {list?.map(command => (
                             <button
                                 key={command.name}
@@ -89,7 +89,7 @@ const CommandList = ({ commands, picked, onPick }: { commands: CommandInfo[]; pi
                                 {command.needsRoom && <span className="ml-2 text-xs text-muted">room only, in game</span>}
                                 <span className="block truncate text-xs text-muted">{command.description}</span>
                                 {picked?.name === command.name && command.help.length > 0 && (
-                                    <span className="mt-1 block font-mono text-[11px] text-muted">
+                                    <span className="mt-1 block font-mono text-2xs text-muted">
                                         {command.help.map((help, index) => <span key={index} className="block">{help}</span>)}
                                     </span>
                                 )}

@@ -45,7 +45,7 @@ export const TextsPage = () => {
                 <Button variant="secondary" icon={<History />} onClick={() => setHistory(true)}>History</Button>
                 {state.canManage && <Button icon={<Plus />} onClick={() => setAdding(tab)}>New {noun}</Button>}
             </PageHeader>
-            <PageBody className="flex flex-col gap-4 lg:gap-5">
+            <PageBody>
                 <GamedataLoaded state={state}>
                     {status => (
                         <>

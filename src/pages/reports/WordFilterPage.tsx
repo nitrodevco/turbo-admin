@@ -11,7 +11,7 @@ import { plural } from '#/lib/plural';
 
 /** What an add did, in a line or two: added, already there, refused and why. */
 const AddResult = ({ result }: { result: WordFilterAddResponse }) => (
-    <div className="flex flex-col gap-1 text-[13px]">
+    <div className="flex flex-col gap-1 text-ui">
         {result.added.length > 0 && <p>Added {result.added.join(', ')}.</p>}
         {result.existing.length > 0 && <p className="text-muted">Already on the filter: {result.existing.join(', ')}.</p>}
         {result.refused.length > 0 && (
@@ -110,7 +110,7 @@ export const WordFilterPage = () => {
                                 : (
                                         <ul className="flex flex-wrap gap-1.5 p-4">
                                             {shown.map(entry => (
-                                                <li key={entry.id} className="inline-flex h-8 items-center gap-1 rounded-md border border-line bg-canvas pr-1 pl-2.5 font-mono text-[13px]">
+                                                <li key={entry.id} className="inline-flex h-8 items-center gap-1 rounded-md border border-line bg-canvas pr-1 pl-2.5 font-mono text-ui">
                                                     {entry.word}
                                                     {data.canManage && (
                                                         <button

@@ -224,14 +224,14 @@ export const AchievementsTab = () => {
                 <div className="max-h-[60dvh] min-h-0 overflow-y-auto lg:max-h-none">
                     {categories.map(category => (
                         <section key={category}>
-                            <h3 className="sticky top-0 border-b border-line bg-subtle px-3 py-1.5 font-mono text-[11px] tracking-wide text-muted uppercase">{category}</h3>
+                            <h3 className="sticky top-0 border-b border-line bg-subtle px-3 py-1.5 font-mono text-2xs tracking-[0.08em] text-muted uppercase">{category}</h3>
                             <ul className="divide-y divide-line">
                                 {shown.filter(x => x.category === category).map(item => (
                                     <li key={item.id}>
                                         <button type="button" onClick={() => setOpen(item.id)} className={cx('flex w-full items-center gap-3 px-3 py-2 text-left hover:bg-subtle', open === item.id && 'bg-accent-soft/50')}>
                                             <BadgeImage code={item.lastBadge} className="size-9" />
                                             <span className="min-w-0 flex-1">
-                                                <span className="block truncate font-mono text-[13px]">{item.key}</span>
+                                                <span className="block truncate font-mono text-ui">{item.key}</span>
                                                 <span className="block text-xs text-muted">{item.levels} levels · rev {item.revision}</span>
                                             </span>
                                             {item.state !== 1 && <Badge tone={STATE_TONES[item.state] ?? 'neutral'}>{ACHIEVEMENT_STATES[item.state] ?? item.state}</Badge>}

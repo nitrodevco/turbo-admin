@@ -181,7 +181,7 @@ const HotelViewEditor = ({ variables, canManage }: { variables: VariableEntry[];
                 {canManage && <Button variant="secondary" icon={<CloudDownload />} onClick={() => setPulling(true)}>Pull from Habbo</Button>}
             </PageHeader>
             <HabboPull open={pulling} onClose={() => setPulling(false)} draft={draft} />
-            <PageBody className="flex flex-col gap-4 lg:gap-5">
+            <PageBody>
                 <div className="flex flex-col gap-3">
                     <div className="flex flex-col gap-2 sm:flex-row sm:flex-wrap sm:items-center sm:gap-x-4">
                         {group.views.length > 1 && (
@@ -229,7 +229,7 @@ const HotelViewEditor = ({ variables, canManage }: { variables: VariableEntry[];
                 {view.value === 'all' && <AllTab draft={draft} disabled={disabled} />}
                 {/* Changes wait here on every view, those that save at once included, so none is forgotten. */}
                 {canManage && (draft.count > 0 || save.isError) && (
-                    <div className="sticky bottom-3 z-20 rounded-xl border border-accent/40 bg-surface/95 shadow-lg backdrop-blur">
+                    <div className="save-bar">
                         <div className="flex flex-wrap items-center gap-3 px-4 py-3">
                             <span className="text-sm">
                                 <span className="font-semibold">{draft.count}</span> {draft.count === 1 ? 'change' : 'changes'} not saved

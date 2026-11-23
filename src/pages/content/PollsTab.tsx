@@ -39,7 +39,7 @@ const Result = ({ result, question }: { result: PollQuestionResult | undefined; 
     const most = Math.max(1, ...result.choices.map(x => x.count));
 
     return (
-        <div className="flex flex-col gap-1.5 text-[13px]">
+        <div className="flex flex-col gap-1.5 text-ui">
             <span className="text-xs text-muted">{plural(result.answered, 'answer')}</span>
             {result.choices.map(choice => (
                 <div key={choice.value} className="grid grid-cols-[minmax(0,6rem)_minmax(0,1fr)_3rem] items-center gap-2">

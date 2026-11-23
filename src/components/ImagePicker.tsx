@@ -93,7 +93,7 @@ const Detail = ({ item, accept, onUse }: { item: MediaImage; accept: ImageAccept
         <div className="flex flex-col gap-3" data-testid="media-detail">
             <MediaThumb url={mediaFilePath(full)} large className="h-40 w-full border border-line" />
             <div className="flex min-w-0 flex-col gap-1">
-                <span className="truncate font-mono text-[13px] font-medium" title={full.name}>{full.name}</span>
+                <span className="truncate font-mono text-ui font-medium" title={full.name}>{full.name}</span>
                 <span className="truncate text-xs text-muted" title={folderOf(full)}>{folderOf(full)}</span>
                 <span className="flex flex-wrap gap-1">
                     <Badge>{full.source}{full.sourceDetail ? `: ${full.sourceDetail}` : ''}</Badge>
@@ -339,7 +339,7 @@ const PickerBody = ({ accept, value, onPick, onClose, none }: PickerProps) => {
                         }}
                     >
                         {x.key}
-                        <span className="font-mono text-[10px] opacity-70">{x.count.toLocaleString()}</span>
+                        <span className="font-mono text-2xs opacity-70">{x.count.toLocaleString()}</span>
                     </Chip>
                 ))}
             </div>
@@ -369,11 +369,11 @@ const PickerBody = ({ accept, value, onPick, onClose, none }: PickerProps) => {
                                 onDoubleClick={() => choose(item)}
                                 className={cx(
                                     'flex min-w-0 cursor-pointer flex-col items-center gap-1 rounded-lg border p-1.5',
-                                    index === at ? 'border-accent bg-accent-soft' : valueOf(item, accept) === value.trim() ? 'border-accent/50' : 'border-line hover:border-muted/60',
+                                    index === at ? 'border-accent bg-accent-soft' : valueOf(item, accept) === value.trim() ? 'border-accent/50' : 'border-line hover:border-line-strong',
                                 )}
                             >
                                 <MediaThumb url={mediaFilePath(item)} className="h-16 w-full" />
-                                <span className="w-full truncate text-center font-mono text-[10.5px] text-muted">{item.name}</span>
+                                <span className="w-full truncate text-center font-mono text-2xs text-muted">{item.name}</span>
                             </li>
                         ))}
                     </ul>

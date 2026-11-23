@@ -32,7 +32,7 @@ const ModeCard = ({ active, icon, title, blurb, onClick }: { active: boolean; ic
         role="radio"
         aria-checked={active}
         onClick={onClick}
-        className={cx('flex flex-1 items-start gap-3 rounded-xl border p-3 text-left transition', active ? 'border-accent bg-accent-soft' : 'border-line bg-canvas hover:border-muted/50')}
+        className={cx('flex flex-1 items-start gap-3 rounded-xl border p-3 text-left transition', active ? 'border-accent bg-accent-soft' : 'border-line bg-canvas hover:border-line-strong')}
     >
         <span className={cx('mt-0.5 grid size-8 shrink-0 place-items-center rounded-lg [&>svg]:size-4', active ? 'bg-accent text-on-accent' : 'bg-subtle text-muted')}>{icon}</span>
         <span className="min-w-0">
@@ -72,7 +72,7 @@ const PlanNode = ({ page, depth, edits, open, onToggle, onEdit, onPickIcon, skip
 
     return (
         <li>
-            <div className={cx('group flex min-h-10 items-center gap-1.5 rounded-lg pr-2 text-[13px] hover:bg-subtle', skipped && 'opacity-40', depth === 0 && 'bg-subtle/60 font-semibold')} style={{ paddingLeft: `${4 + depth * 18}px` }}>
+            <div className={cx('group flex min-h-10 items-center gap-1.5 rounded-lg pr-2 text-ui hover:bg-subtle', skipped && 'opacity-40', depth === 0 && 'bg-subtle/60 font-semibold')} style={{ paddingLeft: `${4 + depth * 18}px` }}>
                 <button type="button" onClick={() => onToggle(page.key)} aria-label={isOpen ? 'Close' : 'Open'} className={cx('grid size-6 shrink-0 place-items-center rounded text-muted hover:text-ink', page.children.length === 0 && 'invisible')}>
                     <ChevronRight className={cx('size-3.5 transition-transform', isOpen && 'rotate-90')} />
                 </button>
@@ -90,20 +90,20 @@ const PlanNode = ({ page, depth, edits, open, onToggle, onEdit, onPickIcon, skip
                                     onEdit(page.key, { title: event.target.value.trim() && event.target.value.trim() !== page.title ? event.target.value.trim() : null });
                                 }}
                                 onKeyDown={event => (event.key === 'Enter' || event.key === 'Escape') && event.currentTarget.blur()}
-                                className="h-8 min-w-0 flex-1 text-[13px] sm:h-7"
+                                className="h-8 min-w-0 flex-1 text-ui sm:h-7"
                             />
                         )
                     : (
                             <button type="button" onClick={() => setEditing(true)} title="Rename it" className="min-w-0 flex-1 truncate text-left hover:underline">
                                 {title}
-                                {edit?.title && <span className="ml-1.5 text-[11px] font-normal text-accent">renamed</span>}
+                                {edit?.title && <span className="ml-1.5 text-2xs font-normal text-accent">renamed</span>}
                             </button>
                         )}
                 {page.display === 'invisible' && <span title="Starts hidden"><EyeOff className="size-3.5 shrink-0 text-muted" /></span>}
                 {page.display === 'bc_only' && <span title="Builders Club only"><Hammer className="size-3.5 shrink-0 text-muted" /></span>}
-                {page.name && <span className="hidden shrink-0 font-mono text-[10px] text-muted sm:inline" title="The name the client opens it by">{page.name}</span>}
-                <span className="hidden w-32 shrink-0 truncate text-right text-[11px] font-normal text-muted md:inline" title={page.layout}>{layoutOf(page.layout).title}</span>
-                <span className="shrink-0 text-right font-mono sm:w-24 text-[11px] font-normal text-muted tabular-nums">
+                {page.name && <span className="hidden shrink-0 font-mono text-2xs text-muted sm:inline" title="The name the client opens it by">{page.name}</span>}
+                <span className="hidden w-32 shrink-0 truncate text-right text-2xs font-normal text-muted md:inline" title={page.layout}>{layoutOf(page.layout).title}</span>
+                <span className="shrink-0 text-right font-mono sm:w-24 text-2xs font-normal text-muted tabular-nums">
                     {sum.added > 0 && <span className="text-ink">{sum.added.toLocaleString()} new</span>}
                     {sum.added > 0 && sum.moved > 0 && ' · '}
                     {sum.moved > 0 && <span className="text-accent">{sum.moved.toLocaleString()} moved</span>}
@@ -223,7 +223,7 @@ export const GenerateCatalog = ({ tree, onDone }: { tree: CatalogTree; onDone: (
 
     return (
         <div className="grid items-start gap-4 xl:grid-cols-[24rem_minmax(0,1fr)]">
-            <div className="flex flex-col gap-4 rounded-xl border border-line bg-surface p-4 xl:sticky xl:top-4">
+            <div className="card flex flex-col gap-4 p-4 xl:sticky xl:top-4">
                 <div className="flex items-start gap-3">
                     <span className="grid size-10 shrink-0 place-items-center rounded-xl bg-accent-soft text-accent"><Wand2 className="size-5" /></span>
                     <div>
@@ -312,7 +312,7 @@ export const GenerateCatalog = ({ tree, onDone }: { tree: CatalogTree; onDone: (
                                 ))}
                             </ul>
                         )}
-                        <div className="rounded-xl border border-line bg-surface">
+                        <div className="card">
                             <div className="flex items-center gap-2 border-b border-line px-3 py-2 text-xs text-muted">
                                 <span className="flex-1">Click a title to rename it, an icon to change it; untick a page to leave it out.</span>
                                 <TextButton onClick={() => setOpen(new Set(allKeys(data.tabs)))}>open all</TextButton>
@@ -342,7 +342,7 @@ export const GenerateCatalog = ({ tree, onDone }: { tree: CatalogTree; onDone: (
                             </ul>
                         </div>
                         {tree.canManage && (
-                            <div className="sticky bottom-3 z-20 flex flex-wrap items-center gap-3 rounded-xl border border-accent/50 bg-surface/95 p-3 shadow-xl backdrop-blur">
+                            <div className="save-bar flex flex-wrap items-center gap-3 p-3">
                                 <span className="mr-auto text-xs text-muted">
                                     {edits.size > 0 && `${edits.size} ${edits.size === 1 ? 'change' : 'changes'} to the plan. `}
                                     Nothing goes live until you publish.

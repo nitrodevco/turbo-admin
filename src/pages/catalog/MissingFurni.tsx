@@ -35,10 +35,10 @@ const FacetList = ({ title, facets, value, none, onChange }: { title: string; fa
                         <button
                             type="button"
                             onClick={() => onChange(value === x.value ? '' : x.value)}
-                            className={cx('flex min-h-9 w-full items-center gap-2 rounded-md px-2 text-left text-[13px] sm:min-h-7', value === x.value ? 'bg-accent-soft text-accent' : 'hover:bg-subtle')}
+                            className={cx('flex min-h-9 w-full items-center gap-2 rounded-md px-2 text-left text-ui sm:min-h-7', value === x.value ? 'bg-accent-soft text-accent' : 'hover:bg-subtle')}
                         >
                             <span className={cx('min-w-0 flex-1 truncate', !x.value && 'italic text-muted')}>{facetLabel(x.value, none)}</span>
-                            <span className="font-mono text-[11px] text-muted tabular-nums">{x.count.toLocaleString()}</span>
+                            <span className="font-mono text-2xs text-muted tabular-nums">{x.count.toLocaleString()}</span>
                         </button>
                     </li>
                 ))}
@@ -56,13 +56,13 @@ const FurniTile = ({ furni, picked, onToggle }: { furni: AuditFurni; picked: boo
             title={`${furni.publicName ?? furni.name} (${furni.name}, #${furni.id})`}
             className={cx(
                 'relative flex h-full w-full flex-col items-center gap-1 rounded-xl border p-2 text-center transition',
-                picked ? 'border-accent bg-accent-soft shadow-[0_0_0_2px_var(--color-accent-soft)]' : 'border-line bg-canvas hover:-translate-y-0.5 hover:border-muted/50 hover:shadow-md',
+                picked ? 'border-accent bg-accent-soft shadow-[0_0_0_2px_var(--color-accent-soft)]' : 'border-line bg-canvas hover:-translate-y-0.5 hover:border-line-strong hover:shadow-pop',
             )}
         >
             <span className="absolute top-1.5 left-1.5 text-accent">{picked ? <CheckSquare className="size-4" /> : <Square className="size-4 text-muted/40" />}</span>
             <ProductIcon type={furni.type} name={furni.name} className="size-12" />
-            <span className="line-clamp-2 w-full text-[11px] leading-tight">{furni.publicName ?? furni.name}</span>
-            <span className="w-full truncate font-mono text-[10px] text-muted">{furni.name}</span>
+            <span className="line-clamp-2 w-full text-2xs leading-tight">{furni.publicName ?? furni.name}</span>
+            <span className="w-full truncate font-mono text-2xs text-muted">{furni.name}</span>
         </button>
     </li>
 );
@@ -188,7 +188,7 @@ export const MissingFurni = ({ tree, pageId, onOpenPage, onAdded }: MissingFurni
 
     return (
         <div className="grid items-start gap-4 lg:grid-cols-[16rem_minmax(0,1fr)]">
-            <aside className="flex flex-col gap-4 rounded-xl border border-line bg-surface p-3 lg:sticky lg:top-4">
+            <aside className="card flex flex-col gap-4 p-4 lg:sticky lg:top-4">
                 <Segmented
                     label="Which furni"
                     value={scope}
@@ -266,7 +266,7 @@ export const MissingFurni = ({ tree, pageId, onOpenPage, onAdded }: MissingFurni
                 </ul>
 
                 {tree.canManage && picked.size > 0 && (
-                    <div className="sticky bottom-3 z-20 flex flex-col gap-2 rounded-xl border border-accent/50 bg-surface/95 p-2.5 shadow-xl backdrop-blur">
+                    <div className="save-bar flex flex-col gap-2 p-2.5">
                         <div className="flex flex-wrap items-center gap-2">
                             <span className="flex items-center gap-1.5 px-1 text-sm font-medium">
                                 {picked.size.toLocaleString()} picked

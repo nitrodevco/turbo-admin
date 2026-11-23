@@ -116,8 +116,8 @@ export const Hierarchy = ({ trees, selected, canEdit, onSelect, onHidden, onMove
                         </label>
                     )}
                     <span className={`truncate ${node.hidden ? 'text-muted line-through' : ''}`}>{labelOf(node, key, tree.owner)}</span>
-                    <span className="ml-auto shrink-0 font-mono text-[10px] text-muted">{node.tag}</span>
-                    {node.insertedAt !== undefined && <span className="shrink-0 rounded bg-good-soft px-1 text-[10px] text-good">new</span>}
+                    <span className="ml-auto shrink-0 font-mono text-2xs text-muted">{node.tag}</span>
+                    {node.insertedAt !== undefined && <span className="shrink-0 rounded bg-good-soft px-1 text-2xs text-good">new</span>}
                 </div>
                 {node.children.length > 0 && open && <ul role="group">{rows(tree, node.children, depth + 1)}</ul>}
             </li>
@@ -128,7 +128,7 @@ export const Hierarchy = ({ trees, selected, canEdit, onSelect, onHidden, onMove
         <div className="flex flex-col gap-2" aria-label="Hierarchy">
             {trees.map(({ tree, label }) => (
                 <section key={tree.template} aria-label={`Tree of ${label.toLowerCase()}`}>
-                    <h3 className="mb-0.5 truncate text-[11px] font-medium tracking-wide text-muted uppercase" title={tree.template}>{label}</h3>
+                    <h3 className="mb-0.5 truncate font-mono text-2xs font-medium tracking-[0.08em] text-muted uppercase" title={tree.template}>{label}</h3>
                     <ul role="tree" aria-label={label}>{rows(tree, tree.roots, 0)}</ul>
                 </section>
             ))}

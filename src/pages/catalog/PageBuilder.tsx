@@ -210,7 +210,7 @@ export const PageBuilder = ({ tree, page, open, onClose, onBuiltPage }: PageBuil
                             <div className="grid gap-3 sm:grid-cols-[auto_minmax(0,1fr)_minmax(0,1fr)]">
                                 <Labeled label="Icon">
                                     <button type="button" onClick={() => setIconOpen(true)} title="Pick its icon" className="grid size-10 place-items-center rounded-lg border border-line bg-canvas hover:border-accent sm:size-8">
-                                        {newIcon ? <PageIcon icon={newIcon} /> : <span className="text-[10px] text-muted">icon</span>}
+                                        {newIcon ? <PageIcon icon={newIcon} /> : <span className="text-2xs text-muted">icon</span>}
                                     </button>
                                 </Labeled>
                                 <Labeled label="Title" hint="The builder's name until you type one.">
@@ -239,15 +239,15 @@ export const PageBuilder = ({ tree, page, open, onClose, onBuiltPage }: PageBuil
                                 <button
                                     type="button"
                                     onClick={() => choose(x)}
-                                    className="flex h-full w-full flex-col gap-1.5 rounded-xl border border-line bg-canvas p-3 text-left transition hover:-translate-y-0.5 hover:border-accent hover:shadow-md"
+                                    className="flex h-full w-full flex-col gap-1.5 rounded-xl border border-line bg-canvas p-3 text-left transition hover:-translate-y-0.5 hover:border-accent hover:shadow-pop"
                                 >
                                     <span className="flex items-center gap-2">
                                         <Wand2 className="size-4 text-accent" />
                                         <span className="flex-1 text-sm font-semibold">{x.title}</span>
-                                        {onPage && x.layouts.includes(onPage.layout) && <span className="rounded-full bg-accent-soft px-2 py-0.5 text-[10px] font-semibold text-accent">for this layout</span>}
+                                        {onPage && x.layouts.includes(onPage.layout) && <span className="rounded-full bg-accent-soft px-2 py-0.5 text-2xs font-semibold text-accent">for this layout</span>}
                                     </span>
                                     <span className="text-xs leading-snug text-muted">{x.blurb}</span>
-                                    <span className="mt-auto pt-1 font-mono text-[11px] text-muted">{x.layouts[0]}</span>
+                                    <span className="mt-auto pt-1 font-mono text-2xs text-muted">{x.layouts[0]}</span>
                                 </button>
                             </li>
                         ))}
@@ -297,14 +297,14 @@ export const PageBuilder = ({ tree, page, open, onClose, onBuiltPage }: PageBuil
                                                             {first && <ProductIcon type={first.type} name={first.definitionName ?? first.extraParam} className="size-8" />}
                                                             <span className="min-w-0 flex-1">
                                                                 <span className="block truncate text-sm">{item.pageTitle ?? item.title}</span>
-                                                                <span className="block truncate font-mono text-[11px] text-muted">
+                                                                <span className="block truncate font-mono text-2xs text-muted">
                                                                     {item.localizationId}
                                                                     {item.products.length > 1 && ` · ${item.products.length} things`}
                                                                     {first?.definitionName && first.definitionName !== item.localizationId && ` · ${first.definitionName}`}
                                                                 </span>
                                                             </span>
-                                                            {item.note && <span className="shrink-0 rounded-full bg-subtle px-2 py-0.5 text-[11px] text-muted">{item.note}</span>}
-                                                            {item.alreadyOffered && <span className="shrink-0 rounded-full bg-warn-soft px-2 py-0.5 text-[11px] text-warn">already sold</span>}
+                                                            {item.note && <span className="shrink-0 rounded-full bg-subtle px-2 py-0.5 text-2xs text-muted">{item.note}</span>}
+                                                            {item.alreadyOffered && <span className="shrink-0 rounded-full bg-warn-soft px-2 py-0.5 text-2xs text-warn">already sold</span>}
                                                         </label>
                                                     </li>
                                                 );

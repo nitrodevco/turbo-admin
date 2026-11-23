@@ -230,7 +230,7 @@ export const UpdatesPage = () => {
             >
                 {state.canManage && <CheckButton />}
             </PageHeader>
-            <PageBody className="flex flex-col gap-4 lg:gap-5">
+            <PageBody>
                 <Loaded state={state}>
                     {(status, assets) => (
                         <>

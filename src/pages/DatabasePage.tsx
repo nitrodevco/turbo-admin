@@ -77,7 +77,7 @@ const TablePicker = ({ tables, chosen, onChange, disabled }: { tables: DatabaseT
                                     disabled={disabled}
                                     onChange={event => toggle(table.name, event.target.checked)}
                                 />
-                                <span className="min-w-0 flex-1 truncate font-mono text-[13px]">{table.name}</span>
+                                <span className="min-w-0 flex-1 truncate font-mono text-ui">{table.name}</span>
                                 <span className="shrink-0 text-right font-mono text-xs whitespace-nowrap text-muted tabular-nums sm:w-40" title={table.rowsEstimated ? 'The database\'s own estimate' : undefined}>
                                     {rowsOf(table)}
                                     {' rows'}
@@ -97,7 +97,7 @@ const TablePicker = ({ tables, chosen, onChange, disabled }: { tables: DatabaseT
 const BackupRow = ({ backup, busy, onDownload, onDelete }: { backup: Backup; busy: boolean; onDownload: () => void; onDelete: () => void }) => (
     <li className="flex flex-wrap items-center gap-x-4 gap-y-2 px-4 py-3">
         <div className="min-w-0 flex-1">
-            <div className="truncate font-mono text-[13px] font-medium">{backup.fileName}</div>
+            <div className="truncate font-mono text-ui font-medium">{backup.fileName}</div>
             <div className="truncate text-xs text-muted" title={backup.tables.join(', ')}>
                 {plural(backup.tables.length, 'table')}
                 {' · '}
@@ -164,7 +164,7 @@ export const DatabasePage = () => {
     return (
         <>
             <PageHeader title="Database" description="Back up the database's tables and download them as SQL" />
-            <PageBody className="flex flex-col gap-4 lg:gap-5">
+            <PageBody>
                 <WarningNotice>
                     A backup holds everything in its tables: players&apos; private messages, login tickets and the settings&apos; secrets. Keep the file where only you can read it, and delete it from the server once you have it.
                 </WarningNotice>

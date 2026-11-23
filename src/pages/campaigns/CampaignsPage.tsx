@@ -44,7 +44,7 @@ const CalendarList = ({ calendars, onOpen }: { calendars: CampaignCalendar[]; on
                             <tr key={calendar.id} onClick={() => onOpen(calendar.id)} className="cursor-pointer hover:bg-subtle/60">
                                 <Td>
                                     <button type="button" className="rounded text-left font-mono">{calendar.name}</button>
-                                    {calendar.image && <span className="block font-mono text-[11px] text-muted">{calendar.image}</span>}
+                                    {calendar.image && <span className="block font-mono text-2xs text-muted">{calendar.image}</span>}
                                 </Td>
                                 <Td><span title={status.meaning}><Badge tone={status.tone}>{status.label}</Badge></span></Td>
                                 <Td>
@@ -59,7 +59,7 @@ const CalendarList = ({ calendars, onOpen }: { calendars: CampaignCalendar[]; on
                                 </Td>
                                 <Td>
                                     <span className="block font-mono text-xs">{utcText(calendar.startsAt)}</span>
-                                    <span className="block text-[11px] text-muted">{localText(calendar.startsAt)} your time</span>
+                                    <span className="block text-2xs text-muted">{localText(calendar.startsAt)} your time</span>
                                 </Td>
                                 <Td className="text-xs"><TodayText calendar={calendar} /></Td>
                                 <Td className="text-right font-mono text-xs tabular-nums">{calendar.rewards.length} <span className="text-muted">/ {calendar.days} days</span></Td>
@@ -90,7 +90,7 @@ export const CampaignsPage = () => {
             <PageHeader title="Campaigns" description="Gift calendars: a door a day, each with a gift">
                 <Button icon={<Plus />} onClick={() => open('new')}>New calendar</Button>
             </PageHeader>
-            <PageBody className="flex flex-col gap-4 lg:gap-5">
+            <PageBody>
                 {error && <ErrorNotice error={error} />}
                 {!data && !error && <Loading />}
                 {data && (

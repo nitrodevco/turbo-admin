@@ -77,7 +77,7 @@ const Tags = ({ tags }: { tags: FurnitureTag[] }) => (
 
 /** The bundle a definition is drawn from, in a few words: where it came from, its revision and size, or that there is none. */
 const BundleCell = ({ item }: { item: FurnitureListItem }) => (
-    <span className="hidden w-36 shrink-0 flex-col items-end gap-0.5 text-right font-mono text-[11px] md:flex">
+    <span className="hidden w-36 shrink-0 flex-col items-end gap-0.5 text-right font-mono text-2xs md:flex">
         {item.bundleSize === null
             ? <span className={item.tags.includes('bundle-failed') ? 'text-bad' : 'text-bad/80'}>{item.tags.includes('bundle-failed') ? 'failed' : 'no bundle'}</span>
             : (
@@ -94,7 +94,7 @@ const LogicCell = ({ item }: { item: FurnitureListItem }) => {
     const wrong = item.tags.includes('logic-mismatch');
 
     return (
-        <span className="hidden w-40 shrink-0 flex-col gap-0.5 font-mono text-[11px] lg:flex" title={wrong ? `Runs ${item.logic}; the server has ${item.matchingLogic ?? ''} for it.` : item.logic}>
+        <span className="hidden w-40 shrink-0 flex-col gap-0.5 font-mono text-2xs lg:flex" title={wrong ? `Runs ${item.logic}; the server has ${item.matchingLogic ?? ''} for it.` : item.logic}>
             <span className={cx('truncate', wrong ? 'text-bad' : 'text-ink')}>{item.logic}</span>
             {wrong && <span className="truncate text-muted">{`→ ${item.matchingLogic ?? ''}`}</span>}
         </span>
@@ -116,7 +116,7 @@ const DefinitionRow = ({ item, onOpen, picked, onPick }: { item: FurnitureListIt
             <FurniIcon className={item.className} />
             <span className="flex min-w-0 flex-1 flex-col gap-1">
                 <span className="flex min-w-0 items-baseline gap-2">
-                    <span className="truncate font-mono text-[13px] font-medium">{item.className}</span>
+                    <span className="truncate font-mono text-ui font-medium">{item.className}</span>
                     <span className="truncate text-sm text-muted max-sm:hidden">{item.name}</span>
                 </span>
                 <Tags tags={item.tags} />
@@ -164,7 +164,7 @@ const LogicBar = ({ picked, mismatched, onDone }: { picked: number[]; mismatched
     const run = (input: { ids?: number[]; logic?: string }) => set.mutate(input, { onSuccess: result => done(result.changeSet?.changeCount), onError: toastError });
 
     return (
-        <div className="flex flex-wrap items-center gap-2 border-b border-line bg-accent-soft/40 px-3 py-2.5 text-[13px] sm:px-4 [&>svg]:size-4 [&>svg]:shrink-0">
+        <div className="flex flex-wrap items-center gap-2 border-b border-line bg-accent-soft/40 px-3 py-2.5 text-ui sm:px-4 [&>svg]:size-4 [&>svg]:shrink-0">
             {picked.length > 0
                 ? (
                         <>
@@ -247,7 +247,7 @@ const Definitions = ({ status }: { status: GamedataStatus }) => {
         <>
             {bulk && <HabboValuesPanel onClose={() => setBulk(false)} />}
             {status.canManage && vendingRepair && <div className="mb-4"><VendingRepairPanel onClose={() => setVendingRepair(false)} /></div>}
-            <section className="overflow-clip rounded-xl border border-line bg-surface">
+            <section className="card overflow-clip">
                 <ListToolbar
                     watch={[ q, type, tag, page ]}
                     page={{ offset: page * pageSize, limit: pageSize, total: unused ? unusedBundles?.total : data?.total, onChange: offset => setPage(Math.round(offset / pageSize)) }}
@@ -325,14 +325,14 @@ const Definitions = ({ status }: { status: GamedataStatus }) => {
                                         >
                                             <BundleIcon kind="furniture" name={item.name} />
                                             <span className="flex min-w-0 flex-1 flex-col gap-1">
-                                                <span className="truncate font-mono text-[13px] font-medium text-muted">{item.name}</span>
+                                                <span className="truncate font-mono text-ui font-medium text-muted">{item.name}</span>
                                                 <span className="flex flex-wrap gap-1">
                                                     <Badge tone="amber">no definition</Badge>
                                                     {item.source === 'upload' && <Badge tone="accent">upload</Badge>}
                                                     {item.error && <Badge tone="red">failed</Badge>}
                                                 </span>
                                             </span>
-                                            <span className="hidden w-36 shrink-0 flex-col items-end gap-0.5 text-right font-mono text-[11px] md:flex">
+                                            <span className="hidden w-36 shrink-0 flex-col items-end gap-0.5 text-right font-mono text-2xs md:flex">
                                                 <span>{item.source === 'upload' ? 'upload' : `rev ${item.revision ?? '-'}`}</span>
                                                 <span className="text-muted">{item.error ? '-' : formatBytes(item.size)}</span>
                                             </span>
@@ -355,7 +355,7 @@ const Definitions = ({ status }: { status: GamedataStatus }) => {
                 )}
                 {!unused && data && data.items.length > 0 && (
                     <>
-                        <div className="hidden items-center gap-3 border-b border-line px-4 py-2 font-mono text-[11px] font-medium tracking-[0.08em] text-muted uppercase md:flex">
+                        <div className="hidden items-center gap-3 border-b border-line px-4 py-2 font-mono text-2xs font-medium tracking-[0.08em] text-muted uppercase md:flex">
                             {status.canManage && <span className="w-4 shrink-0" />}
                             <span className="w-10 shrink-0" />
                             <span className="flex-1">Furniture</span>

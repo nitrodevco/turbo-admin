@@ -18,7 +18,7 @@ export const ConfirmHost = () => {
         <dialog
             {...dialog}
             aria-labelledby="confirm-title"
-            className="mx-0 mt-auto mb-0 w-full max-w-none animate-sheet rounded-t-2xl border border-line bg-surface p-0 text-ink shadow-2xl sm:m-auto sm:max-w-md sm:animate-rise sm:rounded-2xl"
+            className="mx-0 mt-auto mb-0 w-full max-w-none animate-sheet rounded-t-2xl border border-line bg-surface p-0 text-ink shadow-overlay sm:m-auto sm:max-w-md sm:animate-rise sm:rounded-2xl"
         >
             {asking && (
                 <form
@@ -35,7 +35,7 @@ export const ConfirmHost = () => {
                             {asking.danger ? <AlertTriangle /> : <HelpCircle />}
                         </span>
                         <div className="min-w-0 pt-1.5">
-                            <h2 id="confirm-title" className="text-[15px] font-semibold text-pretty">{asking.title}</h2>
+                            <h2 id="confirm-title" className="text-base font-semibold text-pretty">{asking.title}</h2>
                             {asking.body && <p className="mt-1.5 text-sm text-pretty text-muted">{asking.body}</p>}
                         </div>
                     </div>

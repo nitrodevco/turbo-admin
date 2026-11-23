@@ -46,7 +46,7 @@ export const PublishPage = () => {
                     value: tab,
                 }}
             />
-            <PageBody className="flex flex-col gap-4 lg:gap-5">
+            <PageBody>
                 <Loaded state={state}>
                     {(status, assets) => (
                         <>

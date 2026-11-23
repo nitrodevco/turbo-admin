@@ -149,7 +149,7 @@ const TargetCard = ({ target, canManage, busy, onEdit, onHistory }: { target: As
     const start = (dryRun: boolean) => publish.mutate({ id: target.id, dryRun, deleteRemoved }, { onError: toastError });
 
     return (
-        <section className="flex min-w-0 flex-col rounded-xl border border-line bg-surface">
+        <section className="card flex min-w-0 flex-col">
             <header className="flex items-start gap-3 border-b border-line px-4 py-3">
                 <div className="min-w-0 flex-1">
                     <div className="flex flex-wrap items-center gap-2">
@@ -192,7 +192,7 @@ const TargetCard = ({ target, canManage, busy, onEdit, onHistory }: { target: As
                 </div>
             </header>
 
-            <dl className="grid grid-cols-[minmax(0,1fr)] gap-x-4 gap-y-2 px-4 py-3 text-[13px] sm:grid-cols-[7rem_minmax(0,1fr)]">
+            <dl className="grid grid-cols-[minmax(0,1fr)] gap-x-4 gap-y-2 px-4 py-3 text-ui sm:grid-cols-[7rem_minmax(0,1fr)]">
                 <dt className="text-muted">Public URL</dt>
                 <dd className="min-w-0 truncate font-mono text-xs max-sm:-mt-1.5">
                     {target.publicUrl

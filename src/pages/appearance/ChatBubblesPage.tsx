@@ -23,7 +23,7 @@ export const ChatBubblesPage = () => {
             >
                 {canManage && <Button icon={<Upload />} onClick={() => setTakingIn(true)}>Take in</Button>}
             </PageHeader>
-            <PageBody className="flex flex-col gap-4 lg:gap-5">
+            <PageBody>
                 <ChatStylesTab canManage={canManage} />
             </PageBody>
             <TakeInDialog open={takingIn} onClose={() => setTakingIn(false)} />

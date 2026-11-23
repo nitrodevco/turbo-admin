@@ -264,7 +264,7 @@ const PictureDrop = ({ label, state, disabled, onPicture }: { label: string; sta
     >
         <Upload className="size-3.5 shrink-0" />
         <span className="min-w-0 flex-1 truncate">{label}</span>
-        <span className="shrink-0 font-mono text-[11px]">{state}</span>
+        <span className="shrink-0 font-mono text-2xs">{state}</span>
         <input
             type="file"
             accept="image/png,image/gif,image/webp"

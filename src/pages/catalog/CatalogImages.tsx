@@ -48,10 +48,10 @@ const ShownOn = ({ image, onOpenPage }: { image: CatalogImage; onOpenPage: (id: 
 };
 
 const ImageCard = ({ image, canManage, onOpenPage, onReplace, onDelete }: { image: CatalogImage; canManage: boolean; onOpenPage: (id: number) => void; onReplace: () => void; onDelete: () => void }) => (
-    <li className="flex flex-col overflow-hidden rounded-xl border border-line bg-surface">
+    <li className="card flex flex-col overflow-hidden">
         <CatalogImageThumb image={image} className="h-32 w-full rounded-none border-0 border-b p-2" />
         <div className="flex min-w-0 flex-1 flex-col gap-1 p-2.5 text-xs">
-            <span title={image.file} className="line-clamp-2 font-mono text-[13px] break-all text-ink">{image.name}</span>
+            <span title={image.file} className="line-clamp-2 font-mono text-ui break-all text-ink">{image.name}</span>
             <span className="text-muted">{`${image.file.endsWith('.png') ? 'PNG' : 'GIF'} · ${sizeOf(image.size)}`}</span>
             <ShownOn image={image} onOpenPage={onOpenPage} />
             {canManage && (
@@ -137,7 +137,7 @@ const UploadDialog = ({ open, name: fixedName, taken, onClose }: { open: boolean
                     onDrop={onDrop}
                     className={cx(
                         'grid min-h-44 place-items-center rounded-xl border-2 border-dashed p-3 text-sm text-muted transition-colors',
-                        over ? 'border-accent bg-accent-soft' : 'border-line hover:border-muted/60',
+                        over ? 'border-accent bg-accent-soft' : 'border-line hover:border-line-strong',
                         preview && CHECKS,
                     )}
                 >

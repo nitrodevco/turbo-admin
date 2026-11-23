@@ -333,7 +333,7 @@ const SettingsTab = () => {
                                     onToggle={() => setOpen(open === setting.path ? null : setting.path)}
                                     summary={(
                                         <div className="grid items-center gap-x-4 gap-y-1 sm:grid-cols-[minmax(12rem,20rem)_1fr_minmax(0,16rem)]">
-                                            <span className="flex min-w-0 items-center gap-1.5 font-mono text-[13px]">
+                                            <span className="flex min-w-0 items-center gap-1.5 font-mono text-ui">
                                                 <span className="truncate">{nameOf(setting)}</span>
                                                 {setting.startup && <Lock className="size-3.5 shrink-0 text-muted" aria-label="Changed in appsettings.json or the environment" />}
                                             </span>
@@ -374,7 +374,7 @@ const HistoryTab = () => {
                     {data.items.map(change => (
                         <li key={change.id} className="grid gap-x-4 gap-y-1 px-4 py-2.5 sm:grid-cols-[8rem_minmax(12rem,20rem)_1fr_6rem]">
                             <span className="text-xs text-muted" title={change.changedAt}>{fromNow(change.changedAt)}</span>
-                            <span className="truncate font-mono text-[13px]">{change.path}</span>
+                            <span className="truncate font-mono text-ui">{change.path}</span>
                             <span className="min-w-0 font-mono text-xs break-words">
                                 {change.secret && <span className="text-muted">secret replaced</span>}
                                 {!change.secret && change.after === null && <span className="text-muted">put back (was {change.before})</span>}
@@ -407,7 +407,7 @@ export const SettingsPage = () => {
                 description="The server's settings: appsettings.json, overridden here, the environment over both"
                 tabs={{ items: TABS, value: tab }}
             />
-            <PageBody className="flex flex-col gap-4 lg:gap-5">
+            <PageBody>
                 {tab === 'all' && <SettingsTab />}
                 {tab === 'history' && <HistoryTab />}
             </PageBody>

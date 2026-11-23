@@ -74,7 +74,7 @@ export const HandItemsPage = () => {
                 {isLoading && <Loading />}
                 {data && items.length === 0 && <EmptyState>{query ? 'No hand items match that search.' : 'No hand items are available yet. Download and build client assets, sync assets and import texts, then try again.'}</EmptyState>}
                 {data && items.length > 0 && (
-                    <ul className="divide-y divide-line overflow-hidden rounded-xl border border-line bg-surface">
+                    <ul className="card divide-y divide-line overflow-hidden">
                         {items.map(item => (
                             <li key={item.id} className="flex items-center gap-3 px-3 py-3 sm:px-4">
                                 <HandItemPreview key={`${data.revision}-${item.id}`} item={item} />

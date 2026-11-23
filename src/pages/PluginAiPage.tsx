@@ -37,7 +37,7 @@ const Provider = ({ provider, canManage }: { provider: AiProvider; canManage: bo
                     <Button variant="secondary" disabled={test.isPending} onClick={() => test.mutate()}>{test.isPending ? 'Testing…' : 'Test connection'}</Button>
                 </div>
             )}
-            {test.data && <p role="status" className={test.data.ok ? 'text-sm text-muted' : 'text-sm text-red-500'}>{test.data.message}</p>}
+            {test.data && <p role="status" className={test.data.ok ? 'text-sm text-muted' : 'text-sm text-bad'}>{test.data.message}</p>}
         </div>
     );
 };
@@ -85,7 +85,7 @@ export const PluginAiPage = () => {
     return (
         <>
             <PageHeader title="Plugins" description="Language models, access and usage" tabs={tabs} />
-            <PageBody className="flex flex-col gap-4">
+            <PageBody>
                 {error && <ErrorNotice error={error} />}
                 {isPending && <Loading />}
                 {!isPending && !data && !error && <EmptyState>The server has no AI module.</EmptyState>}

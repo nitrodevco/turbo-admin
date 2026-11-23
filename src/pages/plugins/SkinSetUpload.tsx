@@ -314,7 +314,7 @@ export const SkinSetUpload = ({ skins, target, canManage }: { skins: SkinMap; ta
                             </span>
                         </p>
                         <div className="max-h-[40vh] overflow-auto rounded-lg border border-line">
-                            <table className="w-full text-left text-[13px]">
+                            <table className="w-full text-left text-ui">
                                 <thead className="sticky top-0 bg-surface text-xs text-muted">
                                     <tr><th className="p-2">File</th><th className="p-2">Sprite</th><th className="p-2">Size</th><th className="p-2">Skins</th></tr>
                                 </thead>
