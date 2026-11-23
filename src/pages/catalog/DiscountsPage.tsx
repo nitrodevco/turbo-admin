@@ -326,7 +326,7 @@ const FreeChart = ({ ruleset, quantity, onPick }: { ruleset: Ruleset; quantity: 
                     {values.map((value, i) => (
                         <div
                             key={i}
-                            className={cx('min-w-0 flex-1 rounded-t-[2px]', i + 1 <= quantity ? 'bg-accent' : 'bg-accent opacity-25', hover === i + 1 && 'opacity-100 brightness-125')}
+                            className={cx('min-w-0 flex-1 rounded-t-[2px]', i + 1 <= quantity ? 'bg-accent-solid' : 'bg-accent-solid opacity-25', hover === i + 1 && 'opacity-100 brightness-125')}
                             style={{ height: `${(value / peak) * 100}%` }}
                         />
                     ))}
@@ -366,7 +366,7 @@ const Preview = ({ ruleset }: { ruleset: Ruleset }) => {
                         value={quantity}
                         onChange={event => setPicked(Number(event.target.value))}
                         aria-label="Quantity bought"
-                        className="min-w-0 flex-1 accent-accent"
+                        className="min-w-0 flex-1 accent-accent-solid"
                     />
                     <Count label="Quantity bought" value={quantity} min={1} max={ruleset.maxPurchaseSize} onChange={setPicked} />
                 </div>
@@ -441,8 +441,8 @@ const DiscountForm = ({ settings, canManage }: { settings: Record<Name, ServerSe
     );
 
     return (
-        <div className="grid items-start gap-4 lg:gap-5 xl:grid-cols-[minmax(0,1fr)_24rem]">
-            <div className="flex min-w-0 flex-col gap-4 lg:gap-5">
+        <div className="grid items-start gap-4 lg:gap-6 xl:grid-cols-[minmax(0,1fr)_24rem]">
+            <div className="flex min-w-0 flex-col gap-4 lg:gap-6">
                 {NAMES.some(lockedBy) && <WarningNotice>Some of these are set in the environment, which always wins over the panel. Change them there.</WarningNotice>}
                 <Panel
                     title="Start from"
@@ -472,7 +472,7 @@ const DiscountForm = ({ settings, canManage }: { settings: Record<Name, ServerSe
                     <div className="divide-y divide-line">
                         <Step number={1} title="Most at once" hint="How high the client's quantity spinner goes. A bigger order is refused. Only offers that can be bundled go past one.">
                             <div className="flex items-center gap-3">
-                                <input type="range" min={1} max={Math.max(200, draft.maxPurchaseSize)} value={draft.maxPurchaseSize} onChange={event => set({ maxPurchaseSize: Number(event.target.value) })} disabled={!editable('MaxPurchaseSize')} aria-label="Most at once" className="min-w-0 flex-1 accent-accent" />
+                                <input type="range" min={1} max={Math.max(200, draft.maxPurchaseSize)} value={draft.maxPurchaseSize} onChange={event => set({ maxPurchaseSize: Number(event.target.value) })} disabled={!editable('MaxPurchaseSize')} aria-label="Most at once" className="min-w-0 flex-1 accent-accent-solid" />
                                 <Count label="Most at once" value={draft.maxPurchaseSize} min={1} onChange={maxPurchaseSize => set({ maxPurchaseSize })} disabled={!editable('MaxPurchaseSize')} />
                             </div>
                         </Step>

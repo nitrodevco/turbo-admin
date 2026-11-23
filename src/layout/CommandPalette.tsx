@@ -164,7 +164,7 @@ const Palette = ({ onClose }: { onClose: () => void }) => {
             aria-label="Search"
             onClose={onClose}
             onClick={event => event.target === dialog.current && onClose()}
-            className="m-auto mt-[12vh] w-[640px] max-w-[92vw] animate-rise rounded-2xl border border-line bg-surface p-0 text-ink shadow-overlay backdrop:bg-[rgb(5_8_12/0.6)]"
+            className="m-auto mt-[12vh] w-[640px] max-w-[92vw] animate-rise rounded-2xl border border-line bg-surface p-0 text-ink shadow-overlay backdrop:bg-[rgb(6_7_10/0.62)]"
         >
             <div className="flex items-center gap-3 border-b border-line px-4">
                 <Search className="size-4 shrink-0 text-muted" />

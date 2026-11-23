@@ -145,7 +145,7 @@ export const TelemetryRoomPage = () => {
                 {isPending && <Loading />}
                 {data && (
                     <>
-                        <div className="grid gap-4 lg:grid-cols-2 lg:gap-5">
+                        <div className="grid gap-4 lg:grid-cols-2 lg:gap-6">
                             <DayChartCard
                                 title="Frame rate"
                                 description="From performance reports and frame rate events sent in the room."
@@ -219,7 +219,7 @@ export const TelemetryPlayerPage = () => {
                 {data && (
                     <>
                         <Panel title="Performance"><PerformanceRows rows={data.performance} params={params} /></Panel>
-                        <div className="grid gap-4 lg:grid-cols-2 lg:gap-5">
+                        <div className="grid gap-4 lg:grid-cols-2 lg:gap-6">
                             <Panel title="Latency"><LatencyRows rows={data.latency} params={params} /></Panel>
                             <Panel title="Chat lag"><LagRows rows={data.lag} params={params} /></Panel>
                         </div>

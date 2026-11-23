@@ -181,7 +181,7 @@ const NavigatorLists = ({ canManage }: { canManage: boolean }) => {
                     ))}
                 </ul>
             </Panel>
-            <div className="grid gap-4 lg:grid-cols-2">
+            <div className="grid gap-4 lg:gap-6 lg:grid-cols-2">
                 <SimpleList
                     list="event-categories"
                     title="Event categories"

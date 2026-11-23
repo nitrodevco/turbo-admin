@@ -119,7 +119,7 @@ const RailLink = ({ entry, active, onPick }: { entry: ShownEntry; active: boolea
         className={cx(
             'relative flex h-9 items-center gap-3 rounded-lg px-3 text-sm transition-colors [&>svg]:size-[18px] [&>svg]:shrink-0',
             active
-                ? 'bg-subtle font-medium text-ink before:absolute before:inset-y-2 before:-left-3 before:w-[3px] before:rounded-r-full before:bg-accent [&>svg]:text-accent'
+                ? 'bg-subtle font-medium text-ink before:absolute before:inset-y-2 before:-left-3 before:w-[3px] before:rounded-r-full before:bg-accent-solid [&>svg]:text-accent'
                 : 'text-muted hover:bg-subtle hover:text-ink',
         )}
     >
@@ -134,7 +134,7 @@ const ApprovalCount = () => {
     const pending = useApprovalCount().data?.pending ?? 0;
 
     return pending > 0
-        ? <span className="grid h-4 min-w-4 place-items-center rounded-full bg-accent px-1 font-mono text-2xs leading-none font-semibold text-on-accent" aria-label={`${pending} waiting`}>{pending > 99 ? '99+' : pending}</span>
+        ? <span className="grid h-4 min-w-4 place-items-center rounded-full bg-accent-solid px-1 font-mono text-2xs leading-none font-semibold text-on-accent" aria-label={`${pending} waiting`}>{pending > 99 ? '99+' : pending}</span>
         : null;
 };
 
@@ -163,7 +163,7 @@ const RailBody = ({ onPick }: { onPick?: () => void }) => {
                 {!inMenu && <NotificationsBell align="start" />}
             </div>
             <HotelStatusCard />
-            <div className="no-scrollbar flex flex-1 flex-col gap-3 overflow-y-auto px-3 py-3">
+            <div className="no-scrollbar flex flex-1 flex-col gap-5 overflow-y-auto px-3 pt-4 pb-3">
                 {sections.map(section => (
                     <div key={section.label ?? 'top'} className="flex flex-col gap-0.5">
                         {section.label && <span className="px-3 pb-1.5 font-mono text-2xs font-medium tracking-[0.08em] text-muted uppercase">{section.label}</span>}

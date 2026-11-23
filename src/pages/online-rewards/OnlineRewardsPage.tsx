@@ -307,7 +307,7 @@ const OnlineRewardsForm = ({ settings, canManage }: { settings: Record<Name, Ser
     );
 
     return (
-        <div className="flex min-w-0 flex-col gap-4 lg:gap-5">
+        <div className="flex min-w-0 flex-col gap-4 lg:gap-6">
             {NAMES.some(lockedBy) && <WarningNotice>Some of these are set in the environment, which always wins over the panel. Change them there.</WarningNotice>}
             <Panel
                 title="Pay players for time online"

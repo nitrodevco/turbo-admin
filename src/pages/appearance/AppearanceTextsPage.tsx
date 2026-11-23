@@ -81,7 +81,7 @@ const ByWindow = ({ index }: { index: TemplateIndex }) => {
     const keys = id ? texts.get(id) ?? [] : [];
 
     return (
-        <div className="grid gap-4 lg:grid-cols-[22rem_1fr]">
+        <div className="grid gap-4 lg:gap-6 lg:grid-cols-[22rem_1fr]">
             <Panel title="Windows" description={`${found.length} window(s) showing texts`}>
                 <div className="p-3"><SearchInput value={text} onValueChange={setText} placeholder="Find a window by its id or a text key" /></div>
                 <ul className="max-h-[60vh] overflow-y-auto">

@@ -127,7 +127,7 @@ export const NotificationsBell = ({ align = 'end' }: { align?: 'start' | 'end' }
                                         {item.detail && <span className="mt-0.5 line-clamp-2 block font-mono text-xs break-words text-muted">{item.detail}</span>}
                                         <span className="mt-0.5 block text-2xs text-muted" title={new Date(item.atUtc).toLocaleString()}>{fromNow(item.atUtc)}</span>
                                     </span>
-                                    {fresh && <span aria-label="New" className="mt-2 size-2 shrink-0 rounded-full bg-accent" />}
+                                    {fresh && <span aria-label="New" className="mt-2 size-2 shrink-0 rounded-full bg-accent-solid" />}
                                 </button>
                             );
                         })}

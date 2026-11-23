@@ -50,7 +50,7 @@ export const TreeResizer = ({ width, onWidth }: { width: number; onWidth: (width
             onKeyDown={onKeyDown}
             className="group absolute inset-y-0 right-0 z-10 flex w-2 cursor-col-resize touch-none justify-end outline-none max-lg:hidden"
         >
-            <span className="h-full w-0.5 transition-colors group-hover:bg-accent group-focus-visible:bg-accent group-active:bg-accent" />
+            <span className="h-full w-0.5 transition-colors group-hover:bg-accent-solid group-focus-visible:bg-accent-solid group-active:bg-accent-solid" />
         </div>
     );
 };

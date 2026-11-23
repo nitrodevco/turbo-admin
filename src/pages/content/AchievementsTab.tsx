@@ -215,7 +215,7 @@ export const AchievementsTab = () => {
     if (!data) return <Loading />;
 
     return (
-        <div className="grid items-start gap-4 lg:grid-cols-[22rem_minmax(0,1fr)]">
+        <div className="grid items-start gap-4 lg:gap-6 lg:grid-cols-[22rem_minmax(0,1fr)]">
             <Panel ref={fillList} className="flex flex-col overflow-clip lg:sticky lg:top-4 lg:max-h-(--fill-height)">
                 <div className="border-b border-line p-3">
                     <SearchInput value={filter} onValueChange={setFilter} placeholder="Key, category or source" aria-label="Find achievements" />

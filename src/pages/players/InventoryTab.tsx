@@ -50,7 +50,7 @@ export const InventoryTab = ({ player }: { player: PlayerDetailResponse }) => {
     const badges = inventory.badges.filter(badge => matches(badge.code, badgeFilter));
 
     return (
-        <div className="flex flex-col gap-4 lg:gap-5">
+        <div className="flex flex-col gap-4 lg:gap-6">
             <ActionAnswer action={action} />
             <section aria-label="What they own" className="grid grid-cols-2 gap-3 sm:grid-cols-3 xl:grid-cols-5">
                 <Stat compact label="In inventory" value={inventory.furnitureInInventory.toLocaleString()} />
@@ -60,7 +60,7 @@ export const InventoryTab = ({ player }: { player: PlayerDetailResponse }) => {
                 <Stat compact label="Bots" value={inventory.bots.toLocaleString()} />
             </section>
 
-            <div className="grid items-start gap-4 lg:grid-cols-[minmax(0,3fr)_minmax(0,2fr)] lg:gap-5">
+            <div className="grid items-start gap-4 lg:grid-cols-[minmax(0,3fr)_minmax(0,2fr)] lg:gap-6">
                 <Panel
                     title={`Furniture (${inventory.furniture.length.toLocaleString()} kinds)`}
                     actions={(
@@ -88,7 +88,7 @@ export const InventoryTab = ({ player }: { player: PlayerDetailResponse }) => {
                             )}
                 </Panel>
 
-                <div className="flex flex-col gap-4 lg:gap-5">
+                <div className="flex flex-col gap-4 lg:gap-6">
                     <Panel
                         title={`Badges (${inventory.badges.length.toLocaleString()})`}
                         actions={(

@@ -168,7 +168,7 @@ export const Tabs = ({ value, tabs, onChange, ids, rule = true, label, className
             {line && (
                 <span
                     aria-hidden
-                    className="pointer-events-none absolute bottom-0 h-0.5 rounded-full bg-accent transition-all duration-300 ease-out"
+                    className="pointer-events-none absolute bottom-0 h-0.5 rounded-full bg-accent-solid transition-all duration-300 ease-out"
                     style={{ left: line.left, width: line.width }}
                 />
             )}

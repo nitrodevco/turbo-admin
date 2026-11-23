@@ -295,7 +295,7 @@ const SettingsTab = () => {
                     </div>
                 </WarningNotice>
             )}
-            <div className="grid items-start gap-4 lg:grid-cols-[17rem_minmax(0,1fr)]">
+            <div className="grid items-start gap-4 lg:gap-6 lg:grid-cols-[17rem_minmax(0,1fr)]">
                 <Panel ref={fillList} className="flex flex-col overflow-clip lg:sticky lg:top-4 lg:max-h-(--fill-height)">
                     <div className="flex flex-col gap-2 border-b border-line p-3">
                         <SearchInput value={text} onValueChange={setText} placeholder="Name, text or value" aria-label="Find settings" />

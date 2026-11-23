@@ -67,7 +67,7 @@ export const HandItemsPage = () => {
     return (
         <>
             <p className="text-sm text-muted">Hand items available to vending furniture, with locally stored names and artwork.</p>
-            <section className="flex flex-col gap-4 lg:gap-5">
+            <section className="flex flex-col gap-4 lg:gap-6">
                 <div className="flex items-center gap-3"><SearchInput value={search} onValueChange={setSearch} placeholder="Name or ID" aria-label="Search hand items" className="w-full sm:w-72" /><Button variant="secondary" onClick={() => void refetch()} disabled={isFetching}>Refresh</Button></div>
                 {data?.message && <p className="rounded-lg bg-canvas px-3 py-2.5 text-sm text-muted">{data.message} Download and build client assets if needed, then sync assets and import texts for names.</p>}
                 {error && <ErrorNotice error={error} />}

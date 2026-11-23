@@ -263,8 +263,8 @@ export const DashboardPage = () => {
                             />
                         </section>
                         {canControl && <HotelCard phase={data.availability} atUtc={data.availabilityAtUtc} />}
-                        <div className="flex flex-wrap items-start gap-4 lg:gap-5">
-                            <div className="flex min-w-0 flex-[999_1_480px] flex-col gap-4 lg:gap-5">
+                        <div className="flex flex-wrap items-start gap-4 lg:gap-6">
+                            <div className="flex min-w-0 flex-[999_1_480px] flex-col gap-4 lg:gap-6">
                                 <Panel title="Busiest rooms">
                                     {data.busiestRooms.length === 0
                                         ? <EmptyState>Nobody is in a room right now.</EmptyState>

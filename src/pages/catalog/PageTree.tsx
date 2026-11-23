@@ -112,9 +112,9 @@ const Row = ({ row, selected, open, canManage, projectedDepth, onToggle, onSelec
                     isDragging
                         ? 'border-2 border-dashed border-accent bg-accent-soft/50'
                         : offerOver
-                            ? 'bg-accent text-on-accent shadow-[0_0_0_3px_var(--color-accent-soft)]'
+                            ? 'bg-accent-solid text-on-accent shadow-[0_0_0_3px_var(--color-accent-soft)]'
                             : selected
-                                ? 'bg-accent-soft text-accent before:absolute before:inset-y-1.5 before:left-0 before:w-[3px] before:rounded-full before:bg-accent'
+                                ? 'bg-accent-soft text-accent before:absolute before:inset-y-1.5 before:left-0 before:w-[3px] before:rounded-full before:bg-accent-solid'
                                 : isTab ? 'bg-subtle/60 hover:bg-subtle' : 'hover:bg-subtle',
                 )}
                 style={{ paddingLeft: `${4 + depth * INDENT}px` }}

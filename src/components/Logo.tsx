@@ -5,7 +5,7 @@ export const LogoMark = ({ className }: { className?: string }) => (
     <span
         aria-hidden
         className={cx(
-            'grid shrink-0 place-items-center rounded-[10px] bg-[linear-gradient(145deg,color-mix(in_srgb,var(--color-accent)_78%,white),var(--color-accent)_55%,color-mix(in_srgb,var(--color-accent)_80%,black))] text-on-accent shadow-[0_6px_16px_-6px] shadow-accent/70 ring-1 ring-white/15 ring-inset',
+            'grid shrink-0 place-items-center rounded-[10px] bg-[linear-gradient(145deg,color-mix(in_srgb,var(--color-accent-solid)_78%,white),var(--color-accent-solid)_55%,color-mix(in_srgb,var(--color-accent-solid)_80%,black))] text-on-accent shadow-[0_6px_16px_-6px] shadow-accent-solid/70 ring-1 ring-white/15 ring-inset',
             className,
         )}
     >

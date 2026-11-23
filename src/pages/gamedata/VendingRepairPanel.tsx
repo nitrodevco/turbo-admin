@@ -43,7 +43,7 @@ const RepairRow = ({ item, checked, useDefault, disabled, onCheck, onDefault }: 
                         onChange={event => onCheck(event.target.checked)}
                         disabled={!eligible || disabled}
                         aria-label={`Select ${item.className} (ID ${item.id})`}
-                        className="size-4 accent-accent"
+                        className="size-4 accent-accent-solid"
                     />
                 </label>
                 <div className="min-w-0 flex-1">

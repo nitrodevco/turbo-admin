@@ -171,7 +171,7 @@ export const PerformancePage = () => {
                             />
                         </section>
 
-                        <div className="grid gap-4 lg:grid-cols-2 lg:gap-5">
+                        <div className="grid gap-4 lg:grid-cols-2 lg:gap-6">
                             <ChartCard title="CPU" description="Of every core, averaged over each point." series={[ { name: 'CPU', color: SERIES_1 } ]} points={pointsOf(points, x => x.cpuPercent)} format={percent} max={100} dimmed={dimmed} />
                             <ChartCard
                                 title="Memory"

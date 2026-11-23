@@ -62,7 +62,7 @@ const VendingEditor = ({ raw, onChange, disabled }: { raw: string; onChange: (va
                             {filtered.map(item => (
                                 <li key={item.id}>
                                     <label className="flex cursor-pointer items-center gap-3 px-3 py-2 text-sm hover:bg-subtle">
-                                        <input type="checkbox" checked={selected.includes(item.id)} onChange={event => toggle(item.id, event.target.checked)} disabled={disabled} className="size-4 accent-accent" />
+                                        <input type="checkbox" checked={selected.includes(item.id)} onChange={event => toggle(item.id, event.target.checked)} disabled={disabled} className="size-4 accent-accent-solid" />
                                         <HandItemPreview key={`${data?.revision}-${item.id}`} item={item} compact />
                                         <span className="min-w-0 flex-1 truncate">{item.name || `Hand item ${item.id}`}</span>
                                         <span className="font-mono text-xs text-muted">{item.id}</span>
@@ -309,7 +309,7 @@ const Overview = ({ definition, item, draft, differing, canManage, onUseHabbo, o
                 )}
             </section>
 
-            <div className="grid gap-4 lg:grid-cols-2">
+            <div className="grid gap-4 lg:gap-6 lg:grid-cols-2">
                 <Card title="Catalog">
                     <dl className="divide-y divide-line">
                         <Fact label="Sold">{notSold ? <Badge>not sold</Badge> : <Badge tone="green">yes</Badge>}</Fact>
@@ -503,7 +503,7 @@ const EditorBody = ({ definition, canManage, section, onSection, onUnsaved, save
                         >
                             {target.icon}
                             <span className="flex-1">{target.title}</span>
-                            {unsavedIn(target) > 0 && <span className="rounded-full bg-accent px-1.5 font-mono text-2xs font-semibold text-on-accent tabular-nums">{unsavedIn(target)}</span>}
+                            {unsavedIn(target) > 0 && <span className="rounded-full bg-accent-solid px-1.5 font-mono text-2xs font-semibold text-on-accent tabular-nums">{unsavedIn(target)}</span>}
                             {unsavedIn(target) === 0 && differingIn(target) && <span className="size-1.5 rounded-full bg-warn" title="Differs from Habbo" />}
                         </button>
                     ))}

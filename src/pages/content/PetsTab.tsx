@@ -76,7 +76,7 @@ export const PetsTab = ({ canManage }: { canManage: boolean }) => {
     const lineTypes = [ ...new Set(data.speech.map(x => x.typeId)) ];
 
     return (
-        <div className="grid items-start gap-4 xl:grid-cols-2">
+        <div className="grid items-start gap-4 lg:gap-6 xl:grid-cols-2">
             <Panel title="Palettes" description="Breed is the body the info stand names; rarity weighs breeding; the catalogue sells only the sold ones." ref={fillPalettes} className="flex flex-col overflow-clip xl:max-h-(--fill-height)">
                 {types.length === 0 && <EmptyState>No palettes.</EmptyState>}
                 <div className="max-h-[60dvh] min-h-0 overflow-y-auto xl:max-h-none">

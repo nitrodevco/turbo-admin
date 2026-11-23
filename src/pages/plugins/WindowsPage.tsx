@@ -343,7 +343,7 @@ const WindowsTab = () => {
     const found = useMemo(() => (index ? ids.filter(each => matches(index, each, words, shown)) : []), [ index, ids, words, shown ]);
 
     return (
-        <div className="grid gap-4 lg:grid-cols-[minmax(16rem,24rem)_1fr]">
+        <div className="grid gap-4 lg:gap-6 lg:grid-cols-[minmax(16rem,24rem)_1fr]">
             <Panel className="overflow-clip">
                 <div className="flex flex-col gap-1 border-b border-line p-3">
                     <SearchInput value={text} onValueChange={setText} placeholder="Window, element, text key or shown text" aria-label="Find windows" />

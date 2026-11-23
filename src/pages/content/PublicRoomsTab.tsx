@@ -305,7 +305,7 @@ export const PublicRoomsTab = () => {
             onDragEnd={onDragEnd}
             onDragCancel={() => setOver(null)}
         >
-            <div className="grid gap-4 xl:grid-cols-[minmax(0,20rem)_minmax(0,1fr)_minmax(0,18rem)]">
+            <div className="grid gap-4 lg:gap-6 xl:grid-cols-[minmax(0,20rem)_minmax(0,1fr)_minmax(0,18rem)]">
                 <Panel title="Categories" description="Each is one block of the Public tab, in this order. Drag to order; drop a room on one to move it there." className="overflow-clip">
                     <SortableContext items={categories.map(x => categoryKey(x.id))} strategy={verticalListSortingStrategy}>
                         <ul className="divide-y divide-line" aria-label="Public tab categories">

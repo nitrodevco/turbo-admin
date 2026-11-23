@@ -80,7 +80,7 @@ export const ReceptionTab = ({ draft, part, onPart, promoCodes, backgroundCodes,
 
     return (
         <>
-            <div className="grid items-start gap-4 xl:grid-cols-[minmax(0,1fr)_18rem]">
+            <div className="grid items-start gap-4 lg:gap-6 xl:grid-cols-[minmax(0,1fr)_18rem]">
                 <Panel
                     title="As a player sees it"
                     description={part === 'backgrounds'

@@ -163,8 +163,8 @@ export const GroupPage = () => {
                             <Stat label="Blocked" value={blocked.toLocaleString()} />
                         </section>
 
-                        <div className="flex flex-wrap items-start gap-4 lg:gap-5">
-                            <div className="flex min-w-0 flex-[999_1_520px] flex-col gap-4 max-lg:order-1 max-lg:w-full lg:gap-5">
+                        <div className="flex flex-wrap items-start gap-4 lg:gap-6">
+                            <div className="flex min-w-0 flex-[999_1_520px] flex-col gap-4 max-lg:order-1 max-lg:w-full lg:gap-6">
                                 <Panel title={`Members, requests and blocks${group.members.length >= 500 ? ', the first 500' : ''}`}>
                                     {group.members.length === 0
                                         ? <EmptyState>No one.</EmptyState>
@@ -190,7 +190,7 @@ export const GroupPage = () => {
                                 </Panel>
                             </div>
 
-                            <div className="flex min-w-0 flex-[1_1_300px] flex-col gap-4 max-lg:contents lg:gap-5">
+                            <div className="flex min-w-0 flex-[1_1_300px] flex-col gap-4 max-lg:contents lg:gap-6">
                                 <div className="min-w-0 max-lg:order-first max-lg:w-full">
                                     {/* Keyed by what was saved, so a save or another's change shows in the fields. */}
                                     <RenameForm key={`${group.name}\n${group.description}`} group={group} canManage={canManage} act={act} />

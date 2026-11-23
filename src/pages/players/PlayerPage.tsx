@@ -186,8 +186,8 @@ const Overview = ({ player }: { player: PlayerDetailResponse }) => {
     const abilities = usePlayerAbilities().data;
 
     return (
-        <div className="grid items-start gap-4 lg:grid-cols-[minmax(0,3fr)_minmax(18rem,2fr)] lg:gap-5">
-            <div className="flex min-w-0 flex-col gap-4 lg:gap-5">
+        <div className="grid items-start gap-4 lg:grid-cols-[minmax(0,3fr)_minmax(18rem,2fr)] lg:gap-6">
+            <div className="flex min-w-0 flex-col gap-4 lg:gap-6">
                 <CurrenciesPanel player={player} />
                 <Panel title="Profile">
                     <dl>
@@ -209,7 +209,7 @@ const Overview = ({ player }: { player: PlayerDetailResponse }) => {
                 </Panel>
                 <Standing player={player} />
             </div>
-            <div className="flex min-w-0 flex-col gap-4 lg:gap-5">
+            <div className="flex min-w-0 flex-col gap-4 lg:gap-6">
                 <Links player={player} />
                 {abilities?.issueTickets && <LoginTicketCard key={`ticket-${player.id}`} playerId={player.id} playerName={player.name} />}
                 {player.discord && <DiscordCard playerId={player.id} playerName={player.name} discord={player.discord} canManage={abilities?.manageAccounts ?? false} />}

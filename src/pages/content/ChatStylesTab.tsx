@@ -339,7 +339,7 @@ export const ChatStylesTab = ({ canManage }: { canManage: boolean }) => {
     const editingNormal = editing?.id !== null && editing?.clientStyleId === 0;
 
     return (
-        <div className="grid grid-cols-1 items-start gap-4 lg:gap-5 xl:grid-cols-[22rem_minmax(0,1fr)]">
+        <div className="grid grid-cols-1 items-start gap-4 lg:gap-6 xl:grid-cols-[22rem_minmax(0,1fr)]">
             <Panel
                 title="Styles"
                 description={`${items.length.toLocaleString()} styles, ${drawable.toLocaleString()} in ${LIBRARY}${data.bundle ? '' : ' (not built yet)'}.`}
@@ -492,7 +492,7 @@ export const ChatStylesTab = ({ canManage }: { canManage: boolean }) => {
                                                     {slider.label}
                                                     <span className="font-mono">{`${editing[slider.key]}${slider.unit}`}</span>
                                                 </span>
-                                                <input type="range" min={slider.min} max={slider.max} value={editing[slider.key]} onChange={event => change({ [slider.key]: Number(event.target.value) })} className="w-full accent-accent" />
+                                                <input type="range" min={slider.min} max={slider.max} value={editing[slider.key]} onChange={event => change({ [slider.key]: Number(event.target.value) })} className="w-full accent-accent-solid" />
                                             </label>
                                         ))}
                                         <span className="flex flex-wrap gap-2">

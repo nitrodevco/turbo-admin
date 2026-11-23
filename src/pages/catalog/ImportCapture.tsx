@@ -254,7 +254,7 @@ export const ImportCapture = ({ tree }: { tree: CatalogTree }) => {
     };
 
     return (
-        <div className="grid items-start gap-4 xl:grid-cols-[24rem_minmax(0,1fr)]">
+        <div className="grid items-start gap-4 lg:gap-6 xl:grid-cols-[24rem_minmax(0,1fr)]">
             <div className="card flex flex-col gap-4 p-4 xl:sticky xl:top-4">
                 <div className="flex items-start gap-3">
                     <span className="grid size-10 shrink-0 place-items-center rounded-xl bg-accent-soft text-accent"><FileUp className="size-5" /></span>

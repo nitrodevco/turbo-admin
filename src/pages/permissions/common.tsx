@@ -77,7 +77,7 @@ export const TimingFields = ({ duration, extend, onDuration, onExtend }: {
         </Labeled>
         {duration !== '' && (
             <label className="flex items-start gap-2 text-sm select-none sm:max-w-60">
-                <input type="checkbox" checked={extend} onChange={event => onExtend(event.target.checked)} className="mt-0.5 size-4 shrink-0 accent-accent" />
+                <input type="checkbox" checked={extend} onChange={event => onExtend(event.target.checked)} className="mt-0.5 size-4 shrink-0 accent-accent-solid" />
                 <span>
                     Extend
                     <span className="block text-xs text-muted">Add the time to one already running, instead of replacing its end.</span>

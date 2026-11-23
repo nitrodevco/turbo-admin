@@ -17,7 +17,7 @@ import { SortButton } from './SortHeader';
 import { type TabItem, Tabs } from './Tabs';
 
 /** The width every page's content keeps to, header and body alike. */
-const PAGE_WIDTH = 'mx-auto w-full max-w-[1240px]';
+const PAGE_WIDTH = 'mx-auto w-full max-w-[1280px]';
 
 interface PageHeaderProps {
     title: string;
@@ -42,7 +42,7 @@ interface PageHeaderProps {
 export const PageHeader = ({ title, description, back, tabs, children }: PageHeaderProps) => {
     return (
         <header className="sticky top-0 z-30 border-b border-line bg-chrome/95 backdrop-blur lg:static lg:z-auto lg:bg-chrome lg:backdrop-blur-none">
-            <div className={cx(PAGE_WIDTH, 'flex min-h-14 items-center gap-x-2.5 px-3 py-2 sm:gap-x-3 sm:px-4 lg:min-h-17 lg:px-6')}>
+            <div className={cx(PAGE_WIDTH, 'flex min-h-14 items-center gap-x-2.5 px-3 py-2 sm:gap-x-3 sm:px-6 lg:min-h-18 lg:px-8')}>
                 <MenuButton />
                 <BackArrow back={back} />
                 <HeaderIcon />
@@ -61,7 +61,7 @@ export const PageHeader = ({ title, description, back, tabs, children }: PageHea
                 </div>
             </div>
             {/* The tabs' row: its tabs' line sits on the header's own bottom rule. */}
-            <div className={cx(PAGE_WIDTH, 'flex h-10 items-end px-2 sm:px-4 lg:px-6', !tabs && 'max-lg:hidden')}>
+            <div className={cx(PAGE_WIDTH, 'flex h-10 items-end px-3 sm:px-6 lg:px-8', !tabs && 'max-lg:hidden')}>
                 {/* Words only, on every page: the page's icon is the one beside its title. */}
                 {tabs
                     ? <Tabs value={tabs.value} tabs={tabs.items.map(tab => ({ ...tab, icon: undefined }))} onChange={tabs.onChange} rule={false} className="-mb-px min-w-0" />
@@ -105,13 +105,13 @@ const HeaderPage = ({ title }: { title: string }) => (
 );
 
 /**
- * The page under its header, to the same width: its cards one under another, 16px apart (20px from
+ * The page under its header, to the same width: its cards one under another, 16px apart (24px from
  * a laptop up), unless `className` lays them out otherwise (a grid of columns). `still` leaves out
  * its rising entrance, for a page with drag and drop: a transformed parent would move the drag
  * overlay.
  */
 export const PageBody = ({ children, className, still }: { children: ReactNode; className?: string; still?: boolean }) => (
-    <div className={cx(PAGE_WIDTH, !still && 'animate-rise', 'px-3 py-4 sm:px-4 lg:px-6 lg:py-6', className ?? 'flex flex-col gap-4 lg:gap-5')}>{children}</div>
+    <div className={cx(PAGE_WIDTH, !still && 'animate-rise', 'px-4 py-5 sm:px-6 sm:py-6 lg:px-8 lg:py-8', className ?? 'flex flex-col gap-4 lg:gap-6')}>{children}</div>
 );
 
 interface PanelProps {
@@ -127,7 +127,7 @@ interface PanelProps {
 export const Panel = ({ title, description, actions, children, className, ref }: PanelProps) => (
     <section ref={ref} className={cx('card', className)}>
         {(title || actions) && (
-            <header className="flex flex-wrap items-center justify-between gap-x-4 gap-y-2 border-b border-line px-4 py-3">
+            <header className="flex flex-wrap items-center justify-between gap-x-4 gap-y-2 border-b border-line px-4 py-3.5">
                 {/* Shrinks to 8rem, its description wrapping, before the actions drop below it. */}
                 <div className="min-w-0 flex-[1_1_8rem]">
                     {title && <h2 className="text-sm font-semibold">{title}</h2>}
@@ -154,12 +154,12 @@ export const Label = ({ as: Tag = 'span', children, className }: { as?: 'span' |
  * figures inside a tool (what a plan would make), smaller than a page's own.
  */
 export const Stat = ({ label, value, detail, meter, tone, icon, compact }: { label: string; value: ReactNode; detail?: ReactNode; meter?: number; tone?: 'warn' | 'bad'; icon?: ReactNode; compact?: boolean }) => (
-    <div className={cx('card', compact ? 'px-3 py-2.5' : 'px-4 py-3.5')}>
+    <div className={cx('card', compact ? 'px-3 py-2.5' : 'p-4')}>
         <Label className="flex items-center gap-1 [&>svg]:size-3">{icon}{label}</Label>
-        <div className={cx('font-mono font-semibold tabular-nums', compact ? 'mt-0.5 text-xl' : 'mt-1.5 text-2xl', tone === 'warn' && 'text-warn', tone === 'bad' && 'text-bad')}>{value}</div>
+        <div className={cx('font-mono font-semibold tabular-nums', compact ? 'mt-0.5 text-xl' : 'mt-2 text-2xl', tone === 'warn' && 'text-warn', tone === 'bad' && 'text-bad')}>{value}</div>
         {meter !== undefined && (
             <div className="mt-2.5 h-1 rounded-full bg-line" aria-hidden>
-                <div className="h-1 rounded-full bg-accent" style={{ width: `${Math.round(Math.min(1, Math.max(0, meter)) * 100)}%` }} />
+                <div className="h-1 rounded-full bg-accent-solid" style={{ width: `${Math.round(Math.min(1, Math.max(0, meter)) * 100)}%` }} />
             </div>
         )}
         {detail && <div className="mt-1.5 truncate text-xs text-muted">{detail}</div>}
@@ -217,7 +217,7 @@ export const Loading = () => (
     <div className="flex items-center justify-center gap-2.5 py-16 text-sm text-muted">
         <span className="inline-flex items-center gap-1" aria-hidden>
             {[ 0, 1, 2 ].map(index => (
-                <span key={index} className="size-1.5 animate-bounce rounded-full bg-accent" style={{ animationDelay: `${index * 0.15}s` }} />
+                <span key={index} className="size-1.5 animate-bounce rounded-full bg-accent-solid" style={{ animationDelay: `${index * 0.15}s` }} />
             ))}
         </span>
         Loading
@@ -259,7 +259,7 @@ export const Checkbox = ({ label, checked, onChange, disabled, hint }: { label: 
     <label className={cx('flex items-start gap-2 text-sm select-none', disabled && 'opacity-60')}>
         <input
             type="checkbox"
-            className="mt-0.5 size-4 rounded border-line accent-accent"
+            className="mt-0.5 size-4 rounded border-line accent-accent-solid"
             checked={checked}
             disabled={disabled}
             onChange={event => onChange(event.target.checked)}
@@ -286,7 +286,7 @@ export const Switch = ({ label, checked, onChange, disabled, hint, className }: 
             onClick={() => onChange(!checked)}
             className={cx(
                 'relative h-6 w-10 shrink-0 rounded-full transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent',
-                checked ? 'bg-accent' : 'bg-line',
+                checked ? 'bg-accent-solid' : 'bg-line',
             )}
         >
             <span className={cx('absolute top-1 size-4 rounded-full transition-all', checked ? 'left-5 bg-on-accent' : 'left-1 bg-muted')} />
@@ -340,7 +340,7 @@ export const Field = ({ label, hint, id, ...input }: FieldProps) => {
 type ButtonVariant = 'primary' | 'secondary' | 'ghost' | 'danger';
 
 const BUTTON_VARIANTS: Record<ButtonVariant, string> = {
-    primary: 'border border-accent bg-accent font-semibold text-on-accent hover:border-accent-hover hover:bg-accent-hover',
+    primary: 'border border-accent-solid bg-accent-solid font-semibold text-on-accent hover:border-accent-solid-hover hover:bg-accent-solid-hover',
     secondary: 'border border-line bg-subtle text-ink hover:border-line-strong',
     ghost: 'border border-transparent text-muted hover:border-line hover:bg-subtle hover:text-ink',
     danger: 'border border-bad-line bg-bad-soft text-bad hover:border-bad/60',
@@ -464,7 +464,7 @@ export const EmptyState = ({ children, icon, framed }: { children: ReactNode; ic
                     <p className="max-w-md text-sm text-muted">{children}</p>
                 </div>
             )
-        : <p className="px-4 py-6 text-sm text-muted">{children}</p>
+        : <p className="px-4 py-8 text-center text-sm text-muted">{children}</p>
 );
 
 /** A player's initials in a coloured tile, the colour picked from their id so it stays theirs. */
@@ -477,7 +477,7 @@ export const Avatar = ({ id, name, figure, large, className }: { id: number; nam
     return (
         <span
             aria-hidden
-            className={cx('grid size-11 shrink-0 place-items-center overflow-hidden rounded-lg font-mono text-xs font-semibold text-[#0a0e13] sm:size-10', className)}
+            className={cx('grid size-11 shrink-0 place-items-center overflow-hidden rounded-lg font-mono text-xs font-semibold text-[#0c0d10] sm:size-10', className)}
             style={{ background: drawn ? `color-mix(in srgb, ${AVATAR_COLOURS[Math.abs(id) % AVATAR_COLOURS.length]} 35%, var(--color-subtle))` : AVATAR_COLOURS[Math.abs(id) % AVATAR_COLOURS.length] }}
         >
             {/* Their head as the client draws it, from the hotel's imager; their initials without one. */}

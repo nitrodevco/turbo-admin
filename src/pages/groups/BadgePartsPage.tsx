@@ -62,7 +62,7 @@ const BadgeEditor = ({ canManage }: { canManage: boolean }) => {
     if (!data) return <Loading />;
 
     return (
-        <div className="grid items-start gap-4 lg:grid-cols-2">
+        <div className="grid items-start gap-4 lg:gap-6 lg:grid-cols-2">
             <Panel title="Badge parts" description="Bases and symbols; the client loads badgepart_<file>.png. Read again by the hotel as soon as one is saved." className="overflow-clip">
                 {[ 0, 1 ].map(type => (
                     <section key={type}>

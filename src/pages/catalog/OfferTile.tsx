@@ -18,7 +18,7 @@ export const OfferFace = ({ offer, tree }: { offer: CatalogOffer; tree: CatalogT
             <span className="relative grid h-14 w-full place-items-center">
                 {first && <ProductIcon type={first.type} name={first.definitionName ?? first.extraParam} className={cx('size-12', !offer.visible && 'opacity-40 grayscale')} />}
                 {offer.products.length > 1 && (
-                    <span className="absolute right-0 bottom-0 flex items-center gap-0.5 rounded-full bg-accent px-1.5 text-2xs font-semibold text-on-accent" title={`${offer.products.length} things`}>
+                    <span className="absolute right-0 bottom-0 flex items-center gap-0.5 rounded-full bg-accent-solid px-1.5 text-2xs font-semibold text-on-accent" title={`${offer.products.length} things`}>
                         <Layers className="size-2.5" />
                         {offer.products.length}
                     </span>

@@ -34,7 +34,7 @@ const SettingsTab = ({ track, onChange }: { track: RewardTrack; onChange: (track
     const status = STATUS[statusOf(track)];
 
     return (
-        <div className="grid items-start gap-4 xl:grid-cols-2">
+        <div className="grid items-start gap-4 lg:gap-6 xl:grid-cols-2">
             <Panel title="When players get it" description="The protocol has no dates: a track is sent at login while it is on and within its dates, and counts nothing once it has ended.">
                 <div className="flex flex-col gap-4 p-4">
                     <Switch label="On" hint="Off, it is sent to nobody and nothing counts for it." checked={track.enabled} onChange={value => set('enabled', value)} />

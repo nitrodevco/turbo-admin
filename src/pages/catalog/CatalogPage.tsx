@@ -586,7 +586,7 @@ const CatalogEditor = ({ view }: { view: View }) => {
                                                                             label: (
                                                                                 <>
                                                                                     Settings
-                                                                                    {pageDirty && <span className="size-1.5 rounded-full bg-accent" aria-label="unsaved changes" role="img" />}
+                                                                                    {pageDirty && <span className="size-1.5 rounded-full bg-accent-solid" aria-label="unsaved changes" role="img" />}
                                                                                 </>
                                                                             ),
                                                                         },

@@ -154,7 +154,7 @@ export const ReportPage = () => {
                 {report.error && <ErrorNotice error={report.error} />}
                 {report.isPending && <Loading />}
                 {detail && item && (
-                    <div className="grid items-start gap-4 lg:grid-cols-[minmax(0,1fr)_22rem]">
+                    <div className="grid items-start gap-4 lg:gap-6 lg:grid-cols-[minmax(0,1fr)_22rem]">
                         <div className="flex min-w-0 flex-col gap-4">
                             <Panel title="What they wrote">
                                 <p className="px-4 py-3 text-sm whitespace-pre-wrap wrap-anywhere">{item.message || <span className="text-muted">Nothing: only the topic.</span>}</p>

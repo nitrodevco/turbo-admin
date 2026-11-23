@@ -20,7 +20,7 @@ export const JobProgress = ({ job }: { job: ImportJob }) => {
             </div>
             {running && job.phase === 0 && (
                 <div className="h-1.5 rounded-full bg-line" aria-hidden>
-                    <div className="h-1.5 rounded-full bg-accent transition-[width]" style={{ width: `${Math.round(share * 100)}%` }} />
+                    <div className="h-1.5 rounded-full bg-accent-solid transition-[width]" style={{ width: `${Math.round(share * 100)}%` }} />
                 </div>
             )}
             {job.phase === 2 && <SuccessNotice>{job.changeSet ? job.changeSet.summary : 'Nothing to change: the hotel had all of it.'}</SuccessNotice>}

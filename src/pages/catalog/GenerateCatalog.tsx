@@ -34,7 +34,7 @@ const ModeCard = ({ active, icon, title, blurb, onClick }: { active: boolean; ic
         onClick={onClick}
         className={cx('flex flex-1 items-start gap-3 rounded-xl border p-3 text-left transition', active ? 'border-accent bg-accent-soft' : 'border-line bg-canvas hover:border-line-strong')}
     >
-        <span className={cx('mt-0.5 grid size-8 shrink-0 place-items-center rounded-lg [&>svg]:size-4', active ? 'bg-accent text-on-accent' : 'bg-subtle text-muted')}>{icon}</span>
+        <span className={cx('mt-0.5 grid size-8 shrink-0 place-items-center rounded-lg [&>svg]:size-4', active ? 'bg-accent-solid text-on-accent' : 'bg-subtle text-muted')}>{icon}</span>
         <span className="min-w-0">
             <span className="block text-sm font-semibold">{title}</span>
             <span className="block text-xs leading-snug text-muted">{blurb}</span>
@@ -115,7 +115,7 @@ const PlanNode = ({ page, depth, edits, open, onToggle, onEdit, onPickIcon, skip
                     onChange={event => onEdit(page.key, { skip: !event.target.checked })}
                     title={skipped ? 'Left out' : 'Leave it out, with everything under it'}
                     aria-label={`Make ${title}`}
-                    className="size-5 shrink-0 accent-accent sm:size-4"
+                    className="size-5 shrink-0 accent-accent-solid sm:size-4"
                 />
             </div>
             {isOpen && page.children.length > 0 && (
@@ -222,7 +222,7 @@ export const GenerateCatalog = ({ tree, onDone }: { tree: CatalogTree; onDone: (
     const pickedPage = picking && data ? find(data.tabs, picking) : undefined;
 
     return (
-        <div className="grid items-start gap-4 xl:grid-cols-[24rem_minmax(0,1fr)]">
+        <div className="grid items-start gap-4 lg:gap-6 xl:grid-cols-[24rem_minmax(0,1fr)]">
             <div className="card flex flex-col gap-4 p-4 xl:sticky xl:top-4">
                 <div className="flex items-start gap-3">
                     <span className="grid size-10 shrink-0 place-items-center rounded-xl bg-accent-soft text-accent"><Wand2 className="size-5" /></span>
@@ -260,7 +260,7 @@ export const GenerateCatalog = ({ tree, onDone }: { tree: CatalogTree; onDone: (
                                     setSections(next);
                                     settingsChanged();
                                 }}
-                                className="mt-0.5 size-4 shrink-0 accent-accent"
+                                className="mt-0.5 size-4 shrink-0 accent-accent-solid"
                             />
                             <span className="min-w-0">
                                 <span className="block text-sm">{x.title}</span>

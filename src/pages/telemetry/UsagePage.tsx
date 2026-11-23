@@ -80,7 +80,7 @@ export const UsagePage = () => {
                             dimmed={dimmed}
                         />
 
-                        <div className="grid gap-4 lg:grid-cols-2 lg:gap-5">
+                        <div className="grid gap-4 lg:grid-cols-2 lg:gap-6">
                             <Panel title="Most logged events" description="Add an event to the funnel to see how many players went on to the next.">
                                 {data.top.length === 0
                                     ? <EmptyState>No events in this range.</EmptyState>

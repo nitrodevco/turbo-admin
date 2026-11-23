@@ -187,7 +187,7 @@ export const MissingFurni = ({ tree, pageId, onOpenPage, onAdded }: MissingFurni
     };
 
     return (
-        <div className="grid items-start gap-4 lg:grid-cols-[16rem_minmax(0,1fr)]">
+        <div className="grid items-start gap-4 lg:gap-6 lg:grid-cols-[16rem_minmax(0,1fr)]">
             <aside className="card flex flex-col gap-4 p-4 lg:sticky lg:top-4">
                 <Segmented
                     label="Which furni"

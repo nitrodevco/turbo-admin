@@ -92,7 +92,7 @@ const Swatch = ({ colour, selected, isNew, onSelect, draggable, onDragStart, onD
         style={{ background: `#${colour.hex}` }}
     >
         {!colour.selectable && <span aria-hidden className="absolute inset-0 rounded-lg bg-[repeating-linear-gradient(135deg,transparent_0_4px,rgb(0_0_0/0.35)_4px_6px)]" />}
-        {colour.club > 0 && <span className="absolute -top-1.5 -right-1.5 rounded bg-accent px-1 font-mono text-[9px] leading-[14px] font-bold text-on-accent">HC</span>}
+        {colour.club > 0 && <span className="absolute -top-1.5 -right-1.5 rounded bg-accent-solid px-1 font-mono text-[9px] leading-[14px] font-bold text-on-accent">HC</span>}
         {(isNew || differsFromHabbo(colour)) && <span aria-hidden className={cx('absolute -bottom-1 -left-1 size-2.5 rounded-full border-2 border-surface', isNew ? 'bg-good' : 'bg-warn')} />}
     </button>
 );
@@ -285,7 +285,7 @@ export const PaletteEditor = ({ canManage }: { canManage: boolean }) => {
     const usedBy = palette?.usedBy ?? [];
 
     return (
-        <div className="grid items-start gap-4 lg:grid-cols-[14rem_1fr]">
+        <div className="grid items-start gap-4 lg:gap-6 lg:grid-cols-[14rem_1fr]">
             <Panel className="overflow-clip">
                 <ul className="divide-y divide-line">
                     {ids.map((id) => {
@@ -368,7 +368,7 @@ export const PaletteEditor = ({ canManage }: { canManage: boolean }) => {
                                                 </div>
                                             )}
                                     <div className="mt-4 flex flex-wrap items-center gap-x-4 gap-y-1 text-2xs text-muted">
-                                        <span className="flex items-center gap-1.5"><span className="rounded bg-accent px-1 font-mono text-[9px] leading-[14px] font-bold text-on-accent">HC</span> club only</span>
+                                        <span className="flex items-center gap-1.5"><span className="rounded bg-accent-solid px-1 font-mono text-[9px] leading-[14px] font-bold text-on-accent">HC</span> club only</span>
                                         <span className="flex items-center gap-1.5"><span className="size-3 rounded bg-[repeating-linear-gradient(135deg,var(--color-line)_0_3px,transparent_3px_5px)]" /> hidden</span>
                                         <span className="flex items-center gap-1.5"><span className="size-2 rounded-full bg-warn" /> changed from Habbo's</span>
                                         <span className="flex items-center gap-1.5"><span className="size-2 rounded-full bg-good" /> new</span>

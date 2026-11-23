@@ -134,7 +134,7 @@ export const ClientHealthPage = () => {
                             <Stat label="Chat lag warnings" value={number(totals.lag)} tone={totals.lag > 0 ? 'warn' : undefined} detail={`in ${data.rooms.filter(x => x.lagWarnings > 0).length} rooms`} />
                         </section>
 
-                        <div className="grid gap-4 lg:grid-cols-2 lg:gap-5">
+                        <div className="grid gap-4 lg:grid-cols-2 lg:gap-6">
                             <DayChartCard
                                 title="Frame rate"
                                 description={filter.room ? 'In this room, from performance reports and frame rate events.' : 'Frames per second, from performance reports.'}
@@ -198,7 +198,7 @@ export const ClientHealthPage = () => {
                                     )}
                         </Panel>
 
-                        <div className="grid gap-4 lg:grid-cols-2 lg:gap-5">
+                        <div className="grid gap-4 lg:grid-cols-2 lg:gap-6">
                             <Panel title="Rooms" description="The most chat lag first. A room opens its own reports.">
                                 {data.rooms.length === 0
                                     ? <EmptyState>No room reported anything in this range.</EmptyState>

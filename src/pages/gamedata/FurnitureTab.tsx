@@ -105,7 +105,7 @@ const DefinitionRow = ({ item, onOpen, picked, onPick }: { item: FurnitureListIt
     <li className="flex items-center">
         {onPick && (
             <label className="grid shrink-0 cursor-pointer place-items-center self-stretch pl-3 sm:pl-4" title="Pick it, to give several a logic at once">
-                <input type="checkbox" checked={!!picked} onChange={event => onPick(event.target.checked)} aria-label={`Pick ${item.className}`} className="size-4 accent-accent" />
+                <input type="checkbox" checked={!!picked} onChange={event => onPick(event.target.checked)} aria-label={`Pick ${item.className}`} className="size-4 accent-accent-solid" />
             </label>
         )}
         <button
@@ -217,7 +217,7 @@ const startFilter = (params: URLSearchParams): FurnitureTag | '' | typeof UNUSED
     return params.get('status') === 'failed' ? 'bundle-failed' : '';
 };
 
-const TONE_DOTS: Record<string, string> = { red: 'bg-bad', amber: 'bg-warn', accent: 'bg-accent', green: 'bg-good', neutral: 'bg-muted' };
+const TONE_DOTS: Record<string, string> = { red: 'bg-bad', amber: 'bg-warn', accent: 'bg-accent-solid', green: 'bg-good', neutral: 'bg-muted' };
 
 /** Every definition, found by words, kind and tag; one opens in the editor. */
 const Definitions = ({ status }: { status: GamedataStatus }) => {

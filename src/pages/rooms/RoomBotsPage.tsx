@@ -109,7 +109,7 @@ export const RoomBotsPage = () => {
                 {error && <ErrorNotice error={error} />}
                 {bots && bots.length === 0 && <Panel><EmptyState>No bot stands in this room.</EmptyState></Panel>}
                 {bots && selected && (
-                    <div className="grid items-start gap-4 lg:grid-cols-[20rem_minmax(0,1fr)] lg:gap-5">
+                    <div className="grid items-start gap-4 lg:grid-cols-[20rem_minmax(0,1fr)] lg:gap-6">
                         <Panel title={`Bots (${bots.length})`} className="overflow-clip">
                             <ul>
                                 {bots.map(bot => (

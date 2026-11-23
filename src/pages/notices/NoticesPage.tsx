@@ -228,11 +228,11 @@ const Notices = ({ server, canManage, save }: { server: NoticeData; canManage: b
                 {habboModal}
                 <PageBody>
                     {notices}
-                    <div className="grid items-start gap-4 lg:grid-cols-[minmax(0,1fr)_22rem] lg:gap-5">
+                    <div className="grid items-start gap-4 lg:grid-cols-[minmax(0,1fr)_22rem] lg:gap-6">
                         <Panel title="Notice" description="What it says and shows, where a click goes, how it closes, and when it shows and to whom.">
                             <NoticeEditor key={key} notice={notice} onChange={update} disabled={disabled} />
                         </Panel>
-                        <aside className="flex flex-col gap-4 lg:sticky lg:top-6 lg:gap-5">
+                        <aside className="flex flex-col gap-4 lg:sticky lg:top-6 lg:gap-6">
                             <Panel title="As docked" description="About as the client draws it under the purse. Unsaved changes show here too.">
                                 <div className="flex justify-center rounded-b-xl bg-[#0e1a2b] p-6" data-testid="notice-live-preview">
                                     <NoticePreview notice={notice} />

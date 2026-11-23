@@ -331,8 +331,8 @@ export const RoomPage = () => {
                             <Stat label="Score" value={room.score} />
                         </section>
 
-                        <div className="flex flex-wrap items-start gap-4 lg:gap-5">
-                            <div className="flex min-w-0 flex-[999_1_520px] flex-col gap-4 lg:gap-5">
+                        <div className="flex flex-wrap items-start gap-4 lg:gap-6">
+                            <div className="flex min-w-0 flex-[999_1_520px] flex-col gap-4 lg:gap-6">
                                 <Panel title={`In the room now (${room.playersInside.length})`} actions={room.isLoaded && !live ? <Label>refreshes every 10 s</Label> : undefined}>
                                     {room.playersInside.length === 0
                                         ? <EmptyState>{room.isLoaded ? 'Nobody is in the room.' : 'The room is not loaded, so nobody is in it.'}</EmptyState>
@@ -353,7 +353,7 @@ export const RoomPage = () => {
                                 />
                             </div>
 
-                            <div className="flex min-w-0 flex-[1_1_300px] flex-col gap-4 max-lg:order-first lg:gap-5">
+                            <div className="flex min-w-0 flex-[1_1_300px] flex-col gap-4 max-lg:order-first lg:gap-6">
                                 <RoomControls room={room} run={run} busy={action.isPending} />
                                 {/* Only what bears on the people in the room now; everything else is on the Settings tab. */}
                                 <Panel title="Who may do what" actions={room.can.editSettings ? <TextLink to={`/rooms/${id}/settings`}>All settings</TextLink> : undefined}>

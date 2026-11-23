@@ -23,7 +23,7 @@ const VariableItem = ({ item, picked, canManage, onPick }: { item: HabboVariable
         <li className="grid items-start gap-x-3 gap-y-1 px-4 py-2.5 sm:grid-cols-[1rem_5.5rem_minmax(10rem,1fr)_2fr]">
             <input
                 type="checkbox"
-                className="mt-0.5 size-4 rounded border-line accent-accent"
+                className="mt-0.5 size-4 rounded border-line accent-accent-solid"
                 aria-label={`Take in ${item.key}`}
                 checked={picked}
                 disabled={!canManage}

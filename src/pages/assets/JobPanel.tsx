@@ -75,7 +75,7 @@ export const JobPanel = ({ job, canManage, compact = false, actions }: { job: As
                 <span className="flex items-center gap-2">
                     {job.title}
                     <Badge tone={STATUS_TONES[job.status]}>
-                        {running && <span className="size-1.5 animate-pulse rounded-full bg-accent" aria-hidden />}
+                        {running && <span className="size-1.5 animate-pulse rounded-full bg-accent-solid" aria-hidden />}
                         {job.status}
                     </Badge>
                 </span>
@@ -115,7 +115,7 @@ export const JobPanel = ({ job, canManage, compact = false, actions }: { job: As
                     className="h-2 overflow-hidden rounded-full bg-line"
                 >
                     <div
-                        className={cx('h-2 rounded-full transition-[width] duration-700', job.status === 'failed' ? 'bg-bad' : job.status === 'canceled' ? 'bg-warn' : job.status === 'done' ? 'bg-good' : 'bg-accent')}
+                        className={cx('h-2 rounded-full transition-[width] duration-700', job.status === 'failed' ? 'bg-bad' : job.status === 'canceled' ? 'bg-warn' : job.status === 'done' ? 'bg-good' : 'bg-accent-solid')}
                         style={{ width: `${Math.round(share * 100)}%` }}
                     />
                 </div>

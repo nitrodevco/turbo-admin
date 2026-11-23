@@ -220,7 +220,7 @@ export const PromosTab = ({ draft, codes, now, open, onOpen, onOpenSlot, disable
     return (
         <div className="flex flex-col gap-4">
             <Placement draft={draft} widget="widgetcontainer" what="scheduled promos" onOpenSlot={onOpenSlot} disabled={disabled} />
-            <div className="grid items-start gap-4 lg:grid-cols-[18rem_minmax(0,1fr)]">
+            <div className="grid items-start gap-4 lg:gap-6 lg:grid-cols-[18rem_minmax(0,1fr)]">
                 <Panel ref={fillPromos} className="flex flex-col overflow-clip lg:sticky lg:top-4 lg:max-h-(--fill-height)">
                     <div className="flex items-center gap-2 border-b border-line p-3">
                         <SearchInput value={filter} onValueChange={setFilter} placeholder="Find a promo" className="min-w-0 flex-1" />

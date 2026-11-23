@@ -572,7 +572,7 @@ export const ClothingEditor = ({ canManage }: { canManage: boolean }) => {
     const current = data.kinds.find(x => x.entry.key === chosen) ?? data.kinds[0];
 
     return (
-        <div className="grid items-start gap-4 lg:grid-cols-[14rem_1fr]">
+        <div className="grid items-start gap-4 lg:gap-6 lg:grid-cols-[14rem_1fr]">
             <Panel ref={fillKinds} className="flex flex-col overflow-clip lg:sticky lg:top-16 lg:max-h-(--fill-height)">
                 {data.kinds.length === 0 && <EmptyState>No kinds yet: take Habbo’s figure data in above.</EmptyState>}
                 <ul className="max-h-[60dvh] min-h-0 divide-y divide-line overflow-y-auto lg:max-h-none">

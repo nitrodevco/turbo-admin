@@ -408,7 +408,7 @@ export const MediaLibraryPage = () => {
                         {data?.canManage && <UploadBar onUploaded={(ids) => { if (ids.length === 1) select(ids[0] ?? null); }} />}
                     </Panel>
                 </div>
-                <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_380px]">
+                <div className="grid gap-4 lg:gap-6 lg:grid-cols-[minmax(0,1fr)_380px]">
                     <Panel title="Images">
                         {error && <ErrorNotice error={error} />}
                         {!data && !error && <Loading />}

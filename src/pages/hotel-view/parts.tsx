@@ -11,7 +11,7 @@ import type { HotelViewDraft } from './draft';
 import { currentCode, formatSchedule, fromLocalInput, LIBRARY_ADDRESS, parseSchedule, parseTime, type ScheduleEntry, toLocalInput } from './model';
 
 /** A dot beside what has changed since it was saved. */
-export const Changed = ({ on }: { on: boolean }) => (on ? <span title="Not saved yet" className="inline-block size-1.5 shrink-0 rounded-full bg-accent" /> : null);
+export const Changed = ({ on }: { on: boolean }) => (on ? <span title="Not saved yet" className="inline-block size-1.5 shrink-0 rounded-full bg-accent-solid" /> : null);
 
 /** A picture's address, picked in the image picker, with the picture beside it as the client would load it. */
 export const ImageField = ({ label, hint, value, onChange, resolve, changed, disabled, accept = LIBRARY_ADDRESS }: {

@@ -87,7 +87,7 @@ export const ApprovalPage = () => {
                 {query.error && <ErrorNotice error={query.error} />}
                 {query.isPending && <Loading />}
                 {approval && (
-                    <div className="grid items-start gap-4 lg:grid-cols-[minmax(0,1fr)_22rem]">
+                    <div className="grid items-start gap-4 lg:gap-6 lg:grid-cols-[minmax(0,1fr)_22rem]">
                         <div className="flex min-w-0 flex-col gap-4">
                             <Panel title="What it will do" description="The handler of its kind is given these arguments.">
                                 <p className="px-4 pt-3 text-sm wrap-anywhere whitespace-pre-wrap">{approval.summary}</p>

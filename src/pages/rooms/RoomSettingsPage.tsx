@@ -102,10 +102,10 @@ const SettingsForm = ({ room }: { room: RoomDetailResponse }) => {
     };
 
     return (
-        <form id={FORM_ID} onSubmit={handleSubmit} className="flex flex-col gap-4 lg:gap-5">
+        <form id={FORM_ID} onSubmit={handleSubmit} className="flex flex-col gap-4 lg:gap-6">
             <ActionOutcome message={save.data?.message} error={save.error} />
-            <div className="grid gap-4 lg:grid-cols-2 lg:gap-5">
-                <div className="flex flex-col gap-4 lg:gap-5">
+            <div className="grid gap-4 lg:grid-cols-2 lg:gap-6">
+                <div className="flex flex-col gap-4 lg:gap-6">
                     <Section title="Basics">
                         <Field label="Name" name="name" value={settings.name} onChange={event => set('name', event.target.value)} required />
                         <Labeled label="Description">
@@ -152,7 +152,7 @@ const SettingsForm = ({ room }: { room: RoomDetailResponse }) => {
                     </Section>
                 </div>
 
-                <div className="flex flex-col gap-4 lg:gap-5">
+                <div className="flex flex-col gap-4 lg:gap-6">
                     <Section title="Moderation">
                         <div className="grid gap-4 sm:grid-cols-3">
                             <Labeled label="Who can mute">

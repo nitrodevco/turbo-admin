@@ -75,7 +75,7 @@ export const ChangesBar = ({ history, unpublished, busy, onUndo, onRedo, onDisca
         <div className={cx('flex flex-wrap items-center gap-2 rounded-xl border px-3 py-2', unpublished > 0 ? 'border-accent/40 bg-accent-soft/40' : 'border-line bg-surface')}>
             <div className="flex min-w-0 flex-1 items-center gap-2.5">
                 {unpublished > 0
-                    ? <span className="grid size-7 shrink-0 place-items-center rounded-full bg-accent font-mono text-xs font-bold text-on-accent tabular-nums">{unpublished > 99 ? '99+' : unpublished}</span>
+                    ? <span className="grid size-7 shrink-0 place-items-center rounded-full bg-accent-solid font-mono text-xs font-bold text-on-accent tabular-nums">{unpublished > 99 ? '99+' : unpublished}</span>
                     : <CheckCircle2 className="size-5 shrink-0 text-good" />}
                 <div className="min-w-0 text-sm">
                     <div className="truncate font-medium">

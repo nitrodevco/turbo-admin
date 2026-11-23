@@ -100,7 +100,7 @@ export const WordFilterPage = () => {
                 {filter.error && <ErrorNotice error={filter.error} />}
                 {filter.isPending && <Loading />}
                 {data && (
-                    <div className="grid items-start gap-4 lg:grid-cols-[minmax(0,1fr)_22rem]">
+                    <div className="grid items-start gap-4 lg:gap-6 lg:grid-cols-[minmax(0,1fr)_22rem]">
                         <Panel className="overflow-clip" title="Words" description="Matched whole and ignoring case, in everything players type that others see.">
                             <div className="border-b border-line px-4 py-3">
                                 <SearchInput value={search} onValueChange={setSearch} placeholder="Find a word" aria-label="Find a word" className="sm:max-w-64" />
