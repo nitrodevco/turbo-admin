@@ -7,7 +7,7 @@
  *   colour in a coloured bubble, at any of a room's bubble widths and chat font sizes, on a
  *   backdrop and at a zoom.
  * - A style says who may speak with it - the server checks each line by its flags, and the client's
- *   picker offers it by the same - and how many own it and have it as their bubble.
+ *   picker offers it by the same - and how many own it.
  * - The style picked is open to change as it is, or is copied into a new one: its colours round the
  *   wheel and its bitmaps replaced; its words' face, size and colour; its flags; and its shape,
  *   every reg point, with the guides drawn over the bubble. Save shows once something is changed.
@@ -151,11 +151,8 @@ const StyleTitle = ({ style }: { style: ChatStyle }) => (
     </span>
 );
 
-/** How many own the style, and have it as their bubble. */
-const usedBy = (style: ChatStyle) => [
-    style.owners > 0 && `${style.owners.toLocaleString()} own it`,
-    `${style.preferring.toLocaleString()} ${style.preferring === 1 ? 'has' : 'have'} it as their bubble`,
-].filter(Boolean).join(' · ');
+/** How many own the style; nothing when no one does. */
+const usedBy = (style: ChatStyle) => (style.owners > 0 ? `${style.owners.toLocaleString()} own it` : null);
 
 /** A style as a draft to change - `copy` makes a new one from it. One without a look borrows the normal bubble's. */
 const draftOf = (style: ChatStyle, mode: 'edit' | 'copy', normal: ChatStyle | null, nextId: number): Draft => {
@@ -429,7 +426,7 @@ export const ChatStylesTab = ({ canManage }: { canManage: boolean }) => {
                                         onClick={() => ask(
                                             {
                                                 title: `Delete the chat style ${current.assetId}?`,
-                                                body: `It goes from the server and from ${LIBRARY}${current.preferring > 0 ? `; the ${current.preferring.toLocaleString()} who have it as their bubble talk in the normal one` : ''}.`,
+                                                body: `It goes from the server and from ${LIBRARY}; anyone who has it as their bubble talks in the normal one.`,
                                                 confirm: 'Delete',
                                             },
                                             () => remove.mutate(current.id, {

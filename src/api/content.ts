@@ -507,7 +507,7 @@ export type ChatStyleFile = typeof CHAT_STYLE_FILES[number];
 /**
  * A chat bubble style whole: the id the client draws it by and its asset id, who may speak with it
  * (the server checks each line), how it behaves, how it is drawn (its reg points and bitmaps, as
- * `chat-style-definitions.json` has them), and how many own it and have it as their bubble.
+ * `chat-style-definitions.json` has them), and how many own it.
  * `drawable` says the bundle carries it: it needs reg points and its three bitmaps.
  */
 export interface ChatStyle {
@@ -527,7 +527,6 @@ export interface ChatStyle {
     bitmaps: ChatStyleFile[];
     sortOrder: number;
     owners: number;
-    preferring: number;
     drawable: boolean;
     /** Its look was taken from Habbo's HTML client. */
     fromClient: boolean;
