@@ -119,7 +119,7 @@ export const NotificationsBell = ({ align = 'end' }: { align?: 'start' | 'end' }
                                     key={item.id}
                                     type="button"
                                     onClick={() => pick(item)}
-                                    className={cx('flex w-full items-start gap-3 rounded-lg px-2.5 py-2 text-left transition-colors hover:bg-subtle', fresh && 'bg-accent-soft/40')}
+                                    className={cx('flex w-full items-start gap-3 rounded-lg px-2.5 py-2 text-left transition-colors hover:bg-subtle', fresh && 'bg-accent-soft/50')}
                                 >
                                     <span className={cx('mt-0.5 grid size-7 shrink-0 place-items-center rounded-full [&>svg]:size-3.5', kind.tone)}>{kind.icon}</span>
                                     <span className="min-w-0 flex-1">

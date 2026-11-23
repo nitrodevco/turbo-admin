@@ -59,7 +59,7 @@ export const LimitedSection = ({ offerId, limited, canManage }: { offerId: numbe
     };
 
     return (
-        <div className="flex flex-col gap-3 rounded-lg border border-warn-line bg-warn-soft/40 p-3">
+        <div className="flex flex-col gap-3 rounded-lg border border-warn-line bg-warn-soft/50 p-3">
             <div className="flex flex-wrap items-baseline justify-between gap-2">
                 <span className="text-sm font-semibold">Limited series</span>
                 {limited && (

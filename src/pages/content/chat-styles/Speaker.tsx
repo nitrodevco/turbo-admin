@@ -72,7 +72,7 @@ export const SpeakerEditor = ({ name, onName, words, onWords, figure, onFigure, 
                 aria-label="Who says it, and what"
                 aria-expanded={open}
                 className={cx(
-                    'grid size-10 place-items-center rounded-lg border bg-surface/90 shadow-card backdrop-blur transition-colors sm:size-8 [&>svg]:size-4',
+                    'grid size-10 place-items-center rounded-lg border bg-surface/95 shadow-card backdrop-blur transition-colors sm:size-8 [&>svg]:size-4',
                     open ? 'border-accent text-accent' : 'border-line text-muted hover:text-ink',
                 )}
             >

@@ -57,7 +57,7 @@ export const RecolorablePalette = ({ offers, selectedOffer, display }: { offers:
                                         aria-pressed={colour === chosen}
                                         onClick={() => setPicked(colour)}
                                         style={{ backgroundColor: `#${colour}` }}
-                                        className={cx('block h-5 w-6 rounded-sm border border-black/20', colour === chosen && 'ring-2 ring-accent ring-offset-1 ring-offset-canvas')}
+                                        className={cx('block h-5 w-6 rounded-sm border border-black/15', colour === chosen && 'ring-2 ring-accent ring-offset-1 ring-offset-canvas')}
                                     />
                                 </li>
                             ))}

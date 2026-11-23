@@ -164,7 +164,7 @@ const LogicBar = ({ picked, mismatched, onDone }: { picked: number[]; mismatched
     const run = (input: { ids?: number[]; logic?: string }) => set.mutate(input, { onSuccess: result => done(result.changeSet?.changeCount), onError: toastError });
 
     return (
-        <div className="flex flex-wrap items-center gap-2 border-b border-line bg-accent-soft/40 px-3 py-2.5 text-ui sm:px-4 [&>svg]:size-4 [&>svg]:shrink-0">
+        <div className="flex flex-wrap items-center gap-2 border-b border-line bg-accent-soft/50 px-3 py-2.5 text-ui sm:px-4 [&>svg]:size-4 [&>svg]:shrink-0">
             {picked.length > 0
                 ? (
                         <>

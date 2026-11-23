@@ -473,7 +473,7 @@ const EditorBody = ({ definition, canManage, section, onSection, onUnsaved, save
     );
 
     const toggle = (field: FieldInfo) => (
-        <div key={field.key} className={cx('rounded-lg border px-3', differs(field) ? 'border-warn-line bg-warn-soft/40' : 'border-line')}>
+        <div key={field.key} className={cx('rounded-lg border px-3', differs(field) ? 'border-warn-line bg-warn-soft/50' : 'border-line')}>
             <Switch label={field.label} checked={draft[field.key] === true} onChange={checked => set(field.key, checked)} disabled={!canManage} hint={habboNote(field) || FLAG_HINTS[field.key]} />
         </div>
     );

@@ -24,7 +24,7 @@ const PageWords = ({ page, disabled }: { page: ExpiringPage; disabled?: boolean 
     return (
         <div className="flex flex-wrap gap-4">
             <figure className="flex flex-col items-center gap-1">
-                <span className="grid size-28 place-items-center rounded-lg border border-line bg-[#aae0f0]">
+                <span className="grid size-28 place-items-center rounded-lg border border-line bg-hotel-sky">
                     {teaser && <img src={teaser} alt="" className="max-h-full max-w-full" onError={event => (event.currentTarget.style.display = 'none')} />}
                 </span>
                 <figcaption className="max-w-28 truncate font-mono text-2xs text-muted" title={`reception/catalog_teaser_${page.pageName}.png`}>catalog_teaser_{page.pageName}.png</figcaption>

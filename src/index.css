@@ -4,18 +4,20 @@
 @custom-variant dark (&:where(.dark, .dark *));
 
 /*
- * The panel's palette: "Graphite & Iris". Neutral graphite surfaces with no tint of their own, one
- * iris (indigo-violet) accent, numbers and labels in IBM Plex Mono. Components use these tokens
- * through Tailwind (`bg-surface`, `text-muted`, `border-line`, `text-good`), so the look is changed
- * here, for both themes: light below, dark (the default) under `.dark`. Every text colour reads at
- * 4.5:1 or more on the surfaces it is set on, in both themes.
+ * The panel's palette: "Control Room". Slate surfaces, one teal accent, numbers and labels in
+ * IBM Plex Mono. Components use these tokens through Tailwind (`bg-surface`, `text-muted`,
+ * `border-line`, `text-good`), so the look is changed here, for both themes: light below, dark
+ * (the default) under `.dark`. Every text colour reads at 4.5:1 or more on the surfaces it is set
+ * on, in both themes.
  *
- * The accent comes in two: `accent` for words, icons, borders and focus rings, and `accent-solid`
- * for fills with `on-accent` text on them (a primary button, a count, a switch that is on). In the
- * light theme they are one colour; in the dark one the words are a lighter tint, so they read on
- * a dark card, and the fills a deeper one, so white reads on them.
+ * The accent has two jobs, each with its token: `accent` for words, icons, borders and focus rings,
+ * and `accent-solid` for fills with `on-accent` text on them (a primary button, a count, a switch
+ * that is on). With teal they are one colour, white on it in the light theme and dark ink in the
+ * dark one; a fill takes `accent-solid` all the same, so a hue whose words need a lighter tint
+ * than its fills can be set here alone.
  *
- * One scale for each of type, corners and depth, so pages agree without thinking about it:
+ * One scale for each of type, corners, depth, tints and spacing, so pages agree without thinking
+ * about it:
  *   type     text-2xs 11 (labels, tags, keys) · text-xs 12 (hints, meta) · text-ui 13 (controls
  *            and dense rows from a tablet up) · text-sm 14 (reading) · text-base 16 (dialog
  *            titles, phone controls) · text-lg 18 (page titles) · text-2xl 24 (figures)
@@ -23,6 +25,11 @@
  *            · rounded-2xl (dialogs and sheets)
  *   depth    shadow-card (a card on the page) · shadow-pop (a menu or popover over it) ·
  *            shadow-overlay (a dialog over everything); `card` is a card's whole look
+ *   tints    bg-accent-soft (the chosen item) · bg-accent-soft/50 (a hint: unread, waiting, in
+ *            focus, a target pointed at) · border-accent/40 (a quiet accent edge) ·
+ *            ring-accent/25 (the glow around a focused field) · hover:bg-subtle/60 (a row pointed
+ *            at or held open) · bg-subtle/40 (a band or strip inside a card) · bg-canvas/50 (an
+ *            inset well) · bg-warn-soft/50, bg-bad-soft/50 (a row or tile in that state)
  *   spacing  4px steps. A page sits 16px from the window's edge on a phone, 24px on a tablet and
  *            32px from a laptop up; its cards are 16px apart (gap-4), 24px from a laptop up
  *            (lg:gap-6); a card's content sits 16px (px-4) from its edge
@@ -37,42 +44,45 @@
     --text-ui--line-height: 1.25rem;
 
     /* Where the page sits, the cards on it, a raised or hovered area, and their borders. */
-    --color-canvas: #f6f7f9;
+    --color-canvas: #f3f5f8;
     --color-chrome: #ffffff;
     --color-surface: #ffffff;
-    --color-subtle: #f0f1f4;
-    --color-line: #e2e4e9;
+    --color-subtle: #eef1f5;
+    --color-line: #dce2e9;
     /* A border pointed at: a control or a card under the mouse. */
-    --color-line-strong: #c9ccd4;
-    --color-ink: #1b1d22;
-    --color-muted: #5f636d;
+    --color-line-strong: #c3ccd7;
+    --color-ink: #0e141b;
+    --color-muted: #566272;
 
     /* The accent for words and lines, its hover, a quiet fill of it; its solid fill, and text set on that. */
-    --color-accent: #5753d6;
-    --color-accent-hover: #4541c2;
-    --color-accent-soft: #eeeefd;
-    --color-accent-solid: #5753d6;
-    --color-accent-solid-hover: #4541c2;
+    --color-accent: #0b7c74;
+    --color-accent-hover: #09665f;
+    --color-accent-soft: #e7f6f4;
+    --color-accent-solid: #0b7c74;
+    --color-accent-solid-hover: #09665f;
     --color-on-accent: #ffffff;
 
-    /* Chart series, in this order: iris and teal, apart for colour-blind eyes as well. */
-    --color-series-1: #5753d6;
-    --color-series-2: #0f8f84;
+    /* Chart series, in this order; checked for colour-blind separation against the surface. */
+    --color-series-1: #008f85;
+    --color-series-2: #7048e8;
 
     /* The catalogue's own: coins and club (amber), VIP (violet), as the client marks them. */
-    --color-coin: #b45f00;
-    --color-vip: #9a3fd0;
+    --color-coin: #c26a00;
+    --color-vip: #8b3fd9;
+
+    /* The hotel view's sky, behind its pictures as the client draws them: one colour in both themes. */
+    --color-hotel-sky: #aae0f0;
 
     /* States: live and fine, needs attention, destructive or refused. Each with a fill and a line. */
-    --color-good: #18794e;
-    --color-good-soft: #e5f5ec;
-    --color-good-line: #b7e1c9;
-    --color-warn: #9a5b00;
-    --color-warn-soft: #fff3d9;
-    --color-warn-line: #f0d39a;
-    --color-bad: #c62a2f;
-    --color-bad-soft: #fdecec;
-    --color-bad-line: #f6c6c7;
+    --color-good: #157a45;
+    --color-good-soft: #e3f5ec;
+    --color-good-line: #b9e3cc;
+    --color-warn: #8a5600;
+    --color-warn-soft: #fff4dc;
+    --color-warn-line: #f1d9a6;
+    --color-bad: #b42318;
+    --color-bad-soft: #fdeeee;
+    --color-bad-line: #f3c9c9;
 
     --animate-rise: rise 0.28s ease-out both;
     --animate-back-in: back-in 0.25s ease-out both;
@@ -87,45 +97,45 @@
  * shadows, which Tailwind writes into its utilities and so could not change for the dark theme.
  */
 :root {
-    --elevation-card: 0 1px 2px 0 rgb(17 19 26 / 0.05);
-    --elevation-pop: 0 12px 28px -6px rgb(17 19 26 / 0.16), 0 2px 6px -2px rgb(17 19 26 / 0.08);
-    --elevation-overlay: 0 24px 56px -12px rgb(17 19 26 / 0.28);
+    --elevation-card: 0 1px 2px 0 rgb(16 24 40 / 0.05);
+    --elevation-pop: 0 12px 28px -6px rgb(16 24 40 / 0.16), 0 2px 6px -2px rgb(16 24 40 / 0.08);
+    --elevation-overlay: 0 24px 56px -12px rgb(16 24 40 / 0.28);
 }
 
 .dark {
     color-scheme: dark;
 
-    --color-canvas: #0c0d10;
-    --color-chrome: #111215;
-    --color-surface: #16171b;
-    --color-subtle: #1d1f24;
-    --color-line: #272a30;
-    --color-line-strong: #383c44;
-    --color-ink: #ecedf1;
-    --color-muted: #9095a1;
+    --color-canvas: #0a0e13;
+    --color-chrome: #0d1218;
+    --color-surface: #11171f;
+    --color-subtle: #161e28;
+    --color-line: #1f2a37;
+    --color-line-strong: #314052;
+    --color-ink: #e6edf3;
+    --color-muted: #8d9aab;
 
-    --color-accent: #a09dff;
-    --color-accent-hover: #bfbdff;
-    --color-accent-soft: #1e1d3f;
-    --color-accent-solid: #5d58e0;
-    --color-accent-solid-hover: #6d69ea;
-    --color-on-accent: #ffffff;
+    --color-accent: #4fd1c5;
+    --color-accent-hover: #7fe3da;
+    --color-accent-soft: #10302e;
+    --color-accent-solid: #4fd1c5;
+    --color-accent-solid-hover: #7fe3da;
+    --color-on-accent: #06201e;
 
-    --color-series-1: #8783ff;
-    --color-series-2: #2bb3a6;
+    --color-series-1: #14a397;
+    --color-series-2: #8b6ff0;
 
-    --color-coin: #f5a524;
-    --color-vip: #c98bf7;
+    --color-coin: #f59e0b;
+    --color-vip: #c084fc;
 
-    --color-good: #4cc790;
-    --color-good-soft: #11261c;
-    --color-good-line: #1f4a35;
-    --color-warn: #f2b552;
+    --color-good: #5bd68a;
+    --color-good-soft: #0f2219;
+    --color-good-line: #1d4630;
+    --color-warn: #f2b55a;
     --color-warn-soft: #2a2010;
-    --color-warn-line: #574016;
-    --color-bad: #ff8e8b;
-    --color-bad-soft: #2c1518;
-    --color-bad-line: #632a2f;
+    --color-warn-line: #5a4320;
+    --color-bad: #ff8a8a;
+    --color-bad-soft: #1f1215;
+    --color-bad-line: #5a2a2e;
 
     /* On a dark page a shadow hardly shows: a card is lifted by a faint light along its top edge. */
     --elevation-card: inset 0 1px 0 0 rgb(255 255 255 / 0.03);
@@ -241,7 +251,7 @@ body {
 /* Drop-downs drawn as the other fields are, with a chevron in the muted text colour. */
 select:not([multiple]) {
     appearance: none;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%235f636d' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23566272' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
     background-position: right 0.6rem center;
     background-repeat: no-repeat;
     background-size: 1rem;
@@ -249,7 +259,7 @@ select:not([multiple]) {
 }
 
 .dark select:not([multiple]) {
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%239095a1' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%238d9aab' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
 }
 
 select option {
@@ -311,7 +321,7 @@ select option {
 }
 
 dialog::backdrop {
-    background: rgb(6 7 10 / 0.62);
+    background: rgb(5 8 12 / 0.6);
     backdrop-filter: blur(2px);
 }
 

@@ -114,7 +114,7 @@ export const RoomBotsPage = () => {
                             <ul>
                                 {bots.map(bot => (
                                     <li key={bot.id} className="border-t border-line first:border-t-0">
-                                        <button type="button" onClick={() => setOpen(bot.id)} className={cx('flex min-h-14 w-full items-center gap-3 px-4 py-2 text-left hover:bg-subtle', selected.id === bot.id && 'bg-accent-soft/50')}>
+                                        <button type="button" onClick={() => setOpen(bot.id)} className={cx('flex min-h-14 w-full items-center gap-3 px-4 py-2 text-left hover:bg-subtle', selected.id === bot.id && 'bg-accent-soft')}>
                                             <Avatar id={bot.id} name={bot.name} figure={bot.figure} />
                                             <span className="min-w-0 flex-1">
                                                 <span className="block truncate text-sm font-medium">{bot.name}</span>

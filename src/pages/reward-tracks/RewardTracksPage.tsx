@@ -102,7 +102,7 @@ const TrackList = ({ tracks, onOpen }: { tracks: RewardTrackListItem[]; onOpen: 
                                 <Td>
                                     {/* A button for the keyboard: its click goes on to the row's. */}
                                     <button type="button" className="flex items-center gap-2.5 rounded text-left">
-                                        <span className="size-4 shrink-0 rounded border border-black/10" style={{ background: css(themeOf(track.theme).dark) }} title={`Theme ${track.theme || 'blue'}`} />
+                                        <span className="size-4 shrink-0 rounded border border-black/15" style={{ background: css(themeOf(track.theme).dark) }} title={`Theme ${track.theme || 'blue'}`} />
                                         <span className="min-w-0">
                                             {names.has(track.id) && <span className="block truncate font-medium">{names.get(track.id)}</span>}
                                             <span className={cx('block font-mono', names.has(track.id) ? 'text-2xs text-muted' : 'text-sm')}>{track.id}</span>

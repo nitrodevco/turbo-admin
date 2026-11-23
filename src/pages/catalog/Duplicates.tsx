@@ -102,7 +102,7 @@ export const Duplicates = ({ tree, onOpen }: { tree: CatalogTree; onOpen: (pageI
             <ul className="grid gap-3 xl:grid-cols-2">
                 {shown.slice(0, 200).map(duplicate => (
                     <li key={`${duplicate.furni.id}:${duplicate.extraParam ?? ''}`} className="card overflow-hidden">
-                        <div className="flex items-center gap-3 border-b border-line bg-subtle/50 px-3 py-2">
+                        <div className="flex items-center gap-3 border-b border-line bg-subtle/40 px-3 py-2">
                             <ProductIcon type={duplicate.furni.type} name={duplicate.furni.name} className="size-9" />
                             <div className="min-w-0 flex-1">
                                 <div className="truncate text-sm font-semibold">{duplicate.furni.publicName ?? duplicate.furni.name}</div>

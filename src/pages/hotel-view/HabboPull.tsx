@@ -30,7 +30,7 @@ const Change = ({ entry, text }: { entry: HotelViewHabboEntry; text?: boolean })
 
 const Section = ({ title, count, children }: { title: string; count: number; children: ReactNode }) => (
     <section className="flex flex-col">
-        <h3 className="flex items-center gap-2 border-b border-line bg-canvas/60 px-4 py-2 font-mono text-2xs font-medium tracking-[0.08em] text-muted uppercase">
+        <h3 className="flex items-center gap-2 border-b border-line bg-canvas/50 px-4 py-2 font-mono text-2xs font-medium tracking-[0.08em] text-muted uppercase">
             {title}
             <span className="rounded-full bg-subtle px-1.5 font-mono text-2xs text-muted tabular-nums">{count.toLocaleString()}</span>
         </h3>

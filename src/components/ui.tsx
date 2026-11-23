@@ -228,7 +228,7 @@ export const Loading = () => (
  * The look every text box and drop-down shares. Every control (a button, a field, a segmented
  * row) is one height: 40px on a phone, a thumb's size, and 32px from a tablet up.
  */
-export const FIELD_CLASS = 'h-10 sm:h-8 rounded-lg border border-line bg-canvas px-2.5 text-base sm:text-ui text-ink placeholder:text-muted/70 transition-[border-color,box-shadow] hover:border-line-strong focus:border-accent focus:outline-none focus:ring-3 focus:ring-accent/20 disabled:opacity-60 disabled:hover:border-line';
+export const FIELD_CLASS = 'h-10 sm:h-8 rounded-lg border border-line bg-canvas px-2.5 text-base sm:text-ui text-ink placeholder:text-muted/70 transition-[border-color,box-shadow] hover:border-line-strong focus:border-accent focus:outline-none focus:ring-3 focus:ring-accent/25 disabled:opacity-60 disabled:hover:border-line';
 
 /** A colour picker (`<input type="color">`), the height of the fields beside it, its swatch inset. */
 export const COLOUR_FIELD_CLASS = 'h-10 w-12 shrink-0 cursor-pointer rounded-lg border border-line bg-canvas p-1 transition-colors hover:border-line-strong disabled:cursor-not-allowed disabled:opacity-60 sm:h-8';
@@ -477,7 +477,7 @@ export const Avatar = ({ id, name, figure, large, className }: { id: number; nam
     return (
         <span
             aria-hidden
-            className={cx('grid size-11 shrink-0 place-items-center overflow-hidden rounded-lg font-mono text-xs font-semibold text-[#0c0d10] sm:size-10', className)}
+            className={cx('grid size-11 shrink-0 place-items-center overflow-hidden rounded-lg font-mono text-xs font-semibold text-[#0a0e13] sm:size-10', className)}
             style={{ background: drawn ? `color-mix(in srgb, ${AVATAR_COLOURS[Math.abs(id) % AVATAR_COLOURS.length]} 35%, var(--color-subtle))` : AVATAR_COLOURS[Math.abs(id) % AVATAR_COLOURS.length] }}
         >
             {/* Their head as the client draws it, from the hotel's imager; their initials without one. */}

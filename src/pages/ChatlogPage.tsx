@@ -38,7 +38,7 @@ const Lines = ({ entries, highlight, onContext, sorting }: { entries: ChatlogEnt
             sorting={sorting}
         >
             {entries.map(entry => (
-                <Row key={entry.id} className={cx(entry.id === highlight && 'bg-accent/10 hover:bg-accent/15')}>
+                <Row key={entry.id} className={cx(entry.id === highlight && 'bg-accent-soft/50 hover:bg-accent-soft')}>
                     <span className="text-xs whitespace-nowrap text-muted sm:text-sm" title={formatDateTime(entry.atUtc)}>
                         {fromNow(entry.atUtc)}
                     </span>

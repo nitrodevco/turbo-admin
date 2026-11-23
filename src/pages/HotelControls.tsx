@@ -55,7 +55,7 @@ const ControlTile = ({ icon, label, state, tone = 'neutral', chosen, controls, o
         aria-controls={controls}
         className={cx(
             'flex min-h-[4.25rem] min-w-0 flex-col items-start gap-2 rounded-xl border px-3 py-2.5 text-left transition-colors active:scale-[0.99] @xs:flex-row @xs:items-center @xs:gap-3 [&>svg]:size-5 [&>svg]:shrink-0',
-            chosen ? 'border-accent/60 bg-accent-soft [&>svg]:text-accent' : 'border-line bg-surface hover:border-line-strong [&>svg]:text-muted',
+            chosen ? 'border-accent bg-accent-soft [&>svg]:text-accent' : 'border-line bg-surface hover:border-line-strong [&>svg]:text-muted',
         )}
     >
         {icon}

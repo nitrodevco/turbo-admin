@@ -130,7 +130,7 @@ export const MergePagesDialog = ({ tree, pageIds, keepId, onClose, onMerged }: M
                         </p>
                         {data.duplicates.length > 0 && (
                             <div className="overflow-hidden rounded-xl border border-line">
-                                <div className="grid grid-cols-[minmax(0,1fr)_auto_auto] gap-x-4 border-b border-line bg-subtle/50 px-3 py-1.5 text-2xs font-semibold text-muted">
+                                <div className="grid grid-cols-[minmax(0,1fr)_auto_auto] gap-x-4 border-b border-line bg-subtle/40 px-3 py-1.5 text-2xs font-semibold text-muted">
                                     <span>Sold twice</span>
                                     <span className="text-right">Stays</span>
                                     <span className="text-right">Deleted</span>

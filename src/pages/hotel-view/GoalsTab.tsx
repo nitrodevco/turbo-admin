@@ -101,7 +101,7 @@ const MeterArt = ({ code }: { code: string }) => {
 
                     return (
                         <figure key={level} className="flex flex-col items-center gap-1">
-                            <span className="grid size-20 place-items-center rounded-lg border border-line bg-[#aae0f0]">
+                            <span className="grid size-20 place-items-center rounded-lg border border-line bg-hotel-sky">
                                 {url && <img src={url} alt="" className="max-h-full max-w-full" onError={event => (event.currentTarget.style.display = 'none')} />}
                             </span>
                             <figcaption className="text-xs text-muted">Level {level}</figcaption>

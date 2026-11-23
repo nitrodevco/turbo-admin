@@ -238,7 +238,7 @@ export const PromosTab = ({ draft, codes, now, open, onOpen, onOpenSlot, disable
                                     <button
                                         type="button"
                                         onClick={() => onOpen(code)}
-                                        className={cx('flex w-full flex-col gap-1 px-3 py-2.5 text-left hover:bg-subtle', selected === code && 'bg-accent-soft/50')}
+                                        className={cx('flex w-full flex-col gap-1 px-3 py-2.5 text-left hover:bg-subtle', selected === code && 'bg-accent-soft')}
                                     >
                                         <span className="flex items-center gap-2 font-mono text-ui">
                                             <span className="truncate">{code}</span>

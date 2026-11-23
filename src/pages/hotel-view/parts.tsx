@@ -72,7 +72,7 @@ export const ScheduleEditor = ({ value, onChange, codes, now, emptyLabel, disabl
                 const bad = entry.at.trim() !== '' && parseTime(entry.at) === null;
 
                 return (
-                    <div key={index} className={cx('flex flex-wrap items-center gap-2 rounded-lg border p-2', showing.index === index ? 'border-accent bg-accent-soft/40' : 'border-line')}>
+                    <div key={index} className={cx('flex flex-wrap items-center gap-2 rounded-lg border p-2', showing.index === index ? 'border-accent bg-accent-soft/50' : 'border-line')}>
                         <CalendarClock className="size-4 shrink-0 text-muted" />
                         <Input
                             type="datetime-local"

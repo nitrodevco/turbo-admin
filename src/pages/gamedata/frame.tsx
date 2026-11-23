@@ -72,7 +72,7 @@ export const WaitingFromHabbo = ({ status, data, bundles }: { status: GamedataSt
     const pick = changes > 0 ? data : `${bundles}-bundles`;
 
     return (
-        <div className="flex flex-wrap items-center gap-x-3 gap-y-2 rounded-xl border border-accent/30 bg-accent-soft/60 px-4 py-2.5">
+        <div className="flex flex-wrap items-center gap-x-3 gap-y-2 rounded-xl border border-accent/40 bg-accent-soft/50 px-4 py-2.5">
             <CloudDownload className="size-4 shrink-0 text-accent" aria-hidden />
             <p className="min-w-0 flex-1 text-sm">
                 Habbo has <span className="font-semibold">{parts.join(' and ')}</span> the hotel hasn't taken in.

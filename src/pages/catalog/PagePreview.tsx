@@ -45,7 +45,7 @@ const TextSlot = ({ text, slot, onEdit, className }: { text: string; slot: Layou
         onClick={() => onEdit({ list: 'text', index: slot.index })}
         title={slot.label}
         className={cx(
-            'w-full rounded-md px-1.5 py-1 text-left whitespace-pre-line transition hover:bg-accent-soft/60 hover:ring-1 hover:ring-accent',
+            'w-full rounded-md px-1.5 py-1 text-left whitespace-pre-line transition hover:bg-accent-soft/50 hover:ring-1 hover:ring-accent',
             !text && 'flex items-center gap-1.5 border border-dashed border-line text-xs text-muted hover:text-accent',
             className,
         )}
@@ -69,7 +69,7 @@ const AddTile = ({ onAdd }: { onAdd: () => void }) => (
         <button
             type="button"
             onClick={onAdd}
-            className="flex h-full min-h-[6.5rem] w-full flex-col items-center justify-center gap-1 rounded-xl border-2 border-dashed border-line text-muted transition hover:border-accent hover:bg-accent-soft/40 hover:text-accent"
+            className="flex h-full min-h-[6.5rem] w-full flex-col items-center justify-center gap-1 rounded-xl border-2 border-dashed border-line text-muted transition hover:border-accent hover:bg-accent-soft/50 hover:text-accent"
         >
             <Plus className="size-5" />
             <span className="text-xs font-medium">New offer</span>

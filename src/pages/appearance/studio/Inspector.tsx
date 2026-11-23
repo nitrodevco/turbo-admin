@@ -178,7 +178,7 @@ export const Inspector = () => {
             </nav>
             <ElementPicker />
             {part && (
-                <p className="rounded-lg border border-line bg-subtle/50 p-2 text-xs">
+                <p className="rounded-lg border border-line bg-subtle/40 p-2 text-xs">
                     {`${nameOf(part)} is drawn inside ${nameOf(studio.window)}`}
                     {sharedBy > 1 && <span className="ml-1 rounded bg-warn-soft px-1 font-medium text-warn">{`shared by ${sharedBy} windows`}</span>}
                     <span className="block text-muted">{sharedBy > 1 ? 'A change here shows in each of them: a theme patches a part everywhere it is drawn, not one window\'s copy of it.' : 'A theme patches a part everywhere it is drawn.'}</span>

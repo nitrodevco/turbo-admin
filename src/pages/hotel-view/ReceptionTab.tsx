@@ -35,7 +35,7 @@ const PartRow = ({ selected, onClick, label, shows, place, detail, changed }: {
             type="button"
             onClick={onClick}
             aria-current={selected || undefined}
-            className={cx('flex w-full flex-col gap-0.5 px-4 py-2 text-left hover:bg-subtle', selected && 'bg-accent-soft/60 shadow-[inset_3px_0_0_var(--color-accent)] hover:bg-accent-soft/60')}
+            className={cx('flex w-full flex-col gap-0.5 px-4 py-2 text-left hover:bg-subtle', selected && 'bg-accent-soft shadow-[inset_3px_0_0_var(--color-accent)] hover:bg-accent-soft')}
         >
             <span className="flex items-center justify-between gap-3">
                 <span className="flex items-center gap-2 text-sm font-medium">{label} <Changed on={changed} /></span>

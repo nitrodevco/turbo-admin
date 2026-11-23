@@ -39,7 +39,7 @@ const Row = ({ element, skinsOf, onPick, selected, onHover, depth }: { element: 
         <li>
             <div
                 ref={row}
-                className={cx('flex flex-wrap items-baseline gap-x-2 gap-y-0.5 py-0.5 text-ui', element.added && 'text-good', element.moved && 'text-accent', element.set && 'bg-warn/10', isSelected && 'bg-accent/15', onHover && (key !== undefined) && 'hover:bg-subtle')}
+                className={cx('flex flex-wrap items-baseline gap-x-2 gap-y-0.5 py-0.5 text-ui', element.added && 'text-good', element.moved && 'text-accent', element.set && 'bg-warn-soft', isSelected && 'bg-accent-soft', onHover && (key !== undefined) && 'hover:bg-subtle')}
                 style={{ paddingLeft: `${(depth ?? 0) * 1.1}rem` }}
                 onMouseEnter={onHover && (key !== undefined) ? () => onHover(key) : undefined}
                 onMouseLeave={onHover && (key !== undefined) ? () => onHover(null) : undefined}

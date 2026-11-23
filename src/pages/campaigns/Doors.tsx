@@ -58,8 +58,8 @@ export const DayGrid = ({ calendar, selected, faulty, onSelect }: { calendar: Ca
 
 const STATE_CLASS: Record<DoorState, string> = {
     opened: 'border-good-line bg-good-soft',
-    available: 'border-accent bg-accent-soft ring-2 ring-accent/30',
-    missed: 'border-line bg-subtle/60 opacity-60',
+    available: 'border-accent bg-accent-soft ring-2 ring-accent/25',
+    missed: 'border-line bg-subtle/40 opacity-60',
     future: 'border-line bg-surface',
 };
 

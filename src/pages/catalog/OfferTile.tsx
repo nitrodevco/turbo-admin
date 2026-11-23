@@ -69,7 +69,7 @@ export const OfferTile = ({ offer, tree, selected, flagged, onSelect }: { offer:
                     'flex w-full flex-col items-center gap-1 rounded-xl border p-1.5 transition-[box-shadow,border-color,transform] select-none',
                     tree.canManage && 'cursor-grab active:cursor-grabbing',
                     isDragging
-                        ? 'border-dashed border-accent bg-accent-soft/40 opacity-40'
+                        ? 'border-dashed border-accent bg-accent-soft/50 opacity-40'
                         : selected
                             ? 'border-accent bg-accent-soft shadow-[0_0_0_3px_var(--color-accent-soft)]'
                             : flagged

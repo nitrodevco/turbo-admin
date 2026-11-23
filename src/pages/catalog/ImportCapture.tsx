@@ -71,7 +71,7 @@ const MissingPictures = ({ names, canManage }: { names: string[]; canManage: boo
     });
 
     return (
-        <details className="rounded-xl border border-warn-line bg-warn-soft/40">
+        <details className="rounded-xl border border-warn-line bg-warn-soft/50">
             <summary className="flex cursor-pointer flex-wrap items-center gap-2 px-3 py-2 text-xs">
                 <ImageOff className="size-3.5 text-warn" />
                 <span className="min-w-0 flex-1">{names.length.toLocaleString()} headers and teasers this hotel has no picture of: the pages show nothing there until they are taken in.</span>

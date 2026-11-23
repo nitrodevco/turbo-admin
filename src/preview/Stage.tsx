@@ -82,7 +82,7 @@ export const Stage = ({ paint, zoom, onZoom, backdrop, onBackdrop, tools, corner
                     <ToolChoice
                         label="Behind the preview"
                         value={backdrop}
-                        options={BACKDROPS.map(x => ({ value: x.value, title: x.label, label: <span className="size-3 rounded-sm border border-black/20" style={x.style} /> }))}
+                        options={BACKDROPS.map(x => ({ value: x.value, title: x.label, label: <span className="size-3 rounded-sm border border-black/15" style={x.style} /> }))}
                         onChange={onBackdrop}
                     />
                 </span>

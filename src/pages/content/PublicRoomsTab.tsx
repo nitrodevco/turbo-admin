@@ -50,7 +50,7 @@ const CategoryRow = ({ category, selected, onSelect, canManage, dropping }: { ca
         <li
             ref={setNodeRef}
             style={{ transform: CSS.Transform.toString(transform), transition }}
-            className={cx('flex items-center gap-1 pr-3', selected && 'bg-accent/10', dropping && 'ring-2 ring-accent ring-inset', isDragging && 'z-10 bg-surface shadow-pop')}
+            className={cx('flex items-center gap-1 pr-3', selected && 'bg-accent-soft', dropping && 'ring-2 ring-accent ring-inset', isDragging && 'z-10 bg-surface shadow-pop')}
             data-category={category.id}
         >
             {canManage ? <Grip attributes={attributes} listeners={listeners} label={`Move ${titleOf(category)}`} /> : <span className="w-3" />}

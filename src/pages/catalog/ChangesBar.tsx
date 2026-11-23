@@ -72,7 +72,7 @@ export const ChangesBar = ({ history, unpublished, busy, onUndo, onRedo, onDisca
     }, [ open ]);
 
     return (
-        <div className={cx('flex flex-wrap items-center gap-2 rounded-xl border px-3 py-2', unpublished > 0 ? 'border-accent/40 bg-accent-soft/40' : 'border-line bg-surface')}>
+        <div className={cx('flex flex-wrap items-center gap-2 rounded-xl border px-3 py-2', unpublished > 0 ? 'border-accent/40 bg-accent-soft/50' : 'border-line bg-surface')}>
             <div className="flex min-w-0 flex-1 items-center gap-2.5">
                 {unpublished > 0
                     ? <span className="grid size-7 shrink-0 place-items-center rounded-full bg-accent-solid font-mono text-xs font-bold text-on-accent tabular-nums">{unpublished > 99 ? '99+' : unpublished}</span>
@@ -135,7 +135,7 @@ export const ChangesBar = ({ history, unpublished, busy, onUndo, onRedo, onDisca
                                             setOpen(false);
                                             onUndo(i + 1);
                                         }}
-                                        className={cx('flex w-full items-start gap-2.5 px-3 py-2 text-left text-sm hover:bg-subtle', i === 0 && 'bg-accent-soft/40')}
+                                        className={cx('flex w-full items-start gap-2.5 px-3 py-2 text-left text-sm hover:bg-subtle', i === 0 && 'bg-accent-soft/50')}
                                         title={i === 0 ? 'Undo this' : `Undo this and the ${i} after it`}
                                     >
                                         <Undo2 className="mt-0.5 size-3.5 shrink-0 text-muted" />

@@ -59,7 +59,7 @@ const FurniTile = ({ furni, picked, onToggle }: { furni: AuditFurni; picked: boo
                 picked ? 'border-accent bg-accent-soft shadow-[0_0_0_2px_var(--color-accent-soft)]' : 'border-line bg-canvas hover:-translate-y-0.5 hover:border-line-strong hover:shadow-pop',
             )}
         >
-            <span className="absolute top-1.5 left-1.5 text-accent">{picked ? <CheckSquare className="size-4" /> : <Square className="size-4 text-muted/40" />}</span>
+            <span className="absolute top-1.5 left-1.5 text-accent">{picked ? <CheckSquare className="size-4" /> : <Square className="size-4 text-muted/50" />}</span>
             <ProductIcon type={furni.type} name={furni.name} className="size-12" />
             <span className="line-clamp-2 w-full text-2xs leading-tight">{furni.publicName ?? furni.name}</span>
             <span className="w-full truncate font-mono text-2xs text-muted">{furni.name}</span>

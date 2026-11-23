@@ -218,7 +218,7 @@ export const GenericEditor = ({ confKey, layoutKey, draft, wide: initialWide, te
                             <option value="narrow">In a narrow slot (3, 5)</option>
                         </Select>
                     </div>
-                    <div className="max-w-full overflow-auto rounded-lg border border-line bg-[#aae0f0] p-3">
+                    <div className="max-w-full overflow-auto rounded-lg border border-line bg-hotel-sky p-3">
                         <GenericPreview conf={draft.text(confKey)} layout={draft.text(layoutKey)} wide={wide} draft={draft} />
                     </div>
                 </aside>

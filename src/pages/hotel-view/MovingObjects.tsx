@@ -19,7 +19,7 @@ const MovingObjectEditor = ({ n, objectKey, draft, disabled }: { n: number; obje
         <li className="flex flex-col gap-3 p-3">
             <div className="flex flex-wrap items-end gap-3">
                 <span className="w-6 pb-2 text-right font-mono text-xs text-muted">{n}</span>
-                <span className="grid size-12 shrink-0 place-items-center rounded-lg border border-line bg-[#aae0f0]">
+                <span className="grid size-12 shrink-0 place-items-center rounded-lg border border-line bg-hotel-sky">
                     {url && <img src={url} alt="" className="max-h-full max-w-full [image-rendering:pixelated]" />}
                 </span>
                 <Labeled label="Picture" hint={object.type === 'animated' ? 'Frames are <name>1.png, <name>2.png, ... under reception/.' : object.type === 'randomwalk' ? 'Under the image library itself.' : 'Under the image library\'s reception/.'} className="min-w-40 flex-1">

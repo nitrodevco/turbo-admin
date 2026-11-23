@@ -251,7 +251,7 @@ export const ShapeEditor = ({ regPoints, baseHeight, guides, onGuides, onChange 
 /** A picture picked or dropped, for one bitmap. */
 const PictureDrop = ({ label, state, disabled, onPicture }: { label: string; state: string; disabled?: boolean; onPicture: (picture: File) => void }) => (
     <label
-        className={cx('flex min-w-0 flex-1 items-center gap-2 rounded-lg border border-dashed border-line px-3 py-2 text-xs text-muted transition-colors', disabled ? 'opacity-60' : 'cursor-pointer hover:border-accent/60 hover:text-ink')}
+        className={cx('flex min-w-0 flex-1 items-center gap-2 rounded-lg border border-dashed border-line px-3 py-2 text-xs text-muted transition-colors', disabled ? 'opacity-60' : 'cursor-pointer hover:border-accent hover:text-ink')}
         onDragOver={event => event.preventDefault()}
         onDrop={(event) => {
             event.preventDefault();

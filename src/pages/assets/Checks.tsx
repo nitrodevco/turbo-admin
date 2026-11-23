@@ -27,7 +27,7 @@ export const CheckCard = ({ check }: { check: AssetCheck }) => {
     const list = listOf(check);
 
     return (
-        <li className={cx('flex gap-3 rounded-xl border px-4 py-3', error ? 'border-bad-line bg-bad-soft/60' : 'border-warn-line bg-warn-soft/60')}>
+        <li className={cx('flex gap-3 rounded-xl border px-4 py-3', error ? 'border-bad-line bg-bad-soft/50' : 'border-warn-line bg-warn-soft/50')}>
             <Icon className={cx('mt-0.5 size-4 shrink-0', error ? 'text-bad' : 'text-warn')} aria-hidden />
             <div className="flex min-w-0 flex-1 flex-col gap-1.5">
                 <div className="flex flex-wrap items-center gap-x-2 gap-y-1">

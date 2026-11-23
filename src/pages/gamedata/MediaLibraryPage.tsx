@@ -421,7 +421,7 @@ export const MediaLibraryPage = () => {
                                             type="button"
                                             onClick={() => select(image.id)}
                                             title={image.path}
-                                            className={cx('flex w-full flex-col gap-1 rounded-lg p-1.5 text-left hover:bg-subtle', selected === image.id && 'bg-accent/10 ring-2 ring-accent')}
+                                            className={cx('flex w-full flex-col gap-1 rounded-lg p-1.5 text-left hover:bg-subtle', selected === image.id && 'bg-accent-soft ring-2 ring-accent')}
                                         >
                                             <MediaThumb image={image} className="h-24 w-full" />
                                             <span className="truncate text-xs">{image.name}</span>
@@ -435,7 +435,7 @@ export const MediaLibraryPage = () => {
                             <ul className="divide-y divide-line" data-testid="media-list">
                                 {data.items.map(image => (
                                     <li key={image.id}>
-                                        <button type="button" onClick={() => select(image.id)} className={cx('flex w-full items-center gap-3 px-4 py-2 text-left hover:bg-subtle', selected === image.id && 'bg-accent/10')}>
+                                        <button type="button" onClick={() => select(image.id)} className={cx('flex w-full items-center gap-3 px-4 py-2 text-left hover:bg-subtle', selected === image.id && 'bg-accent-soft')}>
                                             <MediaThumb image={image} className="size-10" />
                                             <code className="min-w-0 flex-1 truncate font-mono text-xs">{image.path}</code>
                                             <span className="w-28 text-xs text-muted">{KIND_LABELS[image.kind] ?? image.kind}</span>

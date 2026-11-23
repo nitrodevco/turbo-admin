@@ -112,7 +112,7 @@ const Row = ({ asset, canManage, busy, selected, onSelect, onIgnore, onUploadLib
     };
 
     return (
-        <li className={cx('flex flex-col gap-1.5 px-4 py-3 sm:flex-row sm:items-start sm:gap-4', asset.ignored && 'opacity-75', selected && 'bg-accent/5')}>
+        <li className={cx('flex flex-col gap-1.5 px-4 py-3 sm:flex-row sm:items-start sm:gap-4', asset.ignored && 'opacity-75', selected && 'bg-accent-soft/50')}>
             <div className="flex min-w-0 flex-1 items-start gap-3">
                 {canManage && <Checkbox label={<span className="sr-only">{`Select ${asset.title}`}</span>} checked={selected} onChange={onSelect} />}
                 <div className="flex min-w-0 flex-1 flex-col gap-1">
@@ -192,7 +192,7 @@ const SourceChip = ({ source, active, onPick }: { source: BrokenAssetSource; act
             onClick={onPick}
             className={cx(
                 'flex size-full flex-col gap-0.5 rounded-lg border px-3 py-2 text-left disabled:cursor-default',
-                !source.read ? 'border-line bg-canvas' : source.count > 0 ? 'border-warn-line bg-warn-soft/60' : 'border-line',
+                !source.read ? 'border-line bg-canvas' : source.count > 0 ? 'border-warn-line bg-warn-soft/50' : 'border-line',
                 active && 'ring-2 ring-accent',
             )}
         >

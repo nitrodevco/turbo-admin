@@ -121,7 +121,7 @@ const StyleCard = ({ style, selected, onPick }: { style: ChatStyle; selected: bo
             type="button"
             onClick={onPick}
             aria-pressed={selected}
-            className={cx('group flex min-w-0 flex-col overflow-hidden rounded-lg border text-left transition-colors', selected ? 'border-accent ring-2 ring-accent/25' : 'border-line hover:border-accent/50')}
+            className={cx('group flex min-w-0 flex-col overflow-hidden rounded-lg border text-left transition-colors', selected ? 'border-accent ring-2 ring-accent/25' : 'border-line hover:border-accent')}
         >
             <span className={cx('grid h-14 place-items-center bg-gradient-to-br from-[#8c7a58] to-[#6f6046]', !style.drawable && 'opacity-50')}>
                 {picture
@@ -375,7 +375,7 @@ export const ChatStylesTab = ({ canManage }: { canManage: boolean }) => {
                     onBackdrop={setBackdrop}
                     corner={<SpeakerEditor name={name} onName={setName} words={words} onWords={setWords} figure={figure} onFigure={setFigure} unavailable={unavailable} />}
                     empty={(
-                        <div className="rounded-xl bg-surface/90 px-6 py-5 text-center shadow-card">
+                        <div className="rounded-xl bg-surface/95 px-6 py-5 text-center shadow-card">
                             <Sparkles className="mx-auto mb-2 size-6 text-accent" />
                             <div className="text-sm font-medium">{regPoints && !base ? 'Drawing it...' : 'Nothing to draw'}</div>
                             <div className="text-xs text-muted">{current && !current.drawable ? 'It has no look yet: change it below to give it one.' : 'Pick a style with a look.'}</div>

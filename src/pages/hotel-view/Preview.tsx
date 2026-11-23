@@ -198,7 +198,7 @@ export const ReceptionPreview = ({ draft, now, backgroundCode, selected, onSlot,
 
     return (
         <div ref={ref} className="relative w-full overflow-hidden rounded-lg border border-line" style={{ height: VIEW_HEIGHT * scale }}>
-            <div className="absolute top-0 left-0 origin-top-left overflow-hidden bg-[#aae0f0]" style={{ width: VIEW_WIDTH, height: VIEW_HEIGHT, transform: `scale(${scale})` }}>
+            <div className="absolute top-0 left-0 origin-top-left overflow-hidden bg-hotel-sky" style={{ width: VIEW_WIDTH, height: VIEW_HEIGHT, transform: `scale(${scale})` }}>
                 {layer('background_gradient') && <div className="absolute left-0 bg-repeat-x" style={{ bottom: 38, width: VIEW_WIDTH, height: 1150, backgroundImage: `url("${layer('background_gradient')}")`, backgroundPosition: 'left bottom' }} />}
                 {layer('background_right') && <img src={layer('background_right')} alt="" className="absolute max-w-none" style={{ right: 1, bottom: 38 }} />}
                 {layer('background_horizon') && <img src={layer('background_horizon')} alt="" className="absolute max-w-none" style={{ left: 0, bottom: 38 }} />}

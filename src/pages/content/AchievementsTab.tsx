@@ -228,7 +228,7 @@ export const AchievementsTab = () => {
                             <ul className="divide-y divide-line">
                                 {shown.filter(x => x.category === category).map(item => (
                                     <li key={item.id}>
-                                        <button type="button" onClick={() => setOpen(item.id)} className={cx('flex w-full items-center gap-3 px-3 py-2 text-left hover:bg-subtle', open === item.id && 'bg-accent-soft/50')}>
+                                        <button type="button" onClick={() => setOpen(item.id)} className={cx('flex w-full items-center gap-3 px-3 py-2 text-left hover:bg-subtle', open === item.id && 'bg-accent-soft')}>
                                             <BadgeImage code={item.lastBadge} className="size-9" />
                                             <span className="min-w-0 flex-1">
                                                 <span className="block truncate font-mono text-ui">{item.key}</span>

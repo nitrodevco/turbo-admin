@@ -354,7 +354,7 @@ const PickerBody = ({ accept, value, onPick, onClose, none }: PickerProps) => {
                         aria-label="Pictures"
                         tabIndex={0}
                         onKeyDown={event => move(event, false)}
-                        className="grid max-h-[55dvh] grid-cols-[repeat(auto-fill,minmax(6.5rem,1fr))] content-start gap-1.5 overflow-y-auto rounded-lg p-0.5 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent/40"
+                        className="grid max-h-[55dvh] grid-cols-[repeat(auto-fill,minmax(6.5rem,1fr))] content-start gap-1.5 overflow-y-auto rounded-lg p-0.5 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent"
                     >
                         {items.map((item, index) => (
                             <li
@@ -369,7 +369,7 @@ const PickerBody = ({ accept, value, onPick, onClose, none }: PickerProps) => {
                                 onDoubleClick={() => choose(item)}
                                 className={cx(
                                     'flex min-w-0 cursor-pointer flex-col items-center gap-1 rounded-lg border p-1.5',
-                                    index === at ? 'border-accent bg-accent-soft' : valueOf(item, accept) === value.trim() ? 'border-accent/50' : 'border-line hover:border-line-strong',
+                                    index === at ? 'border-accent bg-accent-soft' : valueOf(item, accept) === value.trim() ? 'border-accent/40' : 'border-line hover:border-line-strong',
                                 )}
                             >
                                 <MediaThumb url={mediaFilePath(item)} className="h-16 w-full" />

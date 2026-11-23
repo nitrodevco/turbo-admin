@@ -199,7 +199,7 @@ export const PlayerActions = ({ player }: { player: PlayerDetailResponse }) => {
         return null;
 
     return (
-        <div className="flex flex-col gap-3 border-t border-line bg-canvas/40 px-4 py-3">
+        <div className="flex flex-col gap-3 border-t border-line bg-canvas/50 px-4 py-3">
             <div className="flex flex-wrap items-center gap-2">
                 <Label className="mr-1 max-sm:basis-full">Actions</Label>
                 {(can.warn || can.alert) && <ActionButton icon={<MessageSquareWarning />} label="Alert" onClick={() => setOpen('alert')} />}

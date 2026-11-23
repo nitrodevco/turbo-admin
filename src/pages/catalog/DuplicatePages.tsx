@@ -69,7 +69,7 @@ export const DuplicatePages = ({ tree, onOpen }: { tree: CatalogTree; onOpen: (p
             <ul className="grid gap-3 xl:grid-cols-2">
                 {items.slice(0, 200).map(group => (
                     <li key={group.name} className="card overflow-hidden">
-                        <div className="flex items-center gap-3 border-b border-line bg-subtle/50 px-3 py-2">
+                        <div className="flex items-center gap-3 border-b border-line bg-subtle/40 px-3 py-2">
                             <span className="min-w-0 flex-1 truncate font-mono text-sm font-semibold">{group.name}</span>
                             <span className="rounded-full bg-warn-soft px-2 py-0.5 font-mono text-2xs font-semibold text-warn">×{group.pages.length}</span>
                         </div>
