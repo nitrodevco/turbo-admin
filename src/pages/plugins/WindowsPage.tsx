@@ -300,7 +300,7 @@ const WindowDetail = ({ index, skins, id }: { index: TemplateIndex; skins: SkinM
                 <div className="flex flex-col gap-3 p-4">
                     {draft && <div className="rounded-lg border border-line p-3"><PatchEditor key={JSON.stringify(draft.ops)} patch={draft} onDone={() => setDraft(null)} /></div>}
                     <div>
-                        <h3 className="mb-1 text-xs font-medium text-muted uppercase">Patches on this window</h3>
+                        <h3 className="mb-1 font-mono text-2xs font-medium tracking-[0.08em] text-muted uppercase">Patches on this window</h3>
                         {own.length === 0 && others.length === 0 && <p className="text-xs text-muted">None.</p>}
                         <ul className="divide-y divide-line">
                             {own.map(patch => (

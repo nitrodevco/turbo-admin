@@ -5,10 +5,10 @@ import { Link, useParams } from 'react-router';
 import { checkNode, type CheckResponse, type CheckSource, playerCalls, type PlayerPermissions, useCatalog, useGroups, usePermissionChange, usePlayerAudit, usePlayerPermissions } from '#/api/permissions';
 import { useMe } from '#/api/queries';
 import { ask } from '#/components/confirm';
-import { Badge, Button, EmptyState, ErrorNotice, HeaderLink, Input, Labeled, Loading, PageBody, Panel, Select } from '#/components/ui';
+import { Badge, Button, ButtonLink, EmptyState, ErrorNotice, IconButton, Input, Labeled, Loading, PageBody, Panel, Select } from '#/components/ui';
 
 import { MetaCard, NodesCard } from './AssignmentCards';
-import { ADD_FORM_CLASS, AuditTable, Expiry, PermissionsHeader, TimingFields, UnsetButton, Verdict } from './common';
+import { ADD_FORM_CLASS, AuditTable, Expiry, PermissionsHeader, TimingFields, Verdict } from './common';
 import { LevelCard } from './LevelCard';
 
 /** The groups the player holds directly, and putting them in or taking them out of one. */
@@ -41,7 +41,9 @@ const GroupsCard = ({ player }: { player: PlayerPermissions }) => {
                                         <Expiry at={g.expiresAtUtc} />
                                     </span>
                                     {player.canEdit && (
-                                        <UnsetButton
+                                        <IconButton
+                                            tone="bad"
+                                            small
                                             label={`Take ${player.name} out of ${g.name}`}
                                             icon={<X />}
                                             disabled={removeGroup.isPending}
@@ -229,7 +231,7 @@ export const PlayerPage = () => {
                 {player && !player.canEdit && <Badge>Read-only</Badge>}
                 {isMe && <Badge tone="amber">You</Badge>}
                 {player && canViewPlayers && (
-                    <HeaderLink to={`/players/${player.id}`} icon={<UserRound />}>Profile</HeaderLink>
+                    <ButtonLink to={`/players/${player.id}`} icon={<UserRound />}>Profile</ButtonLink>
                 )}
             </PermissionsHeader>
             <PageBody>

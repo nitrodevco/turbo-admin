@@ -216,7 +216,7 @@ export const OfferInspector = ({ tree, pageId, offer, start, featured, onDone, o
                         <span className="flex flex-wrap items-center gap-x-3 gap-y-2">
                             <span>The name key says {lengthOf(named.days)}, but the membership gives {lengthOf(single.subscriptionDays)}. The client sells it by its days.</span>
                             {canManage && (
-                                <Button variant="secondary" onClick={() => set('products', [ { ...single, subscription: named.subscription, subscriptionDays: named.days } ])} className="h-8 sm:h-8">
+                                <Button variant="secondary" onClick={() => set('products', [ { ...single, subscription: named.subscription, subscriptionDays: named.days } ])}>
                                     Make it {lengthOf(named.days)}
                                 </Button>
                             )}

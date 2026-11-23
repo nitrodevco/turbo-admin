@@ -2,7 +2,7 @@ import { Save } from 'lucide-react';
 import { useState } from 'react';
 
 import { type AssetTarget, type AssetTargetInput, DEFAULT_PORTS, PROTOCOLS, type TargetProtocol, useSaveTarget } from '#/api/bundles';
-import { Modal } from '#/components/Modal';
+import { Modal, ModalActions } from '#/components/Modal';
 import { toast } from '#/components/toast';
 import { Button, Checkbox, ErrorNotice, Field, Labeled, Segmented, Switch } from '#/components/ui';
 
@@ -179,10 +179,10 @@ export const TargetForm = ({ target, onClose }: { target: AssetTarget | null; on
 
                 {save.error && <ErrorNotice error={save.error} />}
 
-                <div className="flex justify-end gap-2 border-t border-line pt-4">
+                <ModalActions>
                     <Button variant="ghost" onClick={onClose}>Cancel</Button>
                     <Button type="submit" icon={<Save />} disabled={save.isPending || !input.name.trim()}>{target ? 'Save' : 'Add target'}</Button>
-                </div>
+                </ModalActions>
             </form>
         </Modal>
     );

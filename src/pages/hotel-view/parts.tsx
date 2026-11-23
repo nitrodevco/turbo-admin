@@ -93,7 +93,7 @@ export const ScheduleEditor = ({ value, onChange, codes, now, emptyLabel, disabl
                             aria-label="Code"
                         />
                         {showing.index === index && <Badge tone="accent">Showing</Badge>}
-                        {onOpen && entry.code && codes.includes(entry.code) && <Button variant="ghost" className="h-8 px-2 text-xs" onClick={() => onOpen(entry.code)}>Open</Button>}
+                        {onOpen && entry.code && codes.includes(entry.code) && <Button variant="ghost" small onClick={() => onOpen(entry.code)}>Open</Button>}
                         {!disabled && <IconButton label="Remove" icon={<Trash2 />} tone="bad" onClick={() => set(entries.filter((_, i) => i !== index))} />}
                     </div>
                 );

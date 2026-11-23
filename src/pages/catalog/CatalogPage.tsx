@@ -127,7 +127,7 @@ const ClubShopNotices = ({ tree, busy, onAdd }: { tree: CatalogTree; busy: boole
                 <WarningNotice>
                     <span className="flex flex-wrap items-center gap-x-3 gap-y-2">
                         <span>{club.memberships} {club.memberships === 1 ? 'membership is' : 'memberships are'} on offer, but no shown page has the link key {CLUB_PAGE_NAME}, which the client's club buttons open, so players can't reach the club window.</span>
-                        {tree.canManage && <Button variant="secondary" disabled={busy} onClick={() => onAdd('Habbo Club', CLUB_PAGE_NAME, CLUB_BUY)} className="h-8 sm:h-8">Add a Habbo Club page</Button>}
+                        {tree.canManage && <Button variant="secondary" disabled={busy} onClick={() => onAdd('Habbo Club', CLUB_PAGE_NAME, CLUB_BUY)}>Add a Habbo Club page</Button>}
                     </span>
                 </WarningNotice>
             )}
@@ -135,7 +135,7 @@ const ClubShopNotices = ({ tree, busy, onAdd }: { tree: CatalogTree; busy: boole
                 <WarningNotice>
                     <span className="flex flex-wrap items-center gap-x-3 gap-y-2">
                         <span>{club.gifts} club {club.gifts === 1 ? 'gift is' : 'gifts are'} on offer, but no shown page has the link key {CLUB_GIFTS_PAGE_NAME}, which the client opens to list them.</span>
-                        {tree.canManage && <Button variant="secondary" disabled={busy} onClick={() => onAdd('Club Gifts', CLUB_GIFTS_PAGE_NAME, CLUB_GIFTS)} className="h-8 sm:h-8">Add a club gifts page</Button>}
+                        {tree.canManage && <Button variant="secondary" disabled={busy} onClick={() => onAdd('Club Gifts', CLUB_GIFTS_PAGE_NAME, CLUB_GIFTS)}>Add a club gifts page</Button>}
                     </span>
                 </WarningNotice>
             )}

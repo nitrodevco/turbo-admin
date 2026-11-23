@@ -5,10 +5,10 @@ import { Link, useNavigate, useParams } from 'react-router';
 import { groupCalls, type GroupResponse, useGroup, useGroupAudit, useGroupMembers, useGroups, usePermissionChange } from '#/api/permissions';
 import { ask } from '#/components/confirm';
 import { TabbedPanel } from '#/components/TabbedPanel';
-import { Badge, Button, EmptyState, ErrorNotice, Field, Loading, PageBody, Panel, Select } from '#/components/ui';
+import { Badge, Button, EmptyState, ErrorNotice, Field, IconButton, Loading, PageBody, Panel, Select } from '#/components/ui';
 
 import { MetaCard, NodesCard } from './AssignmentCards';
-import { AuditTable, Expiry, PermissionsHeader, UnsetButton } from './common';
+import { AuditTable, Expiry, PermissionsHeader } from './common';
 import { LevelCard } from './LevelCard';
 
 /** The group's display name and weight, and deleting it. */
@@ -87,7 +87,9 @@ const ParentsCard = ({ group }: { group: GroupResponse }) => {
                                         <span className="ml-2 text-xs text-muted">weight {p.weight}</span>
                                     </span>
                                     {group.canEdit && (
-                                        <UnsetButton
+                                        <IconButton
+                                            tone="bad"
+                                            small
                                             label={`Stop inheriting ${p.name}`}
                                             icon={<X />}
                                             disabled={removeParent.isPending}

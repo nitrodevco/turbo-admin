@@ -76,9 +76,9 @@ export const Stage = ({ paint, zoom, onZoom, backdrop, onBackdrop, tools, corner
             <div className="flex flex-wrap items-center gap-x-4 gap-y-2 border-t border-line px-3 py-2 text-xs text-muted">
                 {tools}
                 <span className="ml-auto flex items-center gap-1">
-                    <IconButton label="Zoom out" icon={<ZoomOut />} className="size-7" disabled={zoom <= 1} onClick={() => onZoom(zoom - 1)} />
+                    <IconButton label="Zoom out" icon={<ZoomOut />} small disabled={zoom <= 1} onClick={() => onZoom(zoom - 1)} />
                     <span className="w-6 text-center tabular-nums">{`${zoom}x`}</span>
-                    <IconButton label="Zoom in" icon={<ZoomIn />} className="size-7" disabled={zoom >= maxZoom} onClick={() => onZoom(zoom + 1)} />
+                    <IconButton label="Zoom in" icon={<ZoomIn />} small disabled={zoom >= maxZoom} onClick={() => onZoom(zoom + 1)} />
                     <ToolChoice
                         label="Behind the preview"
                         value={backdrop}

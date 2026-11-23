@@ -94,7 +94,7 @@ const ElementEditor = ({ element, onChange, draft, suggestKey, disabled }: {
             })}
             {element.args.length === 0 && isTextArg(element.type, 0) && !disabled && (
                 <div>
-                    <Button variant="ghost" className="h-8 px-2 text-xs" onClick={() => setArg(0, suggestKey(element.type))}>Use {suggestKey(element.type)}</Button>
+                    <Button variant="ghost" small onClick={() => setArg(0, suggestKey(element.type))}>Use {suggestKey(element.type)}</Button>
                 </div>
             )}
         </div>

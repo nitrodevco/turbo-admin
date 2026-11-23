@@ -193,7 +193,7 @@ const HistoryModalBody = ({ scope, canManage }: { scope: HistoryScope; canManage
 
     return (
         <>
-            <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-1 border-b border-line px-5 py-2">
+            <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-1 border-b border-line px-4 sm:px-5 py-2">
                 <p className="min-w-0 flex-[1_1_20rem] text-xs text-muted">{describe(scope)}</p>
                 {pager}
             </div>

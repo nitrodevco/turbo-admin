@@ -1,6 +1,7 @@
 import { Check, ChevronDown, Search } from 'lucide-react';
 import { type KeyboardEvent, useEffect, useId, useMemo, useRef, useState } from 'react';
 
+import { Badge } from '#/components/ui';
 import { cx } from '#/lib/cx';
 
 /** Logics of the room's avatars, not furniture's. */
@@ -120,7 +121,7 @@ export const LogicSelect = ({ value, logics, onChange, disabled }: { value: stri
                 )}
             >
                 <span className={cx('min-w-0 flex-1 truncate font-mono', !value && 'text-muted')}>{value || 'Pick a logic'}</span>
-                {!registered && <span className="shrink-0 rounded bg-warn-soft px-1.5 text-2xs font-medium text-warn">not registered</span>}
+                {!registered && <Badge tone="amber" className="shrink-0">not registered</Badge>}
                 <ChevronDown className={cx('size-4 shrink-0 text-muted transition-transform', open && 'rotate-180')} aria-hidden />
             </button>
 

@@ -2,7 +2,7 @@ import { Link2, Save } from 'lucide-react';
 import { useState } from 'react';
 
 import { type PluginSource, type PluginSourceFollow, type PluginSourceInput, useAddPluginSource, useEditPluginSource } from '#/api/plugins';
-import { Modal } from '#/components/Modal';
+import { Modal, ModalActions } from '#/components/Modal';
 import { toast } from '#/components/toast';
 import { Button, Checkbox, ErrorNotice, Field, Labeled, Segmented, Switch } from '#/components/ui';
 
@@ -123,12 +123,12 @@ export const PluginSourceForm = ({ source, allowed, onClose }: { source: PluginS
 
                 {(add.error ?? edit.error) && <ErrorNotice error={add.error ?? edit.error} />}
 
-                <div className="flex justify-end gap-2 border-t border-line pt-4">
+                <ModalActions>
                     <Button variant="ghost" onClick={onClose}>Cancel</Button>
                     <Button type="submit" icon={source ? <Save /> : <Link2 />} disabled={saving}>
                         {source ? 'Save' : 'Link and install'}
                     </Button>
-                </div>
+                </ModalActions>
             </form>
         </Modal>
     );

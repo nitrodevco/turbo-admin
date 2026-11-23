@@ -82,7 +82,7 @@ export const PetsTab = ({ canManage }: { canManage: boolean }) => {
                 <div className="max-h-[60dvh] min-h-0 overflow-y-auto xl:max-h-none">
                     {types.map(type => (
                         <section key={type}>
-                            <h3 className="sticky top-0 border-b border-line bg-subtle px-3 py-1.5 font-mono text-2xs tracking-[0.08em] text-muted uppercase">{typeName(type)}</h3>
+                            <h3 className="sticky top-0 border-b border-line bg-subtle px-3 py-1.5 font-mono text-2xs font-medium tracking-[0.08em] text-muted uppercase">{typeName(type)}</h3>
                             <ul className="divide-y divide-line">
                                 {data.breeds.filter(x => x.typeId === type).map(x => <BreedRow key={x.id} breed={x} canManage={canManage} />)}
                             </ul>
@@ -108,7 +108,7 @@ export const PetsTab = ({ canManage }: { canManage: boolean }) => {
                 <div className="max-h-[60dvh] min-h-0 overflow-y-auto xl:max-h-none">
                     {lineTypes.map(type => (
                         <section key={type ?? 'all'}>
-                            <h3 className="sticky top-0 flex items-center gap-2 border-b border-line bg-subtle px-3 py-1.5 font-mono text-2xs tracking-[0.08em] text-muted uppercase">
+                            <h3 className="sticky top-0 flex items-center gap-2 border-b border-line bg-subtle px-3 py-1.5 font-mono text-2xs font-medium tracking-[0.08em] text-muted uppercase">
                                 {typeName(type)}
                                 {type === null && <Badge>shared</Badge>}
                             </h3>

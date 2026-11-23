@@ -35,13 +35,13 @@ const HistoryModal = ({ target, onClose }: { target: AssetTarget | null; onClose
 
     return (
         <Modal open={!!target} onClose={onClose} title={target ? `${target.name}: publishes` : ''} className="sm:h-fit! sm:max-w-2xl">
-            {error && <div className="p-5"><ErrorNotice error={error} /></div>}
+            {error && <div className="p-4 sm:p-5"><ErrorNotice error={error} /></div>}
             {!data && !error && <Loading />}
             {data && data.items.length === 0 && <EmptyState>Nothing has been published to it yet.</EmptyState>}
             {data && data.items.length > 0 && (
                 <ul className="divide-y divide-line">
                     {data.items.map(entry => (
-                        <li key={entry.id} className="flex flex-col gap-1 px-5 py-3 text-sm">
+                        <li key={entry.id} className="flex flex-col gap-1 px-4 sm:px-5 py-3 text-sm">
                             <div className="flex flex-wrap items-center gap-2">
                                 <span className="font-medium" title={formatTime(entry.startedAt)}>{fromNow(entry.startedAt)}</span>
                                 {entry.playerName && <span className="text-muted">by {entry.playerName}</span>}
@@ -87,13 +87,13 @@ const PendingList = ({ target, canManage }: { target: AssetTarget; canManage: bo
                         </p>
                         {data.changed > 0 && (canManage
                             ? (
-                                    <Button variant="ghost" icon={<GitCompare />} className="h-8 shrink-0 px-2 text-xs sm:h-7" onClick={() => setComparing('')}>
+                                    <Button variant="ghost" icon={<GitCompare />} small className="shrink-0" onClick={() => setComparing('')}>
                                         Compare all
                                     </Button>
                                 )
                             : (
                                     <span title={NEEDS_MANAGE} className="inline-flex shrink-0">
-                                        <Button variant="ghost" icon={<GitCompare />} disabled aria-label={`Compare all: ${NEEDS_MANAGE}`} className="h-8 px-2 text-xs sm:h-7">
+                                        <Button variant="ghost" icon={<GitCompare />} disabled aria-label={`Compare all: ${NEEDS_MANAGE}`} small>
                                             Compare all
                                         </Button>
                                     </span>
@@ -236,7 +236,8 @@ const TargetCard = ({ target, canManage, busy, onEdit, onHistory }: { target: As
                                 <Button
                                     variant="ghost"
                                     icon={<KeyRound />}
-                                    className="h-8 shrink-0 px-2 text-xs sm:h-7"
+                                    small
+                                    className="shrink-0"
                                     disabled={forget.isPending}
                                     onClick={() => ask(
                                         `Forget the host key of ${target.name}? The next connection trusts whatever key the server shows. Do it only when you know the server's key changed.`,

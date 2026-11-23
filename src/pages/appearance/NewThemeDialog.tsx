@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { useThemes } from '#/api/appearance';
 import { useCreateTheme } from '#/api/noCode';
 import { folderOf, useWorkingOn } from '#/appearance/workingOn';
-import { Modal } from '#/components/Modal';
+import { Modal, ModalActions } from '#/components/Modal';
 import { toast } from '#/components/toast';
 import { Button, ErrorNotice, Input, Labeled, Select } from '#/components/ui';
 
@@ -70,11 +70,12 @@ export const NewThemeDialog = ({ open, copyOf, onClose }: { open: boolean; copyO
                     </Labeled>
                 )}
                 {create.error && <ErrorNotice error={create.error} />}
-                <div>
+                <ModalActions>
+                    <Button variant="ghost" onClick={onClose}>Cancel</Button>
                     <Button type="submit" icon={<Palette />} disabled={create.isPending || !typedKey || !name.trim()}>
                         {create.isPending ? 'Making it...' : source ? 'Duplicate' : 'Make the theme'}
                     </Button>
-                </div>
+                </ModalActions>
             </form>
         </Modal>
     );

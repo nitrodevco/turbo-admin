@@ -2,7 +2,7 @@ import { Plus, Save } from 'lucide-react';
 import { useState } from 'react';
 
 import { COLOR_SLOTS, type GroupBadgePart, type GroupColor, PART_TYPES, useCanManageContent, useGroupEditor, useSaveGroupEditor } from '#/api/content';
-import { Button, ErrorNotice, IconButton, Input, Loading, PageBody, PageHeader, Panel, Select } from '#/components/ui';
+import { Button, COLOUR_FIELD_CLASS, ErrorNotice, IconButton, Input, Loading, PageBody, PageHeader, Panel, Select } from '#/components/ui';
 import { useHubTabs } from '#/layout/nav';
 
 /** A part's files, edited where it is listed. */
@@ -37,7 +37,7 @@ const ColorRow = ({ color, canManage }: { color: GroupColor; canManage: boolean 
                 onChange={event => setHex(event.target.value.slice(1))}
                 disabled={!canManage}
                 aria-label={`Colour ${color.colorId}`}
-                className="h-8 w-10 cursor-pointer rounded border border-line bg-canvas p-0.5"
+                className={COLOUR_FIELD_CLASS}
             />
             <Input value={hex} onChange={event => setHex(event.target.value.replace('#', ''))} className="h-8 w-24 font-mono text-xs sm:h-8" disabled={!canManage} />
             {canManage && hex !== color.color && <IconButton label="Save" icon={<Save />} disabled={save.isPending} onClick={() => save.mutate({ kind: 'colors', id: color.id, body: { color: hex } })} />}
@@ -66,7 +66,7 @@ const BadgeEditor = ({ canManage }: { canManage: boolean }) => {
             <Panel title="Badge parts" description="Bases and symbols; the client loads badgepart_<file>.png. Read again by the hotel as soon as one is saved." className="overflow-clip">
                 {[ 0, 1 ].map(type => (
                     <section key={type}>
-                        <h3 className="border-b border-line bg-subtle px-3 py-1.5 font-mono text-2xs tracking-[0.08em] text-muted uppercase">{PART_TYPES[type]}s</h3>
+                        <h3 className="border-b border-line bg-subtle px-3 py-1.5 font-mono text-2xs font-medium tracking-[0.08em] text-muted uppercase">{PART_TYPES[type]}s</h3>
                         <ul className="divide-y divide-line">
                             {data.parts.filter(x => x.partType === type).map(part => <PartRow key={part.id} part={part} canManage={canManage} />)}
                         </ul>
@@ -91,7 +91,7 @@ const BadgeEditor = ({ canManage }: { canManage: boolean }) => {
             <Panel title="Colours" description="The badge's colours, and the group's two. Changing one repaints every badge that uses it." className="overflow-clip">
                 {[ 0, 1, 2 ].map(colorSlot => (
                     <section key={colorSlot}>
-                        <h3 className="border-b border-line bg-subtle px-3 py-1.5 font-mono text-2xs tracking-[0.08em] text-muted uppercase">{COLOR_SLOTS[colorSlot]}</h3>
+                        <h3 className="border-b border-line bg-subtle px-3 py-1.5 font-mono text-2xs font-medium tracking-[0.08em] text-muted uppercase">{COLOR_SLOTS[colorSlot]}</h3>
                         <ul className="divide-y divide-line">
                             {data.colors.filter(x => x.slot === colorSlot).map(color => <ColorRow key={color.id} color={color} canManage={canManage} />)}
                         </ul>

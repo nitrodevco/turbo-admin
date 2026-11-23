@@ -51,7 +51,7 @@ export const HabboNotices = ({ open, onClose, current, dirty, onTake, onTakeOne 
 
     return (
         <Modal open={open} onClose={onClose} title={domain ? `Habbo's notices, from habbo.${domain}` : 'Habbo\'s notices'} className="sm:h-fit! sm:max-w-3xl">
-            {error && <div className="p-5"><ErrorNotice error={error} /></div>}
+            {error && <div className="p-4 sm:p-5"><ErrorNotice error={error} /></div>}
             {!habbo && !error && <Loading />}
             {habbo && (
                 <div className="flex flex-col">

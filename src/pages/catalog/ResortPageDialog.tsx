@@ -2,7 +2,7 @@ import { FolderTree } from 'lucide-react';
 import { useState } from 'react';
 
 import { type AddFurniSort, catalogCalls, type CatalogTree, useCatalogEdit, useResortPlan } from '#/api/catalog';
-import { Modal } from '#/components/Modal';
+import { Modal, ModalActions } from '#/components/Modal';
 import { toast, toastError } from '#/components/toast';
 import { Button, ErrorNotice, Loading, Segmented } from '#/components/ui';
 
@@ -34,7 +34,7 @@ export const ResortPageDialog = ({ tree, pageId, onClose }: { tree: CatalogTree;
 
     return (
         <Modal title={<span className="flex items-center gap-2"><FolderTree className="size-4 text-accent" />{`Sort ${title} into sub pages`}</span>} open onClose={onClose} className="sm:h-fit! sm:max-w-2xl">
-            <div className="flex flex-col gap-4 p-5">
+            <div className="flex flex-col gap-4 p-4 sm:p-5">
                 <div className="flex flex-col gap-1.5">
                     <div className="max-w-full overflow-x-auto">
                         <Segmented label="Sort by" value={sortBy} onChange={value => setSortBy(value as AddFurniSort)} options={SORTS} />
@@ -54,12 +54,12 @@ export const ResortPageDialog = ({ tree, pageId, onClose }: { tree: CatalogTree;
                             </div>
                         ))}
                 <p className="text-xs text-muted">The offers move as they are, prices and all. A new page takes this page's layout, header, teaser and texts; a page of a title there already takes its offers as it is. You can undo it.</p>
-                <div className="flex justify-end gap-2 border-t border-line pt-3">
-                    <Button variant="secondary" onClick={onClose}>Cancel</Button>
+                <ModalActions>
+                    <Button variant="ghost" onClick={onClose}>Cancel</Button>
                     <Button icon={<FolderTree />} disabled={pages.length === 0 || resort.isPending} onClick={submit}>
                         {resort.isPending ? 'Sorting…' : 'Sort'}
                     </Button>
-                </div>
+                </ModalActions>
             </div>
         </Modal>
     );

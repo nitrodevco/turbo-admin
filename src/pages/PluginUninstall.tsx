@@ -2,7 +2,7 @@ import { Download, Trash2 } from 'lucide-react';
 import { useState } from 'react';
 
 import { downloadPluginData, type PluginDataItem, type PluginUninstallMode, usePluginUninstallPlan, useUninstallPlugin } from '#/api/plugins';
-import { Modal } from '#/components/Modal';
+import { Modal, ModalActions } from '#/components/Modal';
 import { toast, toastError } from '#/components/toast';
 import { Button, ErrorNotice, Field, Labeled, Loading, Segmented, WarningNotice } from '#/components/ui';
 
@@ -128,7 +128,7 @@ export const PluginUninstall = ({ pluginKey, onClose }: { pluginKey: string; onC
 
                 {uninstall.error && <ErrorNotice error={uninstall.error} />}
 
-                <div className="flex justify-end gap-2 border-t border-line pt-4">
+                <ModalActions>
                     <Button variant="ghost" onClick={onClose}>Cancel</Button>
                     <Button
                         type="submit"
@@ -138,7 +138,7 @@ export const PluginUninstall = ({ pluginKey, onClose }: { pluginKey: string; onC
                     >
                         {deleting ? 'Uninstall and delete data' : 'Uninstall, keep data'}
                     </Button>
-                </div>
+                </ModalActions>
             </form>
         </Modal>
     );

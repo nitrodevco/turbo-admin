@@ -16,7 +16,7 @@ const Levels = ({ levels, onChange }: { levels: RewardTrackLevel[]; onChange: (l
 
     return (
         <div className="flex flex-col gap-1.5">
-            <div className="grid grid-cols-[3rem_1fr_1fr_6rem_2rem] gap-2 px-1 font-mono text-2xs tracking-[0.08em] text-muted uppercase">
+            <div className="grid grid-cols-[3rem_1fr_1fr_6rem_2rem] gap-2 px-1 font-mono text-2xs font-medium tracking-[0.08em] text-muted uppercase">
                 <span>Level</span><span>Count</span><span>Points</span><span>Premium</span><span />
             </div>
             {levels.map((level, index) => (

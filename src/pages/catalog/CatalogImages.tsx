@@ -56,7 +56,7 @@ const ImageCard = ({ image, canManage, onOpenPage, onReplace, onDelete }: { imag
             <ShownOn image={image} onOpenPage={onOpenPage} />
             {canManage && (
                 <div className="mt-auto flex items-center gap-1 pt-1">
-                    <Button variant="ghost" icon={<RefreshCw />} onClick={onReplace} className="h-8 flex-1 justify-start px-2 sm:h-7">
+                    <Button variant="ghost" icon={<RefreshCw />} onClick={onReplace} small className="flex-1 justify-start">
                         Replace
                     </Button>
                     <IconButton label={`Delete ${image.name}`} icon={<Trash2 />} tone="bad" small onClick={onDelete} />

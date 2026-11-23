@@ -185,7 +185,7 @@ const Fact = ({ label, children }: { label: string; children: ReactNode }) => (
 const Card = ({ title, children, actions }: { title: string; children: ReactNode; actions?: ReactNode }) => (
     <section className="card flex min-w-0 flex-col">
         <header className="flex min-h-10 items-center justify-between gap-2 border-b border-line px-4">
-            <h3 className="text-ui font-semibold">{title}</h3>
+            <h3 className="text-sm font-semibold">{title}</h3>
             {actions}
         </header>
         <div className="flex-1 px-4 py-1">{children}</div>
@@ -221,7 +221,7 @@ const BundleCard = ({ definition, canManage }: { definition: FurnitureDefinition
     return (
         <Card
             title="Bundle"
-            actions={canManage && <Button variant="ghost" icon={<Upload />} className="-mr-2 h-8 px-2 text-xs" onClick={() => setReplacing(true)}>{missing ? 'Upload' : 'Replace'}</Button>}
+            actions={canManage && <Button variant="ghost" icon={<Upload />} small className="-mr-2" onClick={() => setReplacing(true)}>{missing ? 'Upload' : 'Replace'}</Button>}
         >
             {!data && !error && <Loading />}
             {error && !missing && <div className="py-2"><ErrorNotice error={error} /></div>}
@@ -275,7 +275,7 @@ const Overview = ({ definition, item, draft, differing, canManage, onUseHabbo, o
                         <span className="font-mono">{definition.matchingLogic}</span>
                         {' for it: in a room it does nothing of its own.'}
                     </p>
-                    {canManage && <Button variant="secondary" icon={<Wrench />} className="h-8 shrink-0 px-2.5 text-xs" onClick={() => onUseLogic(definition.matchingLogic!)}>{`Use ${definition.matchingLogic}`}</Button>}
+                    {canManage && <Button variant="secondary" icon={<Wrench />} small className="shrink-0" onClick={() => onUseLogic(definition.matchingLogic!)}>{`Use ${definition.matchingLogic}`}</Button>}
                 </section>
             )}
             <section className="card flex flex-col gap-4 p-4 sm:flex-row sm:items-start">
@@ -304,7 +304,7 @@ const Overview = ({ definition, item, draft, differing, canManage, onUseHabbo, o
                 {canManage && differing > 0 && (
                     <div className="flex flex-col items-start gap-1.5 rounded-lg bg-warn-soft px-3 py-2.5 sm:max-w-56">
                         <span className="text-xs text-warn">{`${differing} ${differing === 1 ? 'field differs' : 'fields differ'} from Habbo's.`}</span>
-                        <Button variant="secondary" icon={<RotateCcw />} className="h-8 px-2.5 text-xs" onClick={onUseHabbo}>Use all of Habbo's</Button>
+                        <Button variant="secondary" icon={<RotateCcw />} small onClick={onUseHabbo}>Use all of Habbo's</Button>
                     </div>
                 )}
             </section>
@@ -503,13 +503,13 @@ const EditorBody = ({ definition, canManage, section, onSection, onUnsaved, save
                         >
                             {target.icon}
                             <span className="flex-1">{target.title}</span>
-                            {unsavedIn(target) > 0 && <span className="rounded-full bg-accent px-1.5 text-2xs font-semibold text-on-accent tabular-nums">{unsavedIn(target)}</span>}
+                            {unsavedIn(target) > 0 && <span className="rounded-full bg-accent px-1.5 font-mono text-2xs font-semibold text-on-accent tabular-nums">{unsavedIn(target)}</span>}
                             {unsavedIn(target) === 0 && differingIn(target) && <span className="size-1.5 rounded-full bg-warn" title="Differs from Habbo" />}
                         </button>
                     ))}
                 </nav>
 
-                <div className="min-w-0 p-4 sm:p-6">
+                <div className="min-w-0 p-4 sm:p-5">
                     <header className="mb-5">
                         <h3 className="text-base font-semibold">{shown.title}</h3>
                         <p className="mt-0.5 text-ui text-muted">{shown.about}</p>
@@ -558,7 +558,7 @@ const EditorBody = ({ definition, canManage, section, onSection, onUnsaved, save
                 </div>
             </div>
 
-            <footer className="sticky bottom-0 z-10 flex flex-wrap items-center gap-x-4 gap-y-2 border-t border-line bg-surface/95 px-4 py-3 backdrop-blur sm:static sm:px-6">
+            <footer className="sticky bottom-0 z-10 flex flex-wrap items-center gap-x-4 gap-y-2 border-t border-line bg-surface/95 px-4 py-3 backdrop-blur sm:static sm:px-5">
                 <div className="min-w-0 flex-1 text-ui">
                     {update.error
                         ? <span className="text-bad">{update.error instanceof Error ? update.error.message : 'It could not be saved.'}</span>
@@ -635,7 +635,7 @@ export const FurnitureEditor = ({ id, canManage, onClose }: { id: number | null;
                     )
                 : 'Furniture'}
         >
-            {error && <div className="p-5"><ErrorNotice error={error} /></div>}
+            {error && <div className="p-4 sm:p-5"><ErrorNotice error={error} /></div>}
             {!shown && !error && <Loading />}
             {shown && (
                 <EditorBody

@@ -2,7 +2,7 @@ import { Merge } from 'lucide-react';
 import { useState } from 'react';
 
 import { catalogCalls, type CatalogTree, useCatalogEdit, usePageMergePlan } from '#/api/catalog';
-import { Modal } from '#/components/Modal';
+import { Modal, ModalActions } from '#/components/Modal';
 import { toast, toastError } from '#/components/toast';
 import { Button, ErrorNotice, Label, Loading } from '#/components/ui';
 import { cx } from '#/lib/cx';
@@ -106,7 +106,7 @@ export const MergePagesDialog = ({ tree, pageIds, keepId, onClose, onMerged }: M
 
     return (
         <Modal title={<span className="flex items-center gap-2"><Merge className="size-4 text-accent" />Merge pages</span>} open onClose={onClose} className="sm:h-fit! sm:max-w-2xl">
-            <div className="flex flex-col gap-4 p-5">
+            <div className="flex flex-col gap-4 p-4 sm:p-5">
                 {pageIds.length === 1 && (
                     <div className="flex flex-col gap-1.5">
                         <Label as="h3">{`Merge ${title(pageIds[0]!)} with`}</Label>
@@ -160,12 +160,12 @@ export const MergePagesDialog = ({ tree, pageIds, keepId, onClose, onMerged }: M
                         <p className="text-xs text-muted">An offer something keeps (a club gift, a limited series) is moved instead of deleted. You can undo the merge.</p>
                     </div>
                 )}
-                <div className="flex justify-end gap-2 border-t border-line pt-3">
-                    <Button variant="secondary" onClick={onClose}>Cancel</Button>
+                <ModalActions>
+                    <Button variant="ghost" onClick={onClose}>Cancel</Button>
                     <Button icon={<Merge />} disabled={!data || merge.isPending} onClick={submit}>
                         {merge.isPending ? 'Merging…' : 'Merge'}
                     </Button>
-                </div>
+                </ModalActions>
             </div>
         </Modal>
     );

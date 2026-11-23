@@ -3,7 +3,7 @@ import { Link, useParams } from 'react-router';
 
 import { type ClientEventRow, type ClientLagRow, type ClientLatencyRow, type ClientPerformanceRow, type ClientTelemetryPlayerResponse, useClientTelemetryPlayer, useClientTelemetryRoom } from '#/api/telemetry';
 import { Row, SortedRowList } from '#/components/RowList';
-import { EmptyState, ErrorNotice, HeaderLink, Loading, PageBody, PageHeader, Panel } from '#/components/ui';
+import { ButtonLink, EmptyState, ErrorNotice, Loading, PageBody, PageHeader, Panel } from '#/components/ui';
 import type { ListOrder, SortKeys } from '#/lib/sort';
 
 import { dayPoints, fps, LOGIN_STEPS, megabytes, ms, NO_LAG_HINT, NO_LATENCY_HINT, NO_PERFORMANCE_HINT, NO_ROOM_FPS_HINT, number, SERIES_1, SERIES_2, useDayRange, when } from './format';
@@ -137,7 +137,7 @@ export const TelemetryRoomPage = () => {
                 description="How clients ran in this room"
                 back={{ to: `/client-health?${params}`, label: 'Client health' }}
             >
-                <HeaderLink to={`/rooms/${roomId}`} icon={<House />}>Open the room</HeaderLink>
+                <ButtonLink to={`/rooms/${roomId}`} icon={<House />}>Open the room</ButtonLink>
             </PageHeader>
             <PageBody>
                 <div className="flex"><RangePicker days={days} setDays={setDays} /></div>
@@ -210,7 +210,7 @@ export const TelemetryPlayerPage = () => {
                 description="This player's client reports"
                 back={{ to: `/client-health?${params}`, label: 'Client health' }}
             >
-                <HeaderLink to={`/players/${playerId}`} icon={<UserRound />}>Open the player</HeaderLink>
+                <ButtonLink to={`/players/${playerId}`} icon={<UserRound />}>Open the player</ButtonLink>
             </PageHeader>
             <PageBody>
                 <div className="flex"><RangePicker days={days} setDays={setDays} /></div>

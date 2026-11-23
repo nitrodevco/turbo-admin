@@ -5,10 +5,10 @@ import { Link } from 'react-router';
 import { type MetaAssignment, type NodeAssignment, type Target, targetCalls, useCatalog, usePermissionChange } from '#/api/permissions';
 import { ask } from '#/components/confirm';
 import { PhoneLabel, Row, SortedRowList } from '#/components/RowList';
-import { Button, EmptyState, ErrorNotice, Input, Labeled, Panel, Select } from '#/components/ui';
+import { Button, EmptyState, ErrorNotice, IconButton, Input, Labeled, Panel, Select } from '#/components/ui';
 import type { SortKeys } from '#/lib/sort';
 
-import { ADD_FORM_CLASS, Expiry, TimingFields, UnsetButton, Verdict } from './common';
+import { ADD_FORM_CLASS, Expiry, TimingFields, Verdict } from './common';
 
 const NODE_KEYS: SortKeys<NodeAssignment> = { node: x => x.node, value: x => x.value };
 
@@ -116,7 +116,9 @@ export const NodesCard = ({ target, nodes, canEdit }: { target: Target; nodes: N
                                         <Expiry at={assignment.expiresAtUtc} />
                                     </span>
                                     {canEdit && (
-                                        <UnsetButton
+                                        <IconButton
+                                            tone="bad"
+                                            small
                                             label={`Unset ${assignment.node}`}
                                             icon={<Trash2 />}
                                             disabled={unset.isPending}
@@ -212,7 +214,9 @@ export const MetaCard = ({ target, meta, canEdit }: { target: Target; meta: Meta
                                         <Expiry at={assignment.expiresAtUtc} />
                                     </span>
                                     {canEdit && (
-                                        <UnsetButton
+                                        <IconButton
+                                            tone="bad"
+                                            small
                                             label={`Unset ${assignment.key}`}
                                             icon={<Trash2 />}
                                             disabled={unset.isPending}

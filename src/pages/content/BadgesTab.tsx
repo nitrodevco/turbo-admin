@@ -74,7 +74,7 @@ const BadgeDetail = ({ badge, canManage }: { badge: BadgeItem; canManage: boolea
                                         label={`Take it from ${holder.name}`}
                                         icon={<UserMinus />}
                                         tone="bad"
-                                        className="size-7 sm:size-7"
+                                        small
                                         disabled={take.isPending}
                                         onClick={() => ask({ title: `Take ${badge.code} from ${holder.name}?`, confirm: 'Take it' }, () => take.mutate({ code: badge.code, playerId: holder.playerId }))}
                                     />

@@ -4,7 +4,7 @@ import { useMemo, useState } from 'react';
 import { type PluginStyle, usePluginFonts } from '#/api/noCode';
 import { useTemplateIndex, windowOf } from '#/api/windows';
 import { ImageInput } from '#/components/ImageInput';
-import { IconButton, Labeled, Select, Switch } from '#/components/ui';
+import { EmptyState, IconButton, Labeled, Select, Switch } from '#/components/ui';
 import { ALIGN_H, ALIGN_V, colourValue, SCALES, setOf, withEntry, withSet } from '#/preview/patchOps';
 import { ColourField, keyedElements, NumberField, PairParam, StylePicker, VarField } from '#/preview/VisualEditor';
 import { FLASH_FONT_FACES } from '#/vendor/flash-text/flashFontFaces';
@@ -113,7 +113,7 @@ export const Inspector = () => {
     const [ pressed, setPressed ] = useState<{ of: StudioSelection | null; at: number } | null>(null);
     const focus = (pressed && (pressed.of === selection)) ? pressed.at : null;
 
-    if (!studio.window) return <p className="p-4 text-sm text-muted">Pick a window on the left, then click anything in it.</p>;
+    if (!studio.window) return <EmptyState>Pick a window on the left, then click anything in it.</EmptyState>;
 
     const nameOf = (template: string) => windows.find(window => window.id === template)?.name ?? index?.parts?.[template]?.name ?? partName(template);
     const step = (focus !== null) ? path[focus] : undefined;

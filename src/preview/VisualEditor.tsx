@@ -3,7 +3,7 @@ import { type PointerEvent as ReactPointerEvent, type ReactNode, useEffect, useM
 
 import { useTextSearch } from '#/api/gamedata';
 import { type SkinEntry, type ThemeSheet, useSkinMap, useTemplateIndex, useThemeSheet, type WindowElement, windowOf } from '#/api/windows';
-import { Button, IconButton, Input, Labeled, Select, Switch } from '#/components/ui';
+import { Button, COLOUR_FIELD_CLASS, IconButton, Input, Labeled, Select, Switch } from '#/components/ui';
 
 import { type DesignBox, type DesignDraft, DesignPreview, type DesignPreviewControls, type DesignRects, type DesignSelection } from './DesignPreview';
 import { type OpsHistory } from './opsHistory';
@@ -114,7 +114,7 @@ export const ColourField = ({ label, value, own, onChange, onReset }: { label: s
     return (
         <Labeled label={label}>
             <span className="flex items-center gap-2">
-                <input type="color" aria-label={`${label} picker`} value={hex} onChange={event => onChange(colourOf(event.target.value, alpha))} className="h-8 w-10 rounded border border-line bg-canvas" />
+                <input type="color" aria-label={`${label} picker`} value={hex} onChange={event => onChange(colourOf(event.target.value, alpha))} className={COLOUR_FIELD_CLASS} />
                 <Input type="number" aria-label={`${label} opacity`} title="Opacity, 0 (none) to 255 (whole)" min={0} max={255} value={alpha} onChange={event => onChange(colourOf(hex, Number(event.target.value)))} className="w-20" />
                 <span className="font-mono text-xs text-muted">{hex}</span>
                 {onReset && value !== null && <IconButton label="Its own colour" icon={<RotateCcw />} small onClick={onReset} />}
@@ -438,7 +438,7 @@ export const VisualEditor = ({ template, part, ops, history, draft, owner, foote
                             aria-label="Window colour"
                             value={colourParts(rootColour ?? 0xffffffff).hex}
                             onChange={event => history.change(withSet(ops, '', 'color', colourOf(event.target.value, colourParts(rootColour ?? 0xffffffff).alpha)), ':color')}
-                            className="h-7 w-9 rounded border border-line bg-canvas"
+                            className={COLOUR_FIELD_CLASS}
                         />
                         {rootColour !== null && <IconButton label="The window's own colour" icon={<RotateCcw />} small onClick={() => history.change(withSet(ops, '', 'color', undefined))} />}
                     </span>

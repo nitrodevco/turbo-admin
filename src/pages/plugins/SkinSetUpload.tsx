@@ -6,6 +6,7 @@ import type { SkinMap } from '#/api/windows';
 import { useSaved } from '#/components/SaveFeedback';
 import { toastError } from '#/components/toast';
 import { Badge, Button, Panel, Select } from '#/components/ui';
+import { cx } from '#/lib/cx';
 import { openZip } from '#/lib/zip';
 import { DesignPreview } from '#/preview/DesignPreview';
 import { dataUrlOf } from '#/preview/images';
@@ -252,7 +253,7 @@ export const SkinSetUpload = ({ skins, target, canManage }: { skins: SkinMap; ta
             <div className="flex flex-col gap-3 p-4">
                 {canManage && (
                     <div
-                        className={`flex flex-wrap items-center gap-3 rounded-lg border border-dashed p-4 text-sm ${dropping ? 'border-accent bg-subtle' : 'border-line'}`}
+                        className={cx('flex flex-wrap items-center gap-3 rounded-xl border-2 border-dashed p-4 text-sm transition-colors', dropping ? 'border-accent bg-accent-soft' : 'border-line bg-canvas')}
                         onDragOver={(event) => {
                             event.preventDefault();
                             setDropping(true);

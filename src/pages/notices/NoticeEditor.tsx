@@ -2,7 +2,7 @@ import { Download } from 'lucide-react';
 import { type ReactNode, useState } from 'react';
 
 import { useRewardTracks } from '#/api/rewardTracks';
-import { Badge, Button, Input, Label, Labeled, Segmented, Select, Textarea } from '#/components/ui';
+import { Badge, Button, COLOUR_FIELD_CLASS, Input, Label, Labeled, Segmented, Select, Textarea } from '#/components/ui';
 import { cx } from '#/lib/cx';
 
 import {
@@ -73,7 +73,7 @@ export const NoticeEditor = ({ notice, onChange, disabled }: { notice: Notice; o
                     </Labeled>
                     <Labeled label="Colour" hint={`#rrggbb; none is ${DEFAULT_COLOR}`}>
                         <span className="flex items-center gap-2">
-                            <input type="color" aria-label="Colour picker" value={color ?? DEFAULT_COLOR} onChange={event => set('color', event.target.value)} className="h-8 w-10 rounded border border-line bg-canvas" />
+                            <input type="color" aria-label="Colour picker" value={color ?? DEFAULT_COLOR} onChange={event => set('color', event.target.value)} className={COLOUR_FIELD_CLASS} />
                             <Input aria-label="Colour" value={notice.fields.color} onChange={event => set('color', event.target.value)} placeholder={DEFAULT_COLOR} className="font-mono" />
                         </span>
                     </Labeled>

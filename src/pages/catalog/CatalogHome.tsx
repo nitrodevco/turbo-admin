@@ -74,7 +74,7 @@ export const CatalogHome = ({ tree, busy, compact, onOpenPage, onView, onCreateF
                 <dl className="grid grid-cols-4 border-b border-line">
                     {stats.map(x => (
                         <div key={x.label} className="border-l border-line px-2 py-2 text-center first:border-l-0">
-                            <dt className="truncate font-mono text-2xs tracking-[0.08em] text-muted uppercase">{x.short ?? x.label}</dt>
+                            <dt className="truncate font-mono text-2xs font-medium tracking-[0.08em] text-muted uppercase">{x.short ?? x.label}</dt>
                             <dd className="font-mono text-base font-semibold tabular-nums">{x.value.toLocaleString()}</dd>
                         </div>
                     ))}

@@ -225,7 +225,7 @@ const ExtrasEditor = ({ thresholds, max, disabled, onChange }: { thresholds: num
                                 <li key={quantity}>
                                     <span className={cx('inline-flex h-7 items-center gap-1 rounded-full border pr-1 pl-2.5 font-mono text-xs', quantity > max ? 'border-dashed border-line text-muted' : 'border-line')} title={quantity > max ? `Past the most at once (${max}): never reached` : `Buying ${quantity} or more gives ${count} more free`}>
                                         {quantity}
-                                        {count > 1 && <span className="rounded bg-accent-soft px-1 text-2xs text-accent">+{count}</span>}
+                                        {count > 1 && <span className="rounded-full bg-accent-soft px-1.5 font-mono text-2xs text-accent tabular-nums">+{count}</span>}
                                         {!disabled && (
                                             <button type="button" onClick={() => removeOne(quantity)} aria-label={count > 1 ? `Take one of the ${count} at ${quantity}` : `Take out ${quantity}`} className="grid size-5 place-items-center rounded-full text-muted hover:bg-subtle hover:text-ink">
                                                 <X className="size-3" />

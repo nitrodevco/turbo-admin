@@ -3,7 +3,7 @@ import { useMemo, useState } from 'react';
 
 import { FIGURE_KINDS, type FigurePalette, usePalettes, useSaveFigureBatch } from '#/api/gamedata';
 import { ask } from '#/components/confirm';
-import { Badge, Button, EmptyState, ErrorNotice, Input, Labeled, Loading, Panel, Select, SuccessNotice, Switch } from '#/components/ui';
+import { Badge, Button, COLOUR_FIELD_CLASS, EmptyState, ErrorNotice, Input, Labeled, Loading, Panel, Select, SuccessNotice, Switch } from '#/components/ui';
 import { cx } from '#/lib/cx';
 
 /** A colour as the editor holds it: its record's fields, and Habbo's when Habbo has it. */
@@ -131,14 +131,14 @@ const Inspector = ({ colour, index, count, canManage, onChange, onMove, onRemove
                     <div className="font-mono text-2xs text-muted">id {colour.id} · {index + 1} of {count}</div>
                 </div>
             </div>
-            <div className="grid grid-cols-[2.75rem_1fr] items-end gap-2">
+            <div className="grid grid-cols-[3rem_1fr] items-end gap-2">
                 <input
                     type="color"
                     value={`#${colour.hex}`}
                     onChange={event => setHexText(event.target.value)}
                     disabled={!canManage}
                     aria-label="Pick a colour"
-                    className="h-10 w-11 cursor-pointer rounded-lg border border-line bg-canvas p-1 sm:h-8"
+                    className={COLOUR_FIELD_CLASS}
                 />
                 <Labeled label="Hex">
                     <Input value={hex} onChange={event => setHexText(event.target.value)} maxLength={7} disabled={!canManage} className={cx('w-full font-mono uppercase', !HEX.test(hex) && 'border-bad')} />

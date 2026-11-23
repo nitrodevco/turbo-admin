@@ -243,7 +243,7 @@ export const NewFurnitureDialog = ({ bundle, onClose }: { bundle: string | null;
     return (
         <Modal open={bundle !== null} onClose={close} title={<span className="font-mono">{`New furniture from ${bundle ?? ''}`}</span>} className="sm:h-fit! sm:max-w-3xl">
             {made && <Made made={made} onClose={close} />}
-            {!made && draft.error && <div className="p-5"><ErrorNotice error={draft.error} /></div>}
+            {!made && draft.error && <div className="p-4 sm:p-5"><ErrorNotice error={draft.error} /></div>}
             {!made && !draft.data && !draft.error && <Loading />}
             {!made && draft.data && draft.data.bundle === bundle && <DraftForm key={bundle} draft={draft.data} onMade={setMade} />}
         </Modal>

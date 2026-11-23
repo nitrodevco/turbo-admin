@@ -2,7 +2,7 @@ import { Package } from 'lucide-react';
 import { useState } from 'react';
 
 import { downloadPluginPackage } from '#/api/noCode';
-import { Modal } from '#/components/Modal';
+import { Modal, ModalActions } from '#/components/Modal';
 import { toast, toastError } from '#/components/toast';
 import { Button, Input, Labeled } from '#/components/ui';
 
@@ -42,9 +42,10 @@ export const PackageDialog = ({ pluginKey, open, onClose }: { pluginKey: string;
                 <Labeled label="Version">
                     <Input value={version} onChange={event => setVersion(event.target.value)} className="w-32" />
                 </Labeled>
-                <div>
+                <ModalActions>
+                    <Button variant="ghost" onClick={onClose}>Cancel</Button>
                     <Button type="submit" icon={<Package />} disabled={busy || !key.trim() || !name.trim() || !version.trim()}>Download the zip</Button>
-                </div>
+                </ModalActions>
             </form>
         </Modal>
     );

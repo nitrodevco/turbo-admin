@@ -32,7 +32,7 @@ const Section = ({ title, count, children }: { title: string; count: number; chi
     <section className="flex flex-col">
         <h3 className="flex items-center gap-2 border-b border-line bg-canvas/60 px-4 py-2 font-mono text-2xs font-medium tracking-[0.08em] text-muted uppercase">
             {title}
-            <span className="rounded-full bg-subtle px-1.5 text-2xs tabular-nums">{count.toLocaleString()}</span>
+            <span className="rounded-full bg-subtle px-1.5 font-mono text-2xs text-muted tabular-nums">{count.toLocaleString()}</span>
         </h3>
         <ul className="divide-y divide-line">{children}</ul>
     </section>
@@ -69,7 +69,7 @@ export const HabboPull = ({ open, onClose, draft }: { open: boolean; onClose: ()
 
     return (
         <Modal open={open} onClose={onClose} title={preview ? `Habbo's hotel view, from habbo.${preview.domain}` : 'Habbo\'s hotel view'} className="sm:h-fit! sm:max-w-4xl">
-            {error && <div className="p-5"><ErrorNotice error={error} /></div>}
+            {error && <div className="p-4 sm:p-5"><ErrorNotice error={error} /></div>}
             {!preview && !error && <Loading />}
             {preview && (
                 <div className="flex flex-col">

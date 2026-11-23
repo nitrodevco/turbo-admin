@@ -4,7 +4,7 @@ import { Link, useParams } from 'react-router';
 
 import { type PlayerDetailResponse, type PlayerSanctionItem, usePlayer, usePlayerAbilities } from '#/api/players';
 import { useMe } from '#/api/queries';
-import { Avatar, Badge, ErrorNotice, HeaderLink, Kv, Label, LiveBadge, Loading, PageBody, PageHeader, Panel } from '#/components/ui';
+import { Avatar, Badge, ButtonLink, ErrorNotice, Kv, Label, LiveBadge, Loading, PageBody, PageHeader, Panel } from '#/components/ui';
 import { useRememberRecent } from '#/lib/recent';
 import { usePathTab } from '#/lib/tabs';
 import { fromNow } from '#/lib/time';
@@ -252,7 +252,7 @@ export const PlayerPage = () => {
                     </LiveBadge>
                 )}
                 {player && me?.canViewPermissions && (
-                    <HeaderLink to={`/permissions/players/${player.id}`} icon={<KeyRound />}>Permissions</HeaderLink>
+                    <ButtonLink to={`/permissions/players/${player.id}`} icon={<KeyRound />}>Permissions</ButtonLink>
                 )}
             </PageHeader>
             <PageBody>

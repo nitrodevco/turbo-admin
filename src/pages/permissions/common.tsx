@@ -1,5 +1,5 @@
 import { KeyRound, ListTree, Search, ShieldCheck, Users } from 'lucide-react';
-import type { ButtonHTMLAttributes, ReactNode } from 'react';
+import type { ReactNode } from 'react';
 import { Link } from 'react-router';
 
 import type { AuditEntry } from '#/api/permissions';
@@ -7,7 +7,6 @@ import { useMe } from '#/api/queries';
 import { PhoneLabel, Row, RowList } from '#/components/RowList';
 import type { TabItem } from '#/components/Tabs';
 import { Badge, EmptyState, Labeled, PageHeader, Select } from '#/components/ui';
-import { cx } from '#/lib/cx';
 import { type Sorting, useSortedRows } from '#/lib/sort';
 import { fromNow } from '#/lib/time';
 import { formatDateTime } from '#/pages/rooms/labels';
@@ -90,22 +89,6 @@ export const TimingFields = ({ duration, extend, onDuration, onExtend }: {
 
 /** The layout every add form in an access card shares: stacked fields with labels on a phone, a row from a tablet up. */
 export const ADD_FORM_CLASS = 'flex flex-col gap-3 border-t border-line p-4 sm:flex-row sm:flex-wrap sm:items-end';
-
-/** A row's remove button: only an icon, a thumb's size on a phone and small from a tablet up. */
-export const UnsetButton = ({ label, icon, className, ...button }: ButtonHTMLAttributes<HTMLButtonElement> & { label: string; icon: ReactNode }) => (
-    <button
-        type="button"
-        aria-label={label}
-        title={label}
-        {...button}
-        className={cx(
-            'grid size-10 shrink-0 place-items-center rounded-lg border border-transparent text-muted transition hover:border-line hover:bg-subtle hover:text-ink disabled:pointer-events-none disabled:opacity-50 sm:size-7 [&>svg]:size-4',
-            className,
-        )}
-    >
-        {icon}
-    </button>
-);
 
 /**
  * Permission changes, newest first until a header sorts them otherwise: when, by whom, about whom,

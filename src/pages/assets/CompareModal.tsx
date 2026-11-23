@@ -203,7 +203,7 @@ const Provenance = ({ item }: { item: AssetComparison }) => (
 );
 
 const Comparison = ({ targetId, item }: { targetId: number; item: AssetComparison }) => (
-    <li aria-label={item.path} className="flex flex-col gap-2 px-5 py-3">
+    <li aria-label={item.path} className="flex flex-col gap-2 px-4 sm:px-5 py-3">
         <div className="flex items-center gap-2">
             <Badge tone={RESULTS[item.result].tone}>{RESULTS[item.result].label}</Badge>
             <span className="min-w-0 flex-1 truncate font-mono text-sm" title={item.path}>{item.path}</span>
@@ -243,17 +243,17 @@ export const CompareModal = ({ target, path, onClose }: { target: AssetTarget; p
 
     return (
         <Modal open={path !== null} onClose={onClose} title={`${target.name}: ${path ? `compare ${path.split('/').pop()}` : 'compare all changed'}`} className="sm:h-fit! sm:max-w-3xl">
-            {error && <div className="p-5"><ErrorNotice error={error} /></div>}
+            {error && <div className="p-4 sm:p-5"><ErrorNotice error={error} /></div>}
             {!data && !error && <Loading />}
             {data && data.items.length === 0 && <EmptyState>Nothing is pending as changed.</EmptyState>}
             {data && data.items.length > 0 && (
                 <>
-                    {!path && <p className="border-b border-line px-5 py-2 text-xs text-muted">{summary(data.items, data.total)}</p>}
+                    {!path && <p className="border-b border-line px-4 sm:px-5 py-2 text-xs text-muted">{summary(data.items, data.total)}</p>}
                     <ul aria-label={`${target.name}: compared`} className="divide-y divide-line">
                         {real.map(item => <Comparison key={item.path} targetId={target.id} item={item} />)}
                         {path && quiet.map(item => <Comparison key={item.path} targetId={target.id} item={item} />)}
                         {!path && quiet.length > 0 && (
-                            <li aria-label="No change for players" className="flex flex-col gap-1 px-5 py-3">
+                            <li aria-label="No change for players" className="flex flex-col gap-1 px-4 sm:px-5 py-3">
                                 <h4 className="text-xs font-semibold">{`No change for players (${quiet.length})`}</h4>
                                 <ul className="flex flex-col gap-0.5">
                                     {quiet.map(item => (

@@ -41,7 +41,7 @@ export const BundleDetail = ({ bundle, canManage, onClose }: { bundle: { kind: B
                 </span>
             )}
         >
-            {error && <div className="p-5"><ErrorNotice error={error} /></div>}
+            {error && <div className="p-4 sm:p-5"><ErrorNotice error={error} /></div>}
             {!data && !error && <Loading />}
             {data && bundle && (
                 <div className="flex flex-col gap-4 p-4 sm:p-5">

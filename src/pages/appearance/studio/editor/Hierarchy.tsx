@@ -1,6 +1,8 @@
 import { ChevronDown, ChevronRight, Eye, EyeOff } from 'lucide-react';
 import { type DragEvent, useState } from 'react';
 
+import { Badge } from '#/components/ui';
+
 import type { Picked } from './EditorOverlay';
 import { type EditNode, type EditTree, keyOf } from './tree';
 
@@ -117,7 +119,7 @@ export const Hierarchy = ({ trees, selected, canEdit, onSelect, onHidden, onMove
                     )}
                     <span className={`truncate ${node.hidden ? 'text-muted line-through' : ''}`}>{labelOf(node, key, tree.owner)}</span>
                     <span className="ml-auto shrink-0 font-mono text-2xs text-muted">{node.tag}</span>
-                    {node.insertedAt !== undefined && <span className="shrink-0 rounded bg-good-soft px-1 text-2xs text-good">new</span>}
+                    {node.insertedAt !== undefined && <Badge tone="green" className="shrink-0 py-0">new</Badge>}
                 </div>
                 {node.children.length > 0 && open && <ul role="group">{rows(tree, node.children, depth + 1)}</ul>}
             </li>

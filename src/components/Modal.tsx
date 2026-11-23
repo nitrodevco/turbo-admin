@@ -28,7 +28,7 @@ export const Modal = ({ title, open, onClose, children, className, leave }: { ti
                         className,
                     )}
                 >
-                    <div className="flex items-center justify-between gap-3 border-b border-line bg-surface px-5 pt-[max(0.75rem,env(safe-area-inset-top))] pb-3">
+                    <div className="flex items-center justify-between gap-3 border-b border-line bg-surface px-4 pt-[max(0.75rem,env(safe-area-inset-top))] pb-3 sm:px-5">
                         <h2 className="min-w-0 truncate text-base font-semibold">{title}</h2>
                         <button type="button" onClick={() => closeOrAsk(onClose, leave)} aria-label="Close" className="grid size-10 shrink-0 place-items-center rounded-lg text-muted hover:bg-subtle hover:text-ink sm:size-8">
                             <X className="size-4" />
@@ -40,3 +40,11 @@ export const Modal = ({ title, open, onClose, children, className, leave }: { ti
         </dialog>
     );
 };
+
+/**
+ * The buttons at the foot of a dialog's form, on a rule of their own and to the right: Cancel (a
+ * ghost button) first, the action it is for last.
+ */
+export const ModalActions = ({ children }: { children: ReactNode }) => (
+    <div className="flex flex-wrap items-center justify-end gap-2 border-t border-line pt-4">{children}</div>
+);

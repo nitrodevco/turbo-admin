@@ -8,7 +8,7 @@ import { ask } from '#/components/confirm';
 import { ImageInput } from '#/components/ImageInput';
 import { ImagePicker } from '#/components/ImagePicker';
 import { toast } from '#/components/toast';
-import { Button, ErrorNotice, Field, IconButton, Input, Label, Labeled, Switch, Textarea } from '#/components/ui';
+import { Button, EmptyState, ErrorNotice, Field, IconButton, Input, Label, Labeled, Switch, Textarea } from '#/components/ui';
 import { cx } from '#/lib/cx';
 
 import { CatalogImageThumb, CHECKS } from './CatalogImageThumb';
@@ -370,7 +370,7 @@ export const PageInspector = ({ tree, page, draft, onDraft, focus, onOpen }: Pag
                         </Section>
                     )}
 
-                    {spec.images.length === 0 && spec.texts.length === 0 && <p className="px-4 py-4 text-sm text-muted">This layout takes no pictures or words.</p>}
+                    {spec.images.length === 0 && spec.texts.length === 0 && <EmptyState>This layout takes no pictures or words.</EmptyState>}
                 </div>
             </div>
 

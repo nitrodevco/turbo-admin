@@ -5,6 +5,7 @@ import { type ImageAccept, mediaFilePath, shapeOfValue, useMediaFind } from '#/a
 import { cx } from '#/lib/cx';
 
 import { ImagePicker, MediaThumb } from './ImagePicker';
+import { Badge } from './ui';
 
 /**
  * A field that holds a picture: what it holds, drawn beside its value, and a button that opens
@@ -46,7 +47,7 @@ export const ImageInput = ({ id, value, onChange, accept, disabled, resolve, pre
             >
                 <Images className="size-4 shrink-0 text-muted" aria-hidden />
                 <span className={cx('min-w-0 flex-1 truncate font-mono text-xs', !text && 'font-sans text-muted')} data-testid="image-input-value">{text || 'Pick a picture'}</span>
-                {text && found.data === null && <span className="shrink-0 rounded bg-warn-soft px-1.5 text-2xs font-medium text-warn">not in the media library</span>}
+                {text && found.data === null && <Badge tone="amber" className="shrink-0">not in the media library</Badge>}
             </button>
             {text && !disabled && (
                 <button type="button" onClick={() => onChange('')} aria-label="No picture" title="No picture" className="grid size-8 shrink-0 place-items-center rounded-lg text-muted hover:bg-subtle hover:text-ink">

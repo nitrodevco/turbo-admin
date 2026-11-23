@@ -14,7 +14,7 @@ import { Eye, EyeOff, Upload, X } from 'lucide-react';
 import type { ReactNode } from 'react';
 
 import type { ChatStyleFile } from '#/api/content';
-import { Button, Checkbox, IconButton, Input, Labeled, Select } from '#/components/ui';
+import { Button, Checkbox, COLOUR_FIELD_CLASS, IconButton, Input, Labeled, Select } from '#/components/ui';
 import { cx } from '#/lib/cx';
 import { type ChatStylePoint, type ChatStyleRect, type ChatStyleRegPoints, DEFAULT_FONT_FACE, DEFAULT_FONT_SIZE, GUIDE_COLORS, POINTER_MARGIN_LEFT, POINTER_MARGIN_RIGHT } from '#/preview/chatBubble';
 
@@ -74,7 +74,7 @@ const ColourInput = ({ label, value, faded, onChange }: { label: string; value: 
         aria-label={label}
         value={hexOf(value)}
         onChange={event => onChange(parseInt(event.target.value.slice(1), 16))}
-        className={cx('h-10 w-14 cursor-pointer rounded-lg border border-line bg-canvas p-1 sm:h-8', faded && 'opacity-40')}
+        className={cx(COLOUR_FIELD_CLASS, faded && 'opacity-40')}
     />
 );
 

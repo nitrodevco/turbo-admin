@@ -87,7 +87,7 @@ export const ChangesTab = ({ index, windows, patches, draft, onJump }: { index: 
             {order.map(window => (
                 <section key={window} aria-label={window ? nameOf(window) : 'Theme settings and texts'} className="border-b border-line">
                     <div className="sticky top-0 z-10 flex items-center gap-1 bg-surface px-3 py-1.5">
-                        <h3 className="truncate text-xs font-medium text-muted uppercase">{window ? nameOf(window) : 'Theme settings and texts'}</h3>
+                        <h3 className="truncate font-mono text-2xs font-medium tracking-[0.08em] text-muted uppercase">{window ? nameOf(window) : 'Theme settings and texts'}</h3>
                         {window && <IconButton label={`Show ${nameOf(window)}`} icon={<CornerDownRight />} small className="ml-auto" onClick={() => onJump(window)} />}
                     </div>
                     <ul className="divide-y divide-line">

@@ -42,7 +42,7 @@ const tabClass = (active: boolean) => cx(
 );
 
 const Count = ({ count, active }: { count: number; active: boolean }) => (
-    <span className={cx('rounded-full px-1.5 text-2xs tabular-nums transition-colors', active ? 'bg-accent-soft text-accent' : 'bg-subtle text-muted')}>
+    <span className={cx('rounded-full px-1.5 font-mono text-2xs tabular-nums transition-colors', active ? 'bg-accent-soft text-accent' : 'bg-subtle text-muted')}>
         {count.toLocaleString()}
     </span>
 );

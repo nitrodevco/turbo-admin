@@ -1,4 +1,4 @@
-import { Save } from 'lucide-react';
+import { Languages, Save } from 'lucide-react';
 import { useMemo, useState } from 'react';
 import { Link, useSearchParams } from 'react-router';
 
@@ -7,7 +7,7 @@ import { type TemplateIndex, useTemplateIndex, type WindowElement, windowOf } fr
 import { useSaved } from '#/components/SaveFeedback';
 import { SearchInput } from '#/components/SearchInput';
 import { toastError } from '#/components/toast';
-import { Button, EmptyState, ErrorNotice, Input, Loading, PageBody, PageHeader, Panel } from '#/components/ui';
+import { Button, ButtonLink, EmptyState, ErrorNotice, Input, Loading, PageBody, PageHeader, Panel } from '#/components/ui';
 import { useDebounced } from '#/lib/debounce';
 import { usePathTab } from '#/lib/tabs';
 
@@ -152,7 +152,7 @@ export const AppearanceTextsPage = () => {
     return (
         <>
             <PageHeader title="Texts" description="Every text a window shows, by window or by what it says. Players online see a change as it is saved." tabs={{ items: TABS, value: tab }}>
-                <Link to="/gamedata/texts" className="inline-flex items-center gap-1 rounded-lg border border-line px-3 py-1.5 text-sm hover:bg-subtle">All texts</Link>
+                <ButtonLink to="/gamedata/texts" icon={<Languages />}>All texts</ButtonLink>
             </PageHeader>
             <PageBody>
                 {error && <ErrorNotice error={error} />}

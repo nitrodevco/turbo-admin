@@ -9,7 +9,7 @@ import type { RoomDetailResponse, RoomPlayerRef } from '#/api/types';
 import { ask, type Question } from '#/components/confirm';
 import { Sheet, SheetItem } from '#/components/Sheet';
 import { TabbedPanel } from '#/components/TabbedPanel';
-import { Avatar, Badge, Button, EmptyState, ErrorNotice, HeaderLink, IconButton, Input, Kv, Label, Loading, PageBody, Panel, Segmented, Select, Stat, Switch, Textarea, TextLink } from '#/components/ui';
+import { Avatar, Badge, Button, ButtonLink, EmptyState, ErrorNotice, IconButton, Input, Kv, Label, Loading, PageBody, Panel, Segmented, Select, Stat, Switch, Textarea, TextLink } from '#/components/ui';
 import { fromNow } from '#/lib/time';
 
 import { doorModeLabel, formatDateTime, tradeModeLabel, whoLabel } from './labels';
@@ -306,7 +306,7 @@ export const RoomPage = () => {
         <>
             <RoomHeader id={id} room={room} tab="overview">
                 {me?.canViewChatlog && (
-                    <HeaderLink to={`/chatlog?${new URLSearchParams({ room: String(id) })}`} icon={<MessagesSquare />}>Chat</HeaderLink>
+                    <ButtonLink to={`/chatlog?${new URLSearchParams({ room: String(id) })}`} icon={<MessagesSquare />}>Chat</ButtonLink>
                 )}
             </RoomHeader>
             <PageBody>

@@ -7,7 +7,7 @@ import { useMe } from '#/api/queries';
 import { ask } from '#/components/confirm';
 import { Tabs } from '#/components/Tabs';
 import { toast, toastError } from '#/components/toast';
-import { Badge, type BadgeTone, Button, EmptyState, ErrorNotice, Loading, PageBody, PageHeader, Panel, WarningNotice } from '#/components/ui';
+import { Badge, type BadgeTone, Button, ButtonLink, EmptyState, ErrorNotice, Loading, PageBody, PageHeader, Panel, WarningNotice } from '#/components/ui';
 import { useHubTabs } from '#/layout/nav';
 import { cx } from '#/lib/cx';
 import { fromNow } from '#/lib/time';
@@ -444,10 +444,7 @@ export const PluginsPage = () => {
                     </Button>
                 )}
                 {/* Themes, style properties, windows, patches, images and texts are all under Appearance. */}
-                <Link to="/appearance" className="inline-flex items-center gap-1 rounded-lg border border-line px-3 py-1.5 text-sm hover:bg-subtle">
-                    <Palette className="size-4" />
-                    Appearance
-                </Link>
+                <ButtonLink to="/appearance" icon={<Palette />}>Appearance</ButtonLink>
                 {data && (canLink
                     ? (
                             <Button variant="secondary" icon={<Link2 />} onClick={() => setEditing('new')}>

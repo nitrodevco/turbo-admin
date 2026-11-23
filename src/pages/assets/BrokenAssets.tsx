@@ -1,13 +1,12 @@
 import { CheckCircle2, CloudDownload, ExternalLink, EyeOff, RotateCcw, Send, Upload } from 'lucide-react';
 import { useRef, useState } from 'react';
-import { Link } from 'react-router';
 
 import { type BrokenAsset, type BrokenAssetSource, useBrokenAssets, useIgnoreBrokenAssets, useUploadBadgePicture } from '#/api/brokenAssets';
 import { useStartSync } from '#/api/bundles';
 import { useFetchCatalogPictures, useUploadCatalogImage } from '#/api/catalogImages';
-import { Modal } from '#/components/Modal';
+import { Modal, ModalActions } from '#/components/Modal';
 import { toast, toastError } from '#/components/toast';
-import { Badge, Button, Checkbox, EmptyState, ErrorNotice, Loading, Panel, Segmented, Textarea } from '#/components/ui';
+import { Badge, Button, ButtonLink, Checkbox, EmptyState, ErrorNotice, Loading, Panel, Segmented, Textarea } from '#/components/ui';
 import { cx } from '#/lib/cx';
 import { fromNow } from '#/lib/time';
 import { UploadDialog } from '#/pages/gamedata/UploadDialog';
@@ -80,10 +79,10 @@ const IgnoreDialog = ({ assets, onClose, onIgnored }: { assets: BrokenAsset[]; o
                 <p className="text-sm text-muted">{assets.length === 1 ? 'It stays' : 'They stay'} listed under Ignored, with why, until brought back.</p>
                 <Textarea name="ignore-note" rows={3} maxLength={512} value={note} onChange={event => setNote(event.target.value)} placeholder="Why: retired badge, page not shown, ..." autoFocus />
                 {ignore.error && <ErrorNotice error={ignore.error} />}
-                <div className="flex justify-end gap-2 border-t border-line pt-4">
+                <ModalActions>
                     <Button variant="ghost" onClick={onClose}>Cancel</Button>
                     <Button type="submit" icon={<EyeOff />} disabled={ignore.isPending}>Ignore</Button>
-                </div>
+                </ModalActions>
             </form>
         </Modal>
     );
@@ -139,13 +138,13 @@ const Row = ({ asset, canManage, busy, selected, onSelect, onIgnore, onUploadLib
             {canManage && (
                 <div className="flex shrink-0 flex-wrap items-center gap-1.5 max-sm:pl-7">
                     {!asset.ignored && asset.actions.includes('habbo') && (
-                        <Button variant="secondary" icon={<CloudDownload />} className="h-8 px-2.5 text-xs" disabled={busy || fromHabbo.pending} onClick={() => fromHabbo.take([ asset ])}>
+                        <Button variant="secondary" icon={<CloudDownload />} small disabled={busy || fromHabbo.pending} onClick={() => fromHabbo.take([ asset ])}>
                             Take from Habbo
                         </Button>
                     )}
                     {!asset.ignored && asset.actions.includes('upload') && (
                         <>
-                            <Button variant="secondary" icon={<Upload />} className="h-8 px-2.5 text-xs" disabled={uploading} onClick={upload}>Upload</Button>
+                            <Button variant="secondary" icon={<Upload />} small disabled={uploading} onClick={upload}>Upload</Button>
                             <input
                                 ref={file}
                                 type="file"
@@ -159,23 +158,21 @@ const Row = ({ asset, canManage, busy, selected, onSelect, onIgnore, onUploadLib
                         </>
                     )}
                     {!asset.ignored && asset.actions.includes('publish') && (
-                        <Link to="/gamedata/publish/targets" className="inline-flex h-8 items-center gap-1.5 rounded-lg border border-line px-2.5 text-xs font-medium hover:bg-canvas [&>svg]:size-3.5">
-                            <Send /> Publish
-                        </Link>
+                        <ButtonLink to="/gamedata/publish/targets" icon={<Send />} small>Publish</ButtonLink>
                     )}
                     {asset.ignored
                         ? (
                                 <Button
                                     variant="ghost"
                                     icon={<RotateCcw />}
-                                    className="h-8 px-2.5 text-xs"
+                                    small
                                     disabled={bringBack.isPending}
                                     onClick={() => bringBack.mutate({ assets: [ asset ], note: null }, { onSuccess: () => toast('Brought back.'), onError: toastError })}
                                 >
                                     Bring back
                                 </Button>
                             )
-                        : <Button variant="ghost" icon={<EyeOff />} className="h-8 px-2.5 text-xs" onClick={onIgnore}>Ignore</Button>}
+                        : <Button variant="ghost" icon={<EyeOff />} small onClick={onIgnore}>Ignore</Button>}
                 </div>
             )}
         </li>
@@ -232,18 +229,18 @@ const Selection = ({ items, selected, show, busy, onSelectAll, onIgnore, onDone 
                         ? (
                                 <>
                                     {takeable.length > 0 && (
-                                        <Button variant="secondary" icon={<CloudDownload />} className="h-8 px-2.5 text-xs" disabled={busy || fromHabbo.pending} onClick={() => fromHabbo.take(takeable, onDone)}>
+                                        <Button variant="secondary" icon={<CloudDownload />} small disabled={busy || fromHabbo.pending} onClick={() => fromHabbo.take(takeable, onDone)}>
                                             {`Take ${takeable.length.toLocaleString()} from Habbo`}
                                         </Button>
                                     )}
-                                    <Button variant="secondary" icon={<EyeOff />} className="h-8 px-2.5 text-xs" onClick={onIgnore}>{`Ignore ${selected.length.toLocaleString()}`}</Button>
+                                    <Button variant="secondary" icon={<EyeOff />} small onClick={onIgnore}>{`Ignore ${selected.length.toLocaleString()}`}</Button>
                                 </>
                             )
                         : (
                                 <Button
                                     variant="secondary"
                                     icon={<RotateCcw />}
-                                    className="h-8 px-2.5 text-xs"
+                                    small
                                     disabled={bringBack.isPending}
                                     onClick={() => bringBack.mutate({ assets: selected, note: null }, {
                                         onSuccess: () => {
@@ -256,7 +253,7 @@ const Selection = ({ items, selected, show, busy, onSelectAll, onIgnore, onDone 
                                     {`Bring back ${selected.length.toLocaleString()}`}
                                 </Button>
                             )}
-                    <Button variant="ghost" className="h-8 px-2.5 text-xs" onClick={() => onSelectAll(false)}>Clear</Button>
+                    <Button variant="ghost" small onClick={() => onSelectAll(false)}>Clear</Button>
                 </div>
             )}
         </div>
@@ -364,7 +361,7 @@ export const BrokenAssets = ({ canManage, busy }: { canManage: boolean; busy: bo
                 {items.length > limit && (
                     <div className="flex items-center justify-center gap-3 border-t border-line px-4 py-3 text-ui text-muted">
                         {`${limit.toLocaleString()} of ${items.length.toLocaleString()} shown`}
-                        <Button variant="secondary" className="h-8 px-2.5 text-xs" onClick={() => setLimit(current => current + PAGE)}>Show more</Button>
+                        <Button variant="secondary" small onClick={() => setLimit(current => current + PAGE)}>Show more</Button>
                     </div>
                 )}
             </Panel>

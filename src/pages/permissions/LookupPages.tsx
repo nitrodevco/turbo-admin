@@ -46,7 +46,7 @@ export const SearchPage = () => {
                             <Button type="submit" disabled={draft.trim() === ''}>Search</Button>
                         </form>
                     </ListToolbar>
-                    {node === '' && <p className="px-4 py-6 text-sm text-muted">Name a node to see every group and player given it.</p>}
+                    {node === '' && <EmptyState>Name a node to see every group and player given it.</EmptyState>}
                     {holders.error && <div className="p-4"><ErrorNotice error={holders.error} /></div>}
                     {holders.isFetching && !holders.data && <Loading />}
                     {holders.data && (

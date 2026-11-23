@@ -3,7 +3,7 @@ import { useState } from 'react';
 
 import type { DataWindowFile, DataWindowTemplate } from '#/api/dataWindows';
 import { ImageInput } from '#/components/ImageInput';
-import { Modal } from '#/components/Modal';
+import { Modal, ModalActions } from '#/components/Modal';
 import { toastError } from '#/components/toast';
 import { Button, Checkbox, Input, Labeled, Segmented, Select, Textarea } from '#/components/ui';
 
@@ -56,7 +56,7 @@ export const NewWindowDialog = ({ open, onClose, theme, taken, windows, source, 
 
     return (
         <Modal title="New window" open={open} onClose={onClose}>
-            <div className="flex flex-col gap-4 p-5" data-testid="new-window">
+            <div className="flex flex-col gap-4 p-4 sm:p-5" data-testid="new-window">
                 <Labeled label="Title" hint="Shown in its header, and on its me menu entry">
                     <Input value={start.title} onChange={event => set({ title: event.target.value })} placeholder="Welcome" autoFocus />
                 </Labeled>
@@ -103,10 +103,10 @@ export const NewWindowDialog = ({ open, onClose, theme, taken, windows, source, 
                     </Labeled>
                 )}
                 <Checkbox label="Players open it from the me menu" checked={start.meMenu} onChange={meMenu => set({ meMenu })} />
-                <div className="flex items-center justify-end gap-2">
+                <ModalActions>
                     <Button variant="ghost" onClick={onClose}>Cancel</Button>
                     <Button icon={<Plus />} disabled={busy || (start.starter === 'copy' && !copyOf)} onClick={() => void create()} data-testid="new-window-create">Create</Button>
-                </div>
+                </ModalActions>
             </div>
         </Modal>
     );

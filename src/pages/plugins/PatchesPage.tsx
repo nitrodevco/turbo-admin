@@ -11,7 +11,7 @@ import { WorkingOnPicker } from '#/appearance/WorkingOnPicker';
 import { ask } from '#/components/confirm';
 import { useSaved } from '#/components/SaveFeedback';
 import { toast, toastError } from '#/components/toast';
-import { Badge, Button, EmptyState, ErrorNotice, Input, Labeled, Loading, PageBody, PageHeader, Panel, Textarea } from '#/components/ui';
+import { Badge, Button, ButtonLink, EmptyState, ErrorNotice, Input, Labeled, Loading, PageBody, PageHeader, Panel, Textarea } from '#/components/ui';
 import { outdatedReasons } from '#/pages/appearance/outdated';
 import { DesignPreview } from '#/preview/DesignPreview';
 import { useOpsHistory } from '#/preview/opsHistory';
@@ -302,10 +302,7 @@ export const PatchesPage = () => {
     return (
         <>
             <PageHeader title="Template patches" description="Changes to the game's windows, as data, by who made them: this hotel and each plugin. Beside each window: how many players' clients report it applied / unmatched / ineffective, and what a client update took away. Players get a change at their next load.">
-                <Link to="/appearance/studio" className="inline-flex items-center gap-1 rounded-lg border border-line px-3 py-1.5 text-sm hover:bg-subtle">
-                    <AppWindow className="size-4" />
-                    Theme studio
-                </Link>
+                <ButtonLink to="/appearance/studio" icon={<AppWindow />}>Theme studio</ButtonLink>
             </PageHeader>
             <PageBody>
                 <WorkingOnPicker className="card px-4 py-2.5" />

@@ -105,17 +105,6 @@ const HeaderPage = ({ title }: { title: string }) => (
 );
 
 /**
- * A link in a page's header that looks like the header's buttons: from a room or a player to their
- * chat, commands, permissions or profile.
- */
-export const HeaderLink = ({ to, icon, children }: { to: string; icon: ReactNode; children: ReactNode }) => (
-    <Link to={to} className="inline-flex h-10 items-center gap-1.5 rounded-lg border border-line bg-subtle px-3 text-sm font-medium hover:border-line-strong sm:h-8 sm:text-ui [&>svg]:size-4">
-        {icon}
-        {children}
-    </Link>
-);
-
-/**
  * The page under its header, to the same width: its cards one under another, 16px apart (20px from
  * a laptop up), unless `className` lays them out otherwise (a grid of columns). `still` leaves out
  * its rising entrance, for a page with drag and drop: a transformed parent would move the drag
@@ -241,6 +230,9 @@ export const Loading = () => (
  */
 export const FIELD_CLASS = 'h-10 sm:h-8 rounded-lg border border-line bg-canvas px-2.5 text-base sm:text-ui text-ink placeholder:text-muted/70 transition-[border-color,box-shadow] hover:border-line-strong focus:border-accent focus:outline-none focus:ring-3 focus:ring-accent/20 disabled:opacity-60 disabled:hover:border-line';
 
+/** A colour picker (`<input type="color">`), the height of the fields beside it, its swatch inset. */
+export const COLOUR_FIELD_CLASS = 'h-10 w-12 shrink-0 cursor-pointer rounded-lg border border-line bg-canvas p-1 transition-colors hover:border-line-strong disabled:cursor-not-allowed disabled:opacity-60 sm:h-8';
+
 /** A ref, given, is the input's: React 19 passes it on as a prop. */
 export const Input = ({ className, ...input }: InputHTMLAttributes<HTMLInputElement> & { ref?: Ref<HTMLInputElement> }) => (
     <input {...input} className={cx(FIELD_CLASS, className ?? 'w-full')} />
@@ -354,19 +346,34 @@ const BUTTON_VARIANTS: Record<ButtonVariant, string> = {
     danger: 'border border-bad-line bg-bad-soft text-bad hover:border-bad/60',
 };
 
-export const Button = ({ variant = 'primary', icon, className, children, ...button }: ButtonHTMLAttributes<HTMLButtonElement> & { variant?: ButtonVariant; icon?: ReactNode }) => (
-    <button
-        type="button"
-        {...button}
-        className={cx(
-            'inline-flex h-10 items-center justify-center gap-1.5 rounded-lg px-3 text-sm font-medium whitespace-nowrap transition active:scale-[0.98] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent disabled:pointer-events-none disabled:opacity-50 sm:h-8 sm:text-ui [&>svg]:size-4',
-            BUTTON_VARIANTS[variant],
-            className,
-        )}
-    >
+/** A button's look, for a `Button` and for a link drawn as one (`ButtonLink`). */
+const buttonClass = (variant: ButtonVariant, small: boolean | undefined) => cx(
+    'inline-flex h-10 items-center justify-center gap-1.5 rounded-lg text-sm font-medium whitespace-nowrap transition active:scale-[0.98] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent disabled:pointer-events-none disabled:opacity-50',
+    small ? 'px-2.5 sm:h-7 sm:text-xs [&>svg]:size-3.5' : 'px-3 sm:h-8 sm:text-ui [&>svg]:size-4',
+    BUTTON_VARIANTS[variant],
+);
+
+/**
+ * A button with words. `small` for a dense row (an item's actions in a list inside a card), as
+ * `IconButton` has it: still a thumb's size on a phone, compact from a tablet up.
+ */
+export const Button = ({ variant = 'primary', icon, small, className, children, ...button }: ButtonHTMLAttributes<HTMLButtonElement> & { variant?: ButtonVariant; icon?: ReactNode; small?: boolean }) => (
+    <button type="button" {...button} className={cx(buttonClass(variant, small), className)}>
         {icon}
         {children}
     </button>
+);
+
+/**
+ * A link that looks like a secondary `Button`, for a way to another page among buttons: in a page's
+ * header, from a room or a player to their chat, commands, permissions or profile; `small` among a
+ * row's small buttons.
+ */
+export const ButtonLink = ({ to, icon, small, children }: { to: string; icon: ReactNode; small?: boolean; children: ReactNode }) => (
+    <Link to={to} className={buttonClass('secondary', small)}>
+        {icon}
+        {children}
+    </Link>
 );
 
 /**
