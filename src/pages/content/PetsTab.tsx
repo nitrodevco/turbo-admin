@@ -22,14 +22,14 @@ const BreedRow = ({ breed, canManage }: { breed: PetBreed; canManage: boolean })
                 value={draft[field]}
                 onChange={event => setDraft({ ...draft, [field]: Number(event.target.value.replace(/[^-\d]/g, '')) || 0 })}
                 inputMode="numeric"
-                className="h-10 w-16 text-ink sm:h-8"
+                className="w-16"
                 disabled={!canManage}
             />
         </label>
     );
 
     return (
-        <li className="flex flex-wrap items-center gap-2 px-3 py-1.5 text-sm">
+        <li className="flex flex-wrap items-center gap-2 px-4 py-1.5 text-sm">
             <span className="w-20 font-mono text-xs">palette {breed.paletteId}</span>
             {number('breedId', 'Breed')}
             {number('rarityLevel', 'Rarity')}
@@ -49,8 +49,8 @@ const LineRow = ({ line, canManage }: { line: PetLine; canManage: boolean }) => 
     const remove = useDeletePetLine();
 
     return (
-        <li className="flex items-center gap-2 px-3 py-1.5">
-            <Input value={text} onChange={event => setText(event.target.value)} className="h-8 min-w-0 flex-1 sm:h-8" disabled={!canManage} aria-label="Line" />
+        <li className="flex items-center gap-2 px-4 py-1.5">
+            <Input value={text} onChange={event => setText(event.target.value)} className="min-w-0 flex-1" disabled={!canManage} aria-label="Line" />
             {canManage && text !== line.line && <IconButton label="Save" icon={<Save />} disabled={save.isPending} onClick={() => save.mutate({ kind: 'speech', id: line.id, body: { line: text } })} />}
             {canManage && <IconButton label="Remove" icon={<Trash2 />} tone="bad" disabled={remove.isPending} onClick={() => ask({ title: 'Remove this line?', body: line.line, confirm: 'Remove' }, () => remove.mutate(line.id))} />}
         </li>
@@ -82,7 +82,7 @@ export const PetsTab = ({ canManage }: { canManage: boolean }) => {
                 <div className="max-h-[60dvh] min-h-0 overflow-y-auto xl:max-h-none">
                     {types.map(type => (
                         <section key={type}>
-                            <h3 className="sticky top-0 border-b border-line bg-subtle px-3 py-1.5 font-mono text-2xs font-medium tracking-[0.08em] text-muted uppercase">{typeName(type)}</h3>
+                            <h3 className="sticky top-0 border-b border-line bg-subtle px-4 py-1.5 font-mono text-2xs font-medium tracking-[0.08em] text-muted uppercase">{typeName(type)}</h3>
                             <ul className="divide-y divide-line">
                                 {data.breeds.filter(x => x.typeId === type).map(x => <BreedRow key={x.id} breed={x} canManage={canManage} />)}
                             </ul>
@@ -91,7 +91,7 @@ export const PetsTab = ({ canManage }: { canManage: boolean }) => {
                 </div>
                 {canManage && (
                     <form
-                        className="flex flex-wrap gap-2 border-t border-line p-3"
+                        className="flex flex-wrap gap-2 border-t border-line px-4 py-3"
                         onSubmit={(event) => {
                             event.preventDefault();
                             save.mutate({ kind: 'breeds', id: null, body: { typeId: Number(breed.typeId), paletteId: Number(breed.paletteId), sellable: true } }, { onSuccess: () => setBreed({ typeId: '', paletteId: '' }) });
@@ -108,7 +108,7 @@ export const PetsTab = ({ canManage }: { canManage: boolean }) => {
                 <div className="max-h-[60dvh] min-h-0 overflow-y-auto xl:max-h-none">
                     {lineTypes.map(type => (
                         <section key={type ?? 'all'}>
-                            <h3 className="sticky top-0 flex items-center gap-2 border-b border-line bg-subtle px-3 py-1.5 font-mono text-2xs font-medium tracking-[0.08em] text-muted uppercase">
+                            <h3 className="sticky top-0 flex items-center gap-2 border-b border-line bg-subtle px-4 py-1.5 font-mono text-2xs font-medium tracking-[0.08em] text-muted uppercase">
                                 {typeName(type)}
                                 {type === null && <Badge>shared</Badge>}
                             </h3>
@@ -120,7 +120,7 @@ export const PetsTab = ({ canManage }: { canManage: boolean }) => {
                 </div>
                 {canManage && (
                     <form
-                        className="flex flex-wrap gap-2 border-t border-line p-3"
+                        className="flex flex-wrap gap-2 border-t border-line px-4 py-3"
                         onSubmit={(event) => {
                             event.preventDefault();
                             save.mutate({ kind: 'speech', id: null, body: { typeId: line.typeId === '' ? null : Number(line.typeId), line: line.text } }, { onSuccess: () => setLine({ ...line, text: '' }) });
@@ -134,7 +134,7 @@ export const PetsTab = ({ canManage }: { canManage: boolean }) => {
                         <Button type="submit" variant="secondary" icon={<Plus />} disabled={!line.text.trim() || save.isPending}>Add line</Button>
                     </form>
                 )}
-                {save.error && <div className="p-3"><ErrorNotice error={save.error} /></div>}
+                {save.error && <div className="p-4"><ErrorNotice error={save.error} /></div>}
             </Panel>
         </div>
     );

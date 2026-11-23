@@ -316,7 +316,7 @@ export const PaletteEditor = ({ canManage }: { canManage: boolean }) => {
                     })}
                 </ul>
                 {canManage && (
-                    <div className="border-t border-line p-3">
+                    <div className="border-t border-line px-4 py-3">
                         <Button variant="secondary" icon={<Plus />} className="w-full" onClick={addPalette}>New palette</Button>
                     </div>
                 )}

@@ -132,7 +132,7 @@ const ValueInput = ({ setting, text, onChange }: { setting: ServerSetting; text:
         case 'list':
         case 'map':
         case 'json':
-            return <Textarea value={text} onChange={event => onChange(event.target.value)} rows={Math.min(12, Math.max(3, text.split('\n').length))} className="font-mono text-xs" />;
+            return <Textarea value={text} onChange={event => onChange(event.target.value)} rows={Math.min(12, Math.max(3, text.split('\n').length))} className="font-mono" />;
         default:
             return (
                 <Input
@@ -304,7 +304,7 @@ const SettingsTab = () => {
                         </Select>
                     </div>
                     {sections.length === 0 && <EmptyState>No setting matches.</EmptyState>}
-                    <nav aria-label="Sections" className="flex max-h-[40dvh] min-h-0 flex-col gap-3 overflow-y-auto p-2 lg:max-h-none">
+                    <nav aria-label="Sections" className="flex max-h-[40dvh] min-h-0 flex-col gap-3 overflow-y-auto px-3 py-2 lg:max-h-none">
                         {([ [ 'Server', false ], [ 'Plugins', true ] ] as const).map(([ group, plugins ]) => sections.some(([ , settings ]) => !!settings[0]?.plugin === plugins) && (
                             <div key={group} className="flex flex-col gap-0.5">
                                 <Label className="px-3 pt-1 pb-1">{group}</Label>

@@ -127,7 +127,7 @@ const ProductFields = ({ product, onChange, disabled, locked }: { product: Produ
                                 onChange={event => set('extraParam', event.target.value.trim() || null)}
                                 placeholder={[ 'wallpaper', 'floor', 'landscape' ].includes(product.definitionName ?? '') ? 'Pattern, e.g. 101 (a landscape: 1.1) - needed' : product.definitionName === 'poster' ? 'Poster number, e.g. 12 - needed' : 'Extra parameter, if any'}
                                 disabled={disabled || locked}
-                                className="mt-1.5 w-full font-mono text-xs"
+                                className="mt-1.5 w-full font-mono"
                                 aria-label="Pattern or poster number"
                             />
                         )}
@@ -139,7 +139,7 @@ const ProductFields = ({ product, onChange, disabled, locked }: { product: Produ
                                 onChange={event => set('extraParam', event.target.value ? String(Math.max(1, Math.floor(Number(event.target.value)))) : null)}
                                 placeholder="Song id - needed"
                                 disabled={disabled || locked}
-                                className="mt-1.5 w-full font-mono text-xs"
+                                className="mt-1.5 w-full font-mono"
                                 aria-label="Song id"
                             />
                         )}
@@ -170,7 +170,7 @@ const ProductFields = ({ product, onChange, disabled, locked }: { product: Produ
         case 'robot':
             return (
                 <Labeled label="Figure" hint="The look the bot wears, as a figure string (hr-100-61.hd-180-1…). It is named after its furni, or the hotel's default bot name.">
-                    <Textarea value={product.extraParam ?? ''} onChange={event => set('extraParam', event.target.value.trim() || null)} rows={2} placeholder="hd-180-1.ch-210-66.lg-270-82.sh-290-91" disabled={disabled} className="font-mono text-xs" spellCheck={false} />
+                    <Textarea value={product.extraParam ?? ''} onChange={event => set('extraParam', event.target.value.trim() || null)} rows={2} placeholder="hd-180-1.ch-210-66.lg-270-82.sh-290-91" disabled={disabled} className="font-mono" spellCheck={false} />
                 </Labeled>
             );
         case 'club':

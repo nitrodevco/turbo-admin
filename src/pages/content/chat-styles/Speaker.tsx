@@ -98,7 +98,7 @@ export const SpeakerEditor = ({ name, onName, words, onWords, figure, onFigure, 
                                         event.currentTarget.blur();
                                 }}
                                 spellCheck={false}
-                                className="w-full min-w-0 font-mono text-xs"
+                                className="w-full min-w-0 font-mono"
                             />
                             <IconButton label="Another look" icon={<Dices />} onClick={() => onFigure(SAMPLE_LOOKS[(SAMPLE_LOOKS.indexOf(figure) + 1) % SAMPLE_LOOKS.length]!)} />
                         </span>

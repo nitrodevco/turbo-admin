@@ -90,7 +90,8 @@ const PlanNode = ({ page, depth, edits, open, onToggle, onEdit, onPickIcon, skip
                                     onEdit(page.key, { title: event.target.value.trim() && event.target.value.trim() !== page.title ? event.target.value.trim() : null });
                                 }}
                                 onKeyDown={event => (event.key === 'Enter' || event.key === 'Escape') && event.currentTarget.blur()}
-                                className="h-8 min-w-0 flex-1 text-ui sm:h-7"
+                                small
+                                className="min-w-0 flex-1"
                             />
                         )
                     : (

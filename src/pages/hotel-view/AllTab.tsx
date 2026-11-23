@@ -53,7 +53,7 @@ export const AllTab = ({ draft, disabled }: { draft: HotelViewDraft; disabled?: 
 
     return (
         <Panel className="overflow-clip">
-            <div className="flex flex-wrap items-center gap-2 border-b border-line p-3">
+            <div className="flex flex-wrap items-center gap-2 border-b border-line px-4 py-3">
                 <Input type="search" value={filter} onChange={event => setFilter(event.target.value)} placeholder="Key or value" aria-label="Find variables" className="min-w-48 flex-1 sm:max-w-96" />
                 <span className="text-xs text-muted">{keys.length} of {draft.keys.length}</span>
                 {!disabled && (
@@ -69,7 +69,7 @@ export const AllTab = ({ draft, disabled }: { draft: HotelViewDraft; disabled?: 
                             setAdding(PREFIX);
                         }}
                     >
-                        <Input value={adding} onChange={event => setAdding(event.target.value)} aria-label="New variable's key" className="w-72 min-w-0 font-mono text-xs" />
+                        <Input value={adding} onChange={event => setAdding(event.target.value)} aria-label="New variable's key" className="w-72 min-w-0 font-mono" />
                         <Button type="submit" variant="secondary" icon={<Plus />} disabled={addProblem}>Add</Button>
                     </form>
                 )}

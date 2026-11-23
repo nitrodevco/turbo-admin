@@ -476,7 +476,7 @@ const PickerBody = ({ accept, value, onPick, onClose, none }: PickerProps) => {
                         }}
                         placeholder="Or paste an address or name"
                         spellCheck={false}
-                        className="w-64 font-mono text-xs"
+                        className="w-64 font-mono"
                     />
                     <Button
                         variant="ghost"

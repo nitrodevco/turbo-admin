@@ -423,7 +423,7 @@ const EditorBody = ({ definition, canManage, section, onSection, onUnsaved, save
             case 'description':
                 return <Textarea value={value} onChange={event => set(field.key, event.target.value)} rows={3} disabled={!canManage} className={cx('w-full', ring)} />;
             case 'extradata':
-                return <Textarea value={value} onChange={event => set(field.key, event.target.value)} rows={5} placeholder="{}" disabled={!canManage} className="w-full font-mono text-xs" />;
+                return <Textarea value={value} onChange={event => set(field.key, event.target.value)} rows={5} placeholder="{}" disabled={!canManage} className="w-full font-mono" />;
             case 'logic':
                 return <LogicSelect value={value} logics={logics} onChange={next => set(field.key, next)} disabled={!canManage} />;
             case 'usagepolicy':

@@ -57,7 +57,7 @@ const BotEditor = ({ roomId, bot, canManage, linked }: { roomId: number; bot: Ro
                     <Labeled label="Name"><Input value={draft.name} onChange={event => set({ name: event.target.value })} disabled={disabled} /></Labeled>
                     <Labeled label="Motto"><Input value={draft.motto} onChange={event => set({ motto: event.target.value })} disabled={disabled} /></Labeled>
                     <Labeled label="Look" hint="A figure string, as a player's.">
-                        <Input value={draft.figure} onChange={event => set({ figure: event.target.value })} className="font-mono text-xs" disabled={disabled} />
+                        <Input value={draft.figure} onChange={event => set({ figure: event.target.value })} className="font-mono" disabled={disabled} />
                     </Labeled>
                     <Labeled label="Gender">
                         <Select value={String(draft.gender)} onChange={event => set({ gender: Number(event.target.value) })} disabled={disabled}>

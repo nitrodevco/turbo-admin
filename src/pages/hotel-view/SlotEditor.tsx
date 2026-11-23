@@ -85,7 +85,7 @@ const MainSlotEditor = ({ slot, draft, codes, now, onOpenPromo, onOpenView, disa
                         <Switch label="A heading above it" checked={draft.bool(slotKey(slot, 'separator'))} onChange={checked => draft.setBool(slotKey(slot, 'separator'), checked)} disabled={disabled} />
                         {draft.bool(slotKey(slot, 'separator')) && (
                             <Labeled label="Heading (text key)">
-                                <Input value={draft.text(slotKey(slot, 'title'))} onChange={event => draft.setText(slotKey(slot, 'title'), event.target.value)} className="w-full font-mono text-xs" disabled={disabled} />
+                                <Input value={draft.text(slotKey(slot, 'title'))} onChange={event => draft.setText(slotKey(slot, 'title'), event.target.value)} className="w-full font-mono" disabled={disabled} />
                             </Labeled>
                         )}
                     </div>

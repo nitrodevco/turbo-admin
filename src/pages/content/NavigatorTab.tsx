@@ -38,7 +38,7 @@ const CategoryEditor = ({ category, onDone, canManage }: { category: NavigatorFl
                 <Labeled label="Order"><Input value={draft.orderNum} onChange={event => set({ orderNum: Number(event.target.value.replace(/[^-\d]/g, '')) || 0 })} inputMode="numeric" disabled={!canManage} /></Labeled>
                 <Labeled label="Lowest rank" hint="1 is every player."><Input value={draft.minRank} onChange={event => set({ minRank: Math.max(1, Number(event.target.value.replace(/\D/g, '')) || 1) })} inputMode="numeric" disabled={!canManage} /></Labeled>
                 <Labeled label="Needs the permission" hint="Empty: none.">
-                    <Input value={draft.requiredNode} onChange={event => set({ requiredNode: event.target.value })} placeholder="navigator.category.events" className="font-mono text-xs" disabled={!canManage} />
+                    <Input value={draft.requiredNode} onChange={event => set({ requiredNode: event.target.value })} placeholder="navigator.category.events" className="font-mono" disabled={!canManage} />
                 </Labeled>
                 <Switch label="Shown" checked={draft.visible} onChange={visible => set({ visible })} disabled={!canManage} />
                 <Switch label="Staff only" hint="Needs navigator.category.staff." checked={draft.staffOnly} onChange={staffOnly => set({ staffOnly })} disabled={!canManage} />
@@ -96,7 +96,7 @@ const SimpleList = ({ list, title, description, rows, placeholder, canManage }: 
                                         onBlur={event => Number(event.target.value) !== row.orderNum && save.mutate({ list, id: row.id, body: { [field]: row.name, orderNum: Number(event.target.value) || 0 } })}
                                         inputMode="numeric"
                                         aria-label={`Order of ${row.name}`}
-                                        className="h-8 w-16 sm:h-8"
+                                        className="w-16"
                                     />
                                 )}
                                 <IconButton label={row.visible ? 'Hide' : 'Show'} icon={row.visible ? <EyeOff /> : <Eye />} onClick={() => save.mutate({ list, id: row.id, body: { [field]: row.name, visible: !row.visible } })} />
@@ -108,17 +108,17 @@ const SimpleList = ({ list, title, description, rows, placeholder, canManage }: 
             </ul>
             {canManage && (
                 <form
-                    className="flex gap-2 border-t border-line p-3"
+                    className="flex gap-2 border-t border-line px-4 py-3"
                     onSubmit={(event) => {
                         event.preventDefault();
                         save.mutate({ list, id: null, body: { [field]: adding.trim(), visible: true } }, { onSuccess: () => setAdding('') });
                     }}
                 >
-                    <Input value={adding} onChange={event => setAdding(event.target.value)} placeholder={placeholder} className="min-w-0 flex-1 font-mono text-xs" />
+                    <Input value={adding} onChange={event => setAdding(event.target.value)} placeholder={placeholder} className="min-w-0 flex-1 font-mono" />
                     <Button type="submit" variant="secondary" icon={<Plus />} disabled={!adding.trim() || save.isPending}>Add</Button>
                 </form>
             )}
-            {(save.error || remove.error) && <div className="p-3"><ErrorNotice error={save.error ?? remove.error} /></div>}
+            {(save.error || remove.error) && <div className="p-4"><ErrorNotice error={save.error ?? remove.error} /></div>}
         </Panel>
     );
 };

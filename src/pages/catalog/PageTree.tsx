@@ -218,7 +218,7 @@ export const PageTree = ({ tree, rows, open, selected, projection, onToggle, onS
                 )}
             </div>
 
-            <div className="min-h-0 flex-1 overflow-y-auto p-1.5">
+            <div className="min-h-0 flex-1 overflow-y-auto p-2">
                 {searching
                     ? (
                             <ul className="flex flex-col gap-0.5">

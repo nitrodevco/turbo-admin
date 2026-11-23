@@ -115,7 +115,7 @@ export const BadgesTab = ({ canManage }: { canManage: boolean }) => {
             description="Every badge players hold or that has a pinned rarity, most held first; a hundred at most. A pinned rarity reaches the hotel within five minutes."
             className="overflow-clip"
         >
-            <div className="border-b border-line p-3">
+            <div className="border-b border-line px-4 py-3">
                 <SearchInput value={text} onValueChange={setText} placeholder="Badge code" className="w-full sm:max-w-96" aria-label="Find badges" />
             </div>
             {error && <div className="p-4"><ErrorNotice error={error} /></div>}
@@ -137,7 +137,7 @@ export const BadgesTab = ({ canManage }: { canManage: boolean }) => {
                                 onChange={event => rarity.mutate({ code: badge.code, rarity: event.target.value === '' ? null : Number(event.target.value) })}
                                 disabled={!canManage || rarity.isPending}
                                 aria-label={`Rarity of ${badge.code}`}
-                                className="h-10 w-full text-xs sm:h-8 sm:w-40"
+                                className="w-full sm:w-40"
                             >
                                 <option value="">By how many hold it</option>
                                 {Object.entries(BADGE_RARITIES).map(([ value, label ]) => <option key={value} value={value}>{label}</option>)}

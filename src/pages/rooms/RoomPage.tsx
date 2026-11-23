@@ -101,7 +101,7 @@ const InsideRow = ({ room, player, run, busy, onMore, linked }: { room: RoomDeta
                         >
                             Kick
                         </Button>
-                        <Button variant="ghost" icon={<Gavel />} disabled={busy} aria-label={`Mute or ban ${player.name}`} onClick={onMore} className="px-2.5">
+                        <Button variant="ghost" icon={<Gavel />} disabled={busy} aria-label={`Mute or ban ${player.name}`} onClick={onMore}>
                             Mute or ban
                         </Button>
                     </div>

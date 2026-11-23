@@ -23,7 +23,7 @@ const MovingObjectEditor = ({ n, objectKey, draft, disabled }: { n: number; obje
                     {url && <img src={url} alt="" className="max-h-full max-w-full [image-rendering:pixelated]" />}
                 </span>
                 <Labeled label="Picture" hint={object.type === 'animated' ? 'Frames are <name>1.png, <name>2.png, ... under reception/.' : object.type === 'randomwalk' ? 'Under the image library itself.' : 'Under the image library\'s reception/.'} className="min-w-40 flex-1">
-                    <Input value={object.image} onChange={event => set({ image: event.target.value.replace(/[;\s]/g, '') })} className="font-mono text-xs" disabled={disabled} />
+                    <Input value={object.image} onChange={event => set({ image: event.target.value.replace(/[;\s]/g, '') })} className="font-mono" disabled={disabled} />
                 </Labeled>
                 <Labeled label="Moves" className="w-40">
                     <Select value={object.type} onChange={event => set({ type: event.target.value, args: [] })} disabled={disabled}>
@@ -48,7 +48,7 @@ const MovingObjectEditor = ({ n, objectKey, draft, disabled }: { n: number; obje
                                     args[i] = event.target.value.replace(/[;\s]/g, '');
                                     set({ args });
                                 }}
-                                className="font-mono text-xs"
+                                className="font-mono"
                                 disabled={disabled}
                             />
                         </Labeled>

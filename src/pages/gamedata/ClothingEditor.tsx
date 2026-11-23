@@ -254,7 +254,7 @@ const PartsTable = ({ parts, onChange, disabled }: { parts: Part[]; onChange: (p
 
     return (
         <div className="rounded-lg border border-line">
-            <div aria-hidden className={cx('grid gap-x-3 px-3 py-2 font-mono text-2xs font-medium tracking-[0.08em] text-muted uppercase max-sm:hidden', PART_COLUMNS)}>
+            <div aria-hidden className={cx('grid gap-x-3 px-4 py-2 font-mono text-2xs font-medium tracking-[0.08em] text-muted uppercase max-sm:hidden', PART_COLUMNS)}>
                 <span>Asset id</span>
                 <span>Part</span>
                 <span>Layer</span>
@@ -262,7 +262,7 @@ const PartsTable = ({ parts, onChange, disabled }: { parts: Part[]; onChange: (p
             </div>
             <ul className="divide-y divide-line sm:border-t sm:border-line">
                 {parts.map((part, index) => (
-                    <li key={index} className={cx('grid grid-cols-3 gap-x-3 gap-y-2 p-3 sm:items-center sm:px-3 sm:py-1.5', PART_COLUMNS)}>
+                    <li key={index} className={cx('grid grid-cols-3 gap-x-3 gap-y-2 px-4 py-3 sm:items-center sm:py-1.5', PART_COLUMNS)}>
                         <div className="col-span-3 flex items-center justify-between sm:hidden">
                             <span className="text-xs font-semibold">Part {index + 1}</span>
                             {removeButton(index)}
@@ -348,7 +348,7 @@ const HiddenLayers = ({ layers, onChange, disabled }: { layers: string[]; onChan
                     }}
                     onBlur={add}
                     placeholder="add a part type"
-                    className="h-8 w-36 font-mono text-xs sm:h-8"
+                    className="w-36 font-mono"
                     aria-label="Hide a part type"
                 />
             )}
@@ -419,7 +419,7 @@ const PieceEditor = ({ entry, type, nextId, canManage, onDone }: { entry: Figure
                         rows={10}
                         spellCheck={false}
                         disabled={disabled}
-                        className={cx('w-full font-mono text-xs', jsonError && 'border-bad')}
+                        className={cx('w-full font-mono', jsonError && 'border-bad')}
                     />
                 </Labeled>
             )}
@@ -536,7 +536,7 @@ const NewKind = ({ kinds, onAdded }: { kinds: FigureKindEntry[]; onAdded: (type:
 
     return (
         <form
-            className="flex flex-col gap-2 border-t border-line p-3"
+            className="flex flex-col gap-2 border-t border-line px-4 py-3"
             onSubmit={(event) => {
                 event.preventDefault();
                 save.mutate(

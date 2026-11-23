@@ -141,7 +141,7 @@ const VariableEditor = ({ variable, linking, canManage, onDone }: { variable: Va
                     value={value}
                     onChange={event => setValue(event.target.value)}
                     rows={Math.min(12, Math.max(2, value.split('\n').length, Math.ceil(value.length / 100)))}
-                    className="font-mono text-xs"
+                    className="font-mono"
                     disabled={!canManage}
                 />
             </Labeled>
@@ -211,7 +211,7 @@ const ImportPanel = ({ initial, onDone }: { initial: string | null; onDone: () =
                     }}
                     rows={8}
                     placeholder={'{\n    "socket.url": "wss://hotel.example/ws",\n    "catalog.deep.hierarchy": true\n}'}
-                    className="font-mono text-xs"
+                    className="font-mono"
                     aria-label="Client config"
                 />
                 <Checkbox

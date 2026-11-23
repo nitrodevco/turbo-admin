@@ -238,7 +238,7 @@ export const PageInspector = ({ tree, page, draft, onDraft, focus, onOpen }: Pag
                                     placeholder="catalog.page.vip"
                                     spellCheck={false}
                                     autoComplete="off"
-                                    className="font-mono text-xs"
+                                    className="font-mono"
                                     disabled={!canManage}
                                 />
                             </Labeled>

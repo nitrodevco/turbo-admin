@@ -87,7 +87,7 @@ export const ReceptionTab = ({ draft, part, onPart, promoCodes, backgroundCodes,
                         ? `With the background set you are editing: ${chosenSet || 'the default'}.`
                         : 'On a 1600 by 900 window, scaled to fit, without the avatar and the toolbar. Click a slot or the backgrounds to edit them.'}
                 >
-                    <div className="p-3">
+                    <div className="p-4">
                         <ReceptionPreview
                             draft={draft}
                             now={now}

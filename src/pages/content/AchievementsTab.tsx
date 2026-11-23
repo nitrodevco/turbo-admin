@@ -94,7 +94,7 @@ const DefinitionForm = ({ initial, all, canManage, onPublished }: { initial: Ach
                                 <li key={index} className="flex flex-wrap items-end gap-3 p-3">
                                     <span className="w-6 pb-2 text-right font-mono text-xs text-muted">{index + 1}</span>
                                     <BadgeImage code={level.BadgeCode} />
-                                    <Labeled label="Badge" className="w-full sm:w-44"><Input value={level.BadgeCode} onChange={event => setLevel(index, { BadgeCode: event.target.value.trim() })} className="font-mono text-xs" disabled={disabled} /></Labeled>
+                                    <Labeled label="Badge" className="w-full sm:w-44"><Input value={level.BadgeCode} onChange={event => setLevel(index, { BadgeCode: event.target.value.trim() })} className="font-mono" disabled={disabled} /></Labeled>
                                     <Labeled label="Requirement" className="w-[calc(50%-0.375rem)] sm:w-28"><Input value={level.Requirement} onChange={event => setLevel(index, { Requirement: Number(event.target.value.replace(/\D/g, '')) || 0 })} inputMode="numeric" disabled={disabled} /></Labeled>
                                     <Labeled label="Score" className="w-[calc(50%-0.375rem)] sm:w-24"><Input value={level.Score} onChange={event => setLevel(index, { Score: Number(event.target.value.replace(/\D/g, '')) || 0 })} inputMode="numeric" disabled={disabled} /></Labeled>
                                     {level.Rewards.map((reward, r) => (
@@ -134,7 +134,7 @@ const DefinitionForm = ({ initial, all, canManage, onPublished }: { initial: Ach
             )}
             {raw !== null && (
                 <Labeled label="The definition, as the catalog keeps it" hint={rawProblem ?? 'Every field, the match and the rewards\' payloads included.'}>
-                    <Textarea value={json} onChange={event => setRaw(event.target.value)} rows={24} className="font-mono text-xs" disabled={disabled} />
+                    <Textarea value={json} onChange={event => setRaw(event.target.value)} rows={24} className="font-mono" disabled={disabled} />
                 </Labeled>
             )}
             <div className="flex flex-wrap items-center gap-2">

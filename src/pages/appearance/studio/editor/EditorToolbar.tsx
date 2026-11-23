@@ -54,7 +54,7 @@ export const EditorToolbar = ({ editor, view, onView, canEdit }: { editor: Windo
                 <span className="mx-1 h-5 w-px bg-line" />
                 <label className="inline-flex items-center gap-1 text-xs text-muted" title="Moves and resizes land on this grid">
                     <Grid3x3 className="size-4" />
-                    <Select aria-label="Grid" value={String(editor.grid)} className="h-7 w-auto py-0 text-xs" onChange={event => editor.setGrid(Number(event.target.value))}>
+                    <Select aria-label="Grid" value={String(editor.grid)} small className="w-auto" onChange={event => editor.setGrid(Number(event.target.value))}>
                         {GRIDS.map(grid => <option key={grid} value={grid}>{grid ? `${grid} px` : 'No grid'}</option>)}
                     </Select>
                 </label>

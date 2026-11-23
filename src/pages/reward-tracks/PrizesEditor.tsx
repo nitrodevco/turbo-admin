@@ -120,7 +120,7 @@ const GiveFields = ({ prize, furni, onChange, onPickFurni }: { prize: RewardTrac
             return (
                 <div className="flex flex-col gap-3">
                     <Labeled label="Figure" hint="The look the bot wears (hd-180-1.ch-210-66…).">
-                        <Textarea value={prize.extraParams} onChange={event => set('extraParams', event.target.value.trim())} rows={2} className="font-mono text-xs" spellCheck={false} aria-label="Bot figure" />
+                        <Textarea value={prize.extraParams} onChange={event => set('extraParams', event.target.value.trim())} rows={2} className="font-mono" spellCheck={false} aria-label="Bot figure" />
                     </Labeled>
                     {name}
                 </div>

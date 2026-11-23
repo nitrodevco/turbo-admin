@@ -13,10 +13,10 @@ const PartRow = ({ part, canManage }: { part: GroupBadgePart; canManage: boolean
     const changed = file !== part.fileName || mask !== part.maskFileName;
 
     return (
-        <li className="flex flex-wrap items-center gap-2 px-3 py-1.5">
+        <li className="flex flex-wrap items-center gap-2 px-4 py-1.5">
             <span className="w-10 text-right font-mono text-xs text-muted">{part.partId}</span>
-            <Input value={file} onChange={event => setFile(event.target.value)} aria-label="File" className="h-10 min-w-0 flex-1 font-mono text-xs sm:h-8" disabled={!canManage} />
-            <Input value={mask} onChange={event => setMask(event.target.value)} aria-label="Mask" placeholder="no mask" className="h-10 min-w-0 flex-1 font-mono text-xs sm:h-8" disabled={!canManage} />
+            <Input value={file} onChange={event => setFile(event.target.value)} aria-label="File" className="min-w-0 flex-1 font-mono" disabled={!canManage} />
+            <Input value={mask} onChange={event => setMask(event.target.value)} aria-label="Mask" placeholder="no mask" className="min-w-0 flex-1 font-mono" disabled={!canManage} />
             {canManage && changed && <IconButton label="Save" icon={<Save />} disabled={save.isPending} onClick={() => save.mutate({ kind: 'parts', id: part.id, body: { fileName: file, maskFileName: mask } })} />}
             {save.error && <ErrorNotice error={save.error} />}
         </li>
@@ -29,7 +29,7 @@ const ColorRow = ({ color, canManage }: { color: GroupColor; canManage: boolean 
     const save = useSaveGroupEditor();
 
     return (
-        <li className="flex items-center gap-2 px-3 py-1.5">
+        <li className="flex items-center gap-2 px-4 py-1.5">
             <span className="w-8 text-right font-mono text-xs text-muted">{color.colorId}</span>
             <input
                 type="color"
@@ -39,7 +39,7 @@ const ColorRow = ({ color, canManage }: { color: GroupColor; canManage: boolean 
                 aria-label={`Colour ${color.colorId}`}
                 className={COLOUR_FIELD_CLASS}
             />
-            <Input value={hex} onChange={event => setHex(event.target.value.replace('#', ''))} className="h-8 w-24 font-mono text-xs sm:h-8" disabled={!canManage} />
+            <Input value={hex} onChange={event => setHex(event.target.value.replace('#', ''))} className="w-24 font-mono" disabled={!canManage} />
             {canManage && hex !== color.color && <IconButton label="Save" icon={<Save />} disabled={save.isPending} onClick={() => save.mutate({ kind: 'colors', id: color.id, body: { color: hex } })} />}
             {save.error && <ErrorNotice error={save.error} />}
         </li>
@@ -66,7 +66,7 @@ const BadgeEditor = ({ canManage }: { canManage: boolean }) => {
             <Panel title="Badge parts" description="Bases and symbols; the client loads badgepart_<file>.png. Read again by the hotel as soon as one is saved." className="overflow-clip">
                 {[ 0, 1 ].map(type => (
                     <section key={type}>
-                        <h3 className="border-b border-line bg-subtle px-3 py-1.5 font-mono text-2xs font-medium tracking-[0.08em] text-muted uppercase">{PART_TYPES[type]}s</h3>
+                        <h3 className="border-b border-line bg-subtle px-4 py-1.5 font-mono text-2xs font-medium tracking-[0.08em] text-muted uppercase">{PART_TYPES[type]}s</h3>
                         <ul className="divide-y divide-line">
                             {data.parts.filter(x => x.partType === type).map(part => <PartRow key={part.id} part={part} canManage={canManage} />)}
                         </ul>
@@ -74,7 +74,7 @@ const BadgeEditor = ({ canManage }: { canManage: boolean }) => {
                 ))}
                 {canManage && (
                     <form
-                        className="flex flex-wrap gap-2 border-t border-line p-3"
+                        className="flex flex-wrap gap-2 border-t border-line px-4 py-3"
                         onSubmit={(event) => {
                             event.preventDefault();
                             save.mutate({ kind: 'parts', id: null, body: { partType: Number(partType), fileName: file.trim() } }, { onSuccess: () => setFile('') });
@@ -83,7 +83,7 @@ const BadgeEditor = ({ canManage }: { canManage: boolean }) => {
                         <Select value={partType} onChange={event => setPartType(event.target.value)} aria-label="Kind" className="w-32">
                             {Object.entries(PART_TYPES).map(([ value, label ]) => <option key={value} value={value}>{label}</option>)}
                         </Select>
-                        <Input value={file} onChange={event => setFile(event.target.value)} placeholder="file name" className="min-w-0 flex-1 font-mono text-xs" />
+                        <Input value={file} onChange={event => setFile(event.target.value)} placeholder="file name" className="min-w-0 flex-1 font-mono" />
                         <Button type="submit" variant="secondary" icon={<Plus />} disabled={!file.trim() || save.isPending}>Add</Button>
                     </form>
                 )}
@@ -91,7 +91,7 @@ const BadgeEditor = ({ canManage }: { canManage: boolean }) => {
             <Panel title="Colours" description="The badge's colours, and the group's two. Changing one repaints every badge that uses it." className="overflow-clip">
                 {[ 0, 1, 2 ].map(colorSlot => (
                     <section key={colorSlot}>
-                        <h3 className="border-b border-line bg-subtle px-3 py-1.5 font-mono text-2xs font-medium tracking-[0.08em] text-muted uppercase">{COLOR_SLOTS[colorSlot]}</h3>
+                        <h3 className="border-b border-line bg-subtle px-4 py-1.5 font-mono text-2xs font-medium tracking-[0.08em] text-muted uppercase">{COLOR_SLOTS[colorSlot]}</h3>
                         <ul className="divide-y divide-line">
                             {data.colors.filter(x => x.slot === colorSlot).map(color => <ColorRow key={color.id} color={color} canManage={canManage} />)}
                         </ul>
@@ -99,7 +99,7 @@ const BadgeEditor = ({ canManage }: { canManage: boolean }) => {
                 ))}
                 {canManage && (
                     <form
-                        className="flex flex-wrap gap-2 border-t border-line p-3"
+                        className="flex flex-wrap gap-2 border-t border-line px-4 py-3"
                         onSubmit={(event) => {
                             event.preventDefault();
                             save.mutate({ kind: 'colors', id: null, body: { slot: Number(slot), color: hex.trim() } }, { onSuccess: () => setHex('') });
@@ -108,11 +108,11 @@ const BadgeEditor = ({ canManage }: { canManage: boolean }) => {
                         <Select value={slot} onChange={event => setSlot(event.target.value)} aria-label="Slot" className="w-36">
                             {Object.entries(COLOR_SLOTS).map(([ value, label ]) => <option key={value} value={value}>{label}</option>)}
                         </Select>
-                        <Input value={hex} onChange={event => setHex(event.target.value)} placeholder="ff8800" className="w-28 font-mono text-xs" />
+                        <Input value={hex} onChange={event => setHex(event.target.value)} placeholder="ff8800" className="w-28 font-mono" />
                         <Button type="submit" variant="secondary" icon={<Plus />} disabled={!hex.trim() || save.isPending}>Add</Button>
                     </form>
                 )}
-                {save.error && <div className="p-3"><ErrorNotice error={save.error} /></div>}
+                {save.error && <div className="p-4"><ErrorNotice error={save.error} /></div>}
             </Panel>
         </div>
     );

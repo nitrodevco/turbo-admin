@@ -88,7 +88,7 @@ export const ScheduleEditor = ({ value, onChange, codes, now, emptyLabel, disabl
                             onChange={event => set(entries.map((x, i) => (i === index ? { ...x, code: event.target.value.trim() } : x)))}
                             list={listId}
                             placeholder="code"
-                            className="w-48 min-w-0 flex-1 font-mono text-xs"
+                            className="w-48 min-w-0 flex-1 font-mono"
                             disabled={disabled}
                             aria-label="Code"
                         />
@@ -118,7 +118,7 @@ export const ScheduleEditor = ({ value, onChange, codes, now, emptyLabel, disabl
 
 /** A choice of code from those there are, or none. */
 export const CodeSelect = ({ value, codes, onChange, label, disabled }: { value: string; codes: string[]; onChange: (code: string) => void; label: string; disabled?: boolean }) => (
-    <Select value={value} onChange={event => onChange(event.target.value)} aria-label={label} disabled={disabled} className="font-mono text-xs">
+    <Select value={value} onChange={event => onChange(event.target.value)} aria-label={label} disabled={disabled} className="font-mono">
         {codes.map(code => <option key={code} value={code}>{code}</option>)}
     </Select>
 );
@@ -139,7 +139,7 @@ export const TextKeyField = ({ label, textKey, onKeyChange, draft, disabled }: {
     return (
         <div className="grid gap-2 sm:grid-cols-[minmax(0,16rem)_1fr]">
             <Labeled label={`${label}: text key`}>
-                <Input value={textKey} onChange={event => onKeyChange(event.target.value.trim())} className="w-full font-mono text-xs" disabled={disabled} spellCheck={false} />
+                <Input value={textKey} onChange={event => onKeyChange(event.target.value.trim())} className="w-full font-mono" disabled={disabled} spellCheck={false} />
             </Labeled>
             <Labeled
                 label="What it says"

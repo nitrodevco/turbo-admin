@@ -163,7 +163,7 @@ const RoomFinder = ({ category }: { category: PublicCategory }) => {
     const query = useDebounced(text.trim());
 
     return (
-        <div className="flex flex-col gap-2 border-t border-line p-3">
+        <div className="flex flex-col gap-2 border-t border-line px-4 py-3">
             <div className="flex flex-wrap gap-2">
                 <SearchInput value={text} onValueChange={setText} placeholder="Add a room: search by name, owner or id" className="min-w-0 flex-1" />
                 <Segmented label="Search by" value={by} onChange={value => setBy(value as RoomSearchMode)} options={[ { value: 'name', label: 'Name' }, { value: 'owner', label: 'Owner' }, { value: 'id', label: 'Id' } ]} />
@@ -189,7 +189,7 @@ const RoomFinderResults = ({ category, text, by }: { category: PublicCategory; t
                     const inIt = category.rooms.some(x => x.roomId === room.id);
 
                     return (
-                        <li key={room.id} className="flex items-center gap-2 px-3 py-1.5" data-found={room.id}>
+                        <li key={room.id} className="flex items-center gap-2 px-4 py-1.5" data-found={room.id}>
                             <span className="min-w-0 flex-1">
                                 <span className="block truncate text-sm">{room.name}</span>
                                 <span className="block truncate text-xs text-muted">#{room.id} by {room.ownerName}{room.population > 0 && ` · ${plural(room.population, 'user')} now`}</span>
@@ -217,7 +217,7 @@ const Preview = () => {
 
     return (
         <Panel title="Public tab now" description="What players get with their next search, live user counts and a plugin's room order included." className="overflow-clip">
-            {error && <div className="p-3"><ErrorNotice error={error} /></div>}
+            {error && <div className="p-4"><ErrorNotice error={error} /></div>}
             {!data && !error && <Loading />}
             {data && data.blocks.length === 0 && <EmptyState>The Public tab is empty: no shown category has rooms.</EmptyState>}
             <ol className="divide-y divide-line" aria-label="Public tab preview">
@@ -317,7 +317,7 @@ export const PublicRoomsTab = () => {
                     {categories.length === 0 && <EmptyState>No categories yet.</EmptyState>}
                     {canManage && (
                         <form
-                            className="flex gap-2 border-t border-line p-3"
+                            className="flex gap-2 border-t border-line px-4 py-3"
                             onSubmit={(event) => {
                                 event.preventDefault();
                                 edit.mutate({ path: '/categories', method: 'POST', body: { name: adding.trim() } }, {
@@ -332,7 +332,7 @@ export const PublicRoomsTab = () => {
                             <Button type="submit" variant="secondary" icon={<Plus />} disabled={!adding.trim() || edit.isPending}>Add</Button>
                         </form>
                     )}
-                    {edit.error && <div className="p-3"><ErrorNotice error={edit.error} /></div>}
+                    {edit.error && <div className="p-4"><ErrorNotice error={edit.error} /></div>}
                 </Panel>
                 {category
                     ? (

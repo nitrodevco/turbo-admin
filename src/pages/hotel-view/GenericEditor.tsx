@@ -55,7 +55,7 @@ const ElementEditor = ({ element, onChange, draft, suggestKey, disabled }: {
     if (!known)
         return (
             <Labeled label={`${element.type}: arguments`} hint="An element the panel has no form for: its arguments as the variable writes them, separated by commas.">
-                <Input value={element.args.join(',')} onChange={event => onChange({ ...element, args: event.target.value.replaceAll(';', '').split(',') })} className="w-full font-mono text-xs" disabled={disabled} />
+                <Input value={element.args.join(',')} onChange={event => onChange({ ...element, args: event.target.value.replaceAll(';', '').split(',') })} className="w-full font-mono" disabled={disabled} />
             </Labeled>
         );
 
@@ -86,7 +86,7 @@ const ElementEditor = ({ element, onChange, draft, suggestKey, disabled }: {
                             onChange={event => setArg(index, event.target.value)}
                             inputMode={[ 'width', 'height', 'x', 'y' ].includes(arg) ? 'numeric' : undefined}
                             placeholder={arg === 'until' ? '2026-12-31 18:00' : undefined}
-                            className="w-full font-mono text-xs"
+                            className="w-full font-mono"
                             disabled={disabled}
                         />
                     </Labeled>
@@ -213,7 +213,7 @@ export const GenericEditor = ({ confKey, layoutKey, draft, wide: initialWide, te
                 <aside className="flex min-w-0 flex-col gap-2">
                     <div className="flex items-center justify-between gap-3">
                         <span className="text-xs font-medium text-muted">As the client draws it</span>
-                        <Select value={wide ? 'wide' : 'narrow'} onChange={event => setWide(event.target.value === 'wide')} aria-label="Slot width" className="h-8 text-xs sm:h-8">
+                        <Select value={wide ? 'wide' : 'narrow'} onChange={event => setWide(event.target.value === 'wide')} aria-label="Slot width">
                             <option value="wide">In a wide slot (1, 2, 4)</option>
                             <option value="narrow">In a narrow slot (3, 5)</option>
                         </Select>

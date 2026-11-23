@@ -57,7 +57,7 @@ export const BackgroundsTab = ({ draft, codes, now, set: chosen, onSet: setSet, 
                 description={chosen ? `The set ${chosen}: a layer left empty keeps the picture of the set before it.` : 'The default set, shown while the schedule names none.'}
                 actions={(
                     <>
-                        <Select value={chosen} onChange={event => setSet(event.target.value)} aria-label="Set" className="font-mono text-xs">
+                        <Select value={chosen} onChange={event => setSet(event.target.value)} aria-label="Set" className="font-mono">
                             <option value="">Default</option>
                             {codes.map(code => <option key={code} value={code}>{code}</option>)}
                         </Select>

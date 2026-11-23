@@ -41,7 +41,7 @@ const FileKey = ({ file, keys, fallback, canManage }: { file: string; keys: stri
                         }}
                         placeholder={fallback}
                         aria-label={`Client setting for ${file}`}
-                        className="min-w-0 flex-1 font-mono text-xs"
+                        className="min-w-0 flex-1 font-mono"
                         autoFocus
                     />
                     <IconButton label="Save" icon={<Check />} disabled={key.trim() === '' || setFileKey.isPending} onClick={save} />

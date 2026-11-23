@@ -168,7 +168,7 @@ const HoldsCard = ({ player }: { player: PlayerPermissions }) => {
 
     return (
         <Panel title={`Holds (${player.holds.filter(x => !x.startsWith('group.')).length})`} description="What it all resolves to.">
-            <div className="border-b border-line p-3">
+            <div className="border-b border-line px-4 py-3">
                 <Input type="search" value={filter} onChange={event => setFilter(event.target.value)} placeholder="Filter" aria-label="Filter held nodes" />
             </div>
             <div className="max-h-80 overflow-y-auto px-4 py-3">

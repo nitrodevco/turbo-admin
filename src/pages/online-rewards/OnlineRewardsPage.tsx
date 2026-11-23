@@ -264,7 +264,7 @@ const RulesTable = ({ rules, currencies, disabled, onChange }: { rules: Rule[]; 
                         </div>
                     )}
             {!disabled && (currencies === null || unused.length > 0) && (
-                <div className="border-t border-line p-3">
+                <div className="border-t border-line px-4 py-3">
                     <Button
                         variant="ghost"
                         icon={<Plus />}

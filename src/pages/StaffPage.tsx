@@ -36,7 +36,7 @@ const LinkResult = ({ result }: { result: PasskeyLinkResponse }) => {
                     value={result.link}
                     aria-label="Setup link"
                     onFocus={event => event.target.select()}
-                    className="min-w-0 flex-1 bg-subtle font-mono text-xs"
+                    className="min-w-0 flex-1 bg-subtle font-mono"
                 />
                 <Button variant="secondary" icon={<Copy />} onClick={copy}>{copied ? 'Copied' : 'Copy'}</Button>
             </div>

@@ -233,26 +233,36 @@ export const Loading = () => (
     </div>
 );
 
+/** The look every text box and drop-down shares, apart from its size. */
+const FIELD_LOOK = 'rounded-lg border border-line bg-canvas text-ink placeholder:text-muted/70 transition-[border-color,box-shadow] hover:border-line-strong focus:border-accent focus:outline-none focus:ring-3 focus:ring-accent/25 disabled:opacity-60 disabled:hover:border-line';
+
 /**
- * The look every text box and drop-down shares. Every control (a button, a field, a segmented
- * row) is one height: 40px on a phone, a thumb's size, and 32px from a tablet up.
+ * A text box's or a drop-down's whole look. Every control (a button, a field, a segmented row) is
+ * one height: 40px on a phone, a thumb's size, and 32px from a tablet up. Its size is chosen with
+ * `small`, never with `className`: a second height or text size beside these is settled by the
+ * stylesheet's order, not by which was given last. Text is 16px on a phone, where iOS zooms into
+ * anything smaller (index.css).
  */
-export const FIELD_CLASS = 'h-10 sm:h-8 rounded-lg border border-line bg-canvas px-2.5 text-base sm:text-ui text-ink placeholder:text-muted/70 transition-[border-color,box-shadow] hover:border-line-strong focus:border-accent focus:outline-none focus:ring-3 focus:ring-accent/25 disabled:opacity-60 disabled:hover:border-line';
+export const FIELD_CLASS = `h-10 px-2.5 text-base sm:h-8 sm:text-ui ${FIELD_LOOK}`;
+
+/** A field in a dense row (a tool's own bar, a filter inside a list), as `Button small`: 28px from a tablet up. */
+const SMALL_FIELD_CLASS = `h-10 px-2 text-base sm:h-7 sm:text-xs ${FIELD_LOOK}`;
 
 /** A colour picker (`<input type="color">`), the height of the fields beside it, its swatch inset. */
 export const COLOUR_FIELD_CLASS = 'h-10 w-12 shrink-0 cursor-pointer rounded-lg border border-line bg-canvas p-1 transition-colors hover:border-line-strong disabled:cursor-not-allowed disabled:opacity-60 sm:h-8';
 
 /** A ref, given, is the input's: React 19 passes it on as a prop. */
-export const Input = ({ className, ...input }: InputHTMLAttributes<HTMLInputElement> & { ref?: Ref<HTMLInputElement> }) => (
-    <input {...input} className={cx(FIELD_CLASS, className ?? 'w-full')} />
+export const Input = ({ className, small, ...input }: InputHTMLAttributes<HTMLInputElement> & { ref?: Ref<HTMLInputElement>; small?: boolean }) => (
+    <input {...input} className={cx(small ? SMALL_FIELD_CLASS : FIELD_CLASS, className ?? 'w-full')} />
 );
 
-export const Select = ({ className, ...select }: SelectHTMLAttributes<HTMLSelectElement>) => (
-    <select {...select} className={cx(FIELD_CLASS, className)} />
+export const Select = ({ className, small, ...select }: SelectHTMLAttributes<HTMLSelectElement> & { small?: boolean }) => (
+    <select {...select} className={cx(small ? SMALL_FIELD_CLASS : FIELD_CLASS, className)} />
 );
 
+/** As tall as its rows; text as a field's. */
 export const Textarea = ({ className, ...textarea }: TextareaHTMLAttributes<HTMLTextAreaElement>) => (
-    <textarea {...textarea} className={cx(FIELD_CLASS, 'h-auto py-2 leading-relaxed sm:h-auto', className ?? 'w-full')} />
+    <textarea {...textarea} className={cx(`px-2.5 py-2 text-base leading-relaxed sm:text-ui ${FIELD_LOOK}`, className ?? 'w-full')} />
 );
 
 /** A label over any control: a drop-down, a textarea, a row of them. */

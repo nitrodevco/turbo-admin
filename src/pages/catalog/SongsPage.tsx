@@ -81,7 +81,7 @@ const SongEditor = ({ song, canManage, onSaved, onDeleted }: { song: SongDetail 
                 />
             </div>
             <Labeled label="Track" hint="The song in the client's trax format, as the trax machine writes it (1:0,4;2:0,4;…).">
-                <Textarea value={draft.track} onChange={event => set('track', event.target.value)} rows={5} required spellCheck={false} disabled={!canManage} className="font-mono text-xs" />
+                <Textarea value={draft.track} onChange={event => set('track', event.target.value)} rows={5} required spellCheck={false} disabled={!canManage} className="font-mono" />
             </Labeled>
             <Switch label="Official" hint="An official song can be sold on song discs in the catalog; the Song discs builder offers these." checked={draft.official} onChange={value => set('official', value)} disabled={!canManage} />
             {(save.error ?? remove.error) && <ErrorNotice error={save.error ?? remove.error} />}

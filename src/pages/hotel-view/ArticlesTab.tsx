@@ -76,7 +76,7 @@ const ArticleEditor = ({ article, onDone, disabled }: { article: PromoArticle | 
                     </Labeled>
                     {draft.linkType !== 2 && (
                         <Labeled label={draft.linkType === 0 ? 'Address' : 'Client link'} hint={draft.linkType === 0 ? 'Players are told they are leaving the hotel first.' : 'Such as catalog/open/summer or navigator/goto/123.'}>
-                            <Input value={draft.linkContent} onChange={event => set({ linkContent: event.target.value })} className="w-full font-mono text-xs" disabled={disabled} />
+                            <Input value={draft.linkContent} onChange={event => set({ linkContent: event.target.value })} className="w-full font-mono" disabled={disabled} />
                         </Labeled>
                     )}
                 </div>
