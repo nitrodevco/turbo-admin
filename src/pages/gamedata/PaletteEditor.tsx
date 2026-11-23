@@ -5,6 +5,7 @@ import { FIGURE_KINDS, type FigurePalette, usePalettes, useSaveFigureBatch } fro
 import { ask } from '#/components/confirm';
 import { Badge, Button, COLOUR_FIELD_CLASS, EmptyState, ErrorNotice, Input, Labeled, Loading, Panel, Select, SuccessNotice, Switch } from '#/components/ui';
 import { cx } from '#/lib/cx';
+import { useFillHeight } from '#/lib/fillHeight';
 
 /** A colour as the editor holds it: its record's fields, and Habbo's when Habbo has it. */
 interface Colour {
@@ -276,6 +277,8 @@ export const PaletteEditor = ({ canManage }: { canManage: boolean }) => {
         }, { onSuccess: () => setDraft(null) });
     };
 
+    const fillList = useFillHeight<HTMLElement>();
+
     if (error)
         return <ErrorNotice error={error} />;
 
@@ -286,8 +289,8 @@ export const PaletteEditor = ({ canManage }: { canManage: boolean }) => {
 
     return (
         <div className="grid items-start gap-4 lg:gap-6 lg:grid-cols-[14rem_1fr]">
-            <Panel className="overflow-clip">
-                <ul className="divide-y divide-line">
+            <Panel ref={fillList} className="flex flex-col overflow-clip lg:sticky lg:top-4 lg:max-h-(--fill-height)">
+                <ul className="max-h-[60dvh] min-h-0 divide-y divide-line overflow-y-auto lg:max-h-none">
                     {ids.map((id) => {
                         const of = palettes.find(x => x.id === id);
                         const preview = of ? coloursOf(of).slice(0, 8) : [];

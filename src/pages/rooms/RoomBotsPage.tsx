@@ -7,6 +7,7 @@ import { DANCES, type RoomBotItem, roomCalls, useRoomAction, useRoomBots } from 
 import { ask } from '#/components/confirm';
 import { Avatar, Button, EmptyState, ErrorNotice, Input, Labeled, Loading, PageBody, Panel, Select, Switch, Textarea } from '#/components/ui';
 import { cx } from '#/lib/cx';
+import { useFillHeight } from '#/lib/fillHeight';
 
 import { ActionOutcome, RoomHeader } from './RoomHeader';
 
@@ -98,6 +99,7 @@ export const RoomBotsPage = () => {
     const { data: bots, error, isPending } = useRoomBots(id);
     const [ open, setOpen ] = useState<number | null>(null);
     const linked = useMe().data?.canViewPlayers ?? false;
+    const fillList = useFillHeight<HTMLElement>();
     const canManage = room?.can.manageBotsAndPets ?? false;
     const selected = bots?.find(x => x.id === open) ?? bots?.[0] ?? null;
 
@@ -110,8 +112,8 @@ export const RoomBotsPage = () => {
                 {bots && bots.length === 0 && <Panel><EmptyState>No bot stands in this room.</EmptyState></Panel>}
                 {bots && selected && (
                     <div className="grid items-start gap-4 lg:grid-cols-[20rem_minmax(0,1fr)] lg:gap-6">
-                        <Panel title={`Bots (${bots.length})`} className="overflow-clip">
-                            <ul>
+                        <Panel ref={fillList} title={`Bots (${bots.length})`} className="flex flex-col overflow-clip lg:sticky lg:top-4 lg:max-h-(--fill-height)">
+                            <ul className="max-h-[60dvh] min-h-0 overflow-y-auto lg:max-h-none">
                                 {bots.map(bot => (
                                     <li key={bot.id} className="border-t border-line first:border-t-0">
                                         <button type="button" onClick={() => setOpen(bot.id)} className={cx('flex min-h-14 w-full items-center gap-3 px-4 py-2 text-left hover:bg-subtle', selected.id === bot.id && 'bg-accent-soft')}>

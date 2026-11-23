@@ -15,6 +15,7 @@ import { SearchInput } from '#/components/SearchInput';
 import { toast, toastError } from '#/components/toast';
 import { Badge, Button, EmptyState, ErrorNotice, Loading, PageBody, PageHeader, Panel } from '#/components/ui';
 import { useDebounced } from '#/lib/debounce';
+import { useFillHeight } from '#/lib/fillHeight';
 import { usePathTab } from '#/lib/tabs';
 import { DesignPreview } from '#/preview/DesignPreview';
 
@@ -319,7 +320,7 @@ const WindowDetail = ({ index, skins, id }: { index: TemplateIndex; skins: SkinM
                     </div>
                     {/* One client at a time: an open editor has its own preview, with its draft. */}
                     {!draft && !editing && <DesignPreview template={id} highlight={hovered} onSelect={selection => setPicked(selection.key)} />}
-                    <div className="max-h-[60vh] overflow-auto">
+                    <div className="max-h-[60dvh] overflow-auto">
                         <WindowTree elements={found.elements} skinsOf={key => bySkin.get(key) ?? []} onPick={hotel?.canManage ? start : undefined} selected={picked} onHover={setHovered} />
                     </div>
                 </div>
@@ -341,17 +342,18 @@ const WindowsTab = () => {
     const shown = useMemo(() => new Set(words.length >= 3 ? texts?.items.map(item => item.key) ?? [] : []), [ texts, words ]);
     const ids = useMemo(() => (index ? [ ...Object.keys(index.templates), ...Object.keys(index.frames) ].sort() : []), [ index ]);
     const found = useMemo(() => (index ? ids.filter(each => matches(index, each, words, shown)) : []), [ index, ids, words, shown ]);
+    const fillList = useFillHeight<HTMLElement>();
 
     return (
-        <div className="grid gap-4 lg:gap-6 lg:grid-cols-[minmax(16rem,24rem)_1fr]">
-            <Panel className="overflow-clip">
+        <div className="grid items-start gap-4 lg:gap-6 lg:grid-cols-[minmax(16rem,24rem)_1fr]">
+            <Panel ref={fillList} className="flex flex-col overflow-clip lg:sticky lg:top-4 lg:max-h-(--fill-height)">
                 <div className="flex flex-col gap-1 border-b border-line p-3">
                     <SearchInput value={text} onValueChange={setText} placeholder="Window, element, text key or shown text" aria-label="Find windows" />
                     {index && <span className="text-xs text-muted">{`${found.length} of ${ids.length} windows${shown.size ? `, ${shown.size} text(s) show those words` : ''}`}</span>}
                 </div>
                 {error && <div className="p-4"><ErrorNotice error={error} /></div>}
                 {!index && !error && <Loading />}
-                <ul className="max-h-[70vh] overflow-y-auto">
+                <ul className="max-h-[60dvh] min-h-0 overflow-y-auto lg:max-h-none">
                     {found.slice(0, LIST_LIMIT).map(each => (
                         <li key={each}>
                             <button

@@ -16,8 +16,11 @@ import { HeaderActions } from './HeaderActions';
 import { SortButton } from './SortHeader';
 import { type TabItem, Tabs } from './Tabs';
 
-/** The width every page's content keeps to, header and body alike. */
-const PAGE_WIDTH = 'mx-auto w-full max-w-[1280px]';
+/**
+ * The width every page's content keeps to, header and body alike; `wide`, the whole width beside
+ * the sidebar, for a tool laid out in columns (the theme studio).
+ */
+const pageWidth = (wide: boolean | undefined) => (wide ? 'w-full' : 'mx-auto w-full max-w-[1280px]');
 
 interface PageHeaderProps {
     title: string;
@@ -29,6 +32,8 @@ interface PageHeaderProps {
     tabs?: { items: TabItem[]; value: string; onChange?: (value: string) => void };
     /** Buttons and badges beside the title. */
     children?: ReactNode;
+    /** The whole width, as the page's `PageBody wide` under it. */
+    wide?: boolean;
 }
 
 /**
@@ -39,10 +44,10 @@ interface PageHeaderProps {
  * button before the title and the hotel's state at a glance and the bell after it; from a laptop
  * up it scrolls away with the page, and the search and the bell sit in the sidebar.
  */
-export const PageHeader = ({ title, description, back, tabs, children }: PageHeaderProps) => {
+export const PageHeader = ({ title, description, back, tabs, children, wide }: PageHeaderProps) => {
     return (
         <header className="sticky top-0 z-30 border-b border-line bg-chrome/95 backdrop-blur lg:static lg:z-auto lg:bg-chrome lg:backdrop-blur-none">
-            <div className={cx(PAGE_WIDTH, 'flex min-h-14 items-center gap-x-2.5 px-3 py-2 sm:gap-x-3 sm:px-6 lg:min-h-18 lg:px-8')}>
+            <div className={cx(pageWidth(wide), 'flex min-h-14 items-center gap-x-2.5 px-3 py-2 sm:gap-x-3 sm:px-6 lg:min-h-18 lg:px-8')}>
                 <MenuButton />
                 <BackArrow back={back} />
                 <HeaderIcon />
@@ -61,7 +66,7 @@ export const PageHeader = ({ title, description, back, tabs, children }: PageHea
                 </div>
             </div>
             {/* The tabs' row: its tabs' line sits on the header's own bottom rule. */}
-            <div className={cx(PAGE_WIDTH, 'flex h-10 items-end px-3 sm:px-6 lg:px-8', !tabs && 'max-lg:hidden')}>
+            <div className={cx(pageWidth(wide), 'flex h-10 items-end px-3 sm:px-6 lg:px-8', !tabs && 'max-lg:hidden')}>
                 {/* Words only, on every page: the page's icon is the one beside its title. */}
                 {tabs
                     ? <Tabs value={tabs.value} tabs={tabs.items.map(tab => ({ ...tab, icon: undefined }))} onChange={tabs.onChange} rule={false} className="-mb-px min-w-0" />
@@ -108,10 +113,14 @@ const HeaderPage = ({ title }: { title: string }) => (
  * The page under its header, to the same width: its cards one under another, 16px apart (24px from
  * a laptop up), unless `className` lays them out otherwise (a grid of columns). `still` leaves out
  * its rising entrance, for a page with drag and drop: a transformed parent would move the drag
- * overlay.
+ * overlay. `wide` takes the whole width (`pageWidth`), with its header given `wide` too.
+ *
+ * A tool whose columns should reach the bottom of the window, scrolling inside themselves rather
+ * than the page scrolling for them, gives the element that holds them `useFillHeight`
+ * (`lib/fillHeight`): it stops at the window's bottom, less this body's own space below it.
  */
-export const PageBody = ({ children, className, still }: { children: ReactNode; className?: string; still?: boolean }) => (
-    <div className={cx(PAGE_WIDTH, !still && 'animate-rise', 'px-4 py-5 sm:px-6 sm:py-6 lg:px-8 lg:py-8', className ?? 'flex flex-col gap-4 lg:gap-6')}>{children}</div>
+export const PageBody = ({ children, className, still, wide }: { children: ReactNode; className?: string; still?: boolean; wide?: boolean }) => (
+    <div className={cx(pageWidth(wide), !still && 'animate-rise', 'px-4 py-5 sm:px-6 sm:py-6 lg:px-8 lg:py-8', className ?? 'flex flex-col gap-4 lg:gap-6')}>{children}</div>
 );
 
 interface PanelProps {

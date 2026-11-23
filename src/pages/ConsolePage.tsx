@@ -117,6 +117,8 @@ export const ConsolePage = () => {
     const nextId = useRef(0);
     const input = useRef<HTMLInputElement>(null);
     const bottom = useRef<HTMLDivElement>(null);
+    // From a laptop up the output and the line under it reach the window's bottom, as the commands beside them do.
+    const fillOutput = useFillHeight<HTMLDivElement>();
     const [ params, setParams ] = useSearchParams();
     const wanted = params.get('command');
 
@@ -212,9 +214,9 @@ export const ConsolePage = () => {
                     {commands.error && <ErrorNotice error={commands.error} />}
                     {commands.data && <CommandList commands={commands.data} picked={picked} onPick={pick} />}
                 </div>
-                <div className="order-1 flex min-w-0 flex-col gap-3 lg:order-2">
-                    <Panel className="min-h-80 flex-1">
-                        <div className="max-h-[60dvh] overflow-y-auto p-4 font-mono text-sm">
+                <div ref={fillOutput} className="order-1 flex min-w-0 flex-col gap-3 lg:order-2 lg:h-(--fill-height)">
+                    <Panel className="flex min-h-80 flex-1 flex-col overflow-clip lg:min-h-0">
+                        <div className="max-h-[60dvh] min-h-0 flex-1 overflow-y-auto p-4 font-mono text-sm lg:max-h-none">
                             {entries.length === 0 && (
                                 <p className="font-sans text-muted">
                                     Type a command as you would in the hotel, without the colon if you like:

@@ -164,7 +164,7 @@ const Palette = ({ onClose }: { onClose: () => void }) => {
             aria-label="Search"
             onClose={onClose}
             onClick={event => event.target === dialog.current && onClose()}
-            className="m-auto mt-[12vh] w-[640px] max-w-[92vw] animate-rise rounded-2xl border border-line bg-surface p-0 text-ink shadow-overlay backdrop:bg-[rgb(5_8_12/0.6)]"
+            className="m-auto mt-[12dvh] w-[640px] max-w-[92vw] animate-rise rounded-2xl border border-line bg-surface p-0 text-ink shadow-overlay backdrop:bg-[rgb(5_8_12/0.6)]"
         >
             <div className="flex items-center gap-3 border-b border-line px-4">
                 <Search className="size-4 shrink-0 text-muted" />
@@ -194,7 +194,7 @@ const Palette = ({ onClose }: { onClose: () => void }) => {
                 {loading && <span className="font-mono text-xs text-muted">...</span>}
                 <kbd className="rounded-md border border-line bg-subtle px-1.5 font-mono text-2xs text-muted max-sm:hidden">Esc</kbd>
             </div>
-            <div ref={list} className="max-h-[60vh] overflow-y-auto overscroll-contain py-2">
+            <div ref={list} className="max-h-[60dvh] overflow-y-auto overscroll-contain py-2">
                 {hits.length === 0 && (
                     <p className="px-4 py-6 text-center text-sm text-muted">
                         {loading ? 'Searching...' : searching ? 'Nothing found.' : 'Type a name or an id.'}

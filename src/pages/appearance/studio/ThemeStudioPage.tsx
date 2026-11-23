@@ -15,7 +15,8 @@ import { ImagePicker } from '#/components/ImagePicker';
 import { useSaved } from '#/components/SaveFeedback';
 import { Tabs } from '#/components/Tabs';
 import { toastError } from '#/components/toast';
-import { Badge, Button, ErrorNotice, IconButton, Loading, PageHeader, Segmented, Select } from '#/components/ui';
+import { Badge, Button, ErrorNotice, IconButton, Loading, PageBody, PageHeader, Segmented, Select } from '#/components/ui';
+import { useFillHeight } from '#/lib/fillHeight';
 import { previewLink, STATUS_LABEL } from '#/pages/appearance/ThemeAudience';
 import { themeName, themeTree } from '#/pages/appearance/themes';
 import { PackageDialog } from '#/pages/plugins/PackageDialog';
@@ -173,6 +174,8 @@ export const ThemeStudioPage = () => {
     const [ rects, setRects ] = useState<DesignRects | null>(null);
     const [ zoomChoice, setZoomChoice ] = useState('fit');
     const [ centreWidth, centreRef ] = useWidth();
+    // From a wide screen up, where the three columns stand side by side, they reach the window's bottom.
+    const fillColumns = useFillHeight<HTMLDivElement>('(min-width: 80rem)');
     const [ packaging, setPackaging ] = useState(false);
     const [ creating, setCreating ] = useState(false);
     const saveWindow = useSaveWindow(theme);
@@ -420,8 +423,8 @@ export const ThemeStudioPage = () => {
 
     return (
         <StudioContext value={studio}>
-            <PageHeader title="Theme studio" description={`Pick a window, click what to change, Save: it is written into ${folderOf(theme)} and the players drawing it see it as it is saved.`} />
-            <div className="flex w-full flex-col gap-3 px-3 py-3 lg:px-4">
+            <PageHeader wide title="Theme studio" description={`Pick a window, click what to change, Save: it is written into ${folderOf(theme)} and the players drawing it see it as it is saved.`} />
+            <PageBody wide still>
                 <div className="card flex flex-wrap items-center gap-x-4 gap-y-2 px-3 py-2">
                     <ThemeBar unsaved={unsaved} onPick={pickTheme} />
                     <span className="ml-auto flex flex-wrap items-center gap-2">
@@ -437,7 +440,7 @@ export const ThemeStudioPage = () => {
                 {patchError && <ErrorNotice error={patchError} />}
                 {!index && !error && <Loading />}
                 {index && (
-                    <div className="grid gap-3 xl:h-[calc(100vh-11rem)] xl:grid-cols-[19rem_minmax(0,1fr)_20rem]">
+                    <div ref={fillColumns} className="grid gap-4 lg:gap-6 xl:h-(--fill-height) xl:grid-cols-[19rem_minmax(0,1fr)_20rem]">
                         <section aria-label="Windows and settings" className="card flex min-h-[24rem] flex-col overflow-clip">
                             <Tabs value={tab} tabs={TABS} onChange={value => setParam({ tab: value === 'windows' ? null : value })} label="Studio" className="shrink-0 px-2" />
                             {left[tab]}
@@ -541,7 +544,7 @@ export const ThemeStudioPage = () => {
                         </section>
                     </div>
                 )}
-            </div>
+            </PageBody>
             <PackageDialog pluginKey={theme} open={packaging} onClose={() => setPackaging(false)} />
             <ImagePicker
                 open={!!editor.picturing}

@@ -9,6 +9,7 @@ import { SearchInput } from '#/components/SearchInput';
 import { toastError } from '#/components/toast';
 import { Button, ButtonLink, EmptyState, ErrorNotice, Input, Loading, PageBody, PageHeader, Panel } from '#/components/ui';
 import { useDebounced } from '#/lib/debounce';
+import { useFillHeight } from '#/lib/fillHeight';
 import { usePathTab } from '#/lib/tabs';
 
 const TABS = [
@@ -79,12 +80,13 @@ const ByWindow = ({ index }: { index: TemplateIndex }) => {
     const texts = useMemo(() => textsByWindow(index), [ index ]);
     const found = [ ...texts ].filter(([ each, keys ]) => keys.length > 0 && (!words || each.toLowerCase().includes(words) || keys.some(key => key.toLowerCase().includes(words)))).map(([ each ]) => each).sort();
     const keys = id ? texts.get(id) ?? [] : [];
+    const fillList = useFillHeight<HTMLElement>();
 
     return (
-        <div className="grid gap-4 lg:gap-6 lg:grid-cols-[22rem_1fr]">
-            <Panel title="Windows" description={`${found.length} window(s) showing texts`}>
+        <div className="grid items-start gap-4 lg:gap-6 lg:grid-cols-[22rem_1fr]">
+            <Panel ref={fillList} title="Windows" description={`${found.length} window(s) showing texts`} className="flex flex-col overflow-clip lg:sticky lg:top-4 lg:max-h-(--fill-height)">
                 <div className="p-3"><SearchInput value={text} onValueChange={setText} placeholder="Find a window by its id or a text key" /></div>
-                <ul className="max-h-[60vh] overflow-y-auto">
+                <ul className="max-h-[60dvh] min-h-0 overflow-y-auto lg:max-h-none">
                     {found.slice(0, LIST_LIMIT).map(each => (
                         <li key={each}>
                             <button type="button" className={`w-full truncate px-4 py-1.5 text-left font-mono text-xs hover:bg-subtle ${each === id ? 'bg-subtle text-accent' : ''}`} onClick={() => setParams({ ...(text ? { q: text } : {}), id: each }, { replace: true })}>{each}</button>

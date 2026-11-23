@@ -52,7 +52,7 @@ const Sheet = ({ onClose }: { onClose: () => void }) => {
                 </div>
                 <Key>Esc</Key>
             </header>
-            <div className="grid max-h-[70vh] grid-cols-1 gap-6 overflow-y-auto p-5 sm:grid-cols-2">
+            <div className="grid max-h-[70dvh] grid-cols-1 gap-6 overflow-y-auto p-5 sm:grid-cols-2">
                 <section className="flex flex-col gap-0.5">
                     <Label as="h3" className="mb-1">Go to</Label>
                     {pages.map(page => (
