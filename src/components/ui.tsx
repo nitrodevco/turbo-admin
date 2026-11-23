@@ -444,21 +444,31 @@ export const Kv = ({ label, mono, children }: { label: string; mono?: boolean; c
     </div>
 );
 
+/*
+ * A table's cells keep to their column's edge: a header's words start (or, `text-right`, end) where
+ * its cells' do, as both have the same padding. Padding is chosen with `dense`, never with
+ * `className`: two padding classes on one element are settled by the stylesheet's order, not by
+ * which was given last. A header is left-aligned by the base styles (index.css), so `text-right`
+ * or `text-center` in `className` turns it.
+ */
+
 /**
  * A table's column header. With `sort` (a key the table sorts by) and `sorting`, a click sorts the
- * table by it, as a <c>RowList</c>'s headers do.
+ * table by it, as a <c>RowList</c>'s headers do. `dense` for a small table inside a box of a card
+ * (12px from the edge rather than 16px), with its cells `dense` too.
  */
-export const Th = ({ children, className, sort, first, sorting }: { children?: ReactNode; className?: string; sort?: string; first?: SortDir; sorting?: Sorting }) => (
+export const Th = ({ children, className, sort, first, sorting, dense }: { children?: ReactNode; className?: string; sort?: string; first?: SortDir; sorting?: Sorting; dense?: boolean }) => (
     <th
         aria-sort={sort && sorting?.order?.sort === sort ? (sorting.order.dir === 'asc' ? 'ascending' : 'descending') : undefined}
-        className={cx('border-b border-line px-4 py-2 text-left font-mono text-2xs font-medium tracking-[0.08em] text-muted uppercase', className)}
+        className={cx('border-b border-line font-mono text-2xs font-medium tracking-[0.08em] text-muted uppercase', dense ? 'px-3 py-1.5' : 'px-4 py-2', className)}
     >
         {sort && sorting ? <SortButton label={children} sort={sort} first={first} sorting={sorting} /> : children}
     </th>
 );
 
-export const Td = ({ children, className }: { children?: ReactNode; className?: string }) => (
-    <td className={cx('border-b border-line px-4 py-2.5 align-middle', className)}>{children}</td>
+/** A table's cell, padded as its column's `Th`; `span` columns wide. */
+export const Td = ({ children, className, dense, span }: { children?: ReactNode; className?: string; dense?: boolean; span?: number }) => (
+    <td colSpan={span} className={cx('border-b border-line align-middle', dense ? 'px-3 py-2' : 'px-4 py-2.5', className)}>{children}</td>
 );
 
 /**

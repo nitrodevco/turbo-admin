@@ -17,6 +17,7 @@ const wayOf = (dir: SortDir) => (dir === 'asc' ? 'ascending' : 'descending');
  * A column's header that sorts the list by it. The column sorted by now is in the accent colour
  * with an arrow its way (up ascending, down descending); a click turns it round. The others show a
  * faint pair of arrows, so a header that sorts reads as one, and a click sorts by it its first way.
+ * In a right-aligned column (figures) the arrow is before the words, so they end where the figures do.
  */
 export const SortButton = ({ label, sort, first, sorting }: { label: ReactNode; sort: string; first?: SortDir; sorting: Sorting }) => {
     const dir = sorting.order?.sort === sort ? sorting.order.dir : undefined;
@@ -27,7 +28,7 @@ export const SortButton = ({ label, sort, first, sorting }: { label: ReactNode; 
             onClick={() => sorting.onSort(nextOrder(sorting.order, sort, first))}
             title={dir ? `Sorted ${wayOf(dir)}: sort ${wayOf(dir === 'asc' ? 'desc' : 'asc')}` : 'Sort by this'}
             className={cx(
-                'group/sort -mx-1 inline-flex items-center gap-1 rounded px-1 uppercase transition-colors focus-visible:outline-2 focus-visible:outline-accent',
+                'group/sort -mx-1 inline-flex items-center gap-1 rounded px-1 uppercase transition-colors focus-visible:outline-2 focus-visible:outline-accent in-[.text-right]:flex-row-reverse',
                 dir ? 'text-accent' : 'hover:text-ink',
             )}
         >

@@ -238,6 +238,11 @@ body {
         cursor: not-allowed;
     }
 
+    /* A table's header starts where its column's cells do; `text-right` (a figure's column) turns it. */
+    th {
+        text-align: left;
+    }
+
     /*
      * A ring on whatever the keyboard has reached: links, buttons, tabs and rows that open
      * something. Zero specificity, so a control with its own `focus-visible:` keeps it.

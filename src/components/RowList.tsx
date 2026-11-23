@@ -56,7 +56,9 @@ export const Row = ({ children, className }: { children: ReactNode; className?: 
     <li
         className={cx(
             'group flex flex-wrap items-center gap-x-3 gap-y-1.5 px-4 py-3 hover:bg-subtle/60 [&>:first-child]:basis-full',
-            'sm:col-span-full sm:grid sm:grid-cols-subgrid sm:py-2.5 sm:[&>*]:min-w-0 sm:[&>:first-child]:basis-auto',
+            // From a tablet up a row is the list's own columns: its gaps are the list's too (`normal`, in a subgrid), as its header's are,
+            // or its columns would drift from the header's by half the difference at each gap.
+            'sm:col-span-full sm:grid sm:grid-cols-subgrid sm:py-2.5 sm:[column-gap:normal] sm:[&>*]:min-w-0 sm:[&>:first-child]:basis-auto',
             className,
         )}
     >

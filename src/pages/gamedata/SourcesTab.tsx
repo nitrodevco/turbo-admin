@@ -5,7 +5,7 @@ import { Link } from 'react-router';
 import { type AssetsStatus, type AssetSyncPreview, type HabboClientBuild, useAssetJob, useHabboClientBuild, useRelist, useStartClientBuild, useSyncPreview } from '#/api/bundles';
 import { type GamedataStatus, type HabboAirClient, type HabboClientEnvironment, type HabboClientStatus, useCheckHabboClient, useHabboClient } from '#/api/gamedata';
 import { toastError } from '#/components/toast';
-import { Badge, type BadgeTone, Button, ErrorNotice, Loading, Panel, Th } from '#/components/ui';
+import { Badge, type BadgeTone, Button, ErrorNotice, Loading, Panel, Td, Th } from '#/components/ui';
 import { cx } from '#/lib/cx';
 import { fromNow } from '#/lib/time';
 import { SyncButton } from '#/pages/assets/BundleUpdate';
@@ -173,7 +173,7 @@ const SubTable = ({ heads, children }: { heads: string[]; children: ReactNode })
     <div className="overflow-x-auto rounded-lg border border-line bg-surface">
         <table className="w-full text-sm [&_tbody_tr:last-child>td]:border-b-0">
             <thead>
-                <tr>{heads.map(x => <Th key={x} className="px-3 whitespace-nowrap">{x}</Th>)}</tr>
+                <tr>{heads.map(x => <Th key={x} dense className="whitespace-nowrap">{x}</Th>)}</tr>
             </thead>
             <tbody>{children}</tbody>
         </table>
@@ -181,7 +181,7 @@ const SubTable = ({ heads, children }: { heads: string[]; children: ReactNode })
 );
 
 const Cell = ({ className, span, children }: { className?: string; span?: number; children?: ReactNode }) => (
-    <td colSpan={span} className={cx('border-b border-line px-3 py-2 align-middle whitespace-nowrap', className)}>{children}</td>
+    <Td dense span={span} className={cx('whitespace-nowrap', className)}>{children}</Td>
 );
 
 /** A fact in a dropdown, for the columns a narrow screen hides. */
