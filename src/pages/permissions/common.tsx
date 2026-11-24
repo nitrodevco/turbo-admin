@@ -6,7 +6,7 @@ import type { AuditEntry } from '#/api/permissions';
 import { useMe } from '#/api/queries';
 import { PhoneLabel, Row, RowList } from '#/components/RowList';
 import type { TabItem } from '#/components/Tabs';
-import { Badge, EmptyState, Labeled, PageHeader, Select } from '#/components/ui';
+import { Badge, CHECK_CLASS, EmptyState, Labeled, PageHeader, Select } from '#/components/ui';
 import { type Sorting, useSortedRows } from '#/lib/sort';
 import { fromNow } from '#/lib/time';
 import { formatDateTime } from '#/pages/rooms/labels';
@@ -77,7 +77,7 @@ export const TimingFields = ({ duration, extend, onDuration, onExtend }: {
         </Labeled>
         {duration !== '' && (
             <label className="flex items-start gap-2 text-sm select-none sm:max-w-60">
-                <input type="checkbox" checked={extend} onChange={event => onExtend(event.target.checked)} className="mt-0.5 size-4 shrink-0 accent-accent-solid" />
+                <input type="checkbox" checked={extend} onChange={event => onExtend(event.target.checked)} className={`sm:mt-0.5 ${CHECK_CLASS}`} />
                 <span>
                     Extend
                     <span className="block text-xs text-muted">Add the time to one already running, instead of replacing its end.</span>

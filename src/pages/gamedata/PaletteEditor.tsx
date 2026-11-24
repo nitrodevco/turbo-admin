@@ -4,7 +4,7 @@ import { useMemo, useState } from 'react';
 import { FIGURE_KINDS, type FigurePalette, usePalettes, useSaveFigureBatch } from '#/api/gamedata';
 import { ask } from '#/components/confirm';
 import { Badge, Button, COLOUR_FIELD_CLASS, EmptyState, ErrorNotice, Input, Labeled, Loading, Panel, Select, SuccessNotice, Switch } from '#/components/ui';
-import { cx } from '#/lib/cx';
+import { cx, rowFill } from '#/lib/cx';
 import { useFillHeight } from '#/lib/fillHeight';
 
 /** A colour as the editor holds it: its record's fields, and Habbo's when Habbo has it. */
@@ -300,7 +300,7 @@ export const PaletteEditor = ({ canManage }: { canManage: boolean }) => {
                                 <button
                                     type="button"
                                     onClick={() => choose(id)}
-                                    className={cx('flex w-full flex-col gap-1.5 px-4 py-3 text-left hover:bg-subtle/60', current === id && 'bg-subtle shadow-[inset_2px_0_0_var(--color-accent)]')}
+                                    className={cx('flex w-full flex-col gap-1.5 px-4 py-3 text-left', rowFill(current === id))}
                                 >
                                     <span className="flex items-center justify-between gap-2 text-sm">
                                         <span className="font-medium">Palette {id}</span>

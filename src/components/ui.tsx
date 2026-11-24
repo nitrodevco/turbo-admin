@@ -274,11 +274,18 @@ export const Labeled = ({ label, hint, children, className }: { label: string; h
     </label>
 );
 
+/**
+ * A checkbox's look, for one in a row of a list as for `Checkbox`: 20px on a phone, a thumb's
+ * size, 16px from a tablet up, in the accent. Beside a line of text that starts at the top, it
+ * takes `sm:mt-0.5` to sit on the line's middle.
+ */
+export const CHECK_CLASS = 'size-5 shrink-0 accent-accent-solid sm:size-4';
+
 export const Checkbox = ({ label, checked, onChange, disabled, hint }: { label: ReactNode; checked: boolean; onChange: (checked: boolean) => void; disabled?: boolean; hint?: string }) => (
     <label className={cx('flex items-start gap-2 text-sm select-none', disabled && 'opacity-60')}>
         <input
             type="checkbox"
-            className="mt-0.5 size-4 rounded border-line accent-accent-solid"
+            className={`sm:mt-0.5 ${CHECK_CLASS}`}
             checked={checked}
             disabled={disabled}
             onChange={event => onChange(event.target.checked)}

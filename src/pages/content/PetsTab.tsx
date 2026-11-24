@@ -3,7 +3,7 @@ import { useState } from 'react';
 
 import { type PetBreed, type PetLine, useDeletePetLine, usePets, useSavePet } from '#/api/content';
 import { ask } from '#/components/confirm';
-import { Badge, Button, EmptyState, ErrorNotice, IconButton, Input, Loading, Panel, Select } from '#/components/ui';
+import { Badge, Button, CHECK_CLASS, EmptyState, ErrorNotice, IconButton, Input, Loading, Panel, Select } from '#/components/ui';
 import { useFillHeight } from '#/lib/fillHeight';
 
 /** A pet type by its number; the hotel's texts name them in the client. */
@@ -34,8 +34,8 @@ const BreedRow = ({ breed, canManage }: { breed: PetBreed; canManage: boolean })
             {number('breedId', 'Breed')}
             {number('rarityLevel', 'Rarity')}
             {number('colorTag', 'Colour tag')}
-            <label className="flex items-center gap-1 text-xs"><input type="checkbox" checked={draft.sellable} onChange={event => setDraft({ ...draft, sellable: event.target.checked })} disabled={!canManage} /> sold</label>
-            <label className="flex items-center gap-1 text-xs"><input type="checkbox" checked={draft.rare} onChange={event => setDraft({ ...draft, rare: event.target.checked })} disabled={!canManage} /> rare</label>
+            <label className="flex items-center gap-1 text-xs"><input type="checkbox" className={CHECK_CLASS} checked={draft.sellable} onChange={event => setDraft({ ...draft, sellable: event.target.checked })} disabled={!canManage} /> sold</label>
+            <label className="flex items-center gap-1 text-xs"><input type="checkbox" className={CHECK_CLASS} checked={draft.rare} onChange={event => setDraft({ ...draft, rare: event.target.checked })} disabled={!canManage} /> rare</label>
             {canManage && changed && <IconButton label="Save" icon={<Save />} disabled={save.isPending} onClick={() => save.mutate({ kind: 'breeds', id: breed.id, body: { ...draft } })} />}
             {save.error && <ErrorNotice error={save.error} />}
         </li>

@@ -5,7 +5,7 @@ import { type DatabaseBackup as Backup, type DatabaseTable, downloadDatabaseBack
 import { ask } from '#/components/confirm';
 import { SearchInput } from '#/components/SearchInput';
 import { toast, toastError } from '#/components/toast';
-import { Button, EmptyState, ErrorNotice, IconButton, Loading, PageBody, PageHeader, Panel, TextButton, WarningNotice } from '#/components/ui';
+import { Button, CHECK_CLASS, EmptyState, ErrorNotice, IconButton, Loading, PageBody, PageHeader, Panel, TextButton, WarningNotice } from '#/components/ui';
 import { plural } from '#/lib/plural';
 import { formatBytes } from '#/pages/assets/format';
 
@@ -69,10 +69,10 @@ const TablePicker = ({ tables, chosen, onChange, disabled }: { tables: DatabaseT
                 <ul className="max-h-[28rem] divide-y divide-line overflow-y-auto">
                     {shown.map(table => (
                         <li key={table.name}>
-                            <label className="flex cursor-pointer items-center gap-3 px-4 py-2 hover:bg-subtle has-[:disabled]:cursor-default">
+                            <label className="flex cursor-pointer items-center gap-3 px-4 py-2 hover:bg-subtle/60 has-[:disabled]:cursor-default">
                                 <input
                                     type="checkbox"
-                                    className="size-4 shrink-0 rounded border-line accent-accent-solid"
+                                    className={CHECK_CLASS}
                                     checked={chosen.has(table.name)}
                                     disabled={disabled}
                                     onChange={event => toggle(table.name, event.target.checked)}

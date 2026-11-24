@@ -4,7 +4,7 @@ import { useMemo, useState } from 'react';
 import { useTextSearch } from '#/api/gamedata';
 import type { TemplateIndex, WindowElement, WindowTemplate } from '#/api/windows';
 import { SearchInput } from '#/components/SearchInput';
-import { cx } from '#/lib/cx';
+import { cx, rowFill } from '#/lib/cx';
 import { useDebounced } from '#/lib/debounce';
 
 import { AREAS, HUD_WINDOW, type StudioWindow, windowMatches } from './windows';
@@ -73,7 +73,7 @@ export const WindowList = ({ index, windows, value, onPick }: { index: TemplateI
                         type="button"
                         title="The toolbar, purse, friend bar, chat input, room tools, infostand and notifications, where players see them"
                         aria-current={hud.id === value ? 'true' : undefined}
-                        className={cx('flex w-full items-center gap-2 border-b border-line px-2 py-2 text-left text-ui font-medium hover:bg-subtle', hud.id === value && 'bg-subtle text-accent')}
+                        className={cx('flex w-full items-center gap-2 border-b border-line px-2 py-2 text-left text-ui font-medium', rowFill(hud.id === value), hud.id === value && 'text-accent')}
                         onClick={() => onPick(hud.id)}
                     >
                         <Monitor className="size-5 shrink-0" />
@@ -106,7 +106,7 @@ export const WindowList = ({ index, windows, value, onPick }: { index: TemplateI
                                                 type="button"
                                                 title={window.id}
                                                 aria-current={window.id === value ? 'true' : undefined}
-                                                className={cx('flex w-full items-center gap-2 px-2 py-1 text-left text-ui hover:bg-subtle', window.id === value && 'bg-subtle text-accent')}
+                                                className={cx('flex w-full items-center gap-2 px-2 py-1 text-left text-ui', rowFill(window.id === value), window.id === value && 'text-accent')}
                                                 onClick={() => onPick(window.id)}
                                             >
                                                 <Thumbnail template={window.template} />

@@ -7,12 +7,13 @@ import { useSettings } from '#/api/settings';
 import { ask } from '#/components/confirm';
 import { ListToolbar } from '#/components/ListToolbar';
 import { Modal } from '#/components/Modal';
+import { OpenRow } from '#/components/RowList';
 import { SearchInput } from '#/components/SearchInput';
 import { Badge, Button, Checkbox, EmptyState, ErrorNotice, Input, Labeled, Loading, Panel, Select, SuccessNotice, Textarea } from '#/components/ui';
 import { cx } from '#/lib/cx';
 
 import { useConfigHandoff } from './configHandoff';
-import { OpenRow, ReviewItem } from './parts';
+import { ReviewItem } from './parts';
 
 /** Why a value isn't JSON, as the server would refuse it; null when it is. */
 const jsonProblem = (value: string) => {

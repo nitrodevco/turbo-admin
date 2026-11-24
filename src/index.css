@@ -27,9 +27,12 @@
  *            shadow-overlay (a dialog over everything); `card` is a card's whole look
  *   tints    bg-accent-soft (the chosen item) · bg-accent-soft/50 (a hint: unread, waiting, in
  *            focus, a target pointed at) · border-accent/40 (a quiet accent edge) ·
- *            ring-accent/25 (the glow around a focused field) · hover:bg-subtle/60 (a row pointed
- *            at or held open) · bg-subtle/40 (a band or strip inside a card) · bg-canvas/50 (an
- *            inset well) · bg-warn-soft/50, bg-bad-soft/50 (a row or tile in that state)
+ *            ring-accent/25 (the glow around a focused field) · hover:bg-subtle/60 (a row of a
+ *            card's list pointed at; `rowFill` gives the chosen row its accent instead) ·
+ *            hover:bg-subtle (an item of a menu, or one in a rounded box of its own) ·
+ *            bg-subtle/40 (a band or strip inside a card, a row held open: `OpenRow`) ·
+ *            bg-canvas/50 (an inset well) · bg-warn-soft/50, bg-bad-soft/50 (a row or tile in
+ *            that state)
  *   spacing  4px steps. A page sits 16px from the window's edge on a phone, 24px on a tablet and
  *            32px from a laptop up; its cards are 16px apart (gap-4), 24px from a laptop up
  *            (lg:gap-6); a card's content sits 16px (px-4) from its edge

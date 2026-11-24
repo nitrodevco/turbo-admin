@@ -7,6 +7,7 @@ import { useCatalogTree, useFurnitureSearch } from '#/api/catalog';
 import { useDeleteVoucher, useGenerateVouchers, useSaveVoucher, useVoucherRedemptions, useVouchers, type VoucherDraft, type VoucherItem } from '#/api/vouchers';
 import { ask } from '#/components/confirm';
 import { ListToolbar } from '#/components/ListToolbar';
+import { OpenRow } from '#/components/RowList';
 import { SearchInput } from '#/components/SearchInput';
 import { Badge, Button, EmptyState, ErrorNotice, Input, Labeled, Loading, PageBody, PageHeader, Panel, Select, SuccessNotice, Switch } from '#/components/ui';
 import { cx } from '#/lib/cx';
@@ -324,18 +325,24 @@ export const VouchersPage = () => {
                             const usedUp = voucher.maxUses !== null && voucher.uses >= voucher.maxUses;
 
                             return (
-                                <li key={voucher.id}>
-                                    <button type="button" onClick={() => setOpen(open === voucher.id ? null : voucher.id)} className={cx('flex w-full flex-wrap items-center gap-x-3 gap-y-1 px-4 py-2.5 text-left hover:bg-subtle', open === voucher.id && 'bg-subtle/60')}>
-                                        <span className="font-mono text-sm">{voucher.code}</span>
-                                        <span className="min-w-0 flex-1 truncate text-xs text-muted">{rewards(item, currencyName)}{voucher.note ? ` · ${voucher.note}` : ''}</span>
-                                        <span className="text-xs text-muted tabular-nums">{voucher.uses}{voucher.maxUses === null ? '' : ` / ${voucher.maxUses}`} used</span>
-                                        {voucher.expiresAt && !expired && <Badge>until {utc(voucher.expiresAt)}</Badge>}
-                                        {!voucher.enabled && <Badge tone="amber">Off</Badge>}
-                                        {expired && <Badge tone="red">Expired</Badge>}
-                                        {usedUp && <Badge>Used up</Badge>}
-                                    </button>
-                                    {open === voucher.id && <div className="border-t border-line bg-subtle/40 p-4"><VoucherEditor key={voucher.id} item={item} onDone={() => setOpen(null)} disabled={!canManage} /></div>}
-                                </li>
+                                <OpenRow
+                                    key={voucher.id}
+                                    open={open === voucher.id}
+                                    onToggle={() => setOpen(open === voucher.id ? null : voucher.id)}
+                                    summary={(
+                                        <span className="flex flex-wrap items-center gap-x-3 gap-y-1">
+                                            <span className="font-mono text-sm">{voucher.code}</span>
+                                            <span className="min-w-0 flex-1 truncate text-xs text-muted">{rewards(item, currencyName)}{voucher.note ? ` · ${voucher.note}` : ''}</span>
+                                            <span className="text-xs text-muted tabular-nums">{voucher.uses}{voucher.maxUses === null ? '' : ` / ${voucher.maxUses}`} used</span>
+                                            {voucher.expiresAt && !expired && <Badge>until {utc(voucher.expiresAt)}</Badge>}
+                                            {!voucher.enabled && <Badge tone="amber">Off</Badge>}
+                                            {expired && <Badge tone="red">Expired</Badge>}
+                                            {usedUp && <Badge>Used up</Badge>}
+                                        </span>
+                                    )}
+                                >
+                                    <VoucherEditor key={voucher.id} item={item} onDone={() => setOpen(null)} disabled={!canManage} />
+                                </OpenRow>
                             );
                         })}
                     </ul>

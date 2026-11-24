@@ -5,7 +5,7 @@ import { badgeUrl, useClientAssets } from '#/api/assets';
 import { ACHIEVEMENT_STATES, type AchievementDefinition, type AchievementItem, useAchievementDefinition, useAchievements, useCheckAchievement, usePublishAchievement } from '#/api/content';
 import { SearchInput } from '#/components/SearchInput';
 import { Badge, Button, EmptyState, ErrorNotice, IconButton, Input, Labeled, Loading, Panel, Select, SuccessNotice, Textarea } from '#/components/ui';
-import { cx } from '#/lib/cx';
+import { cx, rowFill } from '#/lib/cx';
 import { useFillHeight } from '#/lib/fillHeight';
 
 const STATE_TONES: Record<number, 'green' | 'neutral' | 'amber' | 'red'> = { 0: 'red', 1: 'green', 2: 'neutral', 3: 'amber', 4: 'neutral' };
@@ -217,18 +217,18 @@ export const AchievementsTab = () => {
     return (
         <div className="grid items-start gap-4 lg:gap-6 lg:grid-cols-[22rem_minmax(0,1fr)]">
             <Panel ref={fillList} className="flex flex-col overflow-clip lg:sticky lg:top-4 lg:max-h-(--fill-height)">
-                <div className="border-b border-line p-3">
+                <div className="border-b border-line px-4 py-3">
                     <SearchInput value={filter} onValueChange={setFilter} placeholder="Key, category or source" aria-label="Find achievements" />
                 </div>
                 {shown.length === 0 && <EmptyState>No achievement matches.</EmptyState>}
                 <div className="max-h-[60dvh] min-h-0 overflow-y-auto lg:max-h-none">
                     {categories.map(category => (
                         <section key={category}>
-                            <h3 className="sticky top-0 border-b border-line bg-subtle px-3 py-1.5 font-mono text-2xs font-medium tracking-[0.08em] text-muted uppercase">{category}</h3>
+                            <h3 className="sticky top-0 border-b border-line bg-subtle px-4 py-1.5 font-mono text-2xs font-medium tracking-[0.08em] text-muted uppercase">{category}</h3>
                             <ul className="divide-y divide-line">
                                 {shown.filter(x => x.category === category).map(item => (
                                     <li key={item.id}>
-                                        <button type="button" onClick={() => setOpen(item.id)} className={cx('flex w-full items-center gap-3 px-3 py-2 text-left hover:bg-subtle', open === item.id && 'bg-accent-soft')}>
+                                        <button type="button" onClick={() => setOpen(item.id)} className={cx('flex w-full items-center gap-3 px-4 py-2 text-left', rowFill(open === item.id))}>
                                             <BadgeImage code={item.lastBadge} className="size-9" />
                                             <span className="min-w-0 flex-1">
                                                 <span className="block truncate font-mono text-ui">{item.key}</span>

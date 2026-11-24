@@ -1,3 +1,4 @@
+import { ChevronDown, ChevronRight } from 'lucide-react';
 import type { CSSProperties, ReactNode } from 'react';
 
 import { cx } from '#/lib/cx';
@@ -68,3 +69,22 @@ export const Row = ({ children, className }: { children: ReactNode; className?: 
 
 /** Words a cell needs on a phone, where there is no column header to say what it is. */
 export const PhoneLabel = ({ children }: { children: ReactNode }) => <span className="text-muted sm:hidden">{children}</span>;
+
+/**
+ * A row of a list that opens in place to edit what it is: one open at a time, chosen by the
+ * list. Closed it is a summary, a line a hand can hit; open, its editor under it.
+ */
+export const OpenRow = ({ open, onToggle, summary, children }: { open: boolean; onToggle: () => void; summary: ReactNode; children: ReactNode }) => (
+    <li className={cx(open && 'bg-subtle/40')}>
+        <button
+            type="button"
+            onClick={onToggle}
+            aria-expanded={open}
+            className="flex min-h-11 w-full items-center gap-3 px-4 py-2 text-left text-sm hover:bg-subtle/60 [&>svg]:size-4 [&>svg]:shrink-0 [&>svg]:text-muted"
+        >
+            {open ? <ChevronDown /> : <ChevronRight />}
+            <span className="min-w-0 flex-1">{summary}</span>
+        </button>
+        {open && <div className="border-t border-line px-4 py-4 sm:pl-11">{children}</div>}
+    </li>
+);

@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { ask } from '#/components/confirm';
 import { SearchInput } from '#/components/SearchInput';
 import { Badge, type BadgeTone, Button, EmptyState, Input, Labeled, Panel, Select } from '#/components/ui';
-import { cx } from '#/lib/cx';
+import { cx, rowFill } from '#/lib/cx';
 import { useFillHeight } from '#/lib/fillHeight';
 
 import type { HotelViewDraft } from './draft';
@@ -222,7 +222,7 @@ export const PromosTab = ({ draft, codes, now, open, onOpen, onOpenSlot, disable
             <Placement draft={draft} widget="widgetcontainer" what="scheduled promos" onOpenSlot={onOpenSlot} disabled={disabled} />
             <div className="grid items-start gap-4 lg:gap-6 lg:grid-cols-[18rem_minmax(0,1fr)]">
                 <Panel ref={fillPromos} className="flex flex-col overflow-clip lg:sticky lg:top-4 lg:max-h-(--fill-height)">
-                    <div className="flex items-center gap-2 border-b border-line p-3">
+                    <div className="flex items-center gap-2 border-b border-line px-4 py-3">
                         <SearchInput value={filter} onValueChange={setFilter} placeholder="Find a promo" className="min-w-0 flex-1" />
                         {!disabled && <Button variant="secondary" icon={<Plus />} onClick={() => setMaking({ from: null })}>New</Button>}
                     </div>
@@ -238,7 +238,7 @@ export const PromosTab = ({ draft, codes, now, open, onOpen, onOpenSlot, disable
                                     <button
                                         type="button"
                                         onClick={() => onOpen(code)}
-                                        className={cx('flex w-full flex-col gap-1 px-3 py-2.5 text-left hover:bg-subtle', selected === code && 'bg-accent-soft')}
+                                        className={cx('flex w-full flex-col gap-1 px-4 py-2.5 text-left', rowFill(selected === code))}
                                     >
                                         <span className="flex items-center gap-2 font-mono text-ui">
                                             <span className="truncate">{code}</span>

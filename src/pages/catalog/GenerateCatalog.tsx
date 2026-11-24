@@ -6,7 +6,7 @@ import { catalogCalls, type CatalogTree, type GeneratedPage, type GenerateMode, 
 import { ask } from '#/components/confirm';
 import { ImagePicker } from '#/components/ImagePicker';
 import { celebrate, toast, toastError } from '#/components/toast';
-import { Button, EmptyState, ErrorNotice, Input, Label, Labeled, Stat, Switch, TextButton } from '#/components/ui';
+import { Button, CHECK_CLASS, EmptyState, ErrorNotice, Input, Label, Labeled, Stat, Switch, TextButton } from '#/components/ui';
 import { cx } from '#/lib/cx';
 
 import { type Price, PriceFields } from './fields';
@@ -116,7 +116,7 @@ const PlanNode = ({ page, depth, edits, open, onToggle, onEdit, onPickIcon, skip
                     onChange={event => onEdit(page.key, { skip: !event.target.checked })}
                     title={skipped ? 'Left out' : 'Leave it out, with everything under it'}
                     aria-label={`Make ${title}`}
-                    className="size-5 shrink-0 accent-accent-solid sm:size-4"
+                    className={CHECK_CLASS}
                 />
             </div>
             {isOpen && page.children.length > 0 && (
@@ -261,7 +261,7 @@ export const GenerateCatalog = ({ tree, onDone }: { tree: CatalogTree; onDone: (
                                     setSections(next);
                                     settingsChanged();
                                 }}
-                                className="mt-0.5 size-4 shrink-0 accent-accent-solid"
+                                className={`sm:mt-0.5 ${CHECK_CLASS}`}
                             />
                             <span className="min-w-0">
                                 <span className="block text-sm">{x.title}</span>

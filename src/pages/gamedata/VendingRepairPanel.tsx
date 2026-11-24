@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { ApiError } from '#/api/client';
 import { useVendingRepair, useVendingRepairPreview, type VendingRepairItem } from '#/api/gamedata';
 import { ask } from '#/components/confirm';
-import { Button, Checkbox, EmptyState, ErrorNotice, IconButton, Loading, Panel, SuccessNotice, WarningNotice } from '#/components/ui';
+import { Button, CHECK_CLASS, Checkbox, EmptyState, ErrorNotice, IconButton, Loading, Panel, SuccessNotice, WarningNotice } from '#/components/ui';
 
 import { USAGE_POLICIES } from './fields';
 
@@ -43,7 +43,7 @@ const RepairRow = ({ item, checked, useDefault, disabled, onCheck, onDefault }: 
                         onChange={event => onCheck(event.target.checked)}
                         disabled={!eligible || disabled}
                         aria-label={`Select ${item.className} (ID ${item.id})`}
-                        className="size-4 accent-accent-solid"
+                        className={CHECK_CLASS}
                     />
                 </label>
                 <div className="min-w-0 flex-1">

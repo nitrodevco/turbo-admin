@@ -5,6 +5,7 @@ import { Link } from 'react-router';
 import { type Plugin, type PluginActionResponse, type PluginSource, type PluginSourceActionResponse, useCheckPluginSource, useInstallPlugin, usePluginContributions, usePlugins, useReloadPlugin, useRemovePluginSource, useRescanPlugins, useRollbackPlugin, useSetPluginEnabled, useUpdatePluginSource } from '#/api/plugins';
 import { useMe } from '#/api/queries';
 import { ask } from '#/components/confirm';
+import { OpenRow } from '#/components/RowList';
 import { Tabs } from '#/components/Tabs';
 import { toast, toastError } from '#/components/toast';
 import { Badge, Button, ButtonLink, EmptyState, ErrorNotice, FileButton, Loading, PageBody, PageHeader, Panel, WarningNotice } from '#/components/ui';
@@ -12,7 +13,6 @@ import { useHubTabs } from '#/layout/nav';
 import { cx } from '#/lib/cx';
 import { fromNow } from '#/lib/time';
 import { JobPanel } from '#/pages/assets/JobPanel';
-import { OpenRow } from '#/pages/gamedata/parts';
 
 import { PLUGIN_STATES } from './plugins/pluginStates';
 import { PluginSourceForm } from './PluginSourceForm';

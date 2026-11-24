@@ -6,6 +6,7 @@ import { useFurnitureSearch } from '#/api/catalog';
 import { BONUS_SOURCES, type BonusRareCampaign, PURCHASE_RESULTS, useBonusRareCampaigns, useBonusRareStanding, useDeleteBonusRareCampaign, useRecordBonusRarePurchase, useSaveBonusRareCampaign } from '#/api/hotelView';
 import type { ImageAccept } from '#/api/media';
 import { ask } from '#/components/confirm';
+import { OpenRow } from '#/components/RowList';
 import { Badge, Button, EmptyState, ErrorNotice, Input, Labeled, Loading, Panel, Select, SuccessNotice } from '#/components/ui';
 import { cx } from '#/lib/cx';
 
@@ -203,15 +204,21 @@ export const BonusRareTab = ({ draft, now, onOpenSlot, disabled }: { draft: Hote
                 {data && campaigns.length === 0 && open !== 'new' && <EmptyState>No campaigns: the widget is hidden.</EmptyState>}
                 <ul className="divide-y divide-line">
                     {campaigns.map(campaign => (
-                        <li key={campaign.id}>
-                            <button type="button" onClick={() => setOpen(open === campaign.id ? null : campaign.id)} className={cx('flex w-full items-center gap-3 px-4 py-2.5 text-left hover:bg-subtle', open === campaign.id && 'bg-subtle/60')}>
-                                <span className="truncate font-mono text-sm">{campaign.code}</span>
-                                <span className="truncate text-xs text-muted">{campaign.furnitureName} for {campaign.creditsRequired} credits</span>
-                                <Badge>{BONUS_SOURCES[campaign.source] ?? campaign.source}</Badge>
-                                {campaign.id === running?.id && <Badge tone="green">Running</Badge>}
-                            </button>
-                            {open === campaign.id && <div className="border-t border-line bg-subtle/40 p-4"><CampaignEditor key={campaign.id} campaign={campaign} now={now} onDone={() => setOpen(null)} disabled={disabled} /></div>}
-                        </li>
+                        <OpenRow
+                            key={campaign.id}
+                            open={open === campaign.id}
+                            onToggle={() => setOpen(open === campaign.id ? null : campaign.id)}
+                            summary={(
+                                <span className="flex items-center gap-3">
+                                    <span className="truncate font-mono text-sm">{campaign.code}</span>
+                                    <span className="truncate text-xs text-muted">{campaign.furnitureName} for {campaign.creditsRequired} credits</span>
+                                    <Badge>{BONUS_SOURCES[campaign.source] ?? campaign.source}</Badge>
+                                    {campaign.id === running?.id && <Badge tone="green">Running</Badge>}
+                                </span>
+                            )}
+                        >
+                            <CampaignEditor key={campaign.id} campaign={campaign} now={now} onDone={() => setOpen(null)} disabled={disabled} />
+                        </OpenRow>
                     ))}
                 </ul>
             </Panel>

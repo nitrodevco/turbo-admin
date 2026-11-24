@@ -4,6 +4,7 @@ import { Link, useSearchParams } from 'react-router';
 
 import { type NavigatorFlatCategory, type NavigatorList, useDeleteNavigator, useNavigatorContent, useSaveNavigator } from '#/api/content';
 import { ask } from '#/components/confirm';
+import { OpenRow } from '#/components/RowList';
 import { Badge, Button, EmptyState, ErrorNotice, IconButton, Input, Labeled, Loading, Panel, Segmented, Switch } from '#/components/ui';
 import { plural } from '#/lib/plural';
 
@@ -166,18 +167,24 @@ const NavigatorLists = ({ canManage }: { canManage: boolean }) => {
                 {open === 'new' && <div className="border-b border-line bg-subtle/40 p-4"><CategoryEditor category={null} onDone={() => setOpen(null)} canManage={canManage} /></div>}
                 <ul className="divide-y divide-line">
                     {data.flatCategories.map(category => (
-                        <li key={category.id}>
-                            <button type="button" onClick={() => setOpen(open === category.id ? null : category.id)} className="flex w-full items-center gap-3 px-4 py-2.5 text-left hover:bg-subtle">
-                                <span className="w-8 text-right font-mono text-xs text-muted">{category.orderNum}</span>
-                                <span className="min-w-0 flex-1 truncate text-sm">{category.name}</span>
-                                <span className="text-xs text-muted">{plural(category.rooms, 'room')}</span>
-                                {!category.visible && <Badge>Hidden</Badge>}
-                                {category.staffOnly && <Badge tone="amber">Staff</Badge>}
-                                {category.minRank > 1 && <Badge>Rank {category.minRank}+</Badge>}
-                                {category.requiredNode && <Badge tone="accent" className="max-w-48 truncate">{category.requiredNode}</Badge>}
-                            </button>
-                            {open === category.id && <div className="border-t border-line bg-subtle/40 p-4"><CategoryEditor category={category} onDone={() => setOpen(null)} canManage={canManage} /></div>}
-                        </li>
+                        <OpenRow
+                            key={category.id}
+                            open={open === category.id}
+                            onToggle={() => setOpen(open === category.id ? null : category.id)}
+                            summary={(
+                                <span className="flex items-center gap-3">
+                                    <span className="w-8 text-right font-mono text-xs text-muted">{category.orderNum}</span>
+                                    <span className="min-w-0 flex-1 truncate text-sm">{category.name}</span>
+                                    <span className="text-xs text-muted">{plural(category.rooms, 'room')}</span>
+                                    {!category.visible && <Badge>Hidden</Badge>}
+                                    {category.staffOnly && <Badge tone="amber">Staff</Badge>}
+                                    {category.minRank > 1 && <Badge>Rank {category.minRank}+</Badge>}
+                                    {category.requiredNode && <Badge tone="accent" className="max-w-48 truncate">{category.requiredNode}</Badge>}
+                                </span>
+                            )}
+                        >
+                            <CategoryEditor category={category} onDone={() => setOpen(null)} canManage={canManage} />
+                        </OpenRow>
                     ))}
                 </ul>
             </Panel>

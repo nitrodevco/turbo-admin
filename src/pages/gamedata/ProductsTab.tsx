@@ -6,13 +6,14 @@ import { FILES, type GamedataStatus, type ProductEntry, useDeleteProduct, usePro
 import { ask } from '#/components/confirm';
 import { ListToolbar } from '#/components/ListToolbar';
 import { Modal } from '#/components/Modal';
+import { OpenRow } from '#/components/RowList';
 import { SearchInput } from '#/components/SearchInput';
 import { Badge, Button, EmptyState, ErrorNotice, Input, Labeled, Loading, Panel, Textarea } from '#/components/ui';
 import { cx } from '#/lib/cx';
 import { useDebounced } from '#/lib/debounce';
 
 import { WaitingFromHabbo } from './frame';
-import { FieldChanges, HabboDiffers, HabboUpdate, OpenRow, ReviewItem } from './parts';
+import { FieldChanges, HabboDiffers, HabboUpdate, ReviewItem } from './parts';
 
 /** Habbo's newest product data: what taking it in would change. */
 export const HabboProducts = ({ status, defaultOpen }: { status: GamedataStatus; defaultOpen?: boolean }) => {

@@ -9,7 +9,7 @@ import { FURNITURE_KINDS, type FurnitureDefinition, furnitureTag, useFurnitureDe
 import { Modal } from '#/components/Modal';
 import { SearchInput } from '#/components/SearchInput';
 import { toast, toastError } from '#/components/toast';
-import { Badge, Button, ErrorNotice, Input, Loading, Segmented, Select, Switch, Textarea } from '#/components/ui';
+import { Badge, Button, CHECK_CLASS, ErrorNotice, Input, Loading, Segmented, Select, Switch, Textarea } from '#/components/ui';
 import { cx } from '#/lib/cx';
 import { fromNow } from '#/lib/time';
 import { formatBytes } from '#/pages/assets/format';
@@ -62,7 +62,7 @@ const VendingEditor = ({ raw, onChange, disabled }: { raw: string; onChange: (va
                             {filtered.map(item => (
                                 <li key={item.id}>
                                     <label className="flex cursor-pointer items-center gap-3 px-3 py-2 text-sm hover:bg-subtle">
-                                        <input type="checkbox" checked={selected.includes(item.id)} onChange={event => toggle(item.id, event.target.checked)} disabled={disabled} className="size-4 accent-accent-solid" />
+                                        <input type="checkbox" checked={selected.includes(item.id)} onChange={event => toggle(item.id, event.target.checked)} disabled={disabled} className={CHECK_CLASS} />
                                         <HandItemPreview key={`${data?.revision}-${item.id}`} item={item} compact />
                                         <span className="min-w-0 flex-1 truncate">{item.name || `Hand item ${item.id}`}</span>
                                         <span className="font-mono text-xs text-muted">{item.id}</span>

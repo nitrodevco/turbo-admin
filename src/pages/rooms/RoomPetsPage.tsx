@@ -6,7 +6,7 @@ import { useMe, useRoom } from '#/api/queries';
 import { roomCalls, type RoomPetItem, type RoomPetRequest, useRoomAction, useRoomPets } from '#/api/rooms';
 import { ask } from '#/components/confirm';
 import { Avatar, Badge, Button, EmptyState, ErrorNotice, Input, Labeled, Loading, PageBody, Panel, Switch } from '#/components/ui';
-import { cx } from '#/lib/cx';
+import { cx, rowFill } from '#/lib/cx';
 import { useFillHeight } from '#/lib/fillHeight';
 
 import { ActionOutcome, RoomHeader } from './RoomHeader';
@@ -111,7 +111,7 @@ export const RoomPetsPage = () => {
                             <ul className="max-h-[60dvh] min-h-0 overflow-y-auto lg:max-h-none">
                                 {pets.map(pet => (
                                     <li key={pet.id} className="border-t border-line first:border-t-0">
-                                        <button type="button" onClick={() => setOpen(pet.id)} className={cx('flex min-h-14 w-full items-center gap-3 px-4 py-2 text-left hover:bg-subtle', selected.id === pet.id && 'bg-accent-soft')}>
+                                        <button type="button" onClick={() => setOpen(pet.id)} className={cx('flex min-h-14 w-full items-center gap-3 px-4 py-2 text-left', rowFill(selected.id === pet.id))}>
                                             <Avatar id={pet.id} name={pet.name} />
                                             <span className="min-w-0 flex-1">
                                                 <span className="block truncate text-sm font-medium">{pet.name}</span>

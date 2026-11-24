@@ -29,7 +29,7 @@ const Card = ({ icon, title, value, blurb, action, tone }: { icon: ReactNode; ti
 /** One line of the phone's summary: what it is, its count, and where tapping it goes. */
 const Shortcut = ({ icon, label, value, tone, disabled, onClick }: { icon: ReactNode; label: string; value?: ReactNode; tone?: 'warn' | 'good'; disabled?: boolean; onClick: () => void }) => (
     <li className="border-t border-line first:border-t-0">
-        <button type="button" disabled={disabled} onClick={onClick} className="flex min-h-12 w-full items-center gap-3 px-3 py-2 text-left text-sm transition-colors hover:bg-subtle disabled:opacity-50">
+        <button type="button" disabled={disabled} onClick={onClick} className="flex min-h-12 w-full items-center gap-3 px-3 py-2 text-left text-sm transition-colors hover:bg-subtle/60 disabled:opacity-50">
             <span className={cx('grid size-8 shrink-0 place-items-center rounded-lg [&>svg]:size-4', TONES[tone ?? 'none'])}>{icon}</span>
             <span className="min-w-0 flex-1 truncate">{label}</span>
             {value !== undefined && <span className="font-mono text-sm text-muted tabular-nums">{value}</span>}

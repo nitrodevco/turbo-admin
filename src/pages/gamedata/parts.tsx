@@ -159,25 +159,6 @@ export const ReviewItem = ({ action, name, kind, children }: { action: number; n
     </li>
 );
 
-/**
- * A row of a list that opens in place to edit what it is: one open at a time, chosen by the
- * list. Closed it is a summary, a line a hand can hit; open, its editor under it.
- */
-export const OpenRow = ({ open, onToggle, summary, children }: { open: boolean; onToggle: () => void; summary: ReactNode; children: ReactNode }) => (
-    <li className={cx(open && 'bg-subtle/40')}>
-        <button
-            type="button"
-            onClick={onToggle}
-            aria-expanded={open}
-            className="flex w-full items-center gap-3 px-4 py-2.5 text-left text-sm hover:bg-subtle/60 [&>svg]:size-4 [&>svg]:shrink-0 [&>svg]:text-muted"
-        >
-            {open ? <ChevronDown /> : <ChevronRight />}
-            <div className="min-w-0 flex-1">{summary}</div>
-        </button>
-        {open && <div className="border-t border-line px-4 py-4 sm:pl-11">{children}</div>}
-    </li>
-);
-
 /** Habbo's value beside one the hotel changed, with a way to put Habbo's back. */
 export const HabboDiffers = ({ habbo, onUse, canManage }: { habbo: ReactNode; onUse: () => void; canManage: boolean }) => (
     <div className="flex flex-wrap items-center gap-2 text-xs">

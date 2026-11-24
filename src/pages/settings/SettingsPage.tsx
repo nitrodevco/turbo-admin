@@ -6,13 +6,13 @@ import { type ServerSetting, SOURCE, useResetSetting, useSaveSetting, useSetting
 import { ask } from '#/components/confirm';
 import { ListToolbar } from '#/components/ListToolbar';
 import { RestartServer } from '#/components/RestartServer';
+import { OpenRow } from '#/components/RowList';
 import { SearchInput } from '#/components/SearchInput';
 import { Badge, Button, EmptyState, ErrorNotice, Input, Label, Labeled, Loading, PageBody, PageHeader, Panel, Select, Switch, Textarea, WarningNotice } from '#/components/ui';
 import { cx } from '#/lib/cx';
 import { useFillHeight } from '#/lib/fillHeight';
 import { usePathTab } from '#/lib/tabs';
 import { fromNow } from '#/lib/time';
-import { OpenRow } from '#/pages/gamedata/parts';
 
 const TABS = [
     { value: 'all', label: 'Settings', to: '/settings/all' },

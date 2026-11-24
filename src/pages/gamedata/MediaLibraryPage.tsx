@@ -10,7 +10,7 @@ import { Pagination } from '#/components/Pagination';
 import { SearchInput } from '#/components/SearchInput';
 import { toast, toastError } from '#/components/toast';
 import { Badge, Button, Chip, EmptyState, ErrorNotice, IconButton, Input, Kv, Labeled, Loading, PageBody, PageHeader, Panel, Segmented, Select } from '#/components/ui';
-import { cx } from '#/lib/cx';
+import { cx, rowFill } from '#/lib/cx';
 import { useDebounced } from '#/lib/debounce';
 import { CHECKS } from '#/pages/catalog/CatalogImageThumb';
 import { apiImageQuery } from '#/preview/images';
@@ -435,7 +435,7 @@ export const MediaLibraryPage = () => {
                             <ul className="divide-y divide-line" data-testid="media-list">
                                 {data.items.map(image => (
                                     <li key={image.id}>
-                                        <button type="button" onClick={() => select(image.id)} className={cx('flex w-full items-center gap-3 px-4 py-2 text-left hover:bg-subtle', selected === image.id && 'bg-accent-soft')}>
+                                        <button type="button" onClick={() => select(image.id)} className={cx('flex w-full items-center gap-3 px-4 py-2 text-left', rowFill(selected === image.id))}>
                                             <MediaThumb image={image} className="size-10" />
                                             <code className="min-w-0 flex-1 truncate font-mono text-xs">{image.path}</code>
                                             <span className="w-28 text-xs text-muted">{KIND_LABELS[image.kind] ?? image.kind}</span>

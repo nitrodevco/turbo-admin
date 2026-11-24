@@ -4,12 +4,13 @@ import { type ReactNode, useMemo, useState } from 'react';
 import { FIGURE_KINDS, type FigureEntry, type FigureKindEntry, useDeleteFigure, useFigureKinds, useFigureSearch, usePalettes, useSaveFigure } from '#/api/gamedata';
 import { ask } from '#/components/confirm';
 import { ListToolbar } from '#/components/ListToolbar';
+import { OpenRow } from '#/components/RowList';
 import { SearchInput } from '#/components/SearchInput';
 import { Badge, Button, EmptyState, ErrorNotice, IconButton, Input, Labeled, Loading, Panel, Segmented, Select, Switch, Textarea } from '#/components/ui';
-import { cx } from '#/lib/cx';
+import { cx, rowFill } from '#/lib/cx';
 import { useFillHeight } from '#/lib/fillHeight';
 
-import { HabboDiffers, OpenRow } from './parts';
+import { HabboDiffers } from './parts';
 
 /** What each of Habbo's kinds of clothing is, as the avatar editor groups them. */
 const KIND_LABELS: Record<string, string> = {
@@ -581,10 +582,7 @@ export const ClothingEditor = ({ canManage }: { canManage: boolean }) => {
                             <button
                                 type="button"
                                 onClick={() => setChosen(entry.key)}
-                                className={cx(
-                                    'flex w-full items-center gap-3 px-4 py-2.5 text-left text-sm hover:bg-subtle/60',
-                                    current?.entry.key === entry.key && 'bg-subtle shadow-[inset_2px_0_0_var(--color-accent)]',
-                                )}
+                                className={cx('flex w-full items-center gap-3 px-4 py-2.5 text-left text-sm', rowFill(current?.entry.key === entry.key))}
                             >
                                 <span className="w-7 font-mono text-xs text-muted">{entry.key}</span>
                                 <span className="min-w-0 flex-1 truncate">{labelOf(entry.key)}</span>

@@ -9,7 +9,7 @@ import { ask } from '#/components/confirm';
 import { ListToolbar } from '#/components/ListToolbar';
 import { SearchInput } from '#/components/SearchInput';
 import { toast, toastError } from '#/components/toast';
-import { Badge, Button, EmptyState, ErrorNotice, Loading, Select } from '#/components/ui';
+import { Badge, Button, CHECK_CLASS, EmptyState, ErrorNotice, Loading, Select } from '#/components/ui';
 import { cx } from '#/lib/cx';
 import { BundleDetail } from '#/pages/assets/BundleDetail';
 import { BundleIcon } from '#/pages/assets/BundleIcon';
@@ -105,7 +105,7 @@ const DefinitionRow = ({ item, onOpen, picked, onPick }: { item: FurnitureListIt
     <li className="flex items-center">
         {onPick && (
             <label className="grid shrink-0 cursor-pointer place-items-center self-stretch pl-3 sm:pl-4" title="Pick it, to give several a logic at once">
-                <input type="checkbox" checked={!!picked} onChange={event => onPick(event.target.checked)} aria-label={`Pick ${item.className}`} className="size-4 accent-accent-solid" />
+                <input type="checkbox" checked={!!picked} onChange={event => onPick(event.target.checked)} aria-label={`Pick ${item.className}`} className={CHECK_CLASS} />
             </label>
         )}
         <button

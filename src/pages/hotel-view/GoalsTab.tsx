@@ -5,8 +5,8 @@ import { Link } from 'react-router';
 import { promoImageUrl, useClientAssets } from '#/api/assets';
 import { type CommunityGoal, GOAL_MODES, useCommunityGoals, useDeleteCommunityGoal, useGoalStanding, useHotelViewTexts, useSaveCommunityGoal, useSaveHotelView } from '#/api/hotelView';
 import { ask } from '#/components/confirm';
+import { OpenRow } from '#/components/RowList';
 import { Badge, Button, EmptyState, ErrorNotice, Input, Labeled, Loading, Panel, Select, SuccessNotice, WarningNotice } from '#/components/ui';
-import { cx } from '#/lib/cx';
 
 import type { HotelViewDraft } from './draft';
 import { slotsHolding } from './hooks';
@@ -273,15 +273,21 @@ export const GoalsTab = ({ draft, now, onOpenSlot, disabled }: { draft: HotelVie
                 {data && goals.length === 0 && open !== 'new' && <EmptyState>No goals yet.</EmptyState>}
                 <ul className="divide-y divide-line">
                     {goals.map(goal => (
-                        <li key={goal.id}>
-                            <button type="button" onClick={() => setOpen(open === goal.id ? null : goal.id)} className={cx('flex w-full items-center gap-3 px-4 py-2.5 text-left hover:bg-subtle', open === goal.id && 'bg-subtle/60')}>
-                                <span className="truncate font-mono text-sm">{goal.code}</span>
-                                <Badge>{GOAL_MODES[goal.mode] ?? goal.mode}</Badge>
-                                {goal.id === shown?.id && <Badge tone="green">Shown</Badge>}
-                                <span className="ml-auto text-xs text-muted">{phase(goal, now)}</span>
-                            </button>
-                            {open === goal.id && <div className="border-t border-line bg-subtle/40 p-4"><GoalEditor key={goal.id} goal={goal} now={now} onDone={() => setOpen(null)} disabled={disabled} /></div>}
-                        </li>
+                        <OpenRow
+                            key={goal.id}
+                            open={open === goal.id}
+                            onToggle={() => setOpen(open === goal.id ? null : goal.id)}
+                            summary={(
+                                <span className="flex items-center gap-3">
+                                    <span className="truncate font-mono text-sm">{goal.code}</span>
+                                    <Badge>{GOAL_MODES[goal.mode] ?? goal.mode}</Badge>
+                                    {goal.id === shown?.id && <Badge tone="green">Shown</Badge>}
+                                    <span className="ml-auto text-xs text-muted">{phase(goal, now)}</span>
+                                </span>
+                            )}
+                        >
+                            <GoalEditor key={goal.id} goal={goal} now={now} onDone={() => setOpen(null)} disabled={disabled} />
+                        </OpenRow>
                     ))}
                 </ul>
             </Panel>

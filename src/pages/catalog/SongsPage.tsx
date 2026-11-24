@@ -7,7 +7,7 @@ import { songCalls, type SongDetail, type SongInput, useSong, useSongEdit, useSo
 import { ask } from '#/components/confirm';
 import { toast } from '#/components/toast';
 import { Badge, Button, EmptyState, ErrorNotice, Field, Labeled, Loading, PageBody, PageHeader, Panel, Switch, Textarea } from '#/components/ui';
-import { cx } from '#/lib/cx';
+import { cx, rowFill } from '#/lib/cx';
 
 import { catalogTabs } from './catalogTabs';
 
@@ -152,7 +152,7 @@ export const SongsPage = () => {
                                 <ul className="divide-y divide-line">
                                     {songs.data.songs.map(x => (
                                         <li key={x.id}>
-                                            <button type="button" onClick={() => open(x.id)} className={cx('flex w-full items-center gap-3 px-4 py-2.5 text-left hover:bg-subtle', selected === x.id && 'bg-accent-soft')}>
+                                            <button type="button" onClick={() => open(x.id)} className={cx('flex w-full items-center gap-3 px-4 py-2.5 text-left', rowFill(selected === x.id))}>
                                                 <Disc3 className={cx('size-5 shrink-0', x.official ? 'text-accent' : 'text-muted')} />
                                                 <span className="min-w-0 flex-1">
                                                     <span className="block truncate text-sm">{x.name}</span>
