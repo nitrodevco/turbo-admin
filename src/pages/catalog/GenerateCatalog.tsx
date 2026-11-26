@@ -106,7 +106,7 @@ const PlanNode = ({ page, depth, edits, open, onToggle, onEdit, onPickIcon, skip
                 {page.display === 'bc_only' && <span title="Builders Club only"><Hammer className="size-3.5 shrink-0 text-muted" /></span>}
                 {page.name && <span className="hidden shrink-0 font-mono text-2xs text-muted sm:inline" title="The name the client opens it by">{page.name}</span>}
                 <span className="hidden w-32 shrink-0 truncate text-right text-2xs font-normal text-muted md:inline" title={page.layout}>{layoutOf(page.layout).title}</span>
-                <span className="shrink-0 text-right font-mono sm:w-24 text-2xs font-normal text-muted tabular-nums">
+                <span className="shrink-0 text-right sm:w-24 text-2xs font-normal text-muted tabular-nums">
                     {sum.added > 0 && <span className="text-ink">{sum.added.toLocaleString()} new</span>}
                     {sum.added > 0 && sum.moved > 0 && ' · '}
                     {sum.moved > 0 && <span className="text-accent">{sum.moved.toLocaleString()} moved</span>}

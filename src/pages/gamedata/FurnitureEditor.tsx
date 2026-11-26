@@ -500,7 +500,7 @@ const EditorBody = ({ definition, canManage, section, onSection, onUnsaved, save
                         >
                             {target.icon}
                             <span className="flex-1">{target.title}</span>
-                            {unsavedIn(target) > 0 && <span className="rounded-full bg-accent-solid px-1.5 font-mono text-2xs font-semibold text-on-accent tabular-nums">{unsavedIn(target)}</span>}
+                            {unsavedIn(target) > 0 && <span className="rounded-full bg-accent-solid px-1.5 text-2xs font-semibold text-on-accent tabular-nums">{unsavedIn(target)}</span>}
                             {unsavedIn(target) === 0 && differingIn(target) && <span className="size-1.5 rounded-full bg-warn" title="Differs from Habbo" />}
                         </button>
                     ))}

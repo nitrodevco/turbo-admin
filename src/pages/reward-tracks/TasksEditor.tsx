@@ -17,7 +17,7 @@ const Levels = ({ levels, onChange }: { levels: RewardTrackLevel[]; onChange: (l
 
     return (
         <div className="flex flex-col gap-1.5">
-            <div className="grid grid-cols-[3rem_1fr_1fr_6rem_2rem] gap-2 px-1 font-mono text-2xs font-medium tracking-[0.08em] text-muted uppercase">
+            <div className="grid grid-cols-[3rem_1fr_1fr_6rem_2rem] gap-2 px-1 text-xs font-medium text-muted">
                 <span>Level</span><span>Count</span><span>Points</span><span>Premium</span><span />
             </div>
             {levels.map((level, index) => (
@@ -70,7 +70,7 @@ const TaskRow = ({ task, index, count, open, onOpen, actionTypes, onChange, onMo
                     {!counted && <Badge tone="amber">not counted</Badge>}
                     {task.premium && <Badge tone="accent">premium</Badge>}
                 </button>
-                <span className="font-mono text-xs text-muted tabular-nums">{plural(task.levels.length, 'level')} · {taskPoints(task).toLocaleString()} pts</span>
+                <span className="text-xs text-muted tabular-nums">{plural(task.levels.length, 'level')} · {taskPoints(task).toLocaleString()} pts</span>
                 <IconButton label="Move up" icon={<ArrowUp />} disabled={index === 0} onClick={() => onMove(-1)} />
                 <IconButton label="Move down" icon={<ArrowDown />} disabled={index === count - 1} onClick={() => onMove(1)} />
                 <IconButton label={`Remove ${task.id}`} icon={<Trash2 />} tone="bad" onClick={onRemove} />

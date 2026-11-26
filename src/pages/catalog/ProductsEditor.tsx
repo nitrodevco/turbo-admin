@@ -76,7 +76,7 @@ export const ItemPicker = ({ type, value, onPick, disabled }: { type?: 'floor' |
                                     >
                                         <ProductIcon type={item.type} name={item.name} className="size-7" />
                                         <span className="min-w-0 flex-1 truncate font-mono">{item.name}</span>
-                                        <span className="font-mono text-2xs text-muted">#{item.id}</span>
+                                        <span className="text-xs text-muted">#{item.id}</span>
                                     </button>
                                 </li>
                             ))}

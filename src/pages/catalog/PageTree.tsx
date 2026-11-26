@@ -61,7 +61,7 @@ export const PageRowBody = ({ page, needle = '', path, strong }: { page: Catalog
             {path && <span className="truncate text-2xs text-muted">{path}</span>}
         </span>
         <Marks page={page} />
-        {page.offerCount > 0 && <span className="rounded-full bg-subtle px-1.5 font-mono text-2xs leading-4 text-muted tabular-nums">{page.offerCount}</span>}
+        {page.offerCount > 0 && <span className="rounded-full bg-subtle px-1.5 text-2xs leading-4 text-muted tabular-nums">{page.offerCount}</span>}
     </>
 );
 

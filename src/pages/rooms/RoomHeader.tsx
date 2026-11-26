@@ -39,10 +39,10 @@ export const RoomHeader = ({ id, room, tab }: { id: number; room: RoomDetailResp
         >
             {room && (
                 <LiveBadge live={room.isLoaded}>
-                    {room.isLoaded ? `LIVE · ${room.playersInside.length}/${room.playersMax}` : 'NOT LOADED'}
+                    {room.isLoaded ? `Live, ${room.playersInside.length} of ${room.playersMax}` : 'Not loaded'}
                 </LiveBadge>
             )}
-            {me?.canViewChatlog && <ButtonLink to={`/chatlog?${new URLSearchParams({ room: String(id) })}`} icon={<MessagesSquare />}>Chat</ButtonLink>}
+            {me?.canViewChatlog && <ButtonLink to={`/logs/chat-log?${new URLSearchParams({ room: String(id) })}`} icon={<MessagesSquare />}>Chat</ButtonLink>}
         </PageHeader>
     );
 };

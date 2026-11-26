@@ -28,7 +28,7 @@ export const SortButton = ({ label, sort, first, sorting }: { label: ReactNode; 
             onClick={() => sorting.onSort(nextOrder(sorting.order, sort, first))}
             title={dir ? `Sorted ${wayOf(dir)}: sort ${wayOf(dir === 'asc' ? 'desc' : 'asc')}` : 'Sort by this'}
             className={cx(
-                'group/sort -mx-1 inline-flex items-center gap-1 rounded px-1 uppercase transition-colors focus-visible:outline-2 focus-visible:outline-accent in-[.text-right]:flex-row-reverse',
+                'group/sort -mx-1 inline-flex items-center gap-1 rounded px-1 transition-colors focus-visible:outline-2 focus-visible:outline-accent in-[.text-right]:flex-row-reverse',
                 dir ? 'text-accent' : 'hover:text-ink',
             )}
         >

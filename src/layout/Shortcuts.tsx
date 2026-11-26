@@ -42,7 +42,7 @@ const Sheet = ({ onClose }: { onClose: () => void }) => {
             aria-labelledby="shortcuts-title"
             onClose={onClose}
             onClick={event => event.target === dialog.current && onClose()}
-            className="m-auto w-[720px] max-w-[92vw] animate-rise rounded-2xl border border-line bg-surface p-0 text-ink shadow-overlay backdrop:bg-[rgb(5_8_12/0.6)]"
+            className="m-auto w-[720px] max-w-[92vw] animate-rise rounded-2xl border border-line bg-surface p-0 text-ink shadow-overlay"
         >
             <header className="flex items-center gap-2 border-b border-line px-5 py-4">
                 <Keyboard className="size-5 text-accent" />

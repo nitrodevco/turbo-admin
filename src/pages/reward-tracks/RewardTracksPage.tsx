@@ -131,8 +131,8 @@ const TrackList = ({ tracks, onOpen }: { tracks: RewardTrackListItem[]; onOpen: 
                                 </span>
                             </Td>
                             <Td><Schedule track={track} /></Td>
-                            <Td className="text-right font-mono text-xs whitespace-nowrap tabular-nums">{track.tasks} <span className="text-muted">/ {plural(track.levels, 'level')}</span></Td>
-                            <Td className="text-right font-mono text-xs whitespace-nowrap tabular-nums">{track.prizes} <span className="text-muted">to {track.maxPoints.toLocaleString()} pts</span></Td>
+                            <Td className="text-right text-xs whitespace-nowrap tabular-nums">{track.tasks} <span className="text-muted">/ {plural(track.levels, 'level')}</span></Td>
+                            <Td className="text-right text-xs whitespace-nowrap tabular-nums">{track.prizes} <span className="text-muted">to {track.maxPoints.toLocaleString()} pts</span></Td>
                             <Td>{track.hasPremium ? <Badge tone="accent">Premium</Badge> : <span className="text-xs text-muted">None</span>}</Td>
                         </tr>
                     );

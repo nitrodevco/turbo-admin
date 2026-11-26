@@ -20,7 +20,7 @@ export const CommandAnswer = ({ response, onConfirm, busy }: { response: RunComm
 
     return (
         <div role="status" className="flex flex-col gap-2 rounded-xl border border-line bg-canvas px-4 py-3">
-            <span className={cx('font-mono text-2xs font-medium tracking-[0.08em] uppercase', outcome.tone)}>{outcome.label}</span>
+            <span className={cx('text-xs font-medium', outcome.tone)}>{outcome.label}</span>
             {response.lines.map((line, index) => <p key={index} className="font-mono text-ui whitespace-pre-wrap">{line.text}</p>)}
             {response.outcome === 'AwaitingConfirmation' && (
                 <Button variant="danger" onClick={onConfirm} disabled={busy} className="self-start">Confirm</Button>

@@ -56,13 +56,13 @@ const ValueText = ({ setting }: { setting: ServerSetting }) => {
 
 const SourceBadge = ({ setting }: { setting: ServerSetting }) => {
     if (setting.source === SOURCE.environment)
-        return <Badge tone="amber" className="max-w-56 truncate normal-case!"><Lock className="size-3" /> {setting.sourceName}</Badge>;
+        return <Badge tone="amber" className="max-w-56 truncate"><Lock className="size-3" /> {setting.sourceName}</Badge>;
 
     if (setting.source === SOURCE.panel)
         return <Badge tone="accent">set here</Badge>;
 
     if (setting.source === SOURCE.appSettings)
-        return <Badge className="normal-case!">{setting.sourceName}</Badge>;
+        return <Badge>{setting.sourceName}</Badge>;
 
     return null;
 };

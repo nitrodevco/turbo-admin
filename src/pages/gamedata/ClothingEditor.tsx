@@ -239,7 +239,7 @@ const PartsTable = ({ parts, onChange, disabled }: { parts: Part[]; onChange: (p
 
     return (
         <div className="rounded-lg border border-line">
-            <div aria-hidden className={cx('grid gap-x-3 px-4 py-2 font-mono text-2xs font-medium tracking-[0.08em] text-muted uppercase max-sm:hidden', PART_COLUMNS)}>
+            <div aria-hidden className={cx('grid gap-x-3 px-4 py-2 text-xs font-medium text-muted max-sm:hidden', PART_COLUMNS)}>
                 <span>Asset id</span>
                 <span>Part</span>
                 <span>Layer</span>
@@ -564,7 +564,7 @@ export const ClothingEditor = ({ canManage }: { canManage: boolean }) => {
                             >
                                 <span className="w-7 font-mono text-xs text-muted">{entry.key}</span>
                                 <span className="min-w-0 flex-1 truncate">{labelOf(entry.key)}</span>
-                                <span className="font-mono text-2xs text-muted tabular-nums">{pieces.toLocaleString()}</span>
+                                <span className="text-2xs text-muted tabular-nums">{pieces.toLocaleString()}</span>
                             </button>
                         </li>
                     ))}

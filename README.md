@@ -18,9 +18,11 @@ It has:
   remove rights, make it a staff pick, mute it, clear it, unload it and send it an alert. Its
   Visitors tab lists who went into it lately.
 - **Players**: find any player by name or id, the online ones alone if you like, and see whether
-  they're online and where, their balances, sanctions, rooms and profile, their badges (worn ones
+  they're online and where (and a link to the room), their balances, sanctions, how many rooms they
+  own (and a link to them), their profile, their badges (worn ones
   first), their furniture by kind (in their inventory and placed in rooms), how many pets and bots
-  they have, and the rooms they went into lately. Only shown if you have `admin.players.view`.
+  they have, and links to their logs (room visits and sanctions among them). Only shown if you
+  have `admin.players.view`.
   With the matching command permissions, warn, ban, silence, trade lock, disconnect them, change
   their balances, give or take badges and put furniture in their inventory, through the hotel's
   own commands. With
@@ -42,6 +44,9 @@ It has:
 - **Permission log** (under Logs, beside the two above): every change to a group's or a player's
   permissions and who made it, searched by node, key or group. Only shown if you have
   `admin.permissions.view`.
+- **Sanctions** (under Logs): every ban and caution, newest first: on whom, why, by whom, until
+  when, and whether it holds now, narrowed to a player, a kind or those in force. Only shown if you
+  have `admin.players.view`. Every log is under `/logs/` (`/logs/chat-log`, `/logs/sanctions`, ...).
 - **Permissions**: groups, any player's permissions and why they hold what they hold, and who is
   given a node. Seeing it needs `admin.permissions.view`; changing it
   needs `permissions.manage`, and only for groups and players below your heaviest group, with

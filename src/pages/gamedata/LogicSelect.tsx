@@ -148,7 +148,7 @@ export const LogicSelect = ({ value, logics, onChange, disabled }: { value: stri
                         {shown.map((option, index) => (
                             <li key={`${option.group}:${option.value}`} role="presentation">
                                 {(index === 0 || shown[index - 1]!.group !== option.group) && (
-                                    <div className="px-3 pt-2 pb-1 font-mono text-2xs font-medium tracking-[0.08em] text-muted uppercase">{option.group}</div>
+                                    <div className="px-3 pt-2 pb-1 text-xs font-medium text-muted">{option.group}</div>
                                 )}
                                 <div
                                     id={`${id}-${index}`}

@@ -92,7 +92,7 @@ export const WindowList = ({ index, windows, value, onPick }: { index: TemplateI
                             <button
                                 type="button"
                                 aria-expanded={open}
-                                className="sticky top-0 z-10 flex w-full items-center gap-1 border-b border-line bg-surface px-2 py-1.5 text-left font-mono text-2xs font-medium tracking-[0.08em] text-muted uppercase"
+                                className="sticky top-0 z-10 flex w-full items-center gap-1 border-b border-line bg-surface px-2 py-1.5 text-left text-xs font-medium text-muted"
                                 onClick={() => setClosed(was => (was.has(area) ? new Set([ ...was ].filter(each => each !== area)) : new Set([ ...was, area ])))}
                             >
                                 {open ? <ChevronDown className="size-3.5" /> : <ChevronRight className="size-3.5" />}

@@ -45,7 +45,7 @@ export const DayChartCard = ({ title, description, series, points, format, dimme
 
 /** One figure of a row: a column of the table from a tablet up, a labelled figure in its row on a phone. */
 export const Figure = ({ label, children }: { label: string; children: ReactNode }) => (
-    <span className="font-mono text-ui tabular-nums sm:text-right sm:text-sm">
+    <span className="text-ui tabular-nums sm:text-right sm:text-sm">
         <span className="text-muted sm:hidden">{`${label} `}</span>
         {children}
     </span>

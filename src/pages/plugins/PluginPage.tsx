@@ -32,7 +32,7 @@ const Cell = ({ column, value }: { column: PluginColumn; value: unknown }) => {
         case 'badge':
             return <Badge tone={value === 'open' ? 'amber' : value === 'resolved' ? 'green' : 'neutral'}>{String(value)}</Badge>;
         case 'number':
-            return <span className="font-mono tabular-nums">{String(value)}</span>;
+            return <span className="tabular-nums">{String(value)}</span>;
         case 'link': {
             const href = String(value);
 

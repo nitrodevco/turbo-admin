@@ -354,8 +354,8 @@ export const VariablesTab = ({ status, adding, onAdded }: { status: GamedataStat
                                         <span className="truncate font-mono text-ui">{item.key}</span>
                                         <Value value={item.value} />
                                         <span className="min-w-0 max-sm:hidden sm:justify-self-end">
-                                            {(item.setting ?? item.file) && <Badge tone="accent" className="max-w-64 truncate normal-case!"><Link2 className="size-3" /> {item.setting ?? item.file}</Badge>}
-                                            {item.managed && <Badge tone="accent" className="normal-case!"><Lock className="size-3" /> kept by the hotel</Badge>}
+                                            {(item.setting ?? item.file) && <Badge tone="accent" className="max-w-64 truncate"><Link2 className="size-3" /> {item.setting ?? item.file}</Badge>}
+                                            {item.managed && <Badge tone="accent"><Lock className="size-3" /> kept by the hotel</Badge>}
                                         </span>
                                     </div>
                                 )}

@@ -1,4 +1,4 @@
-import { Activity, AppWindow, Armchair, BellRing, Bug, CalendarClock, CalendarDays, ChartColumn, CloudDownload, Coins, DatabaseBackup, Disc3, DoorOpen, Flag, FunnelX, Gauge, History, House, ImageIcon, Images, KeyRound, Landmark, Languages, Layers, Mail, MessageCircle, MessagesSquare, Milestone, MonitorSmartphone, PackagePlus, Palette, Plug, Puzzle, ScrollText, Send, Shield, ShieldCheck, SlidersHorizontal, SquareTerminal, Stamp, Store, SwatchBook, Ticket, Timer, Type, UserRound, Users } from 'lucide-react';
+import { Activity, AppWindow, Armchair, BellRing, Bug, CalendarClock, CalendarDays, ChartColumn, CloudDownload, Coins, DatabaseBackup, Disc3, DoorOpen, Flag, FunnelX, Gauge, Gavel, History, House, ImageIcon, Images, KeyRound, Landmark, Languages, Layers, Mail, MessageCircle, MessagesSquare, Milestone, MonitorSmartphone, PackagePlus, Palette, Plug, Puzzle, ScrollText, Send, Shield, ShieldCheck, SlidersHorizontal, SquareTerminal, Stamp, Store, SwatchBook, Ticket, Timer, Type, UserRound, Users } from 'lucide-react';
 import type { ReactNode } from 'react';
 import { useLocation } from 'react-router';
 
@@ -61,12 +61,13 @@ const PAGES = {
     appearanceTexts: { to: '/appearance/texts', label: 'Texts', icon: <Type />, end: false, needs: 'canViewGamedata', words: 'captions labels shown text window phrases' },
     permissions: { to: '/permissions', label: 'Permissions', icon: <KeyRound />, end: false, key: 'k', needs: 'canViewPermissions' },
     staff: { to: '/staff', label: 'Staff passkeys', icon: <ShieldCheck />, end: false, key: 's', needs: 'canResetPasskeys' },
-    commandLog: { to: '/command-log', label: 'Command log', icon: <ScrollText />, end: false, key: 'l', needs: 'canViewCommandLog' },
-    chatlog: { to: '/chatlog', label: 'Chat log', icon: <MessagesSquare />, end: false, key: 'h', needs: 'canViewChatlog' },
-    messages: { to: '/messages', label: 'Messages', icon: <Mail />, end: false, needs: 'canViewMessages' },
-    currencyLog: { to: '/currency-log', label: 'Currency', icon: <Coins />, end: false, needs: 'canViewPlayers' },
-    roomVisits: { to: '/room-visits', label: 'Room visits', icon: <DoorOpen />, end: false, needs: 'canViewPlayers' },
-    permissionLog: { to: '/permission-log', label: 'Permission log', icon: <History />, end: false, needs: 'canViewPermissions' },
+    commandLog: { to: '/logs/command-log', label: 'Command log', icon: <ScrollText />, end: false, key: 'l', needs: 'canViewCommandLog' },
+    chatlog: { to: '/logs/chat-log', label: 'Chat log', icon: <MessagesSquare />, end: false, key: 'h', needs: 'canViewChatlog' },
+    messages: { to: '/logs/messages', label: 'Messages', icon: <Mail />, end: false, needs: 'canViewMessages' },
+    currencyLog: { to: '/logs/currency-log', label: 'Currency', icon: <Coins />, end: false, needs: 'canViewPlayers' },
+    roomVisits: { to: '/logs/room-visits', label: 'Room visits', icon: <DoorOpen />, end: false, needs: 'canViewPlayers' },
+    sanctions: { to: '/logs/sanctions', label: 'Sanctions', icon: <Gavel />, end: false, needs: 'canViewPlayers', words: 'bans banned cautions warnings moderation punishments' },
+    permissionLog: { to: '/logs/permission-log', label: 'Permission log', icon: <History />, end: false, needs: 'canViewPermissions' },
     settings: { to: '/settings', label: 'Settings', icon: <SlidersHorizontal />, end: false, key: 'e', needs: 'canViewSettings' },
     database: { to: '/database', label: 'Database', icon: <DatabaseBackup />, end: false, needs: 'canBackupDatabase', words: 'backup sql dump export download tables mysql' },
     plugins: { to: '/plugins', label: 'Plugins', icon: <Plug />, end: true, key: 'i', needs: 'canViewPlugins' },
@@ -87,7 +88,7 @@ export interface NavEntry {
     label: string;
     icon: ReactNode;
     pages: PageName[];
-    /** A line about it, for the menu on a phone. */
+    /** A line about it, shown when its entry in the sidebar is pointed at. */
     hint: string;
     /** A plugin's page: where it is, which holds no page of the panel's own. */
     path?: string;
@@ -102,7 +103,7 @@ export interface NavSection {
 }
 
 const OVERVIEW: NavEntry = { label: 'Overview', icon: <Gauge />, pages: [ 'dashboard', 'performance', 'clientHealth', 'usage' ], hint: 'The hotel now, how the server and the clients run, and what players use' };
-const LOGS: NavEntry = { label: 'Logs', icon: <ScrollText />, pages: [ 'commandLog', 'chatlog', 'messages', 'currencyLog', 'roomVisits', 'permissionLog' ], hint: 'Commands run, chat in rooms, private messages, wallet changes, room visits, permission changes' };
+const LOGS: NavEntry = { label: 'Logs', icon: <ScrollText />, pages: [ 'commandLog', 'chatlog', 'messages', 'currencyLog', 'roomVisits', 'sanctions', 'permissionLog' ], hint: 'Commands run, chat in rooms, private messages, wallet changes, room visits, bans and cautions, permission changes' };
 const MODERATION: NavEntry = { label: 'Moderation', icon: <Flag />, pages: [ 'reports', 'wordFilter' ], hint: 'Calls for help players send, and the word filter' };
 const GROUPS: NavEntry = { label: 'Groups', icon: <Shield />, pages: [ 'groups', 'badgeParts' ], hint: 'Groups, their members, and badge parts' };
 const PLUGINS: NavEntry = { label: 'Plugins', icon: <Plug />, pages: [ 'plugins', 'pluginSchedule', 'pluginAi' ], hint: 'What the server loaded, turning it off or on, its scheduled tasks and AI' };

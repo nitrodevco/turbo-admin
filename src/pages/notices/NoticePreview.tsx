@@ -76,7 +76,7 @@ export const NoticePreview = ({ notice }: { notice: Notice }) => {
                 {art}
                 {text}
             </div>
-            {type === 'countdown' && <span className="self-center font-mono text-[12px] font-bold tabular-nums">{countdownText(seconds)}</span>}
+            {type === 'countdown' && <span className="self-center text-[12px] font-bold tabular-nums">{countdownText(seconds)}</span>}
         </div>
     );
 };

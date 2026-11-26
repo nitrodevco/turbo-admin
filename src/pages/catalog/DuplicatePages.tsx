@@ -30,7 +30,7 @@ const PageRow = ({ page, canManage, onOpen, onMerge }: { page: DuplicatePageItem
                 </span>
             )}
             <Badge tone={display.tone}>{display.label}</Badge>
-            <span className="font-mono text-xs text-muted tabular-nums sm:w-36 sm:text-right">
+            <span className="text-xs text-muted tabular-nums sm:w-36 sm:text-right">
                 {plural(page.offers, 'offer', 'offers')} · {plural(page.pages, 'page', 'pages')}
             </span>
             {canManage && (

@@ -5,7 +5,7 @@ import { cx } from '#/lib/cx';
 import { type ListOrder, type Sorting, type SortKeys, useSortedRows } from '#/lib/sort';
 
 import { PhoneSort, SortButton, type SortColumn } from './SortHeader';
-import { Ago } from './ui';
+import { Ago, LABEL_CLASS } from './ui';
 
 /** A column's header; with `sort`, a key the list sorts by, it sorts the list when clicked. */
 export interface RowListColumn extends SortColumn {
@@ -22,7 +22,7 @@ export interface RowListColumn extends SortColumn {
 export const RowList = ({ columns, headers, sorting, children }: { columns: string; headers: RowListColumn[]; sorting?: Sorting; children: ReactNode }) => (
     <div style={{ '--row-cols': columns } as CSSProperties} className="text-sm sm:grid sm:grid-cols-(--row-cols) sm:gap-x-4">
         {sorting && <PhoneSort columns={headers} sorting={sorting} />}
-        <div className="hidden border-b border-line px-4 py-2 font-mono text-2xs font-medium tracking-[0.08em] text-muted uppercase sm:col-span-full sm:grid sm:grid-cols-subgrid">
+        <div className={cx('hidden border-b border-line px-4 py-2 sm:col-span-full sm:grid sm:grid-cols-subgrid', LABEL_CLASS)}>
             {headers.map((header, index) => (
                 <span key={index} className={header.className}>
                     {header.sort && sorting

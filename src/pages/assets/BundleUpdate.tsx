@@ -81,7 +81,7 @@ export const BundleUpdate = ({ kind, canManage, defaultOpen = false }: { kind: B
                     )}
                 </div>
                 {pending > 0 && (
-                    <div className="flex flex-wrap items-center gap-x-4 gap-y-1 font-mono text-xs text-muted tabular-nums">
+                    <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-muted tabular-nums">
                         <span><span className="text-good">+{entry!.new.toLocaleString()}</span> new</span>
                         <span><span className="text-accent">{entry!.updated.toLocaleString()}</span> updated</span>
                     </div>

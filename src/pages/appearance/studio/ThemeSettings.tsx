@@ -94,7 +94,7 @@ export const ThemeSettings = ({ fonts, onWindow }: { fonts: readonly PluginFont[
         <div className="flex flex-col">
             {groups.map(([ name, styles ]) => (
                 <section key={name} aria-label={name} className="border-b border-line">
-                    <h3 className="sticky top-0 z-10 bg-surface px-3 pt-2 font-mono text-2xs font-medium tracking-[0.08em] text-muted uppercase">{name}</h3>
+                    <h3 className="sticky top-0 z-10 bg-surface px-3 pt-2 text-xs font-medium text-muted">{name}</h3>
                     {GROUP_HINTS[name] && <p className="bg-surface px-3 pb-1 text-xs text-muted">{GROUP_HINTS[name]}</p>}
                     <ul className="divide-y divide-line">
                         {styles.map(style => <StyleControl key={style.name} style={style} fonts={fonts} onFocus={() => onWindow(style)} />)}

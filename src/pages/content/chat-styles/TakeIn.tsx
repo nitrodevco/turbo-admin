@@ -117,7 +117,7 @@ export const TakeInDialog = ({ open, onClose }: { open: boolean; onClose: () => 
                         }}
                     />
                 </label>
-                <div className="flex items-center gap-3 font-mono text-2xs font-medium tracking-[0.08em] text-muted uppercase" aria-hidden>
+                <div className="flex items-center gap-3 text-xs font-medium text-muted" aria-hidden>
                     <span className="h-px flex-1 bg-line" />
                     or
                     <span className="h-px flex-1 bg-line" />

@@ -84,7 +84,7 @@ export const NoticeTable = ({ notices, ordered, empty, dirty, isNew, habboOf, di
                                 <Td>
                                     {/* The row's click opens the notice: these keep theirs. */}
                                     <span className="flex items-center gap-0.5" onClick={event => event.stopPropagation()}>
-                                        <span className="w-6 font-mono text-xs text-muted tabular-nums">#{index + 1}</span>
+                                        <span className="w-6 text-xs text-muted tabular-nums">#{index + 1}</span>
                                         <IconButton small label={`Move ${notice.key} up`} icon={<ArrowUp />} disabled={disabled || index === 0} onClick={() => onMove(notice.key, -1)} />
                                         <IconButton small label={`Move ${notice.key} down`} icon={<ArrowDown />} disabled={disabled || index === notices.length - 1} onClick={() => onMove(notice.key, 1)} />
                                     </span>

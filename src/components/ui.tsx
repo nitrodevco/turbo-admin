@@ -1,11 +1,8 @@
-import { Check, CheckCircle2, Copy, Menu, TriangleAlert, X, XCircle } from 'lucide-react';
-import { type ButtonHTMLAttributes, type FormEventHandler, type InputHTMLAttributes, type ReactNode, type Ref, type SelectHTMLAttributes, type TextareaHTMLAttributes, useEffect, useId, useState } from 'react';
+import { Check, CheckCircle2, Copy, TriangleAlert, X, XCircle } from 'lucide-react';
+import { type ButtonHTMLAttributes, type FormEventHandler, type InputHTMLAttributes, type ReactNode, type Ref, type RefObject, type SelectHTMLAttributes, type TextareaHTMLAttributes, useEffect, useId, useLayoutEffect, useRef, useState } from 'react';
 import { Link } from 'react-router';
 
 import { useClientAssets } from '#/api/assets';
-import { useDrawer } from '#/layout/drawer';
-import { HotelStatusPill } from '#/layout/HotelStatus';
-import { useActiveNavItem } from '#/layout/nav';
 import { NotificationsBell } from '#/layout/NotificationsBell';
 import { copyText } from '#/lib/clipboard';
 import { cx } from '#/lib/cx';
@@ -42,37 +39,40 @@ interface PageHeaderProps {
 }
 
 /**
- * The top of every page, in the bar along the top of the window as nitro-studio has it: the title
- * and a line under it; the page's actions to the right (actions that do not fit go under "More");
- * and along its bottom edge the page's tabs (or, with none, the page's name marked as a tab is, so
- * every header is the same height). On a phone it stays at the top as an app bar, with the menu's
- * button before the title and the hotel's state at a glance and the bell after it; from a laptop
- * up it scrolls away with the page, and the search and the bell sit in the sidebar.
+ * The top of every page: the title, in the display setting, and a line under it; the page's actions
+ * to the right (actions that do not fit go under "More"); and the page's tabs along its bottom
+ * edge, on a rule across the page. It is one height on every page, and stays it as the page loads:
+ * the line under the title keeps its place when a page has nothing there (or not yet), and from a
+ * laptop up a page with no tabs has its own name where its tabs would be, marked as the chosen tab
+ * is. On a phone it stays at the top as an app bar: the back arrow, the title, the actions and the
+ * bell, the page scrolling under it (the places are in the tab bar along the bottom), and the tabs'
+ * row only for a page that has tabs. From a laptop up it sits on the page and scrolls away with it,
+ * and the search and the bell are in the sidebar.
  */
 export const PageHeader = ({ title, description, back, tabs, children, wide, icon }: PageHeaderProps) => {
     return (
-        <header className="sticky top-0 z-30 border-b border-line bg-chrome/95 backdrop-blur lg:static lg:z-auto lg:bg-chrome lg:backdrop-blur-none">
-            <div className={cx(pageWidth(wide), 'flex min-h-14 items-center gap-x-2.5 px-3 py-2 sm:gap-x-3 sm:px-6 lg:min-h-18 lg:px-8')}>
-                <MenuButton />
+        <header className="sticky top-0 z-30 border-b border-line bg-chrome/95 pt-[env(safe-area-inset-top)] backdrop-blur-md lg:static lg:z-auto lg:bg-transparent lg:pt-0 lg:backdrop-blur-none">
+            <div className={cx(pageWidth(wide), 'flex h-14 items-center gap-x-2 px-3 sm:h-16 sm:gap-x-3 sm:px-6 lg:h-auto lg:px-8 lg:pt-5 lg:pb-2')}>
                 <BackArrow back={back} />
-                {icon ? <span className="shrink-0 max-sm:hidden">{icon}</span> : <HeaderIcon />}
-                <div data-title className="min-w-0 flex-1">
-                    <h1 className="truncate text-base leading-7 font-semibold tracking-tight lg:text-lg">{title}</h1>
-                    {description && (
-                        <p className="truncate text-ui leading-5 text-muted" title={typeof description === 'string' ? description : undefined}>
-                            {description}
-                        </p>
-                    )}
+                {icon && <span className="shrink-0 max-sm:hidden">{icon}</span>}
+                <div data-title className={cx('min-w-0 flex-1', !back && 'max-lg:pl-1')}>
+                    <h1 className="truncate font-display text-lg leading-6 sm:text-title sm:leading-7">{title}</h1>
+                    <p
+                        aria-hidden={description ? undefined : true}
+                        title={typeof description === 'string' ? description : undefined}
+                        className="h-4 truncate text-xs leading-4 text-muted sm:h-5 sm:text-sm sm:leading-5 lg:mt-0.5"
+                    >
+                        {description}
+                    </p>
                 </div>
                 {children && <HeaderActions>{children}</HeaderActions>}
-                <HotelStatusPill />
                 <div className="lg:hidden">
                     <NotificationsBell />
                 </div>
             </div>
             {/* The tabs' row: its tabs' line sits on the header's own bottom rule. */}
-            <div className={cx(pageWidth(wide), 'flex h-10 items-end px-3 sm:px-6 lg:px-8', !tabs && 'max-lg:hidden')}>
-                {/* Words only, on every page: the page's icon is the one beside its title. */}
+            <div className={cx(pageWidth(wide), 'flex h-10 items-end px-1 sm:px-3 lg:px-5', !tabs && 'max-lg:hidden')}>
+                {/* Words only: the page's icon is in the menu beside it. */}
                 {tabs
                     ? <Tabs value={tabs.value} tabs={tabs.items.map(tab => ({ ...tab, icon: undefined }))} onChange={tabs.onChange} rule={false} className="-mb-px min-w-0" />
                     : <HeaderPage title={title} />}
@@ -81,35 +81,9 @@ export const PageHeader = ({ title, description, back, tabs, children, wide, ico
     );
 };
 
-/** On a phone and a tablet, the button that slides the menu in from the left. */
-const MenuButton = () => {
-    const setOpen = useDrawer(state => state.setOpen);
-
-    return (
-        <button
-            type="button"
-            onClick={() => setOpen(true)}
-            aria-label="Menu"
-            className="-ml-1 grid size-10 shrink-0 place-items-center rounded-lg text-muted transition-colors hover:bg-subtle hover:text-ink lg:hidden [&>svg]:size-5"
-        >
-            <Menu />
-        </button>
-    );
-};
-
-/** The page's navigation entry's icon in a tile, before its title. Not on a phone, where the row is the title's. */
-const HeaderIcon = () => {
-    const entry = useActiveNavItem();
-
-    if (!entry)
-        return null;
-
-    return <IconTile className="max-sm:hidden">{entry.icon}</IconTile>;
-};
-
-/** A page with no tabs, where its tabs would be: its name, marked as the chosen tab is. */
+/** A page with no tabs, where its tabs would be from a laptop up: its name, marked as the chosen tab is, so every header is one height. */
 const HeaderPage = ({ title }: { title: string }) => (
-    <span className="-mb-px flex shrink-0 items-center border-b-2 border-accent px-3 py-2 text-sm font-medium whitespace-nowrap text-accent">
+    <span className="-mb-px flex shrink-0 items-center border-b-2 border-accent px-3 py-2.5 text-sm font-medium whitespace-nowrap text-ink">
         {title}
     </span>
 );
@@ -143,7 +117,7 @@ interface PanelProps {
 export const Panel = ({ title, count, description, actions, children, className, ref }: PanelProps) => (
     <section ref={ref} className={cx('card', className)}>
         {(title || actions) && (
-            <header className="flex flex-wrap items-center justify-between gap-x-4 gap-y-2 border-b border-line px-4 py-3.5">
+            <header className="flex flex-wrap items-center justify-between gap-x-4 gap-y-2 border-b border-line px-4 py-3">
                 {/* Shrinks to 8rem, its description wrapping, before the actions drop below it. */}
                 <div className="min-w-0 flex-[1_1_8rem]">
                     {title && (
@@ -202,23 +176,26 @@ export const GroupHeading = ({ children, count, sticky }: { children: ReactNode;
     </Label>
 );
 
+/** A label's look, for `Label` and for a list's or a table's column headers: 12px, medium, muted, in sentence case. */
+export const LABEL_CLASS = 'text-xs font-medium text-muted';
+
 /**
- * A small uppercase label in the mono face: what a number or a group is, or (`as="h3"`) the
- * heading over a group of fields, rows or tiles.
+ * What a number or a group is, in a few muted words; or (`as="h3"`) the heading over a group of
+ * fields, rows or tiles. Sentence case, in the text face, as `FieldLabel` over a field.
  */
 export const Label = ({ as: Tag = 'span', children, className }: { as?: 'span' | 'div' | 'h3'; children: ReactNode; className?: string }) => (
-    <Tag className={cx('font-mono text-2xs font-medium tracking-[0.08em] text-muted uppercase', className)}>{children}</Tag>
+    <Tag className={cx(LABEL_CLASS, className)}>{children}</Tag>
 );
 
 /**
- * A number worth a glance, in the mono face, with what it is above it. `meter` (0 to 1) draws how
+ * A number worth a glance, in the display setting, with what it is above it. `meter` (0 to 1) draws how
  * full it is under it; `tone` colours a number that needs attention. `compact` for a row of
  * figures inside a tool (what a plan would make), smaller than a page's own.
  */
 export const Stat = ({ label, value, detail, meter, tone, icon, compact }: { label: string; value: ReactNode; detail?: ReactNode; meter?: number; tone?: 'warn' | 'bad'; icon?: ReactNode; compact?: boolean }) => (
     <div className={cx('card', compact ? 'px-3 py-2.5' : 'p-4')}>
         <Label className="flex items-center gap-1 [&>svg]:size-3">{icon}{label}</Label>
-        <div className={cx('font-mono font-semibold tabular-nums', compact ? 'mt-0.5 text-xl' : 'mt-2 text-2xl', tone === 'warn' && 'text-warn', tone === 'bad' && 'text-bad')}>{value}</div>
+        <div className={cx('font-display tabular-nums', compact ? 'mt-0.5 text-xl' : 'mt-1.5 text-2xl', tone === 'warn' && 'text-warn', tone === 'bad' && 'text-bad')}>{value}</div>
         {meter !== undefined && (
             <div className="mt-2.5 h-1 rounded-full bg-line" aria-hidden>
                 <div className="h-1 rounded-full bg-accent-solid" style={{ width: `${Math.round(Math.min(1, Math.max(0, meter)) * 100)}%` }} />
@@ -238,30 +215,33 @@ const BADGE_TONES: Record<BadgeTone, string> = {
     red: 'border-bad-line bg-bad-soft text-bad',
 };
 
-/** A tag, in the mono face: a role, a state, a short fact. */
+/** A tag: a role, a state, a short fact, in a word or two as written (most in lower case). */
 export const Badge = ({ tone = 'neutral', children, className }: { tone?: BadgeTone; children: ReactNode; className?: string }) => (
-    <span className={cx('inline-flex items-center gap-1.5 rounded-md border px-1.5 py-0.5 font-mono text-2xs font-medium whitespace-nowrap uppercase', BADGE_TONES[tone], className)}>
+    <span className={cx('inline-flex items-center gap-1.5 rounded-md border px-1.5 text-xs leading-5 font-medium whitespace-nowrap', BADGE_TONES[tone], className)}>
         {children}
     </span>
 );
 
 /** Whether something is live: a dot and a few words, green when it is. */
 export const LiveBadge = ({ live, children }: { live: boolean; children: ReactNode }) => (
-    <span className={cx('inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 font-mono text-xs font-medium whitespace-nowrap', live ? 'border-good-line bg-good-soft text-good' : 'border-line text-muted')}>
+    <span className={cx('inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-xs font-medium whitespace-nowrap', live ? 'border-good-line bg-good-soft text-good' : 'border-line text-muted')}>
         <span className={cx('size-1.5 rounded-full', live ? 'bg-good' : 'bg-muted')} />
         {children}
     </span>
 );
 
 const NOTICE_TONES = {
-    bad: { box: 'border-bad-line bg-bad-soft text-bad', icon: <XCircle /> },
-    good: { box: 'border-good-line bg-good-soft text-good', icon: <CheckCircle2 /> },
-    warn: { box: 'border-warn-line bg-warn-soft text-warn', icon: <TriangleAlert /> },
+    bad: { box: 'border-bad-line bg-bad-soft [&>svg]:text-bad', icon: <XCircle /> },
+    good: { box: 'border-good-line bg-good-soft [&>svg]:text-good', icon: <CheckCircle2 /> },
+    warn: { box: 'border-warn-line bg-warn-soft [&>svg]:text-warn', icon: <TriangleAlert /> },
 };
 
-/** A line in a tone across the page or a card: its icon, so the colour is never all that says it, and the words. */
+/**
+ * A line in a tone across the page or a card: its icon in the tone, so the colour is never all
+ * that says it, and the words in the ink, to be read.
+ */
 const Notice = ({ tone, role, children }: { tone: keyof typeof NOTICE_TONES; role?: 'alert' | 'status'; children: ReactNode }) => (
-    <div role={role} className={cx('flex items-start gap-2.5 rounded-xl border px-4 py-3 text-sm [&>svg]:mt-0.5 [&>svg]:size-4 [&>svg]:shrink-0', NOTICE_TONES[tone].box)}>
+    <div role={role} className={cx('flex items-start gap-2.5 rounded-xl border px-4 py-3 text-sm text-ink [&>svg]:mt-0.5 [&>svg]:size-4 [&>svg]:shrink-0', NOTICE_TONES[tone].box)}>
         {NOTICE_TONES[tone].icon}
         <div className="min-w-0 flex-1">{children}</div>
     </div>
@@ -502,7 +482,7 @@ export const Field = ({ label, hint, id, ...input }: FieldProps) => {
 type ButtonVariant = 'primary' | 'secondary' | 'ghost' | 'danger' | 'danger-ghost';
 
 const BUTTON_VARIANTS: Record<ButtonVariant, string> = {
-    primary: 'border border-accent-solid bg-accent-solid font-semibold text-on-accent hover:border-accent-solid-hover hover:bg-accent-solid-hover',
+    primary: 'border border-accent-edge bg-accent-solid font-semibold text-on-accent hover:bg-accent-solid-hover',
     secondary: 'border border-line bg-subtle text-ink hover:border-line-strong',
     ghost: 'border border-transparent text-muted hover:border-line hover:bg-subtle hover:text-ink',
     danger: 'border border-bad-line bg-bad-soft text-bad hover:border-bad/60',
@@ -670,14 +650,19 @@ export const ValueTag = ({ children, onRemove, removeLabel, disabled, title, cla
     </span>
 );
 
-/** A pill that is on or off: a quick value to pick, or a filter to narrow a list by. */
-export const Chip = ({ active, className, children, ...button }: ButtonHTMLAttributes<HTMLButtonElement> & { active: boolean }) => (
+/**
+ * A pill that is on or off: a quick value to pick, or a filter to narrow a list by (a list's
+ * toolbar has its filters so, "Online only", rather than switches). `large` for one among a
+ * toolbar's controls: a thumb's size on a phone, a field's height from a tablet up.
+ */
+export const Chip = ({ active, large, className, children, ...button }: ButtonHTMLAttributes<HTMLButtonElement> & { active: boolean; large?: boolean }) => (
     <button
         type="button"
         aria-pressed={active}
         {...button}
         className={cx(
-            'inline-flex min-h-8 items-center gap-1.5 rounded-full border px-2.5 text-xs transition-colors disabled:pointer-events-none disabled:opacity-50 sm:min-h-7',
+            'inline-flex items-center gap-1.5 rounded-full border px-2.5 text-xs transition-colors disabled:pointer-events-none disabled:opacity-50 [&>svg]:size-3.5',
+            large ? 'h-10 px-3.5 text-sm font-medium sm:h-8 sm:px-3 sm:text-ui' : 'min-h-8 sm:min-h-7',
             active ? 'border-accent bg-accent-soft text-accent' : 'border-line text-muted hover:border-accent hover:text-accent',
             className,
         )}
@@ -711,15 +696,61 @@ export const Kv = ({ label, mono, children }: { label: string; mono?: boolean; c
  */
 
 /**
- * A table in a card, its `thead` and `tbody` as children: as wide as the card, scrolling sideways
- * in itself when its columns don't fit, and its last row's rule left to the card's own edge.
- * `className` is the box's (`hidden sm:block`, where a phone lists the rows another way).
+ * Each cell of a table's body named by its column's header (`data-label`), for a phone's stacked
+ * rows (`.table-stack`, index.css), where the headers are not shown. Kept as rows come and go.
  */
-export const Table = ({ children, className }: { children: ReactNode; className?: string }) => (
-    <div className={cx('overflow-x-auto', className)}>
-        <table className="w-full text-sm [&>tbody>tr:last-child>td]:border-b-0">{children}</table>
-    </div>
-);
+const useCellLabels = (box: RefObject<HTMLDivElement | null>) => {
+    useLayoutEffect(() => {
+        const table = box.current?.querySelector('table');
+
+        if (!table)
+            return;
+
+        const label = () => {
+            const heads = [ ...table.querySelectorAll('thead th') ].map(th => th.textContent?.trim() ?? '');
+
+            for (const row of table.querySelectorAll('tbody tr')) {
+                let column = 0;
+
+                for (const cell of row.children) {
+                    const text = heads[column] ?? '';
+
+                    if (cell instanceof HTMLElement && cell.dataset.label !== text)
+                        cell.dataset.label = text;
+
+                    column += (cell as HTMLTableCellElement).colSpan || 1;
+                }
+            }
+        };
+
+        label();
+
+        const observer = new MutationObserver(label);
+
+        observer.observe(table, { childList: true, subtree: true });
+
+        return () => observer.disconnect();
+    }, [ box ]);
+};
+
+/**
+ * A table in a card, its `thead` and `tbody` as children: as wide as the card, scrolling sideways
+ * in itself when its columns don't fit, and its last row's rule left to the card's own edge. On a
+ * phone each row stands as a card of its own, a line for each cell with its column's name before
+ * it, so nothing scrolls sideways. `className` is the box's (`hidden sm:block`, where a phone lists
+ * the rows another way).
+ */
+export const Table = ({ children, className }: { children: ReactNode; className?: string }) => {
+    const box = useRef<HTMLDivElement>(null);
+
+    useCellLabels(box);
+
+    return (
+        <div ref={box} className={cx('table-stack overflow-x-auto', className)}>
+            <table className="w-full text-sm [&>tbody>tr:last-child>td]:border-b-0">{children}</table>
+        </div>
+    );
+};
 
 /**
  * A table's column header. With `sort` (a key the table sorts by) and `sorting`, a click sorts the
@@ -729,7 +760,7 @@ export const Table = ({ children, className }: { children: ReactNode; className?
 export const Th = ({ children, className, sort, first, sorting, dense }: { children?: ReactNode; className?: string; sort?: string; first?: SortDir; sorting?: Sorting; dense?: boolean }) => (
     <th
         aria-sort={sort && sorting?.order?.sort === sort ? (sorting.order.dir === 'asc' ? 'ascending' : 'descending') : undefined}
-        className={cx('border-b border-line font-mono text-2xs font-medium tracking-[0.08em] text-muted uppercase', dense ? 'px-3 py-1.5' : 'px-4 py-2', className)}
+        className={cx('border-b border-line', LABEL_CLASS, dense ? 'px-3 py-1.5' : 'px-4 py-2', className)}
     >
         {sort && sorting ? <SortButton label={children} sort={sort} first={first} sorting={sorting} /> : children}
     </th>
@@ -798,7 +829,7 @@ export const Avatar = ({ id, name, figure, large, className }: { id: number; nam
     return (
         <span
             aria-hidden
-            className={cx('grid size-11 shrink-0 place-items-center overflow-hidden rounded-lg font-mono text-xs font-semibold text-[#0a0e13] sm:size-10', className)}
+            className={cx('grid size-11 shrink-0 place-items-center overflow-hidden rounded-lg text-xs font-semibold text-[#111315] sm:size-10', className)}
             style={{ background: drawn ? `color-mix(in srgb, ${AVATAR_COLOURS[Math.abs(id) % AVATAR_COLOURS.length]} 35%, var(--color-subtle))` : AVATAR_COLOURS[Math.abs(id) % AVATAR_COLOURS.length] }}
         >
             {/* Their head as the client draws it, from the hotel's imager; their initials without one. */}
@@ -809,4 +840,4 @@ export const Avatar = ({ id, name, figure, large, className }: { id: number; nam
     );
 };
 
-const AVATAR_COLOURS = [ '#7FE3DA', '#B79CFF', '#F2B55A', '#9CC3FF', '#FFB4A2', '#A6E3A1' ];
+const AVATAR_COLOURS = [ '#9CC3FF', '#B79CFF', '#F2C46B', '#86DCC8', '#FFB4A2', '#A6E3A1' ];

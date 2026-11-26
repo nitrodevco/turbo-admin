@@ -23,7 +23,7 @@ const BackupRow = ({ backup, canManage, busy, onRollback, onDelete }: { backup: 
                 {backup.takenByName ?? `player ${backup.takenById}`}
             </div>
         </div>
-        <div className="font-mono text-xs text-muted tabular-nums">
+        <div className="text-xs text-muted tabular-nums">
             {backup.pages.toLocaleString()} pages · {backup.offers.toLocaleString()} offers · {backup.featuredItems} featured
         </div>
         {canManage && (

@@ -44,7 +44,7 @@ const Result = ({ result, question }: { result: PollQuestionResult | undefined; 
                 <div key={choice.value} className="grid grid-cols-[minmax(0,6rem)_minmax(0,1fr)_3rem] items-center gap-2">
                     <span className="truncate text-xs" title={choice.value}>{question.choices.find(x => x.value === choice.value)?.text || choice.value}</span>
                     <span className="h-2 overflow-hidden rounded-full bg-subtle"><span className="block h-full rounded-full bg-accent-solid" style={{ width: `${(choice.count / most) * 100}%` }} /></span>
-                    <span className="text-right font-mono text-xs tabular-nums">{choice.count}</span>
+                    <span className="text-right text-xs tabular-nums">{choice.count}</span>
                 </div>
             ))}
             {result.texts.map((text, i) => (

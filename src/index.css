@@ -4,23 +4,30 @@
 @custom-variant dark (&:where(.dark, .dark *));
 
 /*
- * The panel's palette: "Control Room". Slate surfaces, one teal accent, numbers and labels in
- * IBM Plex Mono. Components use these tokens through Tailwind (`bg-surface`, `text-muted`,
- * `border-line`, `text-good`), so the look is changed here, for both themes: light below, dark
- * (the default) under `.dark`. Every text colour reads at 4.5:1 or more on the surfaces it is set
- * on, in both themes.
+ * The panel's look: the hotel after hours. Neutral graphite surfaces, so nothing tints the page, and
+ * the blue of the sky behind the hotel view for what can be pressed or is chosen; nothing decorative
+ * is blue. Type is Onest, one family: titles and the figures worth a glance in its display setting
+ * (`font-display`: semibold, set tight), everything else at reading weights. IBM Plex Mono is for
+ * code alone: commands, keys, hashes, JSON. Components use these tokens through Tailwind
+ * (`bg-surface`, `text-muted`, `border-line`, `text-good`), so the look is changed here, for both
+ * themes: light below, dark (the default) under `.dark`. Every text colour reads at 4.5:1 or more on
+ * the surfaces it is set on, in both themes.
  *
- * The accent has two jobs, each with its token: `accent` for words, icons, borders and focus rings,
+ * The accent has two jobs, each with its token: `accent` for words, icons, lines and focus rings,
  * and `accent-solid` for fills with `on-accent` text on them (a primary button, a count, a switch
- * that is on). With teal they are one colour, white on it in the light theme and dark ink in the
- * dark one; a fill takes `accent-solid` all the same, so a hue whose words need a lighter tint
- * than its fills can be set here alone.
+ * that is on). The fill is the sky's blue in both themes, with near-black on it; the words take a
+ * lighter blue on the dark theme and a deeper one on the light theme, to read on each, and on the
+ * light theme `accent-edge` outlines the fill against white.
  *
  * One scale for each of type, corners, depth, tints and spacing, so pages agree without thinking
  * about it:
- *   type     text-2xs 11 (labels, tags, keys) · text-xs 12 (hints, meta) · text-ui 13 (controls
- *            and dense rows from a tablet up) · text-sm 14 (reading) · text-base 16 (dialog
- *            titles, phone controls) · text-lg 18 (page titles) · text-2xl 24 (figures)
+ *   type     text-2xs 11 (keys, a tiny count) · text-xs 12 (labels, hints, meta, tags) · text-ui 13
+ *            (controls and dense rows from a tablet up) · text-sm 14 (reading) · text-base 16
+ *            (dialog titles, phone controls) · text-lg 18 (a phone's page title) · text-title 22
+ *            (a page's title from a tablet up) · text-2xl 24 (figures); titles and figures in
+ *            `font-display`
+ *   labels   sentence case in the text face, 12px medium and muted (`Label`): never in capitals,
+ *            never in the mono face
  *   corners  rounded-md (tags, keys) · rounded-lg (controls, inner boxes) · rounded-xl (cards)
  *            · rounded-2xl (dialogs and sheets)
  *   depth    shadow-card (a card on the page) · shadow-pop (a menu or popover over it) ·
@@ -40,42 +47,48 @@
  *            32px from a laptop up; its cards are 16px apart (gap-4), 24px from a laptop up
  *            (lg:gap-6); a card's content sits 16px (px-4) from its edge; a column that follows
  *            the page as it scrolls sticks 16px under the window's top (top-4: `ListPanel`)
+ *   phone    a page scrolls between its header and the tab bar along the bottom
+ *            (`--tabbar-height`, the home indicator's inset under it); what sticks to a page's
+ *            bottom (a save bar) sits above the bar
  */
 @theme {
-    --font-sans: "IBM Plex Sans", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+    --font-sans: "Onest Variable", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
     --font-mono: "IBM Plex Mono", ui-monospace, "Cascadia Code", Consolas, monospace;
 
     --text-2xs: 0.6875rem;
     --text-2xs--line-height: 1rem;
     --text-ui: 0.8125rem;
     --text-ui--line-height: 1.25rem;
+    --text-title: 1.375rem;
+    --text-title--line-height: 1.75rem;
 
-    /* Where the page sits, the cards on it, a raised or hovered area, and their borders. */
-    --color-canvas: #f3f5f8;
+    /* Where the page sits, the bars around it, the cards on it, a raised or hovered area, and their borders. */
+    --color-canvas: #f4f5f7;
     --color-chrome: #ffffff;
     --color-surface: #ffffff;
-    --color-subtle: #eef1f5;
-    --color-line: #dce2e9;
+    --color-subtle: #eef0f3;
+    --color-line: #dee1e6;
     /* A border pointed at: a control or a card under the mouse. */
-    --color-line-strong: #c3ccd7;
-    --color-ink: #0e141b;
-    --color-muted: #566272;
+    --color-line-strong: #c5cad2;
+    --color-ink: #15171a;
+    --color-muted: #5b626d;
 
-    /* The accent for words and lines, its hover, a quiet fill of it; its solid fill, and text set on that. */
-    --color-accent: #0b7c74;
-    --color-accent-hover: #09665f;
-    --color-accent-soft: #e7f6f4;
-    --color-accent-solid: #0b7c74;
-    --color-accent-solid-hover: #09665f;
-    --color-on-accent: #ffffff;
+    /* The accent for words and lines, its hover, a quiet fill of it; its solid fill, the edge round that, and text set on it. */
+    --color-accent: #0a6aa6;
+    --color-accent-hover: #08588a;
+    --color-accent-soft: #e7f4fd;
+    --color-accent-solid: #5cb8f0;
+    --color-accent-solid-hover: #47a9e6;
+    --color-accent-edge: #2f8fcc;
+    --color-on-accent: #0b1620;
 
     /* Chart series, in this order; checked for colour-blind separation against the surface. */
-    --color-series-1: #008f85;
-    --color-series-2: #7048e8;
+    --color-series-1: #1580c4;
+    --color-series-2: #7a4fd6;
 
-    /* The catalogue's own: coins and club (amber), VIP (violet), as the client marks them. */
-    --color-coin: #c26a00;
-    --color-vip: #8b3fd9;
+    /* The catalogue's own: coins and club (gold), VIP (violet), as the client marks them. */
+    --color-coin: #a86300;
+    --color-vip: #7a38cf;
 
     /* The hotel view's sky, behind its pictures as the client draws them: one colour in both themes. */
     --color-hotel-sky: #aae0f0;
@@ -84,21 +97,20 @@
     --color-swatch-edge: rgb(0 0 0 / 0.15);
 
     /* States: live and fine, needs attention, destructive or refused. Each with a fill and a line. */
-    --color-good: #157a45;
-    --color-good-soft: #e3f5ec;
-    --color-good-line: #b9e3cc;
-    --color-warn: #8a5600;
-    --color-warn-soft: #fff4dc;
-    --color-warn-line: #f1d9a6;
+    --color-good: #12744a;
+    --color-good-soft: #e4f5ec;
+    --color-good-line: #b5e0c8;
+    --color-warn: #ad4800;
+    --color-warn-soft: #fff0e5;
+    --color-warn-line: #f4c9a8;
     --color-bad: #b42318;
-    --color-bad-soft: #fdeeee;
-    --color-bad-line: #f3c9c9;
+    --color-bad-soft: #fdeded;
+    --color-bad-line: #f2c6c6;
 
     --animate-rise: rise 0.28s ease-out both;
     --animate-back-in: back-in 0.25s ease-out both;
     --animate-back-out: back-out 0.2s ease-in both;
     --animate-sheet: sheet 0.22s ease-out both;
-    --animate-drawer: drawer 0.22s ease-out both;
 }
 
 /*
@@ -107,52 +119,62 @@
  * shadows, which Tailwind writes into its utilities and so could not change for the dark theme.
  */
 :root {
-    --elevation-card: 0 1px 2px 0 rgb(16 24 40 / 0.05);
-    --elevation-pop: 0 12px 28px -6px rgb(16 24 40 / 0.16), 0 2px 6px -2px rgb(16 24 40 / 0.08);
-    --elevation-overlay: 0 24px 56px -12px rgb(16 24 40 / 0.28);
+    --elevation-card: 0 1px 2px 0 rgb(21 23 26 / 0.06);
+    --elevation-pop: 0 12px 28px -6px rgb(21 23 26 / 0.18), 0 2px 6px -2px rgb(21 23 26 / 0.08);
+    --elevation-overlay: 0 24px 56px -12px rgb(21 23 26 / 0.3);
+
+    /* The phone's tab bar, without the home indicator's inset under it. */
+    --tabbar-height: 3.75rem;
 }
 
 .dark {
     color-scheme: dark;
 
-    --color-canvas: #0a0e13;
-    --color-chrome: #0d1218;
-    --color-surface: #11171f;
-    --color-subtle: #161e28;
-    --color-line: #1f2a37;
-    --color-line-strong: #314052;
-    --color-ink: #e6edf3;
-    --color-muted: #8d9aab;
+    --color-canvas: #111315;
+    --color-chrome: #15171a;
+    --color-surface: #181a1e;
+    --color-subtle: #202328;
+    --color-line: #2a2e34;
+    --color-line-strong: #3b4048;
+    --color-ink: #eceef1;
+    --color-muted: #9ba1ab;
 
-    --color-accent: #4fd1c5;
-    --color-accent-hover: #7fe3da;
-    --color-accent-soft: #10302e;
-    --color-accent-solid: #4fd1c5;
-    --color-accent-solid-hover: #7fe3da;
-    --color-on-accent: #06201e;
+    --color-accent: #7cc8f5;
+    --color-accent-hover: #a3d8f8;
+    --color-accent-soft: #1c2d3b;
+    --color-accent-solid: #5cb8f0;
+    --color-accent-solid-hover: #7cc8f5;
+    --color-accent-edge: #5cb8f0;
+    --color-on-accent: #0b1620;
 
-    --color-series-1: #14a397;
-    --color-series-2: #8b6ff0;
+    --color-series-1: #5cb8f0;
+    --color-series-2: #c29bff;
 
-    --color-coin: #f59e0b;
-    --color-vip: #c084fc;
+    --color-coin: #ffd04a;
+    --color-vip: #c79bff;
 
     --color-swatch-edge: rgb(255 255 255 / 0.18);
 
-    --color-good: #5bd68a;
-    --color-good-soft: #0f2219;
-    --color-good-line: #1d4630;
-    --color-warn: #f2b55a;
-    --color-warn-soft: #2a2010;
-    --color-warn-line: #5a4320;
-    --color-bad: #ff8a8a;
-    --color-bad-soft: #1f1215;
-    --color-bad-line: #5a2a2e;
+    --color-good: #57d394;
+    --color-good-soft: #10241b;
+    --color-good-line: #1e4634;
+    --color-warn: #ff9a57;
+    --color-warn-soft: #2a1c13;
+    --color-warn-line: #5c3620;
+    --color-bad: #ff8484;
+    --color-bad-soft: #2a1618;
+    --color-bad-line: #5e2a31;
 
     /* On a dark page a shadow hardly shows: a card is lifted by a faint light along its top edge. */
-    --elevation-card: inset 0 1px 0 0 rgb(255 255 255 / 0.03);
+    --elevation-card: inset 0 1px 0 0 rgb(255 255 255 / 0.035);
     --elevation-pop: 0 16px 36px -8px rgb(0 0 0 / 0.6), 0 2px 8px -2px rgb(0 0 0 / 0.4);
     --elevation-overlay: 0 32px 72px -12px rgb(0 0 0 / 0.75);
+}
+
+/* Titles and the figures worth a glance: the face semibold and set tight, as display sizes want. */
+@utility font-display {
+    font-weight: 600;
+    letter-spacing: -0.02em;
 }
 
 @utility shadow-card {
@@ -172,16 +194,16 @@
 
 /*
  * The header's back arrow opening from nothing, pushing the title over, and closing again.
- * The negative margin takes back the row's gap (gap-3), so the title starts exactly where it was.
+ * The negative margin takes back the row's gap (gap-2), so the title starts exactly where it was.
  */
 @keyframes back-in {
-    from { width: 0; margin-right: -0.75rem; opacity: 0; transform: translateX(-0.5rem); }
+    from { width: 0; margin-right: -0.5rem; opacity: 0; transform: translateX(-0.5rem); }
     to { width: 2.5rem; margin-right: 0; opacity: 1; transform: none; }
 }
 
 @keyframes back-out {
     from { width: 2.5rem; margin-right: 0; opacity: 1; transform: none; }
-    to { width: 0; margin-right: -0.75rem; opacity: 0; transform: translateX(-0.5rem); }
+    to { width: 0; margin-right: -0.5rem; opacity: 0; transform: translateX(-0.5rem); }
 }
 
 @keyframes rise {
@@ -192,12 +214,6 @@
 /* A phone's sheet coming up from the bottom edge. */
 @keyframes sheet {
     from { transform: translateY(100%); }
-    to { transform: none; }
-}
-
-/* A phone's menu sliding in from the left edge. */
-@keyframes drawer {
-    from { transform: translateX(-100%); }
     to { transform: none; }
 }
 
@@ -232,7 +248,7 @@ body {
 }
 
 ::selection {
-    background-color: color-mix(in srgb, var(--color-accent) 28%, transparent);
+    background-color: color-mix(in srgb, var(--color-accent-solid) 32%, transparent);
 }
 
 /* A hand over whatever does something when clicked; Tailwind 4 leaves buttons with the arrow. */
@@ -268,7 +284,7 @@ body {
 /* Drop-downs drawn as the other fields are, with a chevron in the muted text colour. */
 select:not([multiple]) {
     appearance: none;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23566272' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%235b626d' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
     background-position: right 0.6rem center;
     background-repeat: no-repeat;
     background-size: 1rem;
@@ -276,7 +292,7 @@ select:not([multiple]) {
 }
 
 .dark select:not([multiple]) {
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%238d9aab' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%239ba1ab' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
 }
 
 select option {
@@ -323,22 +339,95 @@ select option {
 
     /*
      * The bar that floats at the bottom of an editor while it has unsaved changes: what changed,
-     * and saving or throwing it away.
+     * and saving or throwing it away. On a phone it floats above the tab bar.
      */
     .save-bar {
         position: sticky;
         bottom: calc(0.75rem + env(safe-area-inset-bottom));
         z-index: 20;
         border-radius: var(--radius-xl);
-        border: 1px solid color-mix(in srgb, var(--color-accent) 45%, transparent);
+        border: 1px solid var(--color-accent-edge);
         background-color: color-mix(in srgb, var(--color-surface) 94%, transparent);
         box-shadow: var(--elevation-pop);
         backdrop-filter: blur(8px);
     }
 }
 
+/*
+ * A table on a phone (`Table`): no header row, and each row a block of its own with a line for
+ * each cell, its column's name (`data-label`) to the left and its value to the right, so a table
+ * of many columns reads down the screen instead of scrolling sideways.
+ */
+@media (max-width: 639.98px) {
+    .table-stack > table,
+    .table-stack > table > tbody {
+        display: block;
+    }
+
+    .table-stack > table > thead {
+        display: none;
+    }
+
+    .table-stack > table > tbody > tr {
+        display: flex;
+        flex-direction: column;
+        border-bottom: 1px solid var(--color-line);
+        padding: 0.75rem 1rem;
+    }
+
+    .table-stack > table > tbody > tr:last-child {
+        border-bottom: 0;
+    }
+
+    /*
+     * Its column's name in the left two fifths, the value in the rest, against the right edge as a
+     * figure's column is: words, tags, a switch, a row of buttons alike.
+     */
+    .table-stack > table > tbody > tr > td {
+        position: relative;
+        display: block;
+        min-height: 2rem;
+        max-width: none;
+        border: 0;
+        padding: 0.25rem 0 0.25rem 42%;
+        line-height: 1.5rem;
+        text-align: right;
+        white-space: normal;
+    }
+
+    .table-stack > table > tbody > tr > td::before {
+        content: attr(data-label);
+        position: absolute;
+        top: 0.25rem;
+        left: 0;
+        width: 40%;
+        color: var(--color-muted);
+        font-size: 0.75rem;
+        font-weight: 500;
+        line-height: 1.5rem;
+        text-align: left;
+    }
+
+    .table-stack > table > tbody > tr > td[data-label=""] {
+        padding-left: 0;
+    }
+
+    .table-stack > table > tbody > tr > td :is(.flex, label) {
+        justify-content: flex-end;
+    }
+
+    .table-stack > table > tbody > tr > td > :is(button, a, .flex) {
+        margin-left: auto;
+    }
+
+    .table-stack > table > tbody > tr > td:not([data-label]):empty,
+    .table-stack > table > tbody > tr > td[data-label=""]::before {
+        display: none;
+    }
+}
+
 dialog::backdrop {
-    background: rgb(5 8 12 / 0.6);
+    background: rgb(6 7 9 / 0.62);
     backdrop-filter: blur(2px);
 }
 

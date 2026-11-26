@@ -131,7 +131,7 @@ export const ClientFiles = ({ status }: { status: GamedataStatus }) => {
                                 ? <FileKey file={row.file.file} keys={keys} fallback={row.setting} canManage={status.canManage} />
                                 : <span className="truncate font-mono text-xs"><PhoneLabel>Setting </PhoneLabel>{row.setting}</span>}
                             <span className="font-mono text-xs" title={row.file.hash}>{row.file.hash.slice(0, 10)}</span>
-                            <span className="font-mono text-xs text-muted tabular-nums sm:text-right">{formatSize(row.file.size)}</span>
+                            <span className="text-xs text-muted tabular-nums sm:text-right">{formatSize(row.file.size)}</span>
                             <Ago at={row.file.builtAt} className="text-xs text-muted" />
                         </Row>
                     );

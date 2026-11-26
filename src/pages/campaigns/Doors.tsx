@@ -45,7 +45,7 @@ export const DayGrid = ({ calendar, selected, faulty, onSelect }: { calendar: Ca
                                 faulty === day && 'border-bad',
                             )}
                         >
-                            <span className="font-mono tabular-nums">{day + 1}</span>
+                            <span className="tabular-nums">{day + 1}</span>
                             <GiftPicture gift={gift} />
                             {faulty === day && <TriangleAlert className="absolute top-1 right-1 size-3.5 text-bad" aria-hidden />}
                         </button>
@@ -78,7 +78,7 @@ export const TodayPreview = ({ calendar, today }: { calendar: CampaignCalendar; 
             <ol className="grid grid-cols-[repeat(auto-fill,minmax(4rem,1fr))] gap-2">
                 {states.map((state, day) => (
                     <li key={day} title={`Day ${day + 1}: ${DOOR[state].label}. ${DOOR[state].meaning}`} className={cx('flex h-16 flex-col items-center justify-between rounded-lg border px-1 py-1 text-2xs', STATE_CLASS[state])}>
-                        <span className="font-mono tabular-nums">{day + 1}</span>
+                        <span className="tabular-nums">{day + 1}</span>
                         {state === 'future' ? <Lock className="size-4 text-muted" aria-hidden /> : <GiftPicture gift={gifts.get(day)} className="size-7" />}
                         <span className={cx('leading-none', state === 'available' ? 'font-medium text-accent' : 'text-muted')}>{DOOR[state].label}</span>
                     </li>

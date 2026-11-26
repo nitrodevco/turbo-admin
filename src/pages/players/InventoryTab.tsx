@@ -82,7 +82,7 @@ export const InventoryTab = ({ player }: { player: PlayerDetailResponse }) => {
                                             <ProductIcon type={item.type as ProductKind} name={item.name} />
                                             <span className="min-w-0 flex-1 truncate font-mono text-xs">{item.name}</span>
                                             {item.inRooms > 0 && <Badge>{item.inRooms} placed</Badge>}
-                                            <span className="w-12 text-right font-mono text-sm tabular-nums">{item.inInventory > 0 ? `×${item.inInventory}` : ''}</span>
+                                            <span className="w-12 text-right text-sm tabular-nums">{item.inInventory > 0 ? `×${item.inInventory}` : ''}</span>
                                         </li>
                                     ))}
                                 </ul>

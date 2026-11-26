@@ -139,7 +139,7 @@ export const CurrencyLogPage = () => {
                                                 <Row key={entry.id}>
                                                     <WhenCell at={entry.atUtc} />
                                                     <span className="truncate"><PlayerLink id={entry.playerId} name={entry.playerName} /></span>
-                                                    <span className={cx('font-mono whitespace-nowrap tabular-nums sm:text-right', entry.amount < 0 ? 'text-bad' : 'text-good')}>
+                                                    <span className={cx(' whitespace-nowrap tabular-nums sm:text-right', entry.amount < 0 ? 'text-bad' : 'text-good')}>
                                                         {entry.amount > 0 ? '+' : '−'}{Math.abs(entry.amount).toLocaleString()} <span className="font-sans text-xs text-muted">{entry.currency}</span>
                                                     </span>
                                                     <span className="min-w-0 truncate">

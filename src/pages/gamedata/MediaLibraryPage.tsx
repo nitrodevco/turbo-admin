@@ -131,7 +131,7 @@ const Detail = ({ id, canManage, onGone }: { id: string; canManage: boolean; onG
                 <Kv label="Changed">{image.modifiedUtc ? formatDateTime(image.modifiedUtc) : 'unknown'}</Kv>
             </div>
             <div className="flex flex-col gap-1">
-                <h3 className="font-mono text-2xs font-medium tracking-[0.08em] text-muted uppercase">What a field stores</h3>
+                <h3 className="text-xs font-medium text-muted">What a field stores</h3>
                 {VALUE_LABELS.filter(([ key ]) => image.values[key] !== null && image.values[key] !== '').map(([ key, label ]) => (
                     <div key={key} className="flex items-center gap-2 text-sm">
                         <span className="w-44 shrink-0 text-muted">{label}</span>
@@ -141,7 +141,7 @@ const Detail = ({ id, canManage, onGone }: { id: string; canManage: boolean; onG
                 ))}
             </div>
             <div className="flex flex-col gap-1">
-                <h3 className="font-mono text-2xs font-medium tracking-[0.08em] text-muted uppercase">Shown on</h3>
+                <h3 className="text-xs font-medium text-muted">Shown on</h3>
                 {(image.usedOn ?? []).length === 0 ? <span className="text-sm text-muted">Nothing shows it.</span> : <UsedOnList uses={image.usedOn!} />}
             </div>
             {canManage && (

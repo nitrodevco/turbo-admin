@@ -321,7 +321,7 @@ const OnlineRewardsForm = ({ settings, canManage }: { settings: Record<Name, Ser
                         onChange={skipSleeping => set({ skipSleeping })}
                     />
                     <p className="text-xs text-muted">
-                        Each payout is in the <TextLink inline to={`/currency-log?${new URLSearchParams({ cause: 'reward.online' })}`}>Currency log</TextLink> as reward.online.
+                        Each payout is in the <TextLink inline to={`/logs/currency-log?${new URLSearchParams({ cause: 'reward.online' })}`}>Currency log</TextLink> as reward.online.
                     </p>
                 </div>
             </Panel>

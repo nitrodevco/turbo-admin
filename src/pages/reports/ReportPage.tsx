@@ -162,7 +162,7 @@ export const ReportPage = () => {
                                 title={item.source === 'im' ? 'The conversation sent with it' : 'The chat sent with it'}
                                 description={item.reportedId !== null ? `${item.reportedName ?? 'The reported player'}'s lines are marked.` : undefined}
                                 actions={item.roomId !== null && me?.canViewChatlog
-                                    ? <TextLink to={`/chatlog?room=${item.roomId}`}><MessagesSquare className="mr-1 inline size-4" />Room chat</TextLink>
+                                    ? <TextLink to={`/logs/chat-log?room=${item.roomId}`}><MessagesSquare className="mr-1 inline size-4" />Room chat</TextLink>
                                     : undefined}
                             >
                                 {detail.lines.length === 0

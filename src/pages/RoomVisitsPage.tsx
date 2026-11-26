@@ -133,7 +133,7 @@ export const RoomVisitsPage = () => {
                                                     <WhenCell at={entry.atUtc} />
                                                     <Who entry={entry} />
                                                     <Where entry={entry} linked={canViewRooms} />
-                                                    <span className="font-mono text-2xs text-muted max-sm:ml-auto sm:text-right">#{entry.roomId}</span>
+                                                    <span className="text-xs text-muted max-sm:ml-auto sm:text-right">#{entry.roomId}</span>
                                                 </Row>
                                             ))}
                                         </RowList>

@@ -36,6 +36,7 @@ import { BadgePartsPage } from '#/pages/groups/BadgePartsPage';
 import { GroupPage as GuildPage } from '#/pages/groups/GroupPage';
 import { GroupsPage as GuildsPage } from '#/pages/groups/GroupsPage';
 import { HotelViewPage } from '#/pages/hotel-view/HotelViewPage';
+import { LogsHome } from '#/pages/LogsHome';
 import { MessagesPage } from '#/pages/MessagesPage';
 import { NoticesPage } from '#/pages/notices/NoticesPage';
 import { OnlineRewardsPage } from '#/pages/online-rewards/OnlineRewardsPage';
@@ -63,6 +64,7 @@ import { RoomPetsPage } from '#/pages/rooms/RoomPetsPage';
 import { RoomSettingsPage } from '#/pages/rooms/RoomSettingsPage';
 import { RoomsPage } from '#/pages/rooms/RoomsPage';
 import { RoomVisitsPage } from '#/pages/RoomVisitsPage';
+import { SanctionsLogPage } from '#/pages/SanctionsLogPage';
 import { SettingsPage } from '#/pages/settings/SettingsPage';
 import { StaffPage } from '#/pages/StaffPage';
 
@@ -134,12 +136,14 @@ export const App = () => (
             <Route path="appearance/chat-bubbles" element={<ChatBubblesPage />} />
             <Route path="plugin/:key/:page" element={<PluginPage />} />
             <Route path="plugin/:key/:page/:id" element={<PluginPage />} />
-            <Route path="command-log" element={<CommandLogPage />} />
-            <Route path="chatlog" element={<ChatlogPage />} />
-            <Route path="messages" element={<MessagesPage />} />
-            <Route path="currency-log" element={<CurrencyLogPage />} />
-            <Route path="room-visits" element={<RoomVisitsPage />} />
-            <Route path="permission-log" element={<LogPage />} />
+            <Route path="logs" element={<LogsHome />} />
+            <Route path="logs/command-log" element={<CommandLogPage />} />
+            <Route path="logs/chat-log" element={<ChatlogPage />} />
+            <Route path="logs/messages" element={<MessagesPage />} />
+            <Route path="logs/currency-log" element={<CurrencyLogPage />} />
+            <Route path="logs/room-visits" element={<RoomVisitsPage />} />
+            <Route path="logs/sanctions" element={<SanctionsLogPage />} />
+            <Route path="logs/permission-log" element={<LogPage />} />
             <Route path="console" element={<ConsolePage />} />
             <Route path="permissions" element={<ToTab to="groups" />} />
             <Route path="permissions/groups" element={<GroupsPage />} />

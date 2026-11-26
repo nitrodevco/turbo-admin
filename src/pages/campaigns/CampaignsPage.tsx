@@ -17,7 +17,7 @@ const TodayText = ({ calendar }: { calendar: CampaignCalendar }) => {
     if (day < 0) return <span className="text-muted">Not started</span>;
     if (day >= calendar.days) return <span className="text-muted">Over</span>;
 
-    return <span className="font-mono tabular-nums">Day {day + 1} <span className="text-muted">of {calendar.days}</span></span>;
+    return <span className="tabular-nums">Day {day + 1} <span className="text-muted">of {calendar.days}</span></span>;
 };
 
 const CalendarList = ({ calendars, onOpen }: { calendars: CampaignCalendar[]; onOpen: (id: number) => void }) => {
@@ -63,7 +63,7 @@ const CalendarList = ({ calendars, onOpen }: { calendars: CampaignCalendar[]; on
                                 <span className="block text-2xs text-muted">{formatDateTime(calendar.startsAt)} your time</span>
                             </Td>
                             <Td className="text-xs"><TodayText calendar={calendar} /></Td>
-                            <Td className="text-right font-mono text-xs whitespace-nowrap tabular-nums">{calendar.rewards.length} <span className="text-muted">/ {plural(calendar.days, 'day')}</span></Td>
+                            <Td className="text-right text-xs whitespace-nowrap tabular-nums">{calendar.rewards.length} <span className="text-muted">/ {plural(calendar.days, 'day')}</span></Td>
                         </tr>
                     );
                 })}

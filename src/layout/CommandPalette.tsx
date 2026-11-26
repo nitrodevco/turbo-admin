@@ -164,7 +164,7 @@ const Palette = ({ onClose }: { onClose: () => void }) => {
             aria-label="Search"
             onClose={onClose}
             onClick={event => event.target === dialog.current && onClose()}
-            className="m-auto mt-[12dvh] w-[640px] max-w-[92vw] animate-rise rounded-2xl border border-line bg-surface p-0 text-ink shadow-overlay backdrop:bg-[rgb(5_8_12/0.6)]"
+            className="m-auto mt-[12dvh] w-[640px] max-w-[92vw] animate-rise rounded-2xl border border-line bg-surface p-0 text-ink shadow-overlay"
         >
             <div className="flex items-center gap-3 border-b border-line px-4">
                 <Search className="size-4 shrink-0 text-muted" />
@@ -267,23 +267,20 @@ export const CommandPalette = () => {
     return open ? <Palette onClose={() => setOpen(false)} /> : null;
 };
 
-/** The search's box under the sidebar's logo. `onOpen` closes a phone's menu as the search opens over it. */
-export const SearchButton = ({ onOpen }: { onOpen?: () => void }) => {
+/** The search's box under the sidebar's logo. */
+export const SearchButton = () => {
     const setOpen = usePalette(state => state.setOpen);
 
     return (
         <button
             type="button"
-            onClick={() => {
-                onOpen?.();
-                setOpen(true);
-            }}
+            onClick={() => setOpen(true)}
             aria-label="Search everything"
             className="flex h-8 min-w-0 flex-1 items-center gap-2 rounded-lg border border-line bg-surface px-2.5 text-left text-ui text-muted transition-colors hover:border-line-strong"
         >
             <Search className="size-4 shrink-0" />
             <span className="min-w-0 flex-1 truncate">Search</span>
-            <kbd className="rounded-md border border-line bg-subtle px-1.5 font-mono text-2xs">Ctrl K</kbd>
+            <kbd className="rounded-md border border-line bg-subtle px-1.5 text-2xs font-medium">Ctrl K</kbd>
         </button>
     );
 };

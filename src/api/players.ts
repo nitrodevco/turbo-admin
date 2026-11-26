@@ -17,7 +17,6 @@ export interface PlayerListItem {
     /** Null for a player who has never logged in. */
     lastLoginUtc: string | null;
     joinedUtc: string;
-    roomsOwned: number;
     /** Their Discord username, when they sign in to the public site with Discord. */
     discordUsername: string | null;
 }

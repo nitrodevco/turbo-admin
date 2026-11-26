@@ -42,7 +42,7 @@ export const CurrenciesPanel = ({ player, action }: { player: PlayerDetailRespon
                                 {player.currencies.map(currency => (
                                     <div key={currency.typeId} className="border-r border-b border-line px-4 py-3">
                                         <dt><Label>{currency.name}</Label></dt>
-                                        <dd className="mt-1 font-mono text-xl font-semibold tabular-nums">{currency.amount.toLocaleString()}</dd>
+                                        <dd className="mt-1 text-xl font-semibold tabular-nums">{currency.amount.toLocaleString()}</dd>
                                     </div>
                                 ))}
                             </dl>

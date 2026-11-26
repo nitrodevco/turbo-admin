@@ -125,7 +125,7 @@ const ThemeRow = ({ theme, depth, onward, audience, hasDefault, known, onMore }:
                     : (
                             <>
                                 <PhoneLabel>Style properties </PhoneLabel>
-                                <span className="font-mono tabular-nums">{theme.styles}</span>
+                                <span className="tabular-nums">{theme.styles}</span>
                                 <span className="text-xs text-muted max-sm:hidden">{` · ${theme.own} own · ${theme.changed} changed`}</span>
                             </>
                         )}

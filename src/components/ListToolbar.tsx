@@ -82,13 +82,15 @@ export const ListToolbar = ({ children, page, watch }: {
             >
                 {/*
                   * One row from a tablet up: the controls wrap among themselves, the pages stay at its end.
-                  * On a phone the controls have the whole width, so a search box is not squeezed beside the
-                  * pages (its words cut, its button on a line of its own), and the pages go under them.
+                  * On a phone the controls and the pages wrap as one row: a search form has a line to
+                  * itself, so its field is never squeezed, and the pages (which rows these are, and the
+                  * arrows at the end) fill the rest of the last line, beside a filter's pill when there is
+                  * one, or a line of their own.
                   */}
-                <div className="flex flex-wrap items-start gap-2 sm:flex-nowrap">
-                    <div className="flex min-w-0 flex-[1_1_100%] flex-wrap items-center gap-2 sm:flex-1 [&>*]:max-w-full">{children}</div>
+                <div className="flex flex-wrap items-center gap-2 sm:flex-nowrap sm:items-start">
+                    <div className="contents sm:flex sm:min-w-0 sm:flex-1 sm:flex-wrap sm:items-center sm:gap-2 [&>*]:max-w-full max-sm:[&>form]:basis-full">{children}</div>
                     {page && page.total !== undefined && (
-                        <div className="ml-auto flex h-10 shrink-0 items-center sm:h-8">
+                        <div className="flex h-10 min-w-fit flex-1 items-center justify-end sm:h-8 sm:flex-none">
                             <Pagination offset={page.offset} limit={page.limit} total={page.total} capped={page.capped} onChange={page.onChange} />
                         </div>
                     )}

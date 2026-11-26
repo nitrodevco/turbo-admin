@@ -31,7 +31,7 @@ export const Pagination = ({ offset, limit, total, capped, onChange }: { offset:
 
     if (total <= limit)
         return (
-            <div className="shrink-0 text-xs whitespace-nowrap text-muted tabular-nums">
+            <div className="shrink-0 text-xs whitespace-nowrap text-muted tabular-nums max-sm:mr-auto">
                 {`${total.toLocaleString()}${more} ${total === 1 && !capped ? 'result' : 'results'}`}
             </div>
         );
@@ -40,15 +40,12 @@ export const Pagination = ({ offset, limit, total, capped, onChange }: { offset:
     const pages = Math.ceil(total / limit);
 
     return (
-        <nav aria-label="Pages" className="flex shrink-0 items-center gap-0.5 text-xs whitespace-nowrap text-muted">
-            <span className="mr-1.5 tabular-nums max-sm:hidden">
+        <nav aria-label="Pages" aria-description={`Page ${page} of ${pages}${more}`} className="flex flex-1 items-center gap-0.5 text-xs whitespace-nowrap text-muted sm:flex-none">
+            <span className="mr-auto tabular-nums sm:mr-1.5">
                 {`${(offset + 1).toLocaleString()}–${Math.min(offset + limit, total).toLocaleString()} of ${total.toLocaleString()}${more}`}
             </span>
             <PageButton label="First page" icon={<ChevronsLeft />} className="size-7 max-sm:hidden" disabled={page <= 1} onClick={() => onChange(0)} />
             <PageButton label="Previous page" icon={<ChevronLeft />} className="size-10 sm:size-7" disabled={page <= 1} onClick={() => onChange(Math.max(0, offset - limit))} />
-            <span className="min-w-12 text-center tabular-nums sm:hidden" aria-label={`Page ${page} of ${pages}${more}`}>
-                {`${page.toLocaleString()} of ${pages.toLocaleString()}${more}`}
-            </span>
             <PageButton label="Next page" icon={<ChevronRight />} className="size-10 sm:size-7" disabled={page >= pages} onClick={() => onChange(offset + limit)} />
             <PageButton label="Last page" icon={<ChevronsRight />} className="size-7 max-sm:hidden" disabled={page >= pages} onClick={() => onChange((pages - 1) * limit)} />
         </nav>

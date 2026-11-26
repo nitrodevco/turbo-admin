@@ -31,8 +31,8 @@ const useCanControl = () => {
 };
 
 /**
- * The hotel's state at the top of the sidebar, on every page: open or not, and how many are on.
- * It opens the hotel's controls, when the viewer has any.
+ * The hotel's state at the top of the sidebar on every page, and of a phone's More sheet: open or
+ * not, and how many are on. It opens the hotel's controls, when the viewer has any.
  */
 export const HotelStatusCard = () => {
     const { data } = useDashboard();
@@ -56,39 +56,11 @@ export const HotelStatusCard = () => {
             <Dot tone={phase.tone} pulse={phase.tone !== 'good' || live} />
             <span className="min-w-0 flex-1">
                 <span className={cx('block text-ui leading-snug font-medium text-pretty', TEXT[phase.tone])}>{phase.label}</span>
-                <span className="block truncate font-mono text-2xs text-muted tabular-nums">
+                <span className="block truncate text-xs text-muted tabular-nums">
                     {data.playersOnline.toLocaleString()} online
                 </span>
             </span>
             {canControl && <ChevronRight className="size-4 shrink-0 text-muted transition-transform group-hover:translate-x-0.5" />}
-        </button>
-    );
-};
-
-/** The same at a glance in a phone's header: the colour and who is on. */
-export const HotelStatusPill = () => {
-    const { data } = useDashboard();
-    const canControl = useCanControl();
-    const setOpen = useHotelSheet(state => state.setOpen);
-
-    if (!data)
-        return null;
-
-    const phase = phaseOf(data.availability);
-
-    return (
-        <button
-            type="button"
-            disabled={!canControl}
-            onClick={() => setOpen(true)}
-            aria-label={`Hotel ${phase.label.toLowerCase()}, ${data.playersOnline} online${canControl ? '. Hotel controls' : ''}`}
-            className={cx(
-                'flex h-9 shrink-0 items-center gap-1.5 rounded-full border px-2.5 font-mono text-xs font-medium tabular-nums lg:hidden',
-                phase.tone === 'good' ? 'border-line text-ink' : phase.tone === 'warn' ? 'border-warn-line bg-warn-soft text-warn' : 'border-bad-line bg-bad-soft text-bad',
-            )}
-        >
-            <Dot tone={phase.tone} pulse={phase.tone !== 'good'} />
-            {phase.tone === 'good' ? data.playersOnline.toLocaleString() : phase.short}
         </button>
     );
 };

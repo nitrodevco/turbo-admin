@@ -10,7 +10,7 @@ const Card = ({ icon, title, value, blurb, action, tone }: { icon: ReactNode; ti
             <IconTile tone={tone}>{icon}</IconTile>
             <div className="min-w-0 flex-1">
                 <div className="text-sm font-semibold">{title}</div>
-                {value !== undefined && <div className="font-mono text-2xl font-semibold tabular-nums">{value}</div>}
+                {value !== undefined && <div className="text-2xl font-semibold tabular-nums">{value}</div>}
             </div>
         </div>
         <p className="text-xs leading-relaxed text-muted">{blurb}</p>
@@ -24,7 +24,7 @@ const Shortcut = ({ icon, label, value, tone, disabled, onClick }: { icon: React
         <button type="button" disabled={disabled} onClick={onClick} className="flex min-h-12 w-full items-center gap-3 px-3 py-2 text-left text-sm transition-colors hover:bg-subtle/60 disabled:opacity-50">
             <IconTile small tone={tone}>{icon}</IconTile>
             <span className="min-w-0 flex-1 truncate">{label}</span>
-            {value !== undefined && <span className="font-mono text-sm text-muted tabular-nums">{value}</span>}
+            {value !== undefined && <span className="text-sm text-muted tabular-nums">{value}</span>}
             <ChevronRight className="size-4 shrink-0 text-muted" />
         </button>
     </li>
@@ -66,8 +66,8 @@ export const CatalogHome = ({ tree, busy, compact, onOpenPage, onView, onCreateF
                 <dl className="grid grid-cols-4 border-b border-line">
                     {stats.map(x => (
                         <div key={x.label} className="border-l border-line px-2 py-2 text-center first:border-l-0">
-                            <dt className="truncate font-mono text-2xs font-medium tracking-[0.08em] text-muted uppercase">{x.short ?? x.label}</dt>
-                            <dd className="font-mono text-base font-semibold tabular-nums">{x.value.toLocaleString()}</dd>
+                            <dt className="truncate text-xs font-medium text-muted">{x.short ?? x.label}</dt>
+                            <dd className="text-base font-semibold tabular-nums">{x.value.toLocaleString()}</dd>
                         </div>
                     ))}
                 </dl>

@@ -285,7 +285,7 @@ export const ConsolePage = () => {
                     {canViewCommandLog && (
                         <p className="text-xs text-muted">
                             {'Every command run here is logged as yours. '}
-                            <TextLink inline to="/command-log?source=panel">See the log</TextLink>
+                            <TextLink inline to="/logs/command-log?source=panel">See the log</TextLink>
                         </p>
                     )}
                 </div>

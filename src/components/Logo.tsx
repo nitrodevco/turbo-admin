@@ -1,11 +1,11 @@
 import { cx } from '#/lib/cx';
 
-/** The mark: a slanted T in the accent's tile, with the lines of its speed trailing behind it. */
+/** The mark: a slanted T on a tile of the accent's blue, with the lines of its speed trailing behind it. */
 export const LogoMark = ({ className }: { className?: string }) => (
     <span
         aria-hidden
         className={cx(
-            'grid shrink-0 place-items-center rounded-[10px] bg-[linear-gradient(145deg,color-mix(in_srgb,var(--color-accent-solid)_78%,white),var(--color-accent-solid)_55%,color-mix(in_srgb,var(--color-accent-solid)_80%,black))] text-on-accent shadow-[0_6px_16px_-6px] shadow-accent-solid/70 ring-1 ring-white/15 ring-inset',
+            'grid shrink-0 place-items-center rounded-[10px] bg-accent-solid text-on-accent ring-1 ring-accent-edge ring-inset',
             className,
         )}
     >
@@ -20,13 +20,13 @@ export const LogoMark = ({ className }: { className?: string }) => (
     </span>
 );
 
-/** The mark and the name beside it: "Turbo", and under it what this is. */
+/** The mark and the name beside it: "Turbo", set as the page titles are, and under it what this is. */
 export const Logo = ({ className }: { className?: string }) => (
     <span className={cx('flex items-center gap-2.5', className)}>
         <LogoMark className="size-9" />
         <span className="flex flex-col">
-            <span className="text-[15px] leading-tight font-semibold tracking-tight text-ink">Turbo</span>
-            <span className="font-mono text-[10px] leading-tight font-medium tracking-[0.16em] text-muted uppercase">Admin</span>
+            <span className="font-display text-base leading-tight text-ink">Turbo</span>
+            <span className="text-xs leading-tight text-muted">Hotel admin</span>
         </span>
     </span>
 );

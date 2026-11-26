@@ -130,7 +130,7 @@ export const Hierarchy = ({ trees, selected, canEdit, onSelect, onHidden, onMove
         <div className="flex flex-col gap-2" aria-label="Hierarchy">
             {trees.map(({ tree, label }) => (
                 <section key={tree.template} aria-label={`Tree of ${label.toLowerCase()}`}>
-                    <h3 className="mb-0.5 truncate font-mono text-2xs font-medium tracking-[0.08em] text-muted uppercase" title={tree.template}>{label}</h3>
+                    <h3 className="mb-0.5 truncate text-xs font-medium text-muted" title={tree.template}>{label}</h3>
                     <ul role="tree" aria-label={label}>{rows(tree, tree.roots, 0)}</ul>
                 </section>
             ))}

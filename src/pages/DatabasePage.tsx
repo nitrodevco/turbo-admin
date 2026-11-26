@@ -77,12 +77,12 @@ const TablePicker = ({ tables, chosen, onChange, disabled }: { tables: DatabaseT
                                     onChange={event => toggle(table.name, event.target.checked)}
                                 />
                                 <span className="min-w-0 flex-1 truncate font-mono text-ui">{table.name}</span>
-                                <span className="shrink-0 text-right font-mono text-xs whitespace-nowrap text-muted tabular-nums sm:w-40" title={table.rowsEstimated ? 'The database\'s own estimate' : undefined}>
+                                <span className="shrink-0 text-right text-xs whitespace-nowrap text-muted tabular-nums sm:w-40" title={table.rowsEstimated ? 'The database\'s own estimate' : undefined}>
                                     {rowsOf(table)}
                                     {' rows'}
                                 </span>
                                 {table.bytes !== null && (
-                                    <span className="w-20 shrink-0 text-right font-mono text-xs text-muted tabular-nums max-sm:hidden">{formatBytes(table.bytes)}</span>
+                                    <span className="w-20 shrink-0 text-right text-xs text-muted tabular-nums max-sm:hidden">{formatBytes(table.bytes)}</span>
                                 )}
                             </label>
                         </li>

@@ -38,7 +38,7 @@ const lastLines = new Map<string, Line>();
 
 const tabClass = (active: boolean) => cx(
     'flex shrink-0 items-center gap-1.5 px-3 py-2.5 text-sm font-medium whitespace-nowrap transition-colors [&>svg]:size-4',
-    active ? 'text-accent' : 'text-muted hover:text-ink',
+    active ? 'text-ink' : 'text-muted hover:text-ink',
 );
 
 type Edges = { start: boolean; end: boolean };
@@ -91,13 +91,13 @@ const fadeOf = ({ start, end }: Edges) => (start || end
  * `active` beside a chosen tab, in the accent.
  */
 export const Count = ({ count, active, className }: { count: number; active?: boolean; className?: string }) => (
-    <span className={cx('rounded-full px-1.5 font-mono text-2xs font-medium tabular-nums transition-colors', active ? 'bg-accent-soft text-accent' : 'bg-subtle text-muted', className)}>
+    <span className={cx('rounded-full px-1.5 text-xs leading-5 font-medium tabular-nums transition-colors', active ? 'bg-accent-soft text-accent' : 'bg-subtle text-muted', className)}>
         {count.toLocaleString()}
     </span>
 );
 
 /**
- * A row of tabs with the chosen one underlined; the line slides from tab to tab as the choice
+ * A row of tabs with the chosen one in the ink and underlined in the accent; the line slides from tab to tab as the choice
  * moves. Tabs that switch in place follow the WAI-ARIA tabs pattern: one stop for Tab, and the
  * arrow keys (with Home and End) move between them. Tabs with a `to` are links to their pages.
  */
@@ -219,7 +219,7 @@ export const Tabs = ({ value, tabs, onChange, ids, rule = true, label, className
             {line && (
                 <span
                     aria-hidden
-                    className="pointer-events-none absolute bottom-0 h-0.5 rounded-full bg-accent-solid transition-all duration-300 ease-out"
+                    className="pointer-events-none absolute bottom-0 h-0.5 rounded-full bg-accent transition-all duration-300 ease-out"
                     style={{ left: line.left, width: line.width }}
                 />
             )}

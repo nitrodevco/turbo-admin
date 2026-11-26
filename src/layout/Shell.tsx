@@ -1,48 +1,31 @@
-import { useQueryClient } from '@tanstack/react-query';
-import { Keyboard, LogOut, Monitor, Moon, Sun } from 'lucide-react';
-import { type ReactNode, type RefObject, useEffect, useLayoutEffect, useRef, useState } from 'react';
+import { Keyboard, LogOut } from 'lucide-react';
+import { type RefObject, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { Link, NavLink, Outlet, useLocation } from 'react-router';
 
 import { useApprovalCount } from '#/api/approvals';
-import { post } from '#/api/client';
 import { useLiveUpdates } from '#/api/live';
 import { useSession } from '#/auth/session';
 import { ConfirmHost } from '#/components/ConfirmHost';
-import { useModalDialog } from '#/components/dialog';
 import { Logo } from '#/components/Logo';
 import { PageErrorBoundary } from '#/components/PageErrorBoundary';
 import { Toasts } from '#/components/Toasts';
+import { Label } from '#/components/ui';
 import { cx } from '#/lib/cx';
-import { setTheme, type ThemeChoice, useTheme } from '#/lib/theme';
+import { setTheme, useTheme } from '#/lib/theme';
 
+import { THEMES, useSignOut } from './account';
 import { CommandPalette, SearchButton } from './CommandPalette';
-import { useDrawer } from './drawer';
 import { HotelSheet, HotelStatusCard } from './HotelStatus';
+import { Initials } from './Initials';
+import { useMoreSheet } from './moreSheet';
 import { type ShownEntry, useIsActive, useNav } from './nav';
 import { NotificationsBell } from './NotificationsBell';
 import { useShortcutsSheet } from './palette';
+import { MoreSheet, TabBar } from './PhoneNav';
 import { PreviewBanner } from './PreviewBanner';
 import { Shortcuts } from './Shortcuts';
 
-const THEMES: { value: ThemeChoice; label: string; icon: ReactNode }[] = [
-    { value: 'dark', label: 'Dark', icon: <Moon /> },
-    { value: 'light', label: 'Light', icon: <Sun /> },
-    { value: 'system', label: 'System', icon: <Monitor /> },
-];
-
-const useSignOut = () => {
-    const signOut = useSession(state => state.signOut);
-    const queryClient = useQueryClient();
-
-    return async () => {
-        // Ending the session on the server matters more than its answer: sign out here either way.
-        await post('/auth/logout').catch(() => undefined);
-        queryClient.clear();
-        signOut();
-    };
-};
-
-/** The small square buttons at the sidebar's foot: the theme, signing out. */
+/** The small square buttons at the sidebar's foot: the shortcuts, the theme, signing out. */
 const footButton = 'grid size-8 shrink-0 place-items-center rounded-lg text-muted transition-colors hover:bg-subtle hover:text-ink [&>svg]:size-[18px]';
 
 /** Dark, light or as the system is: the chosen one's icon at the sidebar's foot, the three above it when opened. */
@@ -100,7 +83,7 @@ const RailTheme = () => {
                                 setTheme(entry.value);
                                 setOpen(false);
                             }}
-                            className={cx('grid size-8 place-items-center rounded-md [&>svg]:size-4', entry.value === choice ? 'bg-subtle text-accent' : 'text-muted hover:text-ink')}
+                            className={cx('grid size-8 place-items-center rounded-md [&>svg]:size-4', entry.value === choice ? 'bg-accent-soft text-accent' : 'text-muted hover:text-ink')}
                         >
                             {entry.icon}
                         </button>
@@ -111,16 +94,16 @@ const RailTheme = () => {
     );
 };
 
-/** One entry of the sidebar: its icon and name. */
-const RailLink = ({ entry, active, onPick }: { entry: ShownEntry; active: boolean; onPick?: () => void }) => (
+/** One entry of the sidebar: its icon and name, on a bar tinted with the accent, an edge of it at the left, when it is the page open now. */
+const RailLink = ({ entry, active }: { entry: ShownEntry; active: boolean }) => (
     <Link
         to={entry.to}
-        onClick={onPick}
+        title={entry.hint}
         aria-current={active ? 'page' : undefined}
         className={cx(
             'relative flex h-9 items-center gap-3 rounded-lg px-3 text-sm transition-colors [&>svg]:size-[18px] [&>svg]:shrink-0',
             active
-                ? 'bg-subtle font-medium text-ink before:absolute before:inset-y-2 before:-left-3 before:w-[3px] before:rounded-r-full before:bg-accent-solid [&>svg]:text-accent'
+                ? 'bg-accent-soft font-medium text-ink before:absolute before:inset-y-2 before:-left-3 before:w-[3px] before:rounded-r-full before:bg-accent-solid [&>svg]:text-accent'
                 : 'text-muted hover:bg-subtle hover:text-ink',
         )}
     >
@@ -135,119 +118,73 @@ const ApprovalCount = () => {
     const pending = useApprovalCount().data?.pending ?? 0;
 
     return pending > 0
-        ? <span className="grid h-4 min-w-4 place-items-center rounded-full bg-accent-solid px-1 font-mono text-2xs leading-none font-semibold text-on-accent" aria-label={`${pending} waiting`}>{pending > 99 ? '99+' : pending}</span>
+        ? <span className="grid h-5 min-w-5 place-items-center rounded-full bg-accent-solid px-1 text-2xs leading-none font-semibold text-on-accent tabular-nums" aria-label={`${pending} waiting`}>{pending > 99 ? '99+' : pending}</span>
         : null;
 };
 
 /**
- * What the sidebar holds, at a laptop's left and in a phone's menu alike: the logo, the search and
- * the bell under it, the hotel's state, then the places in their sections (pages alike share one
- * entry and show as tabs on their pages), and at its foot your account, the shortcuts, the theme
- * and signing out. In the menu, `onPick` closes it on any place picked; the bell and the shortcuts
- * stay out of it (the phone's header has the bell, and a phone has no keyboard).
+ * From a laptop up, down the window's left: the logo, the search and the bell under it, the
+ * hotel's state, then the places in their sections (pages alike share one entry and show as tabs
+ * on their pages), and at its foot your account, the shortcuts, the theme and signing out. A phone
+ * has the same places in its tab bar and More sheet (`PhoneNav`).
  */
-const RailBody = ({ onPick }: { onPick?: () => void }) => {
+const Rail = () => {
     const sections = useNav();
     const isActive = useIsActive();
     const player = useSession(state => state.session?.player);
     const signOut = useSignOut();
     const showShortcuts = useShortcutsSheet(state => state.setOpen);
-    const inMenu = onPick !== undefined;
 
     return (
-        <>
-            {/* Ringed inside its edges: it spans the sidebar, whose edges (and the menu's) would cut a ring outside them to a line. */}
-            <Link to="/" onClick={onPick} aria-label="Turbo Admin, overview" className="flex h-16 shrink-0 items-center rounded-lg px-4 focus-visible:-outline-offset-2">
+        <nav aria-label="Main" className="sticky top-0 z-30 hidden h-dvh w-60 shrink-0 flex-col border-r border-line bg-chrome lg:flex">
+            {/* Ringed inside its edges: it spans the sidebar, whose edges would cut a ring outside them to a line. */}
+            <Link to="/" aria-label="Turbo Admin, overview" className="flex h-16 shrink-0 items-center rounded-lg px-4 focus-visible:-outline-offset-2">
                 <Logo />
             </Link>
             <div className="flex shrink-0 items-center gap-1.5 px-3 pb-3">
-                <SearchButton onOpen={onPick} />
-                {!inMenu && <NotificationsBell align="start" />}
+                <SearchButton />
+                <NotificationsBell align="start" />
             </div>
             <HotelStatusCard />
-            <div className="no-scrollbar flex flex-1 flex-col gap-5 overflow-y-auto px-3 pt-4 pb-3">
+            <div className="no-scrollbar flex flex-1 flex-col gap-5 overflow-y-auto px-3 pt-5 pb-3">
                 {sections.map(section => (
                     <div key={section.label ?? 'top'} className="flex flex-col gap-0.5">
-                        {section.label && <span className="px-3 pb-1.5 font-mono text-2xs font-medium tracking-[0.08em] text-muted uppercase">{section.label}</span>}
-                        {section.entries.map(entry => <RailLink key={entry.label} entry={entry} active={isActive(entry)} onPick={onPick} />)}
+                        {section.label && <Label as="h3" className="px-3 pb-1.5">{section.label}</Label>}
+                        {section.entries.map(entry => <RailLink key={entry.label} entry={entry} active={isActive(entry)} />)}
                     </div>
                 ))}
             </div>
-            <div className="flex items-center gap-0.5 border-t border-line px-3 pt-3 pb-[max(0.75rem,env(safe-area-inset-bottom))]">
+            <div className="flex items-center gap-0.5 border-t border-line px-3 py-3">
                 <NavLink
                     to="/account"
-                    onClick={onPick}
                     title="Your account"
                     className={({ isActive: open }) => cx('flex h-9 min-w-0 flex-1 items-center gap-2 rounded-lg px-1.5 text-ui transition-colors', open ? 'bg-subtle text-ink' : 'text-muted hover:bg-subtle hover:text-ink')}
                 >
-                    <span className="grid size-6 shrink-0 place-items-center rounded-md bg-warn font-mono text-2xs font-semibold text-canvas">{player?.name.slice(0, 2).toUpperCase()}</span>
+                    <Initials className="size-6 text-2xs" />
                     <span className="truncate">{player?.name}</span>
                 </NavLink>
-                {!inMenu && (
-                    <button type="button" onClick={() => showShortcuts(true)} title="Keyboard shortcuts (?)" aria-label="Keyboard shortcuts" className={footButton}>
-                        <Keyboard />
-                    </button>
-                )}
+                <button type="button" onClick={() => showShortcuts(true)} title="Keyboard shortcuts (?)" aria-label="Keyboard shortcuts" className={footButton}>
+                    <Keyboard />
+                </button>
                 <RailTheme />
                 <button type="button" onClick={signOut} title="Sign out" aria-label="Sign out" className={cx(footButton, 'hover:text-bad')}>
                     <LogOut />
                 </button>
             </div>
-        </>
+        </nav>
     );
 };
 
-/** From a laptop up: the sidebar down the window's left. */
-const Rail = () => (
-    <nav aria-label="Main" className="sticky top-0 z-30 hidden h-dvh w-60 shrink-0 flex-col border-r border-line bg-chrome lg:flex">
-        <RailBody />
-    </nav>
-);
-
-/**
- * On a phone and a tablet: the same sidebar, sliding in from the left when the header's menu
- * button is pressed. It closes when a place is picked, on a tap outside it, and on Escape.
- */
-const MenuDrawer = () => {
-    const open = useDrawer(state => state.open);
-    const setOpen = useDrawer(state => state.setOpen);
-    const close = () => setOpen(false);
-    const dialog = useModalDialog(open, close);
-    const { ref } = dialog;
-
-    // Opened, the menu holds the focus itself and Tab starts at its top. The browser would give it
-    // to the logo's link, and Safari on a phone rings that after a tap: a line across the menu.
-    useEffect(() => {
-        if (open)
-            ref.current?.focus();
-    }, [ open, ref ]);
-
-    return (
-        <dialog
-            {...dialog}
-            aria-label="Menu"
-            tabIndex={-1}
-            className="m-0 h-dvh max-h-none w-72 max-w-[85vw] animate-drawer border-r border-line bg-chrome p-0 text-ink shadow-overlay outline-none lg:hidden"
-        >
-            {open && (
-                <nav aria-label="Main" className="flex h-full flex-col pt-[env(safe-area-inset-top)]">
-                    <RailBody onPick={close} />
-                </nav>
-            )}
-        </dialog>
-    );
-};
-
-/** A new page starts at its top, with the menu closed; tabs kept in the address (its search) keep the place. */
+/** A new page starts at its top, with the More sheet closed; tabs kept in the address (its search) keep the place. */
 const useFreshPage = (root: RefObject<HTMLElement | null>) => {
     const { pathname } = useLocation();
-    const setMenu = useDrawer(state => state.setOpen);
+    const setMore = useMoreSheet(state => state.setOpen);
 
     useLayoutEffect(() => {
         root.current?.scrollTo({ top: 0 });
         window.scrollTo({ top: 0 });
-        setMenu(false);
-    }, [ pathname, root, setMenu ]);
+        setMore(false);
+    }, [ pathname, root, setMore ]);
 };
 
 /**
@@ -264,8 +201,8 @@ const pageKeyOf = (pathname: string) => WORKSPACES.find(x => pathname === x || p
 
 /**
  * The frame every signed-in page sits in, and the live stream that keeps them current. From a
- * laptop up the window scrolls beside the sidebar; on a phone the page scrolls under its header,
- * and the sidebar is a menu that slides in from the left.
+ * laptop up the window scrolls beside the sidebar; on a phone and a tablet the page scrolls between
+ * its header and the tab bar along the bottom, whose More opens every other place.
  */
 export const Shell = () => {
     useLiveUpdates();
@@ -279,16 +216,17 @@ export const Shell = () => {
             <Rail />
             <CommandPalette />
             <Shortcuts />
-            <MenuDrawer />
+            <MoreSheet />
             <HotelSheet />
             <ConfirmHost />
             <Toasts />
-            <main ref={main} data-scroll-root className="flex min-h-0 min-w-0 flex-1 flex-col pb-[env(safe-area-inset-bottom)] max-lg:overflow-y-auto max-lg:overscroll-contain">
+            <main ref={main} data-scroll-root className="flex min-h-0 min-w-0 flex-1 flex-col max-lg:overflow-y-auto max-lg:overscroll-contain lg:pb-[env(safe-area-inset-bottom)]">
                 <PreviewBanner />
                 <PageErrorBoundary key={pageKeyOf(pathname)} resetKey={pathname}>
                     <Outlet />
                 </PageErrorBoundary>
             </main>
+            <TabBar />
         </div>
     );
 };

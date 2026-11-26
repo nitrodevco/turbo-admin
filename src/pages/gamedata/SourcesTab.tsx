@@ -195,7 +195,7 @@ const Fact = ({ label, children }: { label: string; children: ReactNode }) => (
 /** The sources' columns, as a grid: the ones a narrower screen hides fold into each dropdown. */
 const COLUMNS = 'grid grid-cols-[minmax(0,1fr)_9rem_2.75rem] md:grid-cols-[minmax(0,1fr)_9rem_minmax(0,14rem)_2.75rem] lg:grid-cols-[minmax(0,1fr)_9rem_minmax(0,14rem)_8rem_12rem_11rem_2.75rem]';
 
-const HEAD = 'px-4 py-2 font-mono text-2xs font-medium tracking-[0.08em] text-muted uppercase';
+const HEAD = 'px-4 py-2 text-xs font-medium text-muted';
 
 const CELL = 'min-w-0 px-4 py-2.5';
 

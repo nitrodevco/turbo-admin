@@ -38,7 +38,7 @@ const FacetList = ({ title, facets, value, none, onChange }: { title: string; fa
                             className={cx('flex min-h-9 w-full items-center gap-2 rounded-md px-2 text-left text-ui sm:min-h-7', value === x.value ? 'bg-accent-soft text-accent' : 'hover:bg-subtle')}
                         >
                             <span className={cx('min-w-0 flex-1 truncate', !x.value && 'italic text-muted')}>{facetLabel(x.value, none)}</span>
-                            <span className="font-mono text-2xs text-muted tabular-nums">{x.count.toLocaleString()}</span>
+                            <span className="text-2xs text-muted tabular-nums">{x.count.toLocaleString()}</span>
                         </button>
                     </li>
                 ))}

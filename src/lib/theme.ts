@@ -24,8 +24,14 @@ const readChoice = (): ThemeChoice => {
 
 let choice: ThemeChoice = 'dark';
 
+/** A phone's browser bar and status bar, in the colour of the bars of the theme shown (`--color-chrome`). */
+const BAR_COLOURS = { dark: '#15171a', light: '#ffffff' };
+
 const apply = () => {
-    document.documentElement.classList.toggle('dark', choice === 'dark' || (choice === 'system' && systemDark()));
+    const dark = choice === 'dark' || (choice === 'system' && systemDark());
+
+    document.documentElement.classList.toggle('dark', dark);
+    document.querySelector('meta[name="theme-color"]')?.setAttribute('content', BAR_COLOURS[dark ? 'dark' : 'light']);
 
     for (const listener of listeners)
         listener();

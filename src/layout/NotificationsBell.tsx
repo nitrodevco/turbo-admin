@@ -16,14 +16,14 @@ const KINDS: Record<string, { icon: ReactNode; tone: string; to: (item: Notifica
         icon: <ShieldAlert />,
         tone: 'bg-accent-soft text-accent',
         // Refused for a permission or for room rights: the player's log shows both.
-        to: item => `/command-log?${new URLSearchParams(item.playerId ? { player: String(item.playerId) } : { source: 'console' })}`,
+        to: item => `/logs/command-log?${new URLSearchParams(item.playerId ? { player: String(item.playerId) } : { source: 'console' })}`,
     },
 };
 
 const FALLBACK = KINDS.refusedCommand!;
 
 /**
- * The bell under the sidebar's logo (in a phone's header): what staff should know of lately
+ * The bell under the sidebar's logo (at the end of a phone's page header): what staff should know of lately
  * (maintenance or a shutdown, the week's bans, commands refused, calls for help still open), with how many this browser has
  * not seen. The live stream asks again the moment a ban or maintenance happens. Picking one opens
  * what it is about; "Mark all read" clears the count. `align` is the edge of the bell its list

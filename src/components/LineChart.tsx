@@ -48,7 +48,7 @@ const Readout = ({ active, payload, label, series, format, timeFormat }: {
                 return (
                     <div key={s.name} className="flex items-center gap-2">
                         <span className="h-0.5 w-3 shrink-0 rounded-full" style={{ background: s.color }} />
-                        <span className="font-mono font-semibold text-ink tabular-nums">{value == null ? '-' : format(value)}</span>
+                        <span className="font-semibold text-ink tabular-nums">{value == null ? '-' : format(value)}</span>
                         {series.length > 1 && <span className="text-muted">{s.name}</span>}
                     </div>
                 );
@@ -164,7 +164,7 @@ export const ChartTable = ({ label, series, points, format, timeFormat = formatC
                     {series.map(s => <Th key={s.name} className="text-right">{s.name}</Th>)}
                 </tr>
             </thead>
-            <tbody className="font-mono tabular-nums">
+            <tbody className="tabular-nums">
                 {[ ...points ].reverse().map(point => (
                     <tr key={point.at} className="border-t border-line">
                         <td className="px-4 py-1">{timeFormat(point.at)}</td>

@@ -99,7 +99,7 @@ export const JobPanel = ({ job, canManage, compact = false, actions }: { job: As
             <div className="flex flex-col gap-3 p-4">
                 <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1 text-sm">
                     <span className="min-w-0 truncate font-medium">{job.phase || (running ? 'Starting' : 'Finished')}</span>
-                    <span className="font-mono text-xs text-muted tabular-nums">
+                    <span className="text-xs text-muted tabular-nums">
                         {job.total > 0 && `${job.done.toLocaleString()} / ${job.total.toLocaleString()}`}
                         {job.total > 0 && ` (${Math.round(share * 100)}%)`}
                         {job.failed > 0 && <span className="text-bad">{`, ${job.failed.toLocaleString()} failed`}</span>}

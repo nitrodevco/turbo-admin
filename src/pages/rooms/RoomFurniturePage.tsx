@@ -42,7 +42,7 @@ const ItemRow = ({ item, open, onToggle, canPickUp, linkPlayers, onPickUp, picki
                 <span className="block truncate text-xs text-muted">{`#${item.id} · ${item.ownerName}`}</span>
             </span>
             <span className="hidden w-40 shrink-0 truncate font-mono text-2xs text-muted md:block" title={item.logic}>{item.logic}</span>
-            <span className="hidden w-32 shrink-0 text-right font-mono text-2xs text-muted tabular-nums sm:block">
+            <span className="hidden w-32 shrink-0 text-right text-2xs text-muted tabular-nums sm:block">
                 {item.wall ? <Badge>wall</Badge> : `${item.x}, ${item.y}, ${item.z.toFixed(2)} · ${item.rotation}`}
             </span>
             <ChevronDown className={cx('size-4 shrink-0 text-muted transition-transform', open && 'rotate-180')} aria-hidden />

@@ -45,11 +45,11 @@ const PageRow = ({ page, top }: { page: ImportPageChange; top: number }) => {
 
     return (
         <li className="flex min-h-8 items-center gap-2 rounded-lg pr-2 text-ui hover:bg-subtle" style={{ paddingLeft: `${8 + depth * 18}px` }}>
-            <span className={cx('w-16 shrink-0 rounded px-1.5 py-0.5 text-center font-mono text-2xs uppercase', action.tone)}>{action.label}</span>
+            <span className={cx('w-16 shrink-0 rounded px-1.5 py-0.5 text-center text-xs font-medium', action.tone)}>{action.label}</span>
             <span className="min-w-0 flex-1 truncate">{page.title}<span className="ml-2 font-mono text-2xs text-muted">{page.name}</span></span>
             {page.fields.length > 0 && <span className="font-mono text-2xs text-muted">{page.fields.join(', ')}</span>}
             {(page.offersAdded > 0 || page.offersChanged > 0) && (
-                <span className="font-mono text-2xs text-muted tabular-nums">
+                <span className="text-2xs text-muted tabular-nums">
                     {page.offersAdded > 0 && `+${page.offersAdded}`}
                     {page.offersAdded > 0 && page.offersChanged > 0 && ' '}
                     {page.offersChanged > 0 && `~${page.offersChanged}`}

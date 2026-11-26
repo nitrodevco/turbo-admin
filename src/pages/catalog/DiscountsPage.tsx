@@ -196,7 +196,7 @@ const ExtrasEditor = ({ thresholds, max, disabled, onChange }: { thresholds: num
                                         removeLabel={count > 1 ? `Take one of the ${count} at ${quantity}` : `Take out ${quantity}`}
                                     >
                                         {quantity}
-                                        {count > 1 && <span className="rounded-full bg-accent-soft px-1.5 font-mono text-2xs text-accent tabular-nums">+{count}</span>}
+                                        {count > 1 && <span className="rounded-full bg-accent-soft px-1.5 text-2xs text-accent tabular-nums">+{count}</span>}
                                     </ValueTag>
                                 </li>
                             ))}
@@ -338,15 +338,15 @@ const Preview = ({ ruleset }: { ruleset: Ruleset }) => {
                 </div>
                 <div className="grid grid-cols-3 divide-x divide-line rounded-lg border border-line text-center">
                     <div className="p-2.5">
-                        <div className="font-mono text-xl font-semibold tabular-nums">{quantity}</div>
+                        <div className="text-xl font-semibold tabular-nums">{quantity}</div>
                         <div className="text-xs text-muted">paid for</div>
                     </div>
                     <div className="p-2.5">
-                        <div className={cx('font-mono text-xl font-semibold tabular-nums', parts.total > 0 && 'text-accent')}>+{parts.total}</div>
+                        <div className={cx(' text-xl font-semibold tabular-nums', parts.total > 0 && 'text-accent')}>+{parts.total}</div>
                         <div className="text-xs text-muted">free</div>
                     </div>
                     <div className="p-2.5">
-                        <div className="font-mono text-xl font-semibold tabular-nums">{quantity + parts.total}</div>
+                        <div className="text-xl font-semibold tabular-nums">{quantity + parts.total}</div>
                         <div className="text-xs text-muted">received</div>
                     </div>
                 </div>

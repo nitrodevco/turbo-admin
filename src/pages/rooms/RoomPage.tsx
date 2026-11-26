@@ -85,7 +85,7 @@ const InsideRow = ({ room, player, run, busy, onMore, linked }: { room: RoomDeta
                         : <span className="truncate text-sm font-medium">{player.name}</span>}
                     {role !== 'visitor' && <Badge tone={role === 'owner' ? 'accent' : 'neutral'}>{role}</Badge>}
                 </div>
-                <div className="font-mono text-2xs text-muted">#{player.id}</div>
+                <div className="text-xs text-muted">#{player.id}</div>
             </div>
             {actionable && (
                 <>
@@ -183,7 +183,7 @@ const Rights = ({ room, run, busy }: { room: RoomDetailResponse; run: Run; busy:
                         <Avatar id={player.id} name={player.name} figure={player.figure} />
                         <div className="min-w-0 flex-1 truncate text-sm">
                             {player.name}
-                            <span className="ml-2 font-mono text-2xs text-muted">#{player.id}</span>
+                            <span className="ml-2 text-xs text-muted">#{player.id}</span>
                         </div>
                         {room.can.manageRights && <Button variant="danger-ghost" icon={<Trash2 />} className="row-actions" disabled={busy} onClick={() => run(() => calls.removeRights(player.id))}>Remove</Button>}
                     </li>
@@ -215,7 +215,7 @@ const Visitors = ({ roomId, linked }: { roomId: number; linked: boolean }) => {
         <>
             {linked && (
                 <div className="flex justify-end border-b border-line px-4 py-2.5">
-                    <TextLink to={`/room-visits?${new URLSearchParams({ room: String(roomId) })}`}>Every visit, in the log ›</TextLink>
+                    <TextLink to={`/logs/room-visits?${new URLSearchParams({ room: String(roomId) })}`}>Every visit, in the log ›</TextLink>
                 </div>
             )}
             <ul>

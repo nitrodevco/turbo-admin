@@ -100,7 +100,7 @@ const STAGE_KEYS: SortKeys<PerformanceStage> = {
 
 /** One figure of an operation: a column of the table from a tablet up, a labelled figure in its row on a phone. */
 const StageFigure = ({ label, children }: { label: string; children: ReactNode }) => (
-    <span className="font-mono text-ui tabular-nums sm:text-right sm:text-sm">
+    <span className="text-ui tabular-nums sm:text-right sm:text-sm">
         <PhoneLabel>{`${label} `}</PhoneLabel>
         {children}
     </span>

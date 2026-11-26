@@ -7,8 +7,8 @@ import { useFurnitureList } from '#/api/gamedata';
 import { useLive } from '#/api/live';
 import { type Plugin, usePlugins, useReloadPlugin } from '#/api/plugins';
 import { useDashboard, useHotelAbilities, useMe } from '#/api/queries';
-import type { AvailabilityPhase } from '#/api/types';
-import { Ago, Badge, Button, EmptyState, ErrorNotice, Label, LiveBadge, Loading, PageBody, PageHeader, Panel, Stat, TextLink } from '#/components/ui';
+import type { AvailabilityPhase, DashboardResponse } from '#/api/types';
+import { Ago, Badge, Button, EmptyState, ErrorNotice, LiveBadge, Loading, PageBody, PageHeader, Panel, TextLink } from '#/components/ui';
 import { phaseOf } from '#/layout/availability';
 import { useHotelSheet } from '#/layout/hotelSheet';
 import { useHubTabs } from '#/layout/nav';
@@ -61,30 +61,73 @@ const useCanControlHotel = () => {
     return !!can && (can.alert || can.maintenance || can.shutdown || can.welcomeMessage);
 };
 
+/** A server fact under the hotel's figures: what it is, and its value, with a line more on hover. */
+const Fact = ({ label, value, title }: { label: string; value: string; title?: string }) => (
+    <div className="min-w-0" title={title}>
+        <dt className="text-xs text-muted">{label}</dt>
+        <dd className="truncate text-sm font-medium tabular-nums">{value}</dd>
+    </div>
+);
+
 /**
- * The hotel's state in a compact card, below a laptop's width where the controls are not beside
- * the rooms: whether it is open, and the button that opens the controls in their sheet.
+ * The top of the overview, the hotel as the desk sees it: whether it lets players in, how many are
+ * on and in how many rooms, lettered large, and under them how the server holds up. Below a
+ * laptop's width, where the controls are not beside the rooms, it has the button to their sheet.
  */
-const HotelCard = ({ phase, atUtc }: { phase: AvailabilityPhase; atUtc: string | null }) => {
+const HotelDesk = ({ data, now, canControl }: { data: DashboardResponse; now: number; canControl: boolean }) => {
     const openHotel = useHotelSheet(state => state.setOpen);
-    const known = phaseOf(phase);
+    const phase = phaseOf(data.availability);
 
     return (
-        <Panel className="lg:hidden">
-            <div className="flex flex-wrap items-center gap-3 px-4 py-3">
-                <div className="min-w-0 flex-1">
-                    <Label>Hotel</Label>
-                    <div className="mt-1 flex flex-wrap items-center gap-2 text-sm">
-                        <AvailabilityBadge phase={phase} atUtc={atUtc} />
-                        {known.tone === 'good' && <span className="text-muted">Players can log in.</span>}
-                    </div>
+        <section aria-label="The hotel now" className="card overflow-clip">
+            <div className="flex flex-wrap items-center gap-x-4 gap-y-3 px-4 pt-4 sm:px-5 sm:pt-5">
+                <div className="flex min-w-0 flex-1 items-center gap-2 text-sm">
+                    <AvailabilityBadge phase={data.availability} atUtc={data.availabilityAtUtc} />
+                    {phase.tone === 'good' && <span className="text-muted max-sm:hidden">Players can log in</span>}
                 </div>
-                <Button variant="secondary" icon={<SlidersHorizontal />} onClick={() => openHotel(true)} className="max-sm:w-full">
-                    Hotel controls
-                    <ChevronRight className="size-4 text-muted" />
-                </Button>
+                {canControl && (
+                    <Button variant="secondary" icon={<SlidersHorizontal />} onClick={() => openHotel(true)} className="lg:hidden">
+                        Hotel controls
+                    </Button>
+                )}
             </div>
-        </Panel>
+            <p className="flex flex-wrap items-baseline gap-x-3 px-4 pt-4 pb-5 sm:px-5">
+                <span className="font-display text-5xl leading-none tabular-nums sm:text-6xl">{data.playersOnline.toLocaleString()}</span>
+                <span className="text-lg leading-tight font-medium text-muted sm:text-xl">
+                    {data.playersOnline === 1 ? 'player' : 'players'} on, in {plural(data.roomsLoaded, 'room')}
+                </span>
+            </p>
+            <dl className="grid grid-cols-3 gap-4 border-t border-line bg-subtle/40 px-4 py-3 sm:px-5">
+                <Fact label="Up for" value={formatUptime(data.startedAtUtc, now)} title={`Since ${formatDateTime(data.startedAtUtc)}`} />
+                <Fact label="Memory" value={`${data.workingSetMb.toLocaleString()} MB`} title={`${data.managedMb.toLocaleString()} MB managed`} />
+                <Fact label="Silos" value={`${data.silosActive} of ${data.silosTotal}`} />
+            </dl>
+        </section>
+    );
+};
+
+/** A room of the busiest, with how full it is as a bar under its count: its people of the most it takes. */
+const BusyRoom = ({ room, link }: { room: DashboardResponse['busiestRooms'][number]; link: boolean }) => {
+    const full = room.playersMax > 0 ? Math.min(1, room.population / room.playersMax) : 0;
+
+    return (
+        <li className="flex min-h-14 items-center gap-4 border-t border-line px-4 py-2.5 first:border-t-0">
+            <div className="min-w-0 flex-1">
+                {link
+                    ? <Link to={`/rooms/${room.id}`} className="block truncate font-medium hover:text-accent">{room.name}</Link>
+                    : <span className="block truncate font-medium">{room.name}</span>}
+                <span className="block truncate text-xs text-muted">{room.ownerName}</span>
+            </div>
+            <div className="flex w-24 shrink-0 flex-col items-end gap-1.5 sm:w-32">
+                <span className="text-sm tabular-nums">
+                    {room.population}
+                    <span className="text-muted"> of {room.playersMax}</span>
+                </span>
+                <span aria-hidden className="h-1 w-full rounded-full bg-line">
+                    <span className={cx('block h-1 rounded-full', full >= 0.9 ? 'bg-warn' : 'bg-accent-solid')} style={{ width: `${Math.max(4, Math.round(full * 100))}%` }} />
+                </span>
+            </div>
+        </li>
     );
 };
 
@@ -208,7 +251,7 @@ const RecentCommands = () => {
         <Panel
             title="Recent commands"
             className="overflow-clip"
-            actions={<TextLink to="/command-log">The whole log <ChevronRight /></TextLink>}
+            actions={<TextLink to="/logs/command-log">The whole log <ChevronRight /></TextLink>}
         >
             {error && <div className="p-4"><ErrorNotice error={error} /></div>}
             {!data && !error && <Loading />}
@@ -260,9 +303,9 @@ export const DashboardPage = () => {
             <PageHeader
                 title="Overview"
                 tabs={tabs}
-                description={data && `Turbo ${data.version} · updated ${formatClock(dataUpdatedAt)}`}
+                description={data && `Turbo ${data.version}, updated ${formatClock(dataUpdatedAt)}`}
             >
-                <span className="max-sm:hidden"><LiveBadge live={live}>{live ? 'LIVE' : 'EVERY 10S'}</LiveBadge></span>
+                <span className="max-sm:hidden"><LiveBadge live={live}>{live ? 'Live' : 'Every 10 s'}</LiveBadge></span>
             </PageHeader>
             <PageBody>
                 {error && <ErrorNotice error={error} />}
@@ -272,17 +315,7 @@ export const DashboardPage = () => {
                 {isPending && <Loading />}
                 {data && (
                     <>
-                        <section aria-label="At a glance" className="grid grid-cols-2 gap-3 xl:grid-cols-4">
-                            <Stat label="Players online" value={data.playersOnline.toLocaleString()} />
-                            <Stat label="Rooms loaded" value={data.roomsLoaded.toLocaleString()} />
-                            <Stat label="Uptime" value={formatUptime(data.startedAtUtc, Math.max(now, dataUpdatedAt))} detail={`since ${formatDateTime(data.startedAtUtc)}`} />
-                            <Stat
-                                label="Memory"
-                                value={`${data.workingSetMb.toLocaleString()} MB`}
-                                detail={`${data.managedMb.toLocaleString()} MB managed · ${data.silosActive}/${data.silosTotal} silos`}
-                            />
-                        </section>
-                        {canControl && <HotelCard phase={data.availability} atUtc={data.availabilityAtUtc} />}
+                        <HotelDesk data={data} now={Math.max(now, dataUpdatedAt)} canControl={canControl} />
                         <div className="flex flex-wrap items-start gap-4 lg:gap-6">
                             <div className="flex min-w-0 flex-[999_1_480px] flex-col gap-4 lg:gap-6">
                                 <Panel title="Busiest rooms">
@@ -290,20 +323,7 @@ export const DashboardPage = () => {
                                         ? <EmptyState>Nobody is in a room right now.</EmptyState>
                                         : (
                                                 <ul>
-                                                    {data.busiestRooms.map(room => (
-                                                        <li key={room.id} className="flex min-h-14 items-center gap-3 border-t border-line px-4 py-2.5 first:border-t-0">
-                                                            <div className="min-w-0 flex-1">
-                                                                {canViewRooms
-                                                                    ? <Link to={`/rooms/${room.id}`} className="block truncate font-medium hover:text-accent">{room.name}</Link>
-                                                                    : <span className="block truncate font-medium">{room.name}</span>}
-                                                                <span className="block truncate font-mono text-2xs text-muted">#{room.id} · {room.ownerName}</span>
-                                                            </div>
-                                                            <span className="shrink-0 font-mono text-sm tabular-nums">
-                                                                {room.population}
-                                                                <span className="text-muted">/{room.playersMax}</span>
-                                                            </span>
-                                                        </li>
-                                                    ))}
+                                                    {data.busiestRooms.map(room => <BusyRoom key={room.id} room={room} link={canViewRooms} />)}
                                                 </ul>
                                             )}
                                 </Panel>

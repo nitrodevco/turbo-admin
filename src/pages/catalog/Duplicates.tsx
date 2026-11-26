@@ -28,7 +28,7 @@ const OfferRow = ({ tree, offer, busy, onOpen, onDelete, onKeepOnly }: { tree: C
                 {offer.visible ? 'page hidden' : 'hidden'}
             </span>
         )}
-        <span className="font-mono text-xs tabular-nums sm:w-28 sm:text-right">{priceOf(offer, tree)}</span>
+        <span className="text-xs tabular-nums sm:w-28 sm:text-right">{priceOf(offer, tree)}</span>
         {tree.canManage && (
             <span className="flex items-center gap-1">
                 <TextButton disabled={busy} onClick={onKeepOnly} title="Delete the other offers of it" className="min-h-10 px-2 sm:min-h-0">

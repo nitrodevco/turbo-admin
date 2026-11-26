@@ -77,7 +77,7 @@ export const StripPreview = ({ track, furni, title }: { track: RewardTrack; furn
                                 <div key={value}>
                                     <span className="absolute size-4 rounded-full border-2 border-[#7a7a7a] bg-white" style={{ left: x - 8, top: barTop - 4 }} />
                                     <span className="absolute w-0 border-l border-dashed border-[#b55]" style={{ left: x, top: ROW_HEIGHT * 2 + BAR_HEIGHT, height: 8 }} />
-                                    <span className="absolute -translate-x-1/2 font-mono text-[11px] tabular-nums" style={{ left: x, top: ROW_HEIGHT * 2 + BAR_HEIGHT + 8 }}>{value.toLocaleString()}</span>
+                                    <span className="absolute -translate-x-1/2 text-[11px] tabular-nums" style={{ left: x, top: ROW_HEIGHT * 2 + BAR_HEIGHT + 8 }}>{value.toLocaleString()}</span>
                                 </div>
                             );
                         })}

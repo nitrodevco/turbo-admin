@@ -1,4 +1,4 @@
-import { UserPlus } from 'lucide-react';
+import { Check, UserPlus } from 'lucide-react';
 import { type FormEvent, useState } from 'react';
 import { Link, useSearchParams } from 'react-router';
 
@@ -6,7 +6,7 @@ import { type PlayerListItem, type PlayerSearchMode, usePlayerAbilities, usePlay
 import { ListToolbar } from '#/components/ListToolbar';
 import { SearchWithButton } from '#/components/SearchInput';
 import { PhoneSort } from '#/components/SortHeader';
-import { Ago, Avatar, Badge, Button, EmptyState, ErrorNotice, LiveBadge, Loading, PageBody, PageHeader, Panel, Select, Switch, Table, Td, Th } from '#/components/ui';
+import { Ago, Avatar, Button, Chip, EmptyState, ErrorNotice, LiveBadge, Loading, PageBody, PageHeader, Panel, Table, Td, Th } from '#/components/ui';
 import { cx } from '#/lib/cx';
 import { plural } from '#/lib/plural';
 import { type ListOrder, orderOf, orderParams, pageOf, type Sorting } from '#/lib/sort';
@@ -25,14 +25,20 @@ const modeOf = (value: string | null): PlayerSearchMode =>
 /** Online now, or when they were last: never, for someone who has not logged in. */
 const Seen = ({ player }: { player: PlayerListItem }) =>
     player.isOnline
-        ? <LiveBadge live>ONLINE</LiveBadge>
+        ? <LiveBadge live>Online</LiveBadge>
         : <span className="text-xs text-muted">{player.lastLoginUtc ? <Ago at={player.lastLoginUtc} /> : 'never'}</span>;
+
+/**
+ * The line under a player's name: their motto, or, when the list was searched by Discord, the
+ * Discord username it matched.
+ */
+const aboutOf = (player: PlayerListItem, by: PlayerSearchMode) =>
+    (by === 'discord' && player.discordUsername ? `@${player.discordUsername}` : player.motto);
 
 /** The columns the list sorts by, as the server names them. */
 const SORT_COLUMNS = [
     { label: 'Player', sort: 'name' },
     { label: 'Seen', sort: 'seen', first: 'desc' },
-    { label: 'Rooms', sort: 'rooms', first: 'desc' },
     { label: 'Joined', sort: 'joined', first: 'desc' },
 ] as const;
 
@@ -86,19 +92,20 @@ export const PlayersPage = () => {
                             onChange: offset => go({ page: Math.floor(offset / pageSize) + 1 }),
                         }}
                     >
-                        <form onSubmit={handleSubmit} className="flex min-w-0 flex-1 flex-wrap items-center gap-2">
-                            <Select value={draftBy} onChange={event => setDraftBy(modeOf(event.target.value))} aria-label="Search by">
-                                {MODES.map(mode => <option key={mode.value} value={mode.value}>{mode.label}</option>)}
-                            </Select>
+                        <form onSubmit={handleSubmit} className="flex min-w-0 flex-1 flex-wrap items-center gap-2 sm:w-[28rem] sm:flex-none">
                             <SearchWithButton
+                                mode={{ label: 'Search by', value: draftBy, onChange: value => setDraftBy(modeOf(value)), options: MODES }}
                                 value={draft}
                                 onValueChange={setDraft}
                                 placeholder={MODES.find(x => x.value === draftBy)?.placeholder}
                                 aria-label="Search"
                                 inputMode={draftBy === 'id' ? 'numeric' : undefined}
                             />
-                            <Switch label="Online only" checked={online} onChange={value => go({ online: value, page: 1 })} className="min-h-9 gap-3 sm:ml-2" />
                         </form>
+                        <Chip large active={online} onClick={() => go({ online: !online, page: 1 })}>
+                            {online && <Check />}
+                            Online only
+                        </Chip>
                     </ListToolbar>
 
                     {search.error && <div className="p-4"><ErrorNotice error={search.error} /></div>}
@@ -117,7 +124,7 @@ export const PlayersPage = () => {
                                                         <Avatar id={player.id} name={player.name} figure={player.figure} />
                                                         <div className="min-w-0 flex-1">
                                                             <div className="truncate font-medium">{player.name}</div>
-                                                            <div className="truncate font-mono text-2xs text-muted">#{player.id}{player.discordUsername ? ` · @${player.discordUsername}` : player.motto ? ` · ${player.motto}` : ''}</div>
+                                                            <div className="truncate text-xs text-muted">#{player.id}{aboutOf(player, by) ? ` · ${aboutOf(player, by)}` : ''}</div>
                                                         </div>
                                                         <Seen player={player} />
                                                     </Link>
@@ -129,7 +136,6 @@ export const PlayersPage = () => {
                                                 <tr>
                                                     <Th sort="name" sorting={sorting}>Player</Th>
                                                     <Th sort="seen" first="desc" sorting={sorting}>Seen</Th>
-                                                    <Th className="text-right" sort="rooms" first="desc" sorting={sorting}>Rooms</Th>
                                                     <Th sort="joined" first="desc" sorting={sorting}>Joined</Th>
                                                 </tr>
                                             </thead>
@@ -142,15 +148,13 @@ export const PlayersPage = () => {
                                                                 <span className="min-w-0">
                                                                     <span className="block font-medium hover:text-accent">
                                                                         {player.name}
-                                                                        <span className="ml-2 font-mono text-2xs font-normal text-muted">#{player.id}</span>
-                                                                        {player.discordUsername && <Badge tone="accent" className="ml-2">discord</Badge>}
+                                                                        <span className="ml-2 text-xs font-normal text-muted">#{player.id}</span>
                                                                     </span>
-                                                                    {player.motto && <span className="block max-w-80 truncate text-xs text-muted">{player.motto}</span>}
+                                                                    {aboutOf(player, by) && <span className="block max-w-80 truncate text-xs text-muted">{aboutOf(player, by)}</span>}
                                                                 </span>
                                                             </Link>
                                                         </Td>
                                                         <Td><Seen player={player} /></Td>
-                                                        <Td className="text-right font-mono tabular-nums">{player.roomsOwned}</Td>
                                                         <Td className="text-xs text-muted"><Ago at={player.joinedUtc} /></Td>
                                                     </tr>
                                                 ))}

@@ -31,7 +31,7 @@ export const Toasts = () => {
             ref={box}
             popover="manual"
             aria-live="polite"
-            className="pointer-events-none fixed inset-x-0 top-auto bottom-[calc(1rem+env(safe-area-inset-bottom))] m-0 flex h-auto w-full flex-col items-center gap-2 overflow-visible border-0 bg-transparent p-0 px-4 [&:not(:popover-open)]:hidden"
+            className="pointer-events-none fixed inset-x-0 top-auto bottom-[calc(var(--tabbar-height)+0.75rem+env(safe-area-inset-bottom))] lg:bottom-[calc(1rem+env(safe-area-inset-bottom))] m-0 flex h-auto w-full flex-col items-center gap-2 overflow-visible border-0 bg-transparent p-0 px-4 [&:not(:popover-open)]:hidden"
         >
             {toasts.map(x => (
                 <button

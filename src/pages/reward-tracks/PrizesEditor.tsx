@@ -144,7 +144,7 @@ const PrizeRow = ({ prize, index, count, open, onOpen, furni, onChange, onPickFu
             <button type="button" onClick={onOpen} className="flex min-w-0 flex-1 items-center gap-2 text-left" aria-expanded={open}>
                 <ChevronRight className={cx('size-4 shrink-0 text-muted transition', open && 'rotate-90')} />
                 <PrizeIcon prize={prize} furni={furni} />
-                <span className="w-16 shrink-0 text-right font-mono text-xs tabular-nums">{prize.requiredPoints.toLocaleString()}</span>
+                <span className="w-16 shrink-0 text-right text-xs tabular-nums">{prize.requiredPoints.toLocaleString()}</span>
                 <span className="w-24 shrink-0 truncate font-mono text-sm">{prize.id}</span>
                 <span className="min-w-0 truncate text-sm">{prizeText(prize, furni)}</span>
                 {prize.premium && <Badge tone="accent">premium</Badge>}

@@ -139,13 +139,13 @@ export const MergePagesDialog = ({ tree, pageIds, keepId, onClose, onMerged }: M
                                         <li key={x.kept.offerId} className="grid grid-cols-[minmax(0,1fr)_auto_auto] items-center gap-x-4 px-3 py-1.5 text-xs">
                                             <span className="truncate font-mono">{x.name}</span>
                                             <span className="text-right" title={`Offer ${x.kept.offerId} on ${title(x.kept.pageId)}`}>
-                                                <span className="font-mono tabular-nums text-good">{priceOf(x.kept, tree)}</span>
+                                                <span className="tabular-nums text-good">{priceOf(x.kept, tree)}</span>
                                                 <span className="block text-2xs text-muted">{title(x.kept.pageId)}</span>
                                             </span>
                                             <span className="text-right">
                                                 {x.dropped.map(d => (
                                                     <span key={d.offerId} className="block" title={`Offer ${d.offerId} on ${title(d.pageId)}`}>
-                                                        <span className="font-mono tabular-nums text-muted line-through">{priceOf(d, tree)}</span>
+                                                        <span className="tabular-nums text-muted line-through">{priceOf(d, tree)}</span>
                                                         <span className="block text-2xs text-muted">{title(d.pageId)}</span>
                                                     </span>
                                                 ))}

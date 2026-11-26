@@ -34,7 +34,7 @@ const NumberInput = ({ value, onChange, min, max, label }: { value: number; onCh
 
             onChange(Number.isFinite(next) ? next : 0);
         }}
-        className="w-full font-mono tabular-nums"
+        className="w-full tabular-nums"
     />
 );
 

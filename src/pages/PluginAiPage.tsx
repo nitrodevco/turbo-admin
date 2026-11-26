@@ -153,9 +153,9 @@ export const PluginAiPage = () => {
                                                 <Td className="font-mono text-xs whitespace-nowrap">{row.day.slice(0, 10)}</Td>
                                                 <Td>{row.plugin}</Td>
                                                 <Td>{row.provider} <span className="text-muted">/ {row.model}</span></Td>
-                                                <Td className="text-right font-mono tabular-nums">{row.calls.toLocaleString()} <span className="text-muted">/ {row.failed.toLocaleString()}</span></Td>
-                                                <Td className="text-right font-mono tabular-nums">{row.inputTokens.toLocaleString()} <span className="text-muted">/ {row.outputTokens.toLocaleString()}</span></Td>
-                                                <Td className="text-right font-mono tabular-nums">{row.cost.toLocaleString(undefined, { maximumFractionDigits: 6 })}</Td>
+                                                <Td className="text-right tabular-nums">{row.calls.toLocaleString()} <span className="text-muted">/ {row.failed.toLocaleString()}</span></Td>
+                                                <Td className="text-right tabular-nums">{row.inputTokens.toLocaleString()} <span className="text-muted">/ {row.outputTokens.toLocaleString()}</span></Td>
+                                                <Td className="text-right tabular-nums">{row.cost.toLocaleString(undefined, { maximumFractionDigits: 6 })}</Td>
                                             </tr>
                                         ))}
                                     </tbody>

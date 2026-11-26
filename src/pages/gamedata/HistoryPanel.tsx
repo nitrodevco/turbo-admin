@@ -142,7 +142,7 @@ const ChangeSets = ({ scope, canManage, page, query: { data, error, isFetching }
                                         {open === set.id ? <ChevronDown /> : <ChevronRight />}
                                         <Badge tone={KIND_TONES[kind] ?? 'neutral'} className="justify-center sm:min-w-24">{kind}</Badge>
                                         <span className={cx('min-w-0 flex-[1_1_16rem] truncate', set.rolledBackById !== null && 'text-muted line-through decoration-muted/50')}>{set.summary}</span>
-                                        <span className="font-mono text-2xs text-muted tabular-nums">#{set.id} · {plural(set.changeCount, 'row')} · {fromNow(set.createdAt)}</span>
+                                        <span className="text-xs text-muted tabular-nums">#{set.id} · {plural(set.changeCount, 'row')} · {fromNow(set.createdAt)}</span>
                                     </button>
                                     {(set.rolledBackById !== null || canRollBack) && (
                                         // On a phone the actions go under the summary, in line with it.

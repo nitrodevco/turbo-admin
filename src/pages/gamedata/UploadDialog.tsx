@@ -196,7 +196,7 @@ export const UploadDialog = ({ open, onClose, name }: { open: boolean; onClose: 
                                 <li key={entry.id} className="flex flex-col gap-1.5 px-3 py-2.5">
                                     <div className="flex items-baseline justify-between gap-3">
                                         <span className="min-w-0 truncate font-mono text-ui" title={entry.file.name}>{entry.file.name}</span>
-                                        <span className="shrink-0 font-mono text-2xs text-muted tabular-nums">{formatBytes(entry.file.size)}</span>
+                                        <span className="shrink-0 text-2xs text-muted tabular-nums">{formatBytes(entry.file.size)}</span>
                                     </div>
                                     <Outcome entry={entry} onOpen={setOpened} onReview={review} onMake={name ? undefined : setMaking} />
                                 </li>

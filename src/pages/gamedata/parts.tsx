@@ -109,7 +109,7 @@ export const HabboUpdate = ({ title, version, preview, error, extra, file, canMa
                     </div>
                 </div>
                 {preview && !upToDate && (
-                    <div className="flex flex-wrap items-center gap-x-4 gap-y-1 font-mono text-xs text-muted tabular-nums">
+                    <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-muted tabular-nums">
                         <span><span className="text-good">+{preview.added.toLocaleString()}</span> added</span>
                         <span><span className="text-accent">{preview.updated.toLocaleString()}</span> updated</span>
                         {preview.kept > 0 && <span><span className="text-warn">{preview.kept.toLocaleString()}</span> kept as yours</span>}

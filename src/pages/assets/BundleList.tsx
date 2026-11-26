@@ -65,8 +65,8 @@ const BundleRow = ({ bundle, pending, showsFile, onOpen }: { bundle: AssetBundle
                 </span>
                 {showsFile && (
                     <>
-                        <span className="hidden w-24 shrink-0 text-right font-mono text-xs text-muted tabular-nums md:block">{bundle.revision ?? '-'}</span>
-                        <span className="hidden w-20 shrink-0 text-right font-mono text-xs text-muted tabular-nums md:block">{bundle.error ? '-' : formatBytes(bundle.size)}</span>
+                        <span className="hidden w-24 shrink-0 text-right text-xs text-muted tabular-nums md:block">{bundle.revision ?? '-'}</span>
+                        <span className="hidden w-20 shrink-0 text-right text-xs text-muted tabular-nums md:block">{bundle.error ? '-' : formatBytes(bundle.size)}</span>
                     </>
                 )}
                 <ChevronRight className="size-4 shrink-0 text-muted" aria-hidden />
@@ -131,7 +131,7 @@ export const BundleList = ({ kind, canManage }: { kind: BundleKind; canManage: b
             )}
             {data && data.items.length > 0 && (
                 <>
-                    <div className="hidden items-center gap-3 border-b border-line px-4 py-2 font-mono text-2xs font-medium tracking-[0.08em] text-muted uppercase md:flex">
+                    <div className="hidden items-center gap-3 border-b border-line px-4 py-2 text-xs font-medium text-muted md:flex">
                         <span className="w-10 shrink-0" />
                         <span className="flex-1">Bundle</span>
                         {showsFile && (

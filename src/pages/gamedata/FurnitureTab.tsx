@@ -111,7 +111,7 @@ const DefinitionRow = ({ item, onOpen, picked, onPick }: { item: FurnitureListIt
             <span className="hidden w-28 shrink-0 truncate text-xs text-muted xl:block" title={item.furniLine ?? undefined}>{item.furniLine || '-'}</span>
             <LogicCell item={item} />
             <BundleCell item={item} />
-            <span className="hidden w-16 shrink-0 text-right font-mono text-xs text-muted tabular-nums md:block">{item.spriteId}</span>
+            <span className="hidden w-16 shrink-0 text-right text-xs text-muted tabular-nums md:block">{item.spriteId}</span>
             <span className="hidden w-12 shrink-0 md:block"><Badge>{FURNITURE_KINDS[item.productType] ?? '?'}</Badge></span>
             <ChevronRight className="size-4 shrink-0 text-muted" aria-hidden />
         </button>
@@ -342,7 +342,7 @@ const Definitions = ({ status }: { status: GamedataStatus }) => {
                 )}
                 {!unused && data && data.items.length > 0 && (
                     <>
-                        <div className="hidden items-center gap-3 border-b border-line px-4 py-2 font-mono text-2xs font-medium tracking-[0.08em] text-muted uppercase md:flex">
+                        <div className="hidden items-center gap-3 border-b border-line px-4 py-2 text-xs font-medium text-muted md:flex">
                             {status.canManage && <span className="w-4 shrink-0" />}
                             <span className="w-10 shrink-0" />
                             <span className="flex-1">Furniture</span>
