@@ -11,7 +11,7 @@ import { SearchInput } from '#/components/SearchInput';
 import { Badge, Button, EmptyState, ErrorNotice, FieldLabel, Input, Labeled, Loading, PageBody, PageHeader, Panel, Select, SuccessNotice, Switch, Textarea, Thumb } from '#/components/ui';
 import { cx } from '#/lib/cx';
 import { useDebounced } from '#/lib/debounce';
-import { inputToIso, isoTime, isoToInput } from '#/pages/hotel-view/model';
+import { inputToIso, isoTime, isoToInput } from '#/lib/time';
 
 import { catalogTabs } from './catalogTabs';
 import { ProductIcon } from './ProductIcon';

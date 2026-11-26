@@ -7,11 +7,11 @@ import { ask } from '#/components/confirm';
 import { celebrate, toast, toastError } from '#/components/toast';
 import { Badge, Button, ErrorNotice, Input, Labeled, Loading, PageBody, PageHeader, Panel, Select, Switch } from '#/components/ui';
 import { cx } from '#/lib/cx';
-import { inputToIso, isoToInput } from '#/pages/hotel-view/model';
+import { formatDateTime, inputToIso, isoToInput } from '#/lib/time';
 
 import { DayGrid, TodayPreview } from './Doors';
 import { FieldError, GiftEditor } from './GiftEditor';
-import { blankCalendar, blankGift, currentDay, localText, STATUS, statusOf } from './model';
+import { blankCalendar, blankGift, currentDay, STATUS, statusOf } from './model';
 
 /** Whole numbers from an input, not below a floor. */
 const whole = (text: string, min = 0) => Math.max(min, Math.floor(Number(text) || 0));
@@ -107,7 +107,7 @@ export const CalendarEditor = ({ id, onBack, onSaved }: { id: number | null; onB
                             <Input value={calendar.image} onChange={event => set('image', event.target.value.trim())} placeholder="e.g. xmas26.png" className={cx('font-mono', errorOf('image') && 'border-bad')} aria-label="Image" spellCheck={false} />
                             <FieldError message={errorOf('image')} />
                         </Labeled>
-                        <Labeled label="Starts (UTC)" hint={<>Day 1's door opens then, each next a day later. Your time: {localText(calendar.startsAt)}.</>}>
+                        <Labeled label="Starts (UTC)" hint={<>Day 1's door opens then, each next a day later. Your time: {formatDateTime(calendar.startsAt)}.</>}>
                             <Input type="datetime-local" value={isoToInput(calendar.startsAt)} onChange={event => set('startsAt', inputToIso(event.target.value) ?? calendar.startsAt)} aria-label="Starts (UTC)" />
                         </Labeled>
                         <Labeled label="Days" hint="1 to 366 doors.">

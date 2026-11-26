@@ -2,6 +2,7 @@ import { Area, CartesianGrid, ComposedChart, Line, ResponsiveContainer, Tooltip,
 
 import { Th } from '#/components/ui';
 import { cx } from '#/lib/cx';
+import { formatClock } from '#/lib/time';
 
 /** One line: its name (for the legend, tooltip and table) and its colour token. */
 export interface ChartSeries {
@@ -18,7 +19,8 @@ export interface ChartPoint {
 const HEIGHT = 168;
 const AXIS_TEXT = { fill: 'var(--color-muted)', fontSize: 10, fontFamily: 'var(--font-mono)' };
 
-const timeOf = (at: number) => new Date(at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+/** A value and its unit on one line: an axis label wider than the axis would break at the space ("1,200" over "MB"). */
+const keepTogether = (text: string) => text.replaceAll(' ', ' ');
 
 /** The series' keys in a row of chart data. */
 const keyOf = (index: number) => `s${index}`;
@@ -63,7 +65,7 @@ const Readout = ({ active, payload, label, series, format, timeFormat }: {
  * more series get a legend. `format` writes a value with its unit; {@link ChartTable} shows the
  * same figures as a table.
  */
-export const LineChart = ({ label, series, points, format, max, dimmed = false, timeFormat = timeOf }: {
+export const LineChart = ({ label, series, points, format, max, dimmed = false, timeFormat = formatClock }: {
     label: string;
     series: ChartSeries[];
     points: ChartPoint[];
@@ -105,7 +107,7 @@ export const LineChart = ({ label, series, points, format, max, dimmed = false, 
                     />
                     <YAxis
                         domain={[ 0, max ?? 'auto' ]}
-                        tickFormatter={format}
+                        tickFormatter={value => keepTogether(format(value))}
                         tick={AXIS_TEXT}
                         axisLine={false}
                         tickLine={false}
@@ -152,7 +154,7 @@ export const LineChart = ({ label, series, points, format, max, dimmed = false, 
 };
 
 /** The chart's figures as a table, newest first, for reading without the chart. */
-export const ChartTable = ({ label, series, points, format, timeFormat = timeOf }: { label: string; series: ChartSeries[]; points: ChartPoint[]; format: (value: number) => string; timeFormat?: (at: number) => string }) => (
+export const ChartTable = ({ label, series, points, format, timeFormat = formatClock }: { label: string; series: ChartSeries[]; points: ChartPoint[]; format: (value: number) => string; timeFormat?: (at: number) => string }) => (
     <div className="max-h-[168px] overflow-y-auto">
         <table className="w-full text-xs">
             <caption className="sr-only">{label}</caption>

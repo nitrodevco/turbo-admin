@@ -53,7 +53,7 @@ export const GiftEditor = ({ gift, currencies, errorOf, onChange, onRemove }: {
     return (
         <Panel
             title={`Day ${gift.dayIndex + 1}`}
-            actions={<Button variant="ghost" icon={<Trash2 />} onClick={onRemove}>No gift</Button>}
+            actions={<Button variant="danger-ghost" icon={<Trash2 />} onClick={onRemove}>No gift</Button>}
         >
             <div className="grid gap-5 p-4 lg:grid-cols-2">
                 <div className="flex flex-col gap-4">

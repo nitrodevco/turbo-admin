@@ -6,10 +6,9 @@ import { ask } from '#/components/confirm';
 import { SearchInput } from '#/components/SearchInput';
 import { toast, toastError } from '#/components/toast';
 import { Button, CHECK_CLASS, EmptyState, ErrorNotice, IconButton, Loading, PageBody, PageHeader, Panel, TextButton, WarningNotice } from '#/components/ui';
+import { formatBytes } from '#/lib/format';
 import { plural } from '#/lib/plural';
-import { formatBytes } from '#/pages/assets/format';
-
-const at = (utc: string) => new Date(utc).toLocaleString([], { dateStyle: 'medium', timeStyle: 'short' });
+import { formatDateTime } from '#/lib/time';
 
 /** A table's rows as the database says them: MySQL's are its estimate. */
 const rowsOf = (table: DatabaseTable) => `${table.rowsEstimated ? '≈ ' : ''}${table.rows.toLocaleString()}`;
@@ -107,10 +106,10 @@ const BackupRow = ({ backup, busy, onDownload, onDelete }: { backup: Backup; bus
                 {' · '}
                 {backup.builtByName}
                 {', '}
-                {at(backup.builtAtUtc)}
+                {formatDateTime(backup.builtAtUtc)}
             </div>
         </div>
-        <span className="text-xs text-muted">Kept until {at(backup.keptUntilUtc)}</span>
+        <span className="text-xs text-muted">Kept until {formatDateTime(backup.keptUntilUtc)}</span>
         <div className="flex items-center gap-1.5">
             <Button variant="secondary" icon={<Download />} disabled={busy} onClick={onDownload}>
                 Download

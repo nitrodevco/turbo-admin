@@ -4,6 +4,7 @@ import { useLive } from '#/api/live';
 import { useDashboard, useHotelAbilities } from '#/api/queries';
 import { useModalDialog } from '#/components/dialog';
 import { cx } from '#/lib/cx';
+import { formatClock } from '#/lib/time';
 import { HotelControls } from '#/pages/HotelControls';
 
 import { phaseOf, type PhaseTone } from './availability';
@@ -119,7 +120,7 @@ export const HotelSheet = () => {
                             <h2 className="text-base font-semibold">Hotel controls</h2>
                             <p className={cx('text-xs', TEXT[phase.tone])}>
                                 {phase.label}
-                                {data.availabilityAtUtc && ` at ${new Date(data.availabilityAtUtc).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`}
+                                {data.availabilityAtUtc && ` at ${formatClock(data.availabilityAtUtc)}`}
                                 <span className="text-muted"> · {data.playersOnline.toLocaleString()} online</span>
                             </p>
                         </div>

@@ -4,9 +4,11 @@ import { Link, useParams } from 'react-router';
 import { type ClientEventRow, type ClientLagRow, type ClientLatencyRow, type ClientPerformanceRow, type ClientTelemetryPlayerResponse, useClientTelemetryPlayer, useClientTelemetryRoom } from '#/api/telemetry';
 import { Row, SortedRowList } from '#/components/RowList';
 import { ButtonLink, EmptyState, ErrorNotice, Loading, PageBody, PageHeader, Panel } from '#/components/ui';
+import { formatDuration } from '#/lib/format';
 import type { ListOrder, SortKeys } from '#/lib/sort';
+import { formatDateTime } from '#/lib/time';
 
-import { dayPoints, fps, LOGIN_STEPS, megabytes, ms, NO_LAG_HINT, NO_LATENCY_HINT, NO_PERFORMANCE_HINT, NO_ROOM_FPS_HINT, number, SERIES_1, SERIES_2, useDayRange, when } from './format';
+import { dayPoints, fps, LOGIN_STEPS, megabytes, NO_LAG_HINT, NO_LATENCY_HINT, NO_PERFORMANCE_HINT, NO_ROOM_FPS_HINT, number, SERIES_1, SERIES_2, useDayRange } from './format';
 import { DayChartCard, Figure, RangePicker } from './shared';
 
 /** Who sent a report, a link to their client reports; where from, a link to the room's. */
@@ -55,7 +57,7 @@ const PerformanceRows = ({ rows, params }: { rows: ClientPerformanceRow[]; param
                 <SortedRowList columns="auto minmax(0,1fr) minmax(0,1fr) minmax(0,1fr) repeat(3,auto)" headers={PERFORMANCE_COLUMNS} rows={rows} keys={PERFORMANCE_KEYS} initial={NEWEST}>
                     {(x, index) => (
                         <Row key={`${x.at}-${index}`}>
-                            <span className="font-mono text-xs text-muted">{when(x.at)}</span>
+                            <span className="font-mono text-xs text-muted">{formatDateTime(x.at)}</span>
                             <Who playerId={x.playerId} playerName={x.playerName} params={params} />
                             <Where roomId={x.roomId} roomName={x.roomName} params={params} />
                             <span className="truncate" title={x.userAgent}>{`${x.browser}, ${x.os}, ${x.device}`}</span>
@@ -86,11 +88,11 @@ const LatencyRows = ({ rows, params }: { rows: ClientLatencyRow[]; params: strin
                 <SortedRowList columns="auto minmax(0,1fr) minmax(0,1fr) repeat(3,auto)" headers={LATENCY_COLUMNS} rows={rows} keys={LATENCY_KEYS} initial={NEWEST}>
                     {(x, index) => (
                         <Row key={`${x.at}-${index}`}>
-                            <span className="font-mono text-xs text-muted">{when(x.at)}</span>
+                            <span className="font-mono text-xs text-muted">{formatDateTime(x.at)}</span>
                             <Who playerId={x.playerId} playerName={x.playerName} params={params} />
                             <Where roomId={x.roomId} roomName={x.roomName} params={params} />
-                            <Figure label="Average">{ms(x.averageMs)}</Figure>
-                            <Figure label="Without spikes">{ms(x.validAverageMs)}</Figure>
+                            <Figure label="Average">{formatDuration(x.averageMs)}</Figure>
+                            <Figure label="Without spikes">{formatDuration(x.validAverageMs)}</Figure>
                             <Figure label="Pings">{number(x.pings)}</Figure>
                         </Row>
                     )}
@@ -114,7 +116,7 @@ const LagRows = ({ rows, params }: { rows: ClientLagRow[]; params: string }) => 
                 <SortedRowList columns="auto minmax(0,1fr) minmax(0,1fr) auto" headers={LAG_COLUMNS} rows={rows} keys={LAG_KEYS} initial={NEWEST}>
                     {(x, index) => (
                         <Row key={`${x.at}-${index}`}>
-                            <span className="font-mono text-xs text-muted">{when(x.at)}</span>
+                            <span className="font-mono text-xs text-muted">{formatDateTime(x.at)}</span>
                             <Who playerId={x.playerId} playerName={x.playerName} params={params} />
                             <Where roomId={x.roomId} roomName={x.roomName} params={params} />
                             <Figure label="Warnings">{number(x.warnings)}</Figure>
@@ -226,7 +228,7 @@ export const TelemetryPlayerPage = () => {
                                         <SortedRowList columns="auto minmax(0,1fr) minmax(0,1fr) minmax(0,1fr)" headers={EVENT_COLUMNS} rows={data.events} keys={EVENT_KEYS} initial={NEWEST}>
                                             {(x, index) => (
                                                 <Row key={`${x.at}-${index}`}>
-                                                    <span className="font-mono text-xs text-muted">{when(x.at)}</span>
+                                                    <span className="font-mono text-xs text-muted">{formatDateTime(x.at)}</span>
                                                     <div className="min-w-0">
                                                         <div className="truncate font-medium">{x.action || x.type}</div>
                                                         <div className="truncate font-mono text-2xs text-muted">{[ x.category, x.type ].filter(Boolean).join(' / ')}</div>
@@ -245,9 +247,9 @@ export const TelemetryPlayerPage = () => {
                                         <SortedRowList columns="auto minmax(0,1fr) auto" headers={LOGIN_COLUMNS} rows={data.logins} keys={LOGIN_KEYS} initial={NEWEST}>
                                             {(x, index) => (
                                                 <Row key={`${x.at}-${index}`}>
-                                                    <span className="font-mono text-xs text-muted">{when(x.at)}</span>
+                                                    <span className="font-mono text-xs text-muted">{formatDateTime(x.at)}</span>
                                                     <span>{LOGIN_STEPS[x.step] ?? x.step}</span>
-                                                    <Figure label="After connecting">{ms(x.msSinceConnect)}</Figure>
+                                                    <Figure label="After connecting">{formatDuration(x.msSinceConnect)}</Figure>
                                                 </Row>
                                             )}
                                         </SortedRowList>

@@ -7,10 +7,10 @@ import { ListToolbar } from '#/components/ListToolbar';
 import { SearchInput } from '#/components/SearchInput';
 import { Badge, EmptyState, ErrorNotice, Loading, Select } from '#/components/ui';
 import { cx } from '#/lib/cx';
+import { formatBytes } from '#/lib/format';
 
 import { BundleDetail } from './BundleDetail';
 import { BundleIcon } from './BundleIcon';
-import { formatBytes } from './format';
 
 const STATUSES: { value: BundleStatus; label: string }[] = [
     { value: 'all', label: 'All' },

@@ -80,8 +80,5 @@ export const giftText = (gift: CampaignGift, currencyName: (id: number) => strin
     gift.effectId !== null && `effect ${gift.effectId}`,
 ].filter(Boolean).join(', ') || 'Nothing given';
 
-/** A UTC time in the viewer's own zone, to read beside the UTC one. */
-export const localText = (iso: string) => new Date(iso).toLocaleString(undefined, { dateStyle: 'medium', timeStyle: 'short' });
-
 /** A UTC time as the server keeps it, short: 2026-12-01 00:00. */
 export const utcText = (iso: string) => iso.replace('T', ' ').slice(0, 16);

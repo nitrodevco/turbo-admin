@@ -185,7 +185,7 @@ const Rights = ({ room, run, busy }: { room: RoomDetailResponse; run: Run; busy:
                             {player.name}
                             <span className="ml-2 font-mono text-2xs text-muted">#{player.id}</span>
                         </div>
-                        {room.can.manageRights && <Button variant="ghost" icon={<Trash2 />} className="row-actions" disabled={busy} onClick={() => run(() => calls.removeRights(player.id))}>Remove</Button>}
+                        {room.can.manageRights && <Button variant="danger-ghost" icon={<Trash2 />} className="row-actions" disabled={busy} onClick={() => run(() => calls.removeRights(player.id))}>Remove</Button>}
                     </li>
                 ))}
             </ul>

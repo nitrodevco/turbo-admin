@@ -24,5 +24,32 @@ export const fromNow = (utc: string, now = Date.now()) => {
 };
 
 /** A moment as the viewer's clock and calendar have it: "Nov 25, 2026, 3:42 PM". */
-export const formatDateTime = (utc: string) =>
-    new Date(utc).toLocaleString(undefined, { dateStyle: 'medium', timeStyle: 'short' });
+export const formatDateTime = (at: string | number) =>
+    new Date(at).toLocaleString(undefined, { dateStyle: 'medium', timeStyle: 'short' });
+
+/** A moment as the viewer's clock has it, for a time today: "3:42 PM". */
+export const formatClock = (at: string | number) => new Date(at).toLocaleTimeString(undefined, { timeStyle: 'short' });
+
+/** A UTC time from the server (marked Z or not), as a number. */
+export const isoTime = (iso: string | null) => (iso ? Date.parse(/Z$|[+-]\d\d:\d\d$/.test(iso) ? iso : `${iso}Z`) : null);
+
+/**
+ * A UTC time from the server for a `datetime-local` input, read as UTC, and back (null when it
+ * is empty). A field that takes these says "(UTC)" in its label.
+ */
+export const isoToInput = (iso: string | null) => (iso ? iso.replace(/Z$/, '').slice(0, 16) : '');
+export const inputToIso = (value: string) => (value ? `${value}:00Z` : null);
+
+/**
+ * A UTC time for a `datetime-local` input in the viewer's own time, and back (null when it is
+ * empty). A field that takes these says "(your time)" in its label.
+ */
+export const isoToLocalInput = (iso: string | null) => {
+    if (!iso)
+        return '';
+
+    const at = new Date(iso);
+
+    return new Date(at.getTime() - at.getTimezoneOffset() * 60_000).toISOString().slice(0, 16);
+};
+export const localInputToIso = (value: string) => (value ? new Date(value).toISOString() : null);

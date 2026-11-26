@@ -5,11 +5,10 @@ import { type BundleKind, downloadBundle, useBundle, useDeleteBundle } from '#/a
 import { ask } from '#/components/confirm';
 import { Modal, ModalBody } from '#/components/Modal';
 import { toast, toastError } from '#/components/toast';
-import { Badge, Button, ErrorNotice, Kv, Label, Loading } from '#/components/ui';
-import { fromNow } from '#/lib/time';
+import { Ago, Badge, Button, ErrorNotice, Kv, Label, Loading } from '#/components/ui';
+import { formatBytes } from '#/lib/format';
 
 import { BundleIcon } from './BundleIcon';
-import { formatBytes, formatTime } from './format';
 
 /**
  * One bundle: where it came from, its hash, and what its zip holds; it can be downloaded, and
@@ -58,7 +57,7 @@ export const BundleDetail = ({ bundle, canManage, onClose }: { bundle: { kind: B
                         <Kv label="Revision" mono>{data.revision ?? '-'}</Kv>
                         <Kv label="Size" mono>{formatBytes(data.size)}</Kv>
                         <Kv label={data.kind === 'pet' ? 'Pet type' : 'Ids'} mono>{data.ids.length > 0 ? data.ids.join(', ') : '-'}</Kv>
-                        <Kv label="Updated"><span title={formatTime(data.updatedAt)}>{fromNow(data.updatedAt)}</span></Kv>
+                        <Kv label="Updated"><Ago at={data.updatedAt} /></Kv>
                         <Kv label="Path" mono><span className="break-all">{data.path}</span></Kv>
                         <Kv label="Hash" mono><span className="text-xs break-all">{data.hash ?? '-'}</span></Kv>
                     </dl>

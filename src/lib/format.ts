@@ -12,5 +12,6 @@ export const formatBytes = (bytes: number) => {
     return unit === 0 ? `${size} B` : `${size.toFixed(size < 10 ? 1 : 0)} ${units[unit]}`;
 };
 
-/** A moment as a date and time, for a title on hover. */
-export const formatTime = (utc: string) => new Date(utc).toLocaleString();
+/** A duration given in milliseconds, in the unit that reads best: "240 ms", "1.5 s". */
+export const formatDuration = (ms: number) =>
+    (ms >= 1000 ? `${(ms / 1000).toLocaleString(undefined, { maximumFractionDigits: 1 })} s` : `${Math.round(ms).toLocaleString()} ms`);

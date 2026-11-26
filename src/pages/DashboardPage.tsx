@@ -13,6 +13,7 @@ import { phaseOf } from '#/layout/availability';
 import { useHotelSheet } from '#/layout/hotelSheet';
 import { useHubTabs } from '#/layout/nav';
 import { cx } from '#/lib/cx';
+import { formatClock, formatDateTime } from '#/lib/time';
 
 import { Outcome } from './CommandLogPage';
 import { HotelControls } from './HotelControls';
@@ -40,8 +41,6 @@ const useMinuteClock = () => {
     return now;
 };
 
-const atTime = (atUtc: string) => new Date(atUtc).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-
 const AvailabilityBadge = ({ phase, atUtc }: { phase: AvailabilityPhase; atUtc: string | null }) => {
     const known = phaseOf(phase);
 
@@ -49,7 +48,7 @@ const AvailabilityBadge = ({ phase, atUtc }: { phase: AvailabilityPhase; atUtc: 
         <Badge tone={TONES[known.tone]}>
             <span className="size-1.5 rounded-full bg-current" />
             {known.label}
-            {atUtc && <span className="font-normal">at {atTime(atUtc)}</span>}
+            {atUtc && <span className="font-normal">at {formatClock(atUtc)}</span>}
         </Badge>
     );
 };
@@ -260,7 +259,7 @@ export const DashboardPage = () => {
             <PageHeader
                 title="Overview"
                 tabs={tabs}
-                description={data && `Turbo ${data.version} · updated ${new Date(dataUpdatedAt).toLocaleTimeString()}`}
+                description={data && `Turbo ${data.version} · updated ${formatClock(dataUpdatedAt)}`}
             >
                 <span className="max-sm:hidden"><LiveBadge live={live}>{live ? 'LIVE' : 'EVERY 10S'}</LiveBadge></span>
             </PageHeader>
@@ -275,7 +274,7 @@ export const DashboardPage = () => {
                         <section aria-label="At a glance" className="grid grid-cols-2 gap-3 xl:grid-cols-4">
                             <Stat label="Players online" value={data.playersOnline.toLocaleString()} />
                             <Stat label="Rooms loaded" value={data.roomsLoaded.toLocaleString()} />
-                            <Stat label="Uptime" value={formatUptime(data.startedAtUtc, Math.max(now, dataUpdatedAt))} detail={`since ${new Date(data.startedAtUtc).toLocaleString([], { dateStyle: 'medium', timeStyle: 'short' })}`} />
+                            <Stat label="Uptime" value={formatUptime(data.startedAtUtc, Math.max(now, dataUpdatedAt))} detail={`since ${formatDateTime(data.startedAtUtc)}`} />
                             <Stat
                                 label="Memory"
                                 value={`${data.workingSetMb.toLocaleString()} MB`}

@@ -10,9 +10,9 @@ import { SearchInput } from '#/components/SearchInput';
 import { toast, toastError } from '#/components/toast';
 import { Badge, Button, CHECK_CLASS, EmptyState, ErrorNotice, Loading, Select } from '#/components/ui';
 import { cx } from '#/lib/cx';
+import { formatBytes } from '#/lib/format';
 import { BundleDetail } from '#/pages/assets/BundleDetail';
 import { BundleIcon } from '#/pages/assets/BundleIcon';
-import { formatBytes } from '#/pages/assets/format';
 import { FurniThumb } from '#/pages/catalog/ProductIcon';
 
 import { WaitingFromHabbo } from './frame';

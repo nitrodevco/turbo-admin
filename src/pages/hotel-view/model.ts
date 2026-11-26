@@ -456,16 +456,5 @@ export const toColorInput = (value: string) => {
     return /^[0-9a-f]{6}$/i.test(hex) ? `#${hex}` : /^[0-9a-f]{8}$/i.test(hex) ? `#${hex.slice(2)}` : '#000000';
 };
 
-// --- Times the server keeps -----------------------------------------------------------------
-
-/** A UTC time from the server (marked Z or not) for a `datetime-local` input, read as UTC. */
-export const isoToInput = (iso: string | null) => (iso ? iso.replace(/Z$/, '').slice(0, 16) : '');
-
-/** A `datetime-local` input, read as UTC, for the server; null when empty. */
-export const inputToIso = (value: string) => (value ? `${value}:00Z` : null);
-
-/** A UTC time from the server, as a number. */
-export const isoTime = (iso: string | null) => (iso ? Date.parse(/Z$|[+-]\d\d:\d\d$/.test(iso) ? iso : `${iso}Z`) : null);
-
 /** What the hotel view's pictures are: an address under the client's image library (`${image.library.url}reception/x.png`), or a full one. */
 export const LIBRARY_ADDRESS: ImageAccept = { shapes: [ 'libraryUrl', 'url' ] };

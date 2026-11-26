@@ -55,7 +55,7 @@ export const DataWindowCard = ({ theme, name, file, others, canManage, onChange,
                     <Input value={file.title} disabled={!canManage} onChange={event => onChange({ ...file, title: event.target.value }, `${name}:title`)} />
                 </Labeled>
                 <Button variant="ghost" icon={<Copy />} disabled={!canManage} onClick={onDuplicate}>Duplicate</Button>
-                <Button variant="ghost" icon={<Trash2 />} disabled={!canManage} onClick={onDelete}>Delete</Button>
+                <Button variant="danger-ghost" icon={<Trash2 />} disabled={!canManage} onClick={onDelete}>Delete</Button>
             </div>
             <div className="grid gap-3 sm:grid-cols-2">
                 <div className="flex flex-col gap-1.5">

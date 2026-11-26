@@ -6,12 +6,9 @@ import { ACHIEVEMENT_STATES, type AchievementDefinition, type AchievementItem, u
 import { SearchInput } from '#/components/SearchInput';
 import { Badge, Button, EmptyState, ErrorNotice, GroupHeading, IconButton, Input, Labeled, ListPanel, Loading, Panel, Select, SuccessNotice, Textarea, Thumb } from '#/components/ui';
 import { cx, rowFill } from '#/lib/cx';
+import { inputToIso, isoToInput } from '#/lib/time';
 
 const STATE_TONES: Record<number, 'green' | 'neutral' | 'amber' | 'red'> = { 0: 'red', 1: 'green', 2: 'neutral', 3: 'amber', 4: 'neutral' };
-
-/** A time the catalog keeps (UTC) for a `datetime-local` input, and back. */
-const toInput = (iso: string | null) => (iso ? iso.replace(/Z$/, '').slice(0, 16) : '');
-const fromInput = (value: string) => (value ? `${value}:00Z` : null);
 
 /** A badge's picture, as the client loads it. */
 const BadgeImage = ({ code }: { code: string | null }) => {
@@ -78,10 +75,10 @@ const DefinitionForm = ({ initial, all, canManage, onPublished }: { initial: Ach
                             </Select>
                         </Labeled>
                         <Labeled label="Active from (UTC)" hint="Empty: always.">
-                            <Input type="datetime-local" value={toInput(definition.ActiveFromUtc)} onChange={event => set({ ActiveFromUtc: fromInput(event.target.value) })} disabled={disabled} />
+                            <Input type="datetime-local" value={isoToInput(definition.ActiveFromUtc)} onChange={event => set({ ActiveFromUtc: inputToIso(event.target.value) })} disabled={disabled} />
                         </Labeled>
                         <Labeled label="Active until (UTC)" hint="Empty: for good.">
-                            <Input type="datetime-local" value={toInput(definition.ActiveUntilUtc)} onChange={event => set({ ActiveUntilUtc: fromInput(event.target.value) })} disabled={disabled} />
+                            <Input type="datetime-local" value={isoToInput(definition.ActiveUntilUtc)} onChange={event => set({ ActiveUntilUtc: inputToIso(event.target.value) })} disabled={disabled} />
                         </Labeled>
                         <Labeled label="Order"><Input value={definition.Order} onChange={event => set({ Order: Number(event.target.value.replace(/[^-\d]/g, '')) || 0 })} inputMode="numeric" disabled={disabled} /></Labeled>
                         <Labeled label="Counts"><Input value={`${definition.Source} v${definition.SourceVersion}`} disabled /></Labeled>

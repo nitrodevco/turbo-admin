@@ -5,7 +5,9 @@ import { type ChartPoint, type ChartSeries, ChartTable, LineChart } from '#/comp
 import { PhoneLabel, Row, SortedRowList } from '#/components/RowList';
 import { EmptyState, ErrorNotice, Loading, PageBody, PageHeader, Panel, Segmented, Stat } from '#/components/ui';
 import { useHubTabs } from '#/layout/nav';
+import { formatDuration } from '#/lib/format';
 import type { SortKeys } from '#/lib/sort';
+import { formatDateTime } from '#/lib/time';
 
 const RANGES = [
     { value: '1', label: '1 hour' },
@@ -19,7 +21,6 @@ const SERIES_2 = 'var(--color-series-2)';
 const number = (value: number) => Math.round(value).toLocaleString();
 const percent = (value: number) => `${value.toLocaleString(undefined, { maximumFractionDigits: value < 10 ? 1 : 0 })}%`;
 const megabytes = (value: number) => `${Math.round(value).toLocaleString()} MB`;
-const ms = (value: number) => (value >= 1000 ? `${(value / 1000).toLocaleString(undefined, { maximumFractionDigits: 1 })} s` : `${Math.round(value).toLocaleString()} ms`);
 
 /** What each measured operation is, in words; the code stays beside it. */
 const STAGES: Record<string, string> = {
@@ -118,9 +119,9 @@ const StageTable = ({ stages }: { stages: PerformanceStage[] }) => (
                                 <div className="truncate font-mono text-2xs text-muted">{stage.stage}</div>
                             </div>
                             <StageFigure label="Times">{stage.count.toLocaleString()}</StageFigure>
-                            <StageFigure label="Median">{ms(stage.p50Ms)}</StageFigure>
-                            <StageFigure label="p95">{ms(stage.p95Ms)}</StageFigure>
-                            <StageFigure label="Longest">{ms(stage.maxMs)}</StageFigure>
+                            <StageFigure label="Median">{formatDuration(stage.p50Ms)}</StageFigure>
+                            <StageFigure label="p95">{formatDuration(stage.p95Ms)}</StageFigure>
+                            <StageFigure label="Longest">{formatDuration(stage.maxMs)}</StageFigure>
                         </Row>
                     )}
                 </SortedRowList>
@@ -147,7 +148,7 @@ export const PerformancePage = () => {
             <PageHeader
                 title="Overview"
                 tabs={tabs}
-                description={data?.recordingSinceUtc && `This server, sampled every ${data.sampleSeconds} s since ${new Date(data.recordingSinceUtc).toLocaleString()}`}
+                description={data?.recordingSinceUtc && `This server, sampled every ${data.sampleSeconds} s since ${formatDateTime(data.recordingSinceUtc)}`}
             />
             <PageBody>
                 <div className="flex flex-wrap items-center gap-3">
@@ -164,7 +165,7 @@ export const PerformancePage = () => {
                             <Stat label="Players online" value={latest ? number(latest.playersOnline) : '-'} detail={latest && `${number(latest.roomsLoaded)} rooms loaded`} />
                             <Stat
                                 label="Room entry, p95"
-                                value={latest?.roomEntryP95Ms != null ? ms(latest.roomEntryP95Ms) : '-'}
+                                value={latest?.roomEntryP95Ms != null ? formatDuration(latest.roomEntryP95Ms) : '-'}
                                 detail={latest ? `${number(latest.roomEntries)} entries in the last point` : undefined}
                             />
                         </section>
@@ -185,10 +186,10 @@ export const PerformancePage = () => {
                                 description="From asking to enter a room to being in it, on the server."
                                 series={[ { name: 'Median', color: SERIES_1 }, { name: 'p95', color: SERIES_2 } ]}
                                 points={pointsOf(points, x => x.roomEntryP50Ms, x => x.roomEntryP95Ms)}
-                                format={ms}
+                                format={formatDuration}
                                 dimmed={dimmed}
                             />
-                            <ChartCard title="Room updates reaching players" description="From a room publishing an update to a player's session getting it, p95." series={[ { name: 'p95', color: SERIES_1 } ]} points={pointsOf(points, x => x.streamDelayP95Ms)} format={ms} dimmed={dimmed} />
+                            <ChartCard title="Room updates reaching players" description="From a room publishing an update to a player's session getting it, p95." series={[ { name: 'p95', color: SERIES_1 } ]} points={pointsOf(points, x => x.streamDelayP95Ms)} format={formatDuration} dimmed={dimmed} />
                             <ChartCard title="Thread pool queue" description="Work waiting for a thread. A queue that stays up means the server is behind." series={[ { name: 'Waiting', color: SERIES_1 } ]} points={pointsOf(points, x => x.threadPoolQueue)} format={number} dimmed={dimmed} />
                             <ChartCard title="Garbage collection pauses" series={[ { name: 'Paused', color: SERIES_1 } ]} points={pointsOf(points, x => x.gcPausePercent)} format={percent} dimmed={dimmed} />
                         </div>

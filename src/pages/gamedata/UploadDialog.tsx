@@ -6,8 +6,8 @@ import { type AssetUpload, BUNDLE_KINDS, type BundleKind, GAMEDATA_FILE_NAMES, t
 import { Modal, ModalBody } from '#/components/Modal';
 import { Button, ErrorNotice, TextButton } from '#/components/ui';
 import { cx } from '#/lib/cx';
+import { formatBytes } from '#/lib/format';
 import { BundleDetail } from '#/pages/assets/BundleDetail';
-import { formatBytes } from '#/pages/assets/format';
 
 import { configJson, useConfigHandoff } from './configHandoff';
 import { NewFurnitureDialog } from './NewFurnitureDialog';

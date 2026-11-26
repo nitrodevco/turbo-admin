@@ -6,10 +6,11 @@ import { type CommunityGoal, GOAL_MODES, useCommunityGoals, useDeleteCommunityGo
 import { ask } from '#/components/confirm';
 import { OpenRow } from '#/components/RowList';
 import { Badge, Button, EmptyState, ErrorNotice, Input, Labeled, Loading, Panel, Select, SuccessNotice, TextLink, WarningNotice } from '#/components/ui';
+import { inputToIso, isoTime, isoToInput } from '#/lib/time';
 
 import type { HotelViewDraft } from './draft';
 import { slotsHolding } from './hooks';
-import { BOTTOM_SLOT, BOTTOM_SLOT_WIDGETS, inputToIso, isoTime, isoToInput, slotKey, widgetLabel } from './model';
+import { BOTTOM_SLOT, BOTTOM_SLOT_WIDGETS, slotKey, widgetLabel } from './model';
 import { PageField } from './parts';
 import { Placement } from './Placement';
 

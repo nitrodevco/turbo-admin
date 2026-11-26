@@ -1,6 +1,6 @@
 import type { RewardTrack, RewardTrackListItem, RewardTrackPrize, RewardTrackProductType, RewardTrackTask } from '#/api/rewardTracks';
 import type { BadgeTone } from '#/components/ui';
-import { isoTime } from '#/pages/hotel-view/model';
+import { isoTime } from '#/lib/time';
 
 /**
  * The client's track themes (AS3 `RewardTrackTheme.resolve`): dark, medium, light and active, by

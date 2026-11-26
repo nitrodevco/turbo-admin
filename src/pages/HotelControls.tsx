@@ -11,6 +11,7 @@ import { ask, type Question } from '#/components/confirm';
 import { RestartServer } from '#/components/RestartServer';
 import { Button, ErrorNotice, Input, Labeled, Loading, Segmented, SuccessNotice, Textarea } from '#/components/ui';
 import { cx } from '#/lib/cx';
+import { formatClock } from '#/lib/time';
 
 const MAINTENANCE_MINUTES = [
     { value: '0', label: 'Now' },
@@ -33,8 +34,6 @@ type Tone = 'neutral' | 'warn' | 'bad';
 const STATE_TONES: Record<Tone, string> = { neutral: 'text-muted', warn: 'text-warn', bad: 'text-bad' };
 
 /** A time of day as the controls show it: hours and minutes. */
-const clock = (utc: string) => new Date(utc).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-
 /**
  * One of the controls, as a tile: its icon, its name and how it stands now (maintenance at
  * 12:30, the welcome message off). Picking it opens its form under the tiles.
@@ -172,7 +171,7 @@ export const HotelControls = ({ phase, atUtc = null }: { phase: AvailabilityPhas
     const restarting = !!restart && (restart.scheduled || restart.restarting);
     // A restart is a shutdown the host starts again: it shows on its own control.
     const shuttingDown = !restarting && (phase === 'ShutdownScheduled' || phase === 'ShuttingDown');
-    const at = atUtc ? ` at ${clock(atUtc)}` : '';
+    const at = atUtc ? ` at ${formatClock(atUtc)}` : '';
     const controls: Control[] = [
         ...(can.alert ? [ 'alert' as const ] : []),
         ...(can.maintenance ? [ 'maintenance' as const ] : []),

@@ -2,11 +2,9 @@ import { useEffect, useState } from 'react';
 
 import { type AssetComparison, type AssetTarget, type BundleKind, comparedImage, type CompareEntry, type CompareResult, type CompareTexts, type CompareWindow, type DiffChange, useTargetCompare } from '#/api/bundles';
 import { Modal, ModalBody } from '#/components/Modal';
-import { Badge, type BadgeTone, EmptyState, ErrorNotice, Loading, TextButton } from '#/components/ui';
+import { Ago, Badge, type BadgeTone, EmptyState, ErrorNotice, Loading, TextButton } from '#/components/ui';
 import { cx } from '#/lib/cx';
-import { fromNow } from '#/lib/time';
-
-import { formatBytes, formatTime } from './format';
+import { formatBytes } from '#/lib/format';
 
 const RESULTS: Record<CompareResult, { label: string; tone: BadgeTone }> = {
     changed: { label: 'changed', tone: 'amber' },
@@ -188,7 +186,7 @@ const Entries = ({ targetId, item }: { targetId: number; item: AssetComparison }
 const Provenance = ({ item }: { item: AssetComparison }) => (
     <p className="text-xs text-muted">
         {item.source ? `Hotel's copy ${SOURCES[item.source]}` : 'Hotel\'s copy'}
-        {item.updatedAt && <span title={formatTime(item.updatedAt)}>{`, changed ${fromNow(item.updatedAt)}`}</span>}
+        {item.updatedAt && <>, changed <Ago at={item.updatedAt} /></>}
         {(item.stampBefore || item.stampAfter) && (
             <>
                 {', build '}

@@ -7,7 +7,7 @@ import { celebrate, toast, toastError } from '#/components/toast';
 import { Badge, Button, ErrorNotice, Input, Labeled, Loading, PageBody, PageHeader, Panel, Switch } from '#/components/ui';
 import { cx } from '#/lib/cx';
 import { usePathTab } from '#/lib/tabs';
-import { inputToIso, isoToInput } from '#/pages/hotel-view/model';
+import { inputToIso, isoToInput } from '#/lib/time';
 
 import { GamePreview } from './GamePreview';
 import { useGamePreviewUrl, useTrackNames } from './hooks';

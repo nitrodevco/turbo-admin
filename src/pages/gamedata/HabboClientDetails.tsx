@@ -6,11 +6,8 @@ import { type HabboClientRelease, type HabboClientStatus, useForgetHabboClientRe
 import { ask } from '#/components/confirm';
 import { toastError } from '#/components/toast';
 import { Badge, IconButton, Label } from '#/components/ui';
+import { formatBytes } from '#/lib/format';
 import { fromNow } from '#/lib/time';
-
-const megabytes = (bytes: number) => `${(bytes / 1024 / 1024).toFixed(1)} MB`;
-
-const size = (bytes: number) => (bytes < 1024 * 1024 ? `${Math.max(1, Math.round(bytes / 1024))} KB` : megabytes(bytes));
 
 const KINDS: Record<HabboClientBuiltLibrary['kind'], string> = {
     avatar: 'avatar data',
@@ -33,7 +30,7 @@ const ReleaseRow = ({ release, followed, canManage }: { release: HabboClientRele
                 {followed && <Badge tone="green">built from</Badge>}
                 {release.environments.map(x => <Badge key={x}>{x}</Badge>)}
                 <span className="text-xs text-muted">
-                    {[ `${release.libraries.length} libraries`, megabytes(release.size), release.builtAt ? `Habbo built it ${fromNow(release.builtAt)}` : null, `downloaded ${fromNow(release.downloadedAt)}` ].filter(Boolean).join(' · ')}
+                    {[ `${release.libraries.length} libraries`, formatBytes(release.size), release.builtAt ? `Habbo built it ${fromNow(release.builtAt)}` : null, `downloaded ${fromNow(release.downloadedAt)}` ].filter(Boolean).join(' · ')}
                 </span>
                 {canManage && !followed && (
                     <IconButton
@@ -81,7 +78,7 @@ export const HabboClientDetails = ({ client, build, canManage }: { client: Habbo
                                 <span className="min-w-0 font-mono text-sm">{x.library}</span>
                                 <Badge>{KINDS[x.kind]}</Badge>
                                 {x.uploaded && <span title="An upload in the library stands in its place: a build leaves it alone. Delete the upload to have it built."><Badge tone="red">your upload, not built</Badge></span>}
-                                <span className="ml-auto text-xs text-muted">{[ size(x.size), x.updatedAt ? `updated ${fromNow(x.updatedAt)}` : null ].filter(Boolean).join(' · ')}</span>
+                                <span className="ml-auto text-xs text-muted">{[ formatBytes(x.size), x.updatedAt ? `updated ${fromNow(x.updatedAt)}` : null ].filter(Boolean).join(' · ')}</span>
                             </li>
                         ))}
                     </ul>

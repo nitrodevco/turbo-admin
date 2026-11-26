@@ -42,12 +42,9 @@ export const useDayRange = (): { range: DayRange; days: string; setDays: (days: 
 export const number = (value: number) => Math.round(value).toLocaleString();
 export const fps = (value: number) => `${Math.round(value)} fps`;
 export const megabytes = (value: number) => `${Math.round(value).toLocaleString()} MB`;
-export const ms = (value: number) => (value >= 1000 ? `${(value / 1000).toLocaleString(undefined, { maximumFractionDigits: 1 })} s` : `${Math.round(value).toLocaleString()} ms`);
 
 /** A day on a chart's axis and in its readout. */
 export const dateOf = (at: number) => new Date(at).toLocaleDateString([], { day: 'numeric', month: 'short', timeZone: 'UTC' });
-
-export const when = (iso: string) => new Date(iso).toLocaleString();
 
 /** Days as chart points, a value per series; a day nothing was reported on is a gap, not a zero. */
 export const dayPoints = <T extends { day: string }>(days: T[], has: (day: T) => boolean, ...pick: ((day: T) => number)[]): ChartPoint[] =>

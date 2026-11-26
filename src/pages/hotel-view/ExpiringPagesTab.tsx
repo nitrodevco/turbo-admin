@@ -5,9 +5,10 @@ import { promoImageUrl, useClientAssets } from '#/api/assets';
 import { type ExpiringPage, useDeleteExpiringPage, useExpiringPages, useHotelViewTexts, useSaveExpiringPage, useSaveHotelView } from '#/api/hotelView';
 import { ask } from '#/components/confirm';
 import { Badge, Button, EmptyState, ErrorNotice, Input, Labeled, Loading, Panel } from '#/components/ui';
+import { inputToIso, isoTime, isoToInput } from '#/lib/time';
 
 import type { HotelViewDraft } from './draft';
-import { inputToIso, isoTime, isoToInput, pageExpiryTextKey } from './model';
+import { pageExpiryTextKey } from './model';
 import { PageField } from './parts';
 import { Placement } from './Placement';
 

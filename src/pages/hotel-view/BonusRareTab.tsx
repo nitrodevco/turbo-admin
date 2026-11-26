@@ -7,12 +7,13 @@ import { ask } from '#/components/confirm';
 import { OpenRow } from '#/components/RowList';
 import { Badge, Button, EmptyState, ErrorNotice, Input, Labeled, Loading, Panel, Select, SuccessNotice, Thumb } from '#/components/ui';
 import { cx } from '#/lib/cx';
+import { inputToIso, isoTime, isoToInput } from '#/lib/time';
 import { ProductIcon } from '#/pages/catalog/ProductIcon';
 import { ItemPicker } from '#/pages/catalog/ProductsEditor';
 
 import type { HotelViewDraft } from './draft';
 import { useResolveImage } from './hooks';
-import { COMMON, inputToIso, isoTime, isoToInput, LIBRARY_ADDRESS } from './model';
+import { COMMON, LIBRARY_ADDRESS } from './model';
 import { ImageField } from './parts';
 import { Placement } from './Placement';
 

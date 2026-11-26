@@ -4,7 +4,8 @@ import { type ScheduledTask, type ScheduledTaskOutcome, useRunScheduledTask, use
 import { toast, toastError } from '#/components/toast';
 import { Ago, Badge, type BadgeTone, Button, EmptyState, ErrorNotice, Loading, PageBody, PageHeader, Panel } from '#/components/ui';
 import { useHubTabs } from '#/layout/nav';
-import { fromNow } from '#/lib/time';
+import { formatDuration } from '#/lib/format';
+import { formatDateTime, fromNow } from '#/lib/time';
 
 const OUTCOMES: Record<ScheduledTaskOutcome, { label: string; tone: BadgeTone }> = {
     Succeeded: { label: 'ok', tone: 'green' },
@@ -12,8 +13,6 @@ const OUTCOMES: Record<ScheduledTaskOutcome, { label: string; tone: BadgeTone }>
     Cancelled: { label: 'cancelled', tone: 'amber' },
     Lost: { label: 'lost', tone: 'amber' },
 };
-
-const duration = (ms: number) => (ms < 1000 ? `${ms.toLocaleString()} ms` : `${(ms / 1000).toLocaleString(undefined, { maximumFractionDigits: 1 })} s`);
 
 /** One task: its schedule in words, its last and next run, and Run now for staff who manage plugins. */
 const TaskRow = ({ task, canManage }: { task: ScheduledTask; canManage: boolean }) => {
@@ -39,19 +38,19 @@ const TaskRow = ({ task, canManage }: { task: ScheduledTask; canManage: boolean 
                 )}
             </div>
             <div className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-muted">
-                <span title={task.lastRunAt ?? undefined}>
+                <span title={task.lastRunAt ? formatDateTime(task.lastRunAt) : undefined}>
                     Last run:
                     {' '}
                     {task.lastRunAt
-                        ? `${fromNow(task.lastRunAt)}, ${duration(task.lastDurationMs ?? 0)}${task.lastManual ? ' (run now)' : ''}`
+                        ? `${fromNow(task.lastRunAt)}, ${formatDuration(task.lastDurationMs ?? 0)}${task.lastManual ? ' (run now)' : ''}`
                         : 'never'}
                 </span>
-                <span title={task.nextRunAt ?? undefined}>
+                <span>
                     Next run:
                     {' '}
                     {task.nextRunAt ? <Ago at={task.nextRunAt} /> : 'none scheduled'}
                 </span>
-                {task.runningSince && <span title={task.runningSince}>Running since {fromNow(task.runningSince)}</span>}
+                {task.runningSince && <span>Running since <Ago at={task.runningSince} /></span>}
                 {task.skipped > 0 && <span>{task.skipped.toLocaleString()} skipped (the run before was still going)</span>}
                 {task.servers > 1 && <span>On {task.servers.toLocaleString()} servers, run on one</span>}
             </div>

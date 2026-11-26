@@ -8,10 +8,10 @@ import { ask } from '#/components/confirm';
 import { OpenRow } from '#/components/RowList';
 import { Tabs } from '#/components/Tabs';
 import { toast, toastError } from '#/components/toast';
-import { Badge, Button, ButtonLink, EmptyState, ErrorNotice, FileButton, Loading, PageBody, PageHeader, Panel, WarningNotice } from '#/components/ui';
+import { Ago, Badge, Button, ButtonLink, EmptyState, ErrorNotice, FileButton, Loading, PageBody, PageHeader, Panel, WarningNotice } from '#/components/ui';
 import { useHubTabs } from '#/layout/nav';
 import { cx } from '#/lib/cx';
-import { fromNow } from '#/lib/time';
+import { formatDateTime, fromNow } from '#/lib/time';
 import { JobPanel } from '#/pages/assets/JobPanel';
 
 import { PLUGIN_STATES } from './plugins/pluginStates';
@@ -107,7 +107,7 @@ const PluginInspector = ({ pluginKey }: { pluginKey: string }) => {
                                         <span className="flex flex-wrap items-center gap-2">
                                             <Badge tone={issue.kind === 'patch.applied' ? 'green' : (issue.kind === 'patch.conflict' || issue.kind === 'patch.ineffective') ? 'amber' : 'red'}>{ISSUE_LABELS[issue.kind] ?? issue.kind}</Badge>
                                             <code className="break-all">{issue.subject}</code>
-                                            <span className="text-muted" title={issue.lastReportedUtc}>{issue.clients} {issue.clients === 1 ? 'player' : 'players'}, {fromNow(issue.lastReportedUtc)}</span>
+                                            <span className="text-muted" title={formatDateTime(issue.lastReportedUtc)}>{issue.clients} {issue.clients === 1 ? 'player' : 'players'}, {fromNow(issue.lastReportedUtc)}</span>
                                         </span>
                                         <span className="break-words">{issue.message}</span>
                                     </li>
@@ -211,7 +211,7 @@ const PluginDetail = ({ plugin, source, canManage, canRollback, canUninstall }: 
                 {plugin.loadedAtUtc && (
                     <>
                         <dt className="text-muted">Loaded</dt>
-                        <dd title={plugin.loadedAtUtc}>{fromNow(plugin.loadedAtUtc)}</dd>
+                        <dd><Ago at={plugin.loadedAtUtc} /></dd>
                     </>
                 )}
                 {source && (
@@ -288,7 +288,7 @@ const PluginDetail = ({ plugin, source, canManage, canRollback, canUninstall }: 
                     </Link>
                     {!plugin.dev && (canUninstall
                         ? (
-                                <Button variant="ghost" icon={<Trash2 />} disabled={busy} onClick={() => setUninstalling(true)}>
+                                <Button variant="danger-ghost" icon={<Trash2 />} disabled={busy} onClick={() => setUninstalling(true)}>
                                     Uninstall
                                 </Button>
                             )
@@ -354,10 +354,10 @@ const SourceRow = ({ source, canManage, canInstall, onEdit }: { source: PluginSo
                         {source.latestUrl
                             ? <a href={source.latestUrl} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 font-mono text-accent hover:underline">{source.latestTag}<ExternalLink className="size-3" /></a>
                             : <span className="font-mono">{source.latestTag}</span>}
-                        {source.latestPublishedAtUtc && <span title={source.latestPublishedAtUtc}>{`, published ${fromNow(source.latestPublishedAtUtc)}`}</span>}
+                        {source.latestPublishedAtUtc && <>, published <Ago at={source.latestPublishedAtUtc} /></>}
                     </span>
                 )}
-                {source.checkedAtUtc && <span title={source.checkedAtUtc}>Checked {fromNow(source.checkedAtUtc)}</span>}
+                {source.checkedAtUtc && <span>Checked <Ago at={source.checkedAtUtc} /></span>}
             </div>
             {source.error && <ErrorNotice error={new Error(source.error)} />}
             {canManage && (

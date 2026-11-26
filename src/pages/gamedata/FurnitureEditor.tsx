@@ -10,7 +10,7 @@ import { SearchInput } from '#/components/SearchInput';
 import { toast, toastError } from '#/components/toast';
 import { Ago, Badge, Button, CHECK_CLASS, ErrorNotice, FieldLabel, Input, Loading, Segmented, Select, Switch, Textarea, TextButton, TextLink } from '#/components/ui';
 import { cx } from '#/lib/cx';
-import { formatBytes } from '#/pages/assets/format';
+import { formatBytes } from '#/lib/format';
 
 import { type FieldInfo, FIELDS, SPECIAL_TYPES, USAGE_POLICIES } from './fields';
 import { HandItemPreview } from './HandItemsPage';

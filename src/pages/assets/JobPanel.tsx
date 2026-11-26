@@ -7,9 +7,7 @@ import { ask } from '#/components/confirm';
 import { toastError } from '#/components/toast';
 import { Badge, type BadgeTone, Button, ErrorNotice, Panel } from '#/components/ui';
 import { cx } from '#/lib/cx';
-import { fromNow } from '#/lib/time';
-
-import { formatTime } from './format';
+import { formatDateTime, fromNow } from '#/lib/time';
 
 const STATUS_TONES: Record<AssetJob['status'], BadgeTone> = { running: 'accent', done: 'green', failed: 'red', canceled: 'amber' };
 
@@ -80,7 +78,7 @@ export const JobPanel = ({ job, canManage, compact = false, actions }: { job: As
                     </Badge>
                 </span>
             )}
-            description={<span title={formatTime(job.finishedAt ?? job.startedAt)}>{job.title === KIND_NAMES[job.kind] ? when.charAt(0).toUpperCase() + when.slice(1) : `${KIND_NAMES[job.kind]}, ${when}`}</span>}
+            description={<span title={formatDateTime(job.finishedAt ?? job.startedAt)}>{job.title === KIND_NAMES[job.kind] ? when.charAt(0).toUpperCase() + when.slice(1) : `${KIND_NAMES[job.kind]}, ${when}`}</span>}
             actions={(
                 <>
                     {actions}

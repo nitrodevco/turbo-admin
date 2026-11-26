@@ -6,9 +6,9 @@ import { ARTICLE_LINK_TYPES, type PromoArticle, type PromoArticleDraft, useDelet
 import type { ImageAccept } from '#/api/media';
 import { ask } from '#/components/confirm';
 import { Badge, Button, EmptyState, ErrorNotice, FieldLabel, IconButton, Input, Labeled, Loading, Panel, Select, Switch, Textarea } from '#/components/ui';
+import { inputToIso, isoTime, isoToInput } from '#/lib/time';
 
 import type { HotelViewDraft } from './draft';
-import { inputToIso, isoTime, isoToInput } from './model';
 import { ImageField } from './parts';
 import { Placement } from './Placement';
 

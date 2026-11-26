@@ -12,6 +12,7 @@ import { toast, toastError } from '#/components/toast';
 import { Badge, Button, Chip, EmptyState, ErrorNotice, IconButton, Input, Kv, Labeled, Loading, PageBody, PageHeader, Panel, Segmented, Select, TextLink } from '#/components/ui';
 import { cx, rowFill } from '#/lib/cx';
 import { useDebounced } from '#/lib/debounce';
+import { formatDateTime } from '#/lib/time';
 import { CHECKS } from '#/pages/catalog/CatalogImageThumb';
 import { apiImageQuery } from '#/preview/images';
 
@@ -125,7 +126,7 @@ const Detail = ({ id, canManage, onGone }: { id: string; canManage: boolean; onG
             <div className="grid grid-cols-2 gap-2">
                 <Kv label="Size">{image.width && image.height ? `${image.width} x ${image.height}` : 'unknown'}</Kv>
                 <Kv label="File">{sizeOf(image.bytes)}</Kv>
-                <Kv label="Changed">{image.modifiedUtc ? new Date(image.modifiedUtc).toLocaleString() : 'unknown'}</Kv>
+                <Kv label="Changed">{image.modifiedUtc ? formatDateTime(image.modifiedUtc) : 'unknown'}</Kv>
             </div>
             <div className="flex flex-col gap-1">
                 <h3 className="font-mono text-2xs font-medium tracking-[0.08em] text-muted uppercase">What a field stores</h3>
@@ -187,7 +188,7 @@ const Detail = ({ id, canManage, onGone }: { id: string; canManage: boolean; onG
                 </form>
             )}
             {deletable && (
-                <Button variant="ghost" icon={<Trash2 />} className="self-start" disabled={del.isPending} onClick={remove}>Delete</Button>
+                <Button variant="danger-ghost" icon={<Trash2 />} className="self-start" disabled={del.isPending} onClick={remove}>Delete</Button>
             )}
             {inUse && (
                 <div className="rounded-lg border border-line bg-subtle p-3 text-sm" role="alert" data-testid="media-in-use">

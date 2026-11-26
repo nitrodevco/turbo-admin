@@ -10,6 +10,7 @@ import { ImageInput } from '#/components/ImageInput';
 import { toast } from '#/components/toast';
 import { Button, EmptyState, ErrorNotice, IconButton, Input, Labeled, Segmented, Select } from '#/components/ui';
 import { cx } from '#/lib/cx';
+import { isoToLocalInput, localInputToIso } from '#/lib/time';
 
 import { FEATURED_IMAGE } from './images';
 import { givesOf } from './offers';
@@ -28,16 +29,6 @@ const LINK_TYPES = [
     { value: 'offer', label: 'An offer' },
     { value: 'product', label: 'A product' },
 ];
-
-/** A UTC time as a datetime-local input shows it, in the viewer's own time. */
-const toLocal = (utc: string | null) => {
-    if (!utc)
-        return '';
-
-    const at = new Date(utc);
-
-    return new Date(at.getTime() - at.getTimezoneOffset() * 60_000).toISOString().slice(0, 16);
-};
 
 const SLOT_NAMES = [ 'Big, on the left', 'Second', 'Third', 'Fourth' ];
 
@@ -107,8 +98,8 @@ const ItemCard = ({ item, index, tree, offers, onChange, onRemove, disabled }: {
                         <p className="text-xs text-muted">A product code is for in-app purchases; on the web, clicking it does nothing.</p>
                     </>
                 )}
-                <Labeled label="Until" hint={item.expiresAtUtc ? 'It comes off the front page then (no countdown is shown, as in Habbo).' : 'Empty: until it is taken off.'}>
-                    <Input type="datetime-local" value={toLocal(item.expiresAtUtc)} onChange={event => set('expiresAtUtc', event.target.value ? new Date(event.target.value).toISOString() : null)} disabled={disabled} aria-label="Until" />
+                <Labeled label="Until (your time)" hint={item.expiresAtUtc ? 'It comes off the front page then (no countdown is shown, as in Habbo).' : 'Empty: until it is taken off.'}>
+                    <Input type="datetime-local" value={isoToLocalInput(item.expiresAtUtc)} onChange={event => set('expiresAtUtc', localInputToIso(event.target.value))} disabled={disabled} aria-label="Until" />
                 </Labeled>
             </div>
         </li>

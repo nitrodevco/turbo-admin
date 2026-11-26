@@ -4,9 +4,10 @@ import { type ClientHealthDevice, type ClientHealthFilter, type ClientHealthRoom
 import { Row, RowList, SortedRowList } from '#/components/RowList';
 import { EmptyState, ErrorNotice, Input, Loading, PageBody, PageHeader, Panel, Select, Stat } from '#/components/ui';
 import { useHubTabs } from '#/layout/nav';
+import { formatDuration } from '#/lib/format';
 import type { SortKeys } from '#/lib/sort';
 
-import { dayPoints, fps, LOGIN_STEPS, megabytes, ms, NO_LAG_HINT, NO_LATENCY_HINT, NO_PERFORMANCE_HINT, NO_ROOM_FPS_HINT, number, SERIES_1, SERIES_2, useDayRange } from './format';
+import { dayPoints, fps, LOGIN_STEPS, megabytes, NO_LAG_HINT, NO_LATENCY_HINT, NO_PERFORMANCE_HINT, NO_ROOM_FPS_HINT, number, SERIES_1, SERIES_2, useDayRange } from './format';
 import { DayChartCard, Figure, RangePicker } from './shared';
 
 const DEVICE_COLUMNS = [
@@ -129,7 +130,7 @@ export const ClientHealthPage = () => {
                     <>
                         <section aria-label="Over the range" className="grid grid-cols-2 gap-3 xl:grid-cols-4">
                             <Stat label="Frame rate, median" value={totals.latest?.fpsP50 ? fps(totals.latest.fpsP50) : '-'} detail={totals.latest && `p95 ${fps(totals.latest.fpsP95)}, latest day`} />
-                            <Stat label="Latency, median" value={totals.latest?.latencyP50Ms ? ms(totals.latest.latencyP50Ms) : '-'} detail={totals.latest && `p95 ${ms(totals.latest.latencyP95Ms)}, latest day`} />
+                            <Stat label="Latency, median" value={totals.latest?.latencyP50Ms ? formatDuration(totals.latest.latencyP50Ms) : '-'} detail={totals.latest && `p95 ${formatDuration(totals.latest.latencyP95Ms)}, latest day`} />
                             <Stat label="Performance reports" value={number(totals.reports)} detail={`${data.devices.length} browser and device kinds`} />
                             <Stat label="Chat lag warnings" value={number(totals.lag)} tone={totals.lag > 0 ? 'warn' : undefined} detail={`in ${data.rooms.filter(x => x.lagWarnings > 0).length} rooms`} />
                         </section>
@@ -147,7 +148,7 @@ export const ClientHealthPage = () => {
                                 title="Latency"
                                 series={[ { name: 'Median', color: SERIES_1 }, { name: 'p95', color: SERIES_2 } ]}
                                 points={dayPoints(data.days, x => x.latencyReports > 0, x => x.latencyP50Ms, x => x.latencyP95Ms)}
-                                format={ms}
+                                format={formatDuration}
                                 dimmed={dimmed}
                                 empty={NO_LATENCY_HINT}
                             />
@@ -187,7 +188,7 @@ export const ClientHealthPage = () => {
                                                     <Figure label="FPS median">{x.fpsP50 ? fps(x.fpsP50) : '-'}</Figure>
                                                     <Figure label="FPS p95">{x.fpsP95 ? fps(x.fpsP95) : '-'}</Figure>
                                                     <Figure label="Memory">{x.reports ? megabytes(x.memoryP50Mb) : '-'}</Figure>
-                                                    <Figure label="Latency">{x.latencyReports ? ms(x.latencyP50Ms) : '-'}</Figure>
+                                                    <Figure label="Latency">{x.latencyReports ? formatDuration(x.latencyP50Ms) : '-'}</Figure>
                                                     <Figure label="Slow frames">{number(x.slowUpdates)}</Figure>
                                                 </Row>
                                             )}
@@ -209,7 +210,7 @@ export const ClientHealthPage = () => {
                                                         </Link>
                                                         <Figure label="Chat lag">{number(x.lagWarnings)}</Figure>
                                                         <Figure label="FPS median">{x.fpsSamples ? fps(x.fpsP50) : '-'}</Figure>
-                                                        <Figure label="Latency">{x.latencyReports ? ms(x.latencyP50Ms) : '-'}</Figure>
+                                                        <Figure label="Latency">{x.latencyReports ? formatDuration(x.latencyP50Ms) : '-'}</Figure>
                                                         <Figure label="Player days">{number(x.playerDays)}</Figure>
                                                     </Row>
                                                 )}
@@ -229,8 +230,8 @@ export const ClientHealthPage = () => {
                                                         </div>
                                                         <Figure label="Logins">{number(x.sessions)}</Figure>
                                                         <Figure label="Of the first">{`${Math.round((x.sessions / firstStep) * 100)}%`}</Figure>
-                                                        <Figure label="Median">{x.sessions ? ms(x.p50Ms) : '-'}</Figure>
-                                                        <Figure label="p95">{x.sessions ? ms(x.p95Ms) : '-'}</Figure>
+                                                        <Figure label="Median">{x.sessions ? formatDuration(x.p50Ms) : '-'}</Figure>
+                                                        <Figure label="p95">{x.sessions ? formatDuration(x.p95Ms) : '-'}</Figure>
                                                     </Row>
                                                 ))}
                                             </RowList>

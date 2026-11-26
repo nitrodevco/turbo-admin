@@ -4,9 +4,10 @@ import { useNavigate, useParams } from 'react-router';
 import { type CampaignCalendar, useCampaignCalendars, useSaveCampaignCalendar } from '#/api/campaigns';
 import { toast, toastError } from '#/components/toast';
 import { Badge, Button, EmptyState, ErrorNotice, Loading, PageBody, PageHeader, Panel, Switch, Table, Td, Th } from '#/components/ui';
+import { formatDateTime } from '#/lib/time';
 
 import { CalendarEditor } from './CalendarEditor';
-import { currentDay, localText, STATUS, statusOf, utcText } from './model';
+import { currentDay, STATUS, statusOf, utcText } from './model';
 
 /** Where a calendar is today: its day, or how far it is from its days. */
 const TodayText = ({ calendar }: { calendar: CampaignCalendar }) => {
@@ -58,7 +59,7 @@ const CalendarList = ({ calendars, onOpen }: { calendars: CampaignCalendar[]; on
                             </Td>
                             <Td>
                                 <span className="block font-mono text-xs">{utcText(calendar.startsAt)}</span>
-                                <span className="block text-2xs text-muted">{localText(calendar.startsAt)} your time</span>
+                                <span className="block text-2xs text-muted">{formatDateTime(calendar.startsAt)} your time</span>
                             </Td>
                             <Td className="text-xs"><TodayText calendar={calendar} /></Td>
                             <Td className="text-right font-mono text-xs tabular-nums">{calendar.rewards.length} <span className="text-muted">/ {calendar.days} days</span></Td>

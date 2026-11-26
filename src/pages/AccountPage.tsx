@@ -44,7 +44,7 @@ const PasskeyRow = ({ passkey, isLast, onRemoved }: { passkey: AccountPasskey; i
                 {isLast && <div className="mt-1 text-xs text-muted">Your only passkey, so it cannot be removed. Add another first.</div>}
                 {error !== null && <div className="mt-2"><ErrorNotice error={error} /></div>}
             </div>
-            <Button variant="ghost" icon={<Trash2 />} onClick={handleRemove} disabled={busy || isLast}>
+            <Button variant="danger-ghost" icon={<Trash2 />} onClick={handleRemove} disabled={busy || isLast}>
                 Remove
             </Button>
         </li>

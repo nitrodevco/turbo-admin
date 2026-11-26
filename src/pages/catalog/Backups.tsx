@@ -5,11 +5,10 @@ import { type CatalogBackup, catalogCalls, type CatalogTree, useCatalogBackups, 
 import { ask } from '#/components/confirm';
 import { toast, toastError } from '#/components/toast';
 import { Badge, Button, Checkbox, EmptyState, ErrorNotice, IconButton, Input, Loading } from '#/components/ui';
+import { formatDateTime } from '#/lib/time';
 
 /** The longest name a backup takes, as the server holds it. */
 const NAME_MAX_LENGTH = 100;
-
-const takenAt = (utc: string) => new Date(utc).toLocaleString([], { dateStyle: 'medium', timeStyle: 'short' });
 
 const BackupRow = ({ backup, canManage, busy, onRollback, onDelete }: { backup: CatalogBackup; canManage: boolean; busy: boolean; onRollback: () => void; onDelete: () => void }) => (
     <li className="flex flex-wrap items-center gap-x-4 gap-y-2 px-4 py-3">
@@ -19,7 +18,7 @@ const BackupRow = ({ backup, canManage, busy, onRollback, onDelete }: { backup: 
                 {backup.automatic && <Badge tone="amber">Automatic</Badge>}
             </div>
             <div className="truncate text-xs text-muted">
-                {takenAt(backup.takenAtUtc)}
+                {formatDateTime(backup.takenAtUtc)}
                 {' · '}
                 {backup.takenByName ?? `player ${backup.takenById}`}
             </div>

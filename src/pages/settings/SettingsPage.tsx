@@ -8,10 +8,9 @@ import { ListToolbar } from '#/components/ListToolbar';
 import { RestartServer } from '#/components/RestartServer';
 import { OpenRow } from '#/components/RowList';
 import { SearchInput } from '#/components/SearchInput';
-import { Badge, Button, EmptyState, ErrorNotice, Input, Label, Labeled, ListPanel, Loading, PageBody, PageHeader, Panel, Select, Switch, Textarea, TextLink, WarningNotice } from '#/components/ui';
+import { Ago, Badge, Button, EmptyState, ErrorNotice, Input, Label, Labeled, ListPanel, Loading, PageBody, PageHeader, Panel, Select, Switch, Textarea, TextLink, WarningNotice } from '#/components/ui';
 import { cx } from '#/lib/cx';
 import { usePathTab } from '#/lib/tabs';
-import { fromNow } from '#/lib/time';
 
 const TABS = [
     { value: 'all', label: 'Settings', to: '/settings/all' },
@@ -371,7 +370,7 @@ const HistoryTab = () => {
                 <ul className={cx('divide-y divide-line transition-opacity', isFetching && 'opacity-60')}>
                     {data.items.map(change => (
                         <li key={change.id} className="grid gap-x-4 gap-y-1 px-4 py-2.5 sm:grid-cols-[8rem_minmax(12rem,20rem)_1fr_6rem]">
-                            <span className="text-xs text-muted" title={change.changedAt}>{fromNow(change.changedAt)}</span>
+                            <Ago at={change.changedAt} className="text-xs text-muted" />
                             <span className="truncate font-mono text-ui">{change.path}</span>
                             <span className="min-w-0 font-mono text-xs break-words">
                                 {change.secret && <span className="text-muted">secret replaced</span>}

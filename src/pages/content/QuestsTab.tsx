@@ -6,11 +6,7 @@ import { ask } from '#/components/confirm';
 import { toast, toastError } from '#/components/toast';
 import { Badge, Button, EmptyState, ErrorNotice, IconButton, Input, Labeled, Loading, Panel, Switch } from '#/components/ui';
 import { plural } from '#/lib/plural';
-import { formatDateTime } from '#/lib/time';
-
-/** A date for an input of type datetime-local, in UTC, and back. */
-const toInput = (utc: string | null) => (utc ? utc.slice(0, 16) : '');
-const fromInput = (value: string) => (value ? `${value}:00Z` : null);
+import { formatDateTime, inputToIso, isoToInput } from '#/lib/time';
 
 const CampaignForm = ({ start, busy, onSave, onCancel }: { start: QuestCampaignInput; busy: boolean; onSave: (input: QuestCampaignInput) => void; onCancel: () => void }) => {
     const [ draft, setDraft ] = useState(start);
@@ -31,7 +27,7 @@ const CampaignForm = ({ start, busy, onSave, onCancel }: { start: QuestCampaignI
                     <Input type="number" value={draft.sortOrder} onChange={event => setDraft({ ...draft, sortOrder: Number(event.target.value) })} className="w-full font-mono" />
                 </Labeled>
                 <Labeled label="Ends (UTC)" hint="Empty for one that never ends; set, the quest window shows its time left.">
-                    <Input type="datetime-local" value={toInput(draft.endsAtUtc)} onChange={event => setDraft({ ...draft, endsAtUtc: fromInput(event.target.value) })} className="w-full font-mono" />
+                    <Input type="datetime-local" value={isoToInput(draft.endsAtUtc)} onChange={event => setDraft({ ...draft, endsAtUtc: inputToIso(event.target.value) })} className="w-full font-mono" />
                 </Labeled>
             </div>
             <Switch label="On" checked={draft.enabled} onChange={enabled => setDraft({ ...draft, enabled })} />

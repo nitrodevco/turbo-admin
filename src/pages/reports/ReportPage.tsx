@@ -11,7 +11,7 @@ import { Badge, Button, Checkbox, EmptyState, ErrorNotice, Kv, Loading, PageBody
 import { cx } from '#/lib/cx';
 import { plural } from '#/lib/plural';
 import type { SortKeys } from '#/lib/sort';
-import { formatDateTime, fromNow } from '#/lib/time';
+import { formatClock, formatDateTime, fromNow } from '#/lib/time';
 
 import { CLOSE_REASONS, sanctionLabel, SOURCES } from './labels';
 import { PlayerLink, StateBadge } from './parts';
@@ -25,8 +25,6 @@ const RELATED_KEYS: SortKeys<ReportItem> = {
 };
 
 /** A chat line's time of day: the lines of one report are minutes apart. */
-const timeOf = (utc: string) => new Date(utc).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-
 const APPEALS: Record<ReportDetailResponse['appeal'], string | null> = {
     none: null,
     appealed: 'Appealed, waiting',
@@ -173,7 +171,7 @@ export const ReportPage = () => {
                                             <RowList columns="max-content minmax(0,9rem) minmax(0,1fr)" headers={[ { label: 'When' }, { label: 'Who' }, { label: 'Said' } ]}>
                                                 {detail.lines.map((line, index) => (
                                                     <Row key={index} className={cx(line.reported && 'bg-bad-soft hover:bg-bad-soft')}>
-                                                        <WhenCell at={line.atUtc} format={timeOf} />
+                                                        <WhenCell at={line.atUtc} format={formatClock} />
                                                         <span className="truncate"><PlayerLink id={line.playerId} name={line.playerName} linked={linked} /></span>
                                                         <span className="basis-full wrap-anywhere sm:basis-auto">{line.text}</span>
                                                     </Row>

@@ -4,6 +4,7 @@ import { type FormEvent, useState } from 'react';
 import { post } from '#/api/client';
 import type { PasskeyLinkResponse } from '#/api/types';
 import { Button, ErrorNotice, Field, Input, PageBody, Panel, SuccessNotice, WarningNotice } from '#/components/ui';
+import { formatDateTime } from '#/lib/time';
 import { PermissionsHeader } from '#/pages/permissions/common';
 
 const LinkResult = ({ result }: { result: PasskeyLinkResponse }) => {
@@ -18,7 +19,7 @@ const LinkResult = ({ result }: { result: PasskeyLinkResponse }) => {
         <div className="space-y-3">
             <SuccessNotice>
                 {result.replacesExisting ? 'Passkey reset link' : 'Passkey setup link'} for {result.playerName}. It works once, until{' '}
-                {new Date(result.expiresAtUtc).toLocaleString(undefined, { dateStyle: 'medium', timeStyle: 'short' })}.
+                {formatDateTime(result.expiresAtUtc)}.
             </SuccessNotice>
             {result.replacesExisting && (
                 <WarningNotice>

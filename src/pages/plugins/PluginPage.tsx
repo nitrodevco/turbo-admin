@@ -7,8 +7,7 @@ import { endpointOf, type PluginAction, pluginBlob, type PluginBlock, type Plugi
 import { ask } from '#/components/confirm';
 import { ListToolbar } from '#/components/ListToolbar';
 import { toast, toastError } from '#/components/toast';
-import { Badge, Button, Checkbox, EmptyState, ErrorNotice, Input, Kv, Labeled, Loading, PageBody, PageHeader, Panel, Select, Stat, Table, Td, Textarea, TextLink, Th, WarningNotice } from '#/components/ui';
-import { fromNow } from '#/lib/time';
+import { Ago, Badge, Button, Checkbox, EmptyState, ErrorNotice, Input, Kv, Labeled, Loading, PageBody, PageHeader, Panel, Select, Stat, Table, Td, Textarea, TextLink, Th, WarningNotice } from '#/components/ui';
 
 type Item = Record<string, unknown>;
 
@@ -27,7 +26,7 @@ const Cell = ({ column, value }: { column: PluginColumn; value: unknown }) => {
 
     switch (column.type) {
         case 'time':
-            return <span className="text-xs text-muted" title={String(value)}>{fromNow(String(value))}</span>;
+            return <Ago at={String(value)} className="text-xs text-muted" />;
         case 'bool':
             return value ? <Badge tone="green">yes</Badge> : <span className="text-muted">no</span>;
         case 'badge':

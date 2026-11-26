@@ -7,12 +7,11 @@ import { Modal, ModalBody } from '#/components/Modal';
 import { Pagination } from '#/components/Pagination';
 import { SearchInput } from '#/components/SearchInput';
 import { toast, toastError } from '#/components/toast';
-import { Badge, Button, EmptyState, ErrorNotice, IconButton, Loading, Panel, SuccessNotice, Switch } from '#/components/ui';
+import { Ago, Badge, Button, EmptyState, ErrorNotice, IconButton, Loading, Panel, SuccessNotice, Switch } from '#/components/ui';
 import { cx } from '#/lib/cx';
-import { fromNow } from '#/lib/time';
+import { formatBytes } from '#/lib/format';
 
 import { CompareModal } from './CompareModal';
-import { formatBytes, formatTime } from './format';
 import { TargetForm } from './TargetForm';
 
 /** Where a target sends to, as one line: a folder's path, or the server, its port and its folder. */
@@ -43,7 +42,7 @@ const HistoryModal = ({ target, onClose }: { target: AssetTarget | null; onClose
                     {data.items.map(entry => (
                         <li key={entry.id} className="flex flex-col gap-1 px-4 sm:px-5 py-3 text-sm">
                             <div className="flex flex-wrap items-center gap-2">
-                                <span className="font-medium" title={formatTime(entry.startedAt)}>{fromNow(entry.startedAt)}</span>
+                                <Ago at={entry.startedAt} className="font-medium" />
                                 {entry.playerName && <span className="text-muted">by {entry.playerName}</span>}
                                 {entry.dryRun && <Badge>dry run</Badge>}
                                 {entry.error ? <Badge tone="red">failed</Badge> : !entry.finishedAt && <Badge tone="accent">running</Badge>}
@@ -210,7 +209,7 @@ const TargetCard = ({ target, canManage, busy, onEdit, onHistory }: { target: As
                         ? (
                                 <span className="flex flex-col gap-0.5">
                                     <span className="flex flex-wrap items-center gap-1.5">
-                                        <span title={formatTime(last.startedAt)}>{fromNow(last.startedAt)}</span>
+                                        <Ago at={last.startedAt} />
                                         {last.playerName && <span className="text-muted">by {last.playerName}</span>}
                                         {last.dryRun && <Badge>dry run</Badge>}
                                     </span>

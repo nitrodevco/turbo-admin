@@ -4,19 +4,7 @@ import { type FormEvent, useState } from 'react';
 import { catalogCalls, type CatalogLimited, type CatalogLimitedInput, useCatalogEdit } from '#/api/catalog';
 import { ask } from '#/components/confirm';
 import { Button, ErrorNotice, Input, Labeled, Switch } from '#/components/ui';
-
-/** A UTC time as a datetime-local input shows it, in the viewer's own time. */
-const toLocal = (utc: string | null) => {
-    if (!utc)
-        return '';
-
-    const at = new Date(utc);
-
-    return new Date(at.getTime() - at.getTimezoneOffset() * 60_000).toISOString().slice(0, 16);
-};
-
-/** A datetime-local value back to UTC. */
-const toUtc = (local: string) => (local ? new Date(local).toISOString() : null);
+import { isoToLocalInput, localInputToIso } from '#/lib/time';
 
 const inputOf = (limited: CatalogLimited | null): CatalogLimitedInput => ({
     totalQuantity: limited?.total ?? 100,
@@ -76,11 +64,11 @@ export const LimitedSection = ({ offerId, limited, canManage }: { offerId: numbe
                 <Labeled label="Raffle window (seconds)" hint="Buyers in the first this-many seconds are drawn; 0 is first come, first served.">
                     <Input type="number" min={0} max={3600} value={draft.raffleWindowSeconds} onChange={event => set('raffleWindowSeconds', Number(event.target.value) || 0)} disabled={!canManage} className="font-mono" aria-label="Raffle window" />
                 </Labeled>
-                <Labeled label="On sale from" hint="Empty: now. A later time shows as the next limited item.">
-                    <Input type="datetime-local" value={toLocal(draft.startsAtUtc)} onChange={event => set('startsAtUtc', toUtc(event.target.value))} disabled={!canManage} aria-label="On sale from" />
+                <Labeled label="On sale from (your time)" hint="Empty: now. A later time shows as the next limited item.">
+                    <Input type="datetime-local" value={isoToLocalInput(draft.startsAtUtc)} onChange={event => set('startsAtUtc', localInputToIso(event.target.value))} disabled={!canManage} aria-label="On sale from" />
                 </Labeled>
-                <Labeled label="Until" hint="Empty: until it is sold out.">
-                    <Input type="datetime-local" value={toLocal(draft.endsAtUtc)} onChange={event => set('endsAtUtc', toUtc(event.target.value))} disabled={!canManage} aria-label="Until" />
+                <Labeled label="Until (your time)" hint="Empty: until it is sold out.">
+                    <Input type="datetime-local" value={isoToLocalInput(draft.endsAtUtc)} onChange={event => set('endsAtUtc', localInputToIso(event.target.value))} disabled={!canManage} aria-label="Until" />
                 </Labeled>
             </div>
             <Switch label="On sale" checked={draft.active} onChange={value => set('active', value)} disabled={!canManage} />
@@ -91,8 +79,8 @@ export const LimitedSection = ({ offerId, limited, canManage }: { offerId: numbe
                     <Button variant="secondary" icon={<Save />} disabled={save.isPending} onClick={handleSubmit}>{limited ? 'Save series' : 'Make limited'}</Button>
                     {limited
                         ? !hasSales
-                                ? <Button variant="ghost" icon={<Trash2 />} disabled={remove.isPending} onClick={() => remove.mutate([ offerId, false ])}>No longer limited</Button>
-                                : <Button variant="ghost" icon={<Trash2 />} disabled={remove.isPending} onClick={removeWithSales}>Remove with its sales</Button>
+                                ? <Button variant="danger-ghost" icon={<Trash2 />} disabled={remove.isPending} onClick={() => remove.mutate([ offerId, false ])}>No longer limited</Button>
+                                : <Button variant="danger-ghost" icon={<Trash2 />} disabled={remove.isPending} onClick={removeWithSales}>Remove with its sales</Button>
                         : <Button variant="ghost" onClick={() => setOpen(false)}>Cancel</Button>}
                 </div>
             )}
