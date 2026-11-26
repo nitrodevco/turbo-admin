@@ -1,4 +1,4 @@
-import { CheckCircle2, Menu, TriangleAlert, XCircle } from 'lucide-react';
+import { CheckCircle2, Menu, TriangleAlert, X, XCircle } from 'lucide-react';
 import { type ButtonHTMLAttributes, type FormEventHandler, type InputHTMLAttributes, type ReactNode, type Ref, type SelectHTMLAttributes, type TextareaHTMLAttributes, useId, useState } from 'react';
 import { Link } from 'react-router';
 
@@ -283,8 +283,11 @@ export const Loading = () => (
     </div>
 );
 
-/** The look every text box and drop-down shares, apart from its size. */
-const FIELD_LOOK = 'rounded-lg border border-line bg-canvas text-ink placeholder:text-muted/70 transition-[border-color,box-shadow] hover:border-line-strong focus:border-accent focus:outline-none focus:ring-3 focus:ring-accent/25 disabled:opacity-60 disabled:hover:border-line';
+/**
+ * The look every text box and drop-down shares, apart from its size; and a button that opens a
+ * picker in a field's place (`LogicSelect`, `ImageInput`), sized as the field it stands for.
+ */
+export const FIELD_LOOK = 'rounded-lg border border-line bg-canvas text-ink placeholder:text-muted transition-[border-color,box-shadow] hover:border-line-strong focus:border-accent focus:outline-none focus:ring-3 focus:ring-accent/25 disabled:opacity-60 disabled:hover:border-line';
 
 /**
  * A text box's or a drop-down's whole look. Every control (a button, a field, a segmented row) is
@@ -610,6 +613,30 @@ export const TextButton = ({ className, inline, ...button }: ButtonHTMLAttribute
  */
 export const TextLink = ({ to, inline, title, className, children }: { to: string; inline?: boolean; title?: string; className?: string; children: ReactNode }) => (
     <Link to={to} title={title} className={cx(textAction(inline), className)}>{children}</Link>
+);
+
+/**
+ * A value in a set, in the mono face, with an X that takes it out (`onRemove`, named for screen
+ * readers by `removeLabel`): a word on the filter, a layer a piece hides. Its X is 32px on a phone,
+ * in a 40px tag, and 24px in a 32px one from a tablet up; it reddens when pointed at, as removing
+ * does. `className` for a state only (`border-dashed text-muted`, a value that never applies).
+ */
+export const ValueTag = ({ children, onRemove, removeLabel, disabled, title, className }: { children: ReactNode; onRemove?: () => void; removeLabel?: string; disabled?: boolean; title?: string; className?: string }) => (
+    <span title={title} className={cx('inline-flex h-10 items-center gap-1 rounded-md border border-line bg-canvas pl-2.5 font-mono text-xs sm:h-8', onRemove ? 'pr-1' : 'pr-2.5', className)}>
+        {children}
+        {onRemove && (
+            <button
+                type="button"
+                aria-label={removeLabel}
+                title={removeLabel}
+                disabled={disabled}
+                onClick={onRemove}
+                className="grid size-8 place-items-center rounded text-muted transition-colors hover:bg-bad-soft hover:text-bad disabled:pointer-events-none disabled:opacity-50 sm:size-6 [&>svg]:size-3.5"
+            >
+                <X />
+            </button>
+        )}
+    </span>
 );
 
 /** A pill that is on or off: a quick value to pick, or a filter to narrow a list by. */

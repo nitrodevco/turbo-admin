@@ -28,7 +28,7 @@ const FacetList = ({ title, facets, value, none, onChange }: { title: string; fa
                 <Label as="h3">{title}</Label>
                 {value !== '' && <TextButton onClick={() => onChange('')}>all</TextButton>}
             </div>
-            {facets.length > 8 && <Input value={filter} onChange={event => setFilter(event.target.value)} placeholder={`Find a ${title.toLowerCase().replace(/s$/, '')}`} small className="w-full" />}
+            {facets.length > 8 && <Input value={filter} onChange={event => setFilter(event.target.value)} placeholder={`Find a ${title.toLowerCase().replace(/s$/, '')}`} aria-label={`Find a ${title.toLowerCase().replace(/s$/, '')}`} small className="w-full" />}
             <ul className="flex max-h-64 flex-col overflow-y-auto">
                 {shown.map(x => (
                     <li key={x.value}>

@@ -76,7 +76,7 @@ const IgnoreDialog = ({ assets, onClose, onIgnored }: { assets: BrokenAsset[]; o
                 }}
             >
                 <p className="text-sm text-muted">{assets.length === 1 ? 'It stays' : 'They stay'} listed under Ignored, with why, until brought back.</p>
-                <Textarea name="ignore-note" rows={3} maxLength={512} value={note} onChange={event => setNote(event.target.value)} placeholder="Why: retired badge, page not shown, ..." autoFocus />
+                <Textarea name="ignore-note" aria-label="Why it is ignored" rows={3} maxLength={512} value={note} onChange={event => setNote(event.target.value)} placeholder="Why: retired badge, page not shown, ..." autoFocus />
                 {ignore.error && <ErrorNotice error={ignore.error} />}
                 <ModalActions>
                     <Button variant="ghost" onClick={onClose}>Cancel</Button>

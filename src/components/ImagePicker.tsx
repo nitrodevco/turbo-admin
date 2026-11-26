@@ -293,7 +293,7 @@ const PickerBody = ({ accept, value, onPick, onClose, none }: PickerProps) => {
                         onKeyDown={event => move(event, true)}
                         placeholder="Find by name, folder or tag"
                         spellCheck={false}
-                        className="h-9 min-w-0 flex-1 bg-transparent text-sm outline-none placeholder:text-muted/70"
+                        className="h-9 min-w-0 flex-1 bg-transparent text-sm outline-none placeholder:text-muted"
                     />
                 </label>
                 {shownTab === 'all' && facets.sources.length > 1 && (

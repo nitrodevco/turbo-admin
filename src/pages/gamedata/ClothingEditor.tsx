@@ -6,7 +6,7 @@ import { ask } from '#/components/confirm';
 import { ListToolbar } from '#/components/ListToolbar';
 import { OpenRow } from '#/components/RowList';
 import { SearchInput } from '#/components/SearchInput';
-import { Badge, Button, Chip, EmptyState, ErrorNotice, FieldLabel, IconButton, Input, Labeled, ListPanel, Loading, Panel, Segmented, Select, Switch, Textarea } from '#/components/ui';
+import { Badge, Button, Chip, EmptyState, ErrorNotice, FieldLabel, IconButton, Input, Labeled, ListPanel, Loading, Panel, Segmented, Select, Switch, Textarea, ValueTag } from '#/components/ui';
 import { cx, rowFill } from '#/lib/cx';
 
 import { HabboDiffers } from './parts';
@@ -311,14 +311,9 @@ const HiddenLayers = ({ layers, onChange, disabled }: { layers: string[]; onChan
         <div className="flex flex-wrap items-center gap-1.5">
             {layers.length === 0 && disabled && <span className="text-sm text-muted">None.</span>}
             {layers.map(layer => (
-                <span key={layer} className="inline-flex h-8 items-center gap-1 rounded-md border border-line bg-canvas pr-1 pl-2.5 font-mono text-xs">
+                <ValueTag key={layer} onRemove={disabled ? undefined : () => onChange(layers.filter(x => x !== layer))} removeLabel={`Stop hiding ${layer}`}>
                     {layer}
-                    {!disabled && (
-                        <button type="button" aria-label={`Stop hiding ${layer}`} className="grid size-5 place-items-center rounded text-muted hover:bg-subtle hover:text-ink [&>svg]:size-3.5" onClick={() => onChange(layers.filter(x => x !== layer))}>
-                            <X />
-                        </button>
-                    )}
-                </span>
+                </ValueTag>
             ))}
             {!disabled && (
                 <Input

@@ -8,7 +8,7 @@ import { FURNITURE_KINDS, type FurnitureDefinition, furnitureTag, useFurnitureDe
 import { Modal, ModalBody } from '#/components/Modal';
 import { SearchInput } from '#/components/SearchInput';
 import { toast, toastError } from '#/components/toast';
-import { Ago, Badge, Button, CHECK_CLASS, ErrorNotice, Input, Loading, Segmented, Select, Switch, Textarea, TextButton, TextLink } from '#/components/ui';
+import { Ago, Badge, Button, CHECK_CLASS, ErrorNotice, FieldLabel, Input, Loading, Segmented, Select, Switch, Textarea, TextButton, TextLink } from '#/components/ui';
 import { cx } from '#/lib/cx';
 import { formatBytes } from '#/pages/assets/format';
 
@@ -117,6 +117,9 @@ const FLAG_HINTS: Record<string, string> = {
 
 /** Fields that read better across the whole row. */
 const WIDE = new Set([ 'description', 'extradata', 'customparams', 'adurl', 'partcolors' ]);
+
+/** Fields whose control is no single field a label can point at (a picker, a row of choices): it names itself. */
+const CONTROLLED = new Set([ 'logic', 'usagepolicy' ]);
 
 /** A field's value as its control holds it: text for text and numbers, a flag for a flag. */
 const toInput = (field: FieldInfo, value: unknown): string | boolean => {
@@ -403,35 +406,40 @@ const EditorBody = ({ definition, canManage, section, onSection, onUnsaved, save
         </span>
     );
 
+    /** The id that ties a field's label to its control: one editor is open at a time. */
+    const idOf = (field: FieldInfo) => `furniture-${field.key}`;
+
     const control = (field: FieldInfo) => {
         const value = String(draft[field.key] ?? '');
+        const id = idOf(field);
         const ring = differs(field) && 'border-warn';
 
         switch (field.key) {
             case 'description':
-                return <Textarea value={value} onChange={event => set(field.key, event.target.value)} rows={3} disabled={!canManage} className={cx('w-full', ring)} />;
+                return <Textarea id={id} value={value} onChange={event => set(field.key, event.target.value)} rows={3} disabled={!canManage} className={cx('w-full', ring)} />;
             case 'extradata':
-                return <Textarea value={value} onChange={event => set(field.key, event.target.value)} rows={5} placeholder="{}" disabled={!canManage} className="w-full font-mono" />;
+                return <Textarea id={id} value={value} onChange={event => set(field.key, event.target.value)} rows={5} placeholder="{}" disabled={!canManage} className="w-full font-mono" />;
             case 'logic':
                 return <LogicSelect value={value} logics={logics} onChange={next => set(field.key, next)} disabled={!canManage} />;
             case 'usagepolicy':
                 return <Segmented label="Who may use it" value={value} onChange={next => set(field.key, next)} options={USAGE_POLICIES.map(x => ({ value: String(x.value), label: x.label }))} disabled={!canManage} />;
             case 'specialtype':
                 return (
-                    <Select value={value} onChange={event => set(field.key, event.target.value)} disabled={!canManage} className={cx('w-full', ring)}>
+                    <Select id={id} value={value} onChange={event => set(field.key, event.target.value)} disabled={!canManage} className={cx('w-full', ring)}>
                         {!SPECIAL_TYPES.some(x => String(x.value) === value) && <option value={value}>{value || '-'}</option>}
                         {SPECIAL_TYPES.map(x => <option key={x.value} value={String(x.value)}>{`${x.label} (${x.value})`}</option>)}
                     </Select>
                 );
             case 'defaultdir':
                 return (
-                    <Select value={value} onChange={event => set(field.key, event.target.value)} disabled={!canManage} className={cx('w-full font-mono', ring)}>
+                    <Select id={id} value={value} onChange={event => set(field.key, event.target.value)} disabled={!canManage} className={cx('w-full font-mono', ring)}>
                         {[ 0, 1, 2, 3, 4, 5, 6, 7 ].map(x => <option key={x} value={String(x)}>{x}</option>)}
                     </Select>
                 );
             default:
                 return (
                     <Input
+                        id={id}
                         value={value}
                         onChange={event => set(field.key, event.target.value)}
                         inputMode={field.kind === 'int' ? 'numeric' : field.kind === 'number' ? 'decimal' : undefined}
@@ -445,7 +453,7 @@ const EditorBody = ({ definition, canManage, section, onSection, onUnsaved, save
     const input = (field: FieldInfo) => (
         <div key={field.key} className={cx('flex min-w-0 flex-col gap-1.5', (WIDE.has(field.key) || field.key === 'usagepolicy') && 'sm:col-span-2')}>
             <div className="flex min-h-5 items-baseline justify-between gap-3">
-                <label className="shrink-0 text-xs font-medium text-muted">{field.label}</label>
+                {CONTROLLED.has(field.key) ? <FieldLabel>{field.label}</FieldLabel> : <FieldLabel htmlFor={idOf(field)}>{field.label}</FieldLabel>}
                 {habboNote(field)}
             </div>
             {control(field)}

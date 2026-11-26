@@ -1,11 +1,11 @@
-import { Plus, X } from 'lucide-react';
+import { Plus } from 'lucide-react';
 import { type FormEvent, useState } from 'react';
 
 import { useAddFilterWords, useRemoveFilterWord, useTestWordFilter, useWordFilter, type WordFilterAddResponse } from '#/api/wordFilter';
 import { ask } from '#/components/confirm';
 import { SearchInput } from '#/components/SearchInput';
 import { toast, toastError } from '#/components/toast';
-import { Button, EmptyState, ErrorNotice, Input, Loading, PageBody, PageHeader, Panel, Textarea, WarningNotice } from '#/components/ui';
+import { Button, EmptyState, ErrorNotice, Input, Loading, PageBody, PageHeader, Panel, Textarea, ValueTag, WarningNotice } from '#/components/ui';
 import { useHubTabs } from '#/layout/nav';
 import { plural } from '#/lib/plural';
 
@@ -110,19 +110,14 @@ export const WordFilterPage = () => {
                                 : (
                                         <ul className="flex flex-wrap gap-1.5 p-4">
                                             {shown.map(entry => (
-                                                <li key={entry.id} className="inline-flex h-8 items-center gap-1 rounded-md border border-line bg-canvas pr-1 pl-2.5 font-mono text-ui">
-                                                    {entry.word}
-                                                    {data.canManage && (
-                                                        <button
-                                                            type="button"
-                                                            aria-label={`Take ${entry.word} off the filter`}
-                                                            disabled={removeWord.isPending}
-                                                            onClick={() => ask(`Take “${entry.word}” off the filter? Players can say it again at once.`, () => removeWord.mutate(entry.id, { onSuccess: () => toast(`Took ${entry.word} off`), onError: toastError }))}
-                                                            className="grid size-6 place-items-center rounded text-muted hover:bg-subtle hover:text-bad"
-                                                        >
-                                                            <X className="size-3.5" />
-                                                        </button>
-                                                    )}
+                                                <li key={entry.id}>
+                                                    <ValueTag
+                                                        onRemove={data.canManage ? () => ask(`Take “${entry.word}” off the filter? Players can say it again at once.`, () => removeWord.mutate(entry.id, { onSuccess: () => toast(`Took ${entry.word} off`), onError: toastError })) : undefined}
+                                                        removeLabel={`Take ${entry.word} off the filter`}
+                                                        disabled={removeWord.isPending}
+                                                    >
+                                                        {entry.word}
+                                                    </ValueTag>
                                                 </li>
                                             ))}
                                         </ul>

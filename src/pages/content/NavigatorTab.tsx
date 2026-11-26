@@ -114,7 +114,7 @@ const SimpleList = ({ list, title, description, rows, placeholder, canManage }: 
                         save.mutate({ list, id: null, body: { [field]: adding.trim(), visible: true } }, { onSuccess: () => setAdding('') });
                     }}
                 >
-                    <Input value={adding} onChange={event => setAdding(event.target.value)} placeholder={placeholder} className="min-w-0 flex-1 font-mono" />
+                    <Input value={adding} onChange={event => setAdding(event.target.value)} placeholder={placeholder} aria-label={`New in ${title.toLowerCase()}`} className="min-w-0 flex-1 font-mono" />
                     <Button type="submit" variant="secondary" icon={<Plus />} disabled={!adding.trim() || save.isPending}>Add</Button>
                 </AddRow>
             )}

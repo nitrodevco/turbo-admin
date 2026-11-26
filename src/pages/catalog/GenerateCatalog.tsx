@@ -83,6 +83,7 @@ const PlanNode = ({ page, depth, edits, open, onToggle, onEdit, onPickIcon, skip
                     ? (
                             <Input
                                 autoFocus
+                                aria-label={`The title of ${title}`}
                                 defaultValue={title}
                                 maxLength={50}
                                 onBlur={(event) => {

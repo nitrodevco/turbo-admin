@@ -5,7 +5,7 @@ import { type ServerSetting, SOURCE, useResetSetting, useSaveSetting, useSetting
 import { ask } from '#/components/confirm';
 import { RestartServer } from '#/components/RestartServer';
 import { toast } from '#/components/toast';
-import { Button, CountInput, ErrorNotice, FieldLabel, Input, Loading, PageBody, PageHeader, Panel, Switch, TextButton, WarningNotice } from '#/components/ui';
+import { Button, CountInput, ErrorNotice, FieldLabel, Input, Loading, PageBody, PageHeader, Panel, Switch, TextButton, ValueTag, WarningNotice } from '#/components/ui';
 import { cx } from '#/lib/cx';
 
 import { catalogTabs } from './catalogTabs';
@@ -188,15 +188,15 @@ const ExtrasEditor = ({ thresholds, max, disabled, onChange }: { thresholds: num
                         <ul className="flex flex-wrap gap-1.5" aria-label="Quantities that give an extra free item">
                             {counts.map(([ quantity, count ]) => (
                                 <li key={quantity}>
-                                    <span className={cx('inline-flex h-7 items-center gap-1 rounded-full border pr-1 pl-2.5 font-mono text-xs', quantity > max ? 'border-dashed border-line text-muted' : 'border-line')} title={quantity > max ? `Past the most at once (${max}): never reached` : `Buying ${quantity} or more gives ${count} more free`}>
+                                    <ValueTag
+                                        className={quantity > max ? 'border-dashed text-muted' : undefined}
+                                        title={quantity > max ? `Past the most at once (${max}): never reached` : `Buying ${quantity} or more gives ${count} more free`}
+                                        onRemove={disabled ? undefined : () => removeOne(quantity)}
+                                        removeLabel={count > 1 ? `Take one of the ${count} at ${quantity}` : `Take out ${quantity}`}
+                                    >
                                         {quantity}
                                         {count > 1 && <span className="rounded-full bg-accent-soft px-1.5 font-mono text-2xs text-accent tabular-nums">+{count}</span>}
-                                        {!disabled && (
-                                            <button type="button" onClick={() => removeOne(quantity)} aria-label={count > 1 ? `Take one of the ${count} at ${quantity}` : `Take out ${quantity}`} className="grid size-5 place-items-center rounded-full text-muted hover:bg-subtle hover:text-ink">
-                                                <X className="size-3" />
-                                            </button>
-                                        )}
-                                    </span>
+                                    </ValueTag>
                                 </li>
                             ))}
                         </ul>

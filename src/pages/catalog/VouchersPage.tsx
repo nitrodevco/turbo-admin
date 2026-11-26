@@ -8,7 +8,7 @@ import { ask } from '#/components/confirm';
 import { ListToolbar } from '#/components/ListToolbar';
 import { OpenRow } from '#/components/RowList';
 import { SearchInput } from '#/components/SearchInput';
-import { Badge, Button, EmptyState, ErrorNotice, FieldLabel, Input, Labeled, Loading, PageBody, PageHeader, Panel, Select, SuccessNotice, Switch, Thumb } from '#/components/ui';
+import { Badge, Button, EmptyState, ErrorNotice, FieldLabel, Input, Labeled, Loading, PageBody, PageHeader, Panel, Select, SuccessNotice, Switch, Textarea, Thumb } from '#/components/ui';
 import { cx } from '#/lib/cx';
 import { useDebounced } from '#/lib/debounce';
 import { inputToIso, isoTime, isoToInput } from '#/pages/hotel-view/model';
@@ -216,7 +216,7 @@ const Generator = ({ onDone }: { onDone: () => void }) => {
         return (
             <div className="flex flex-col gap-3">
                 <SuccessNotice>Made {generate.data.vouchers.length} vouchers.</SuccessNotice>
-                <textarea readOnly value={codes} rows={Math.min(12, generate.data.vouchers.length)} className="rounded-lg border border-line bg-canvas p-3 font-mono text-sm" />
+                <Textarea readOnly aria-label="The codes made" value={codes} rows={Math.min(12, generate.data.vouchers.length)} className="w-full font-mono" />
                 <div className="flex flex-wrap gap-2">
                     <Button variant="secondary" icon={<Copy />} onClick={() => void navigator.clipboard.writeText(codes).then(() => setCopied(true))}>{copied ? 'Copied' : 'Copy'}</Button>
                     <Button variant="secondary" icon={<Download />} onClick={download}>Download</Button>

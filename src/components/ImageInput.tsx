@@ -5,7 +5,7 @@ import { type ImageAccept, mediaFilePath, shapeOfValue, useMediaFind } from '#/a
 import { cx } from '#/lib/cx';
 
 import { ImagePicker, MediaThumb } from './ImagePicker';
-import { Badge } from './ui';
+import { Badge, FIELD_LOOK, IconButton } from './ui';
 
 /**
  * A field that holds a picture: what it holds, drawn beside its value, and a button that opens
@@ -40,19 +40,14 @@ export const ImageInput = ({ id, value, onChange, accept, disabled, resolve, pre
                 aria-haspopup="dialog"
                 onClick={() => setOpen(true)}
                 data-testid="image-input"
-                className={cx(
-                    'flex min-h-10 min-w-0 flex-1 items-center gap-2 rounded-lg border border-line bg-canvas px-2 py-1 text-left text-base sm:min-h-8 sm:text-ui',
-                    'hover:border-line-strong focus:border-accent focus:ring-2 focus:ring-accent/25 focus:outline-none disabled:opacity-60',
-                )}
+                className={cx('flex min-h-10 min-w-0 flex-1 items-center gap-2 px-2 py-1 text-left text-base sm:min-h-8 sm:text-ui', FIELD_LOOK)}
             >
                 <Images className="size-4 shrink-0 text-muted" aria-hidden />
                 <span className={cx('min-w-0 flex-1 truncate font-mono text-xs', !text && 'font-sans text-muted')} data-testid="image-input-value">{text || 'Pick a picture'}</span>
                 {text && found.data === null && <Badge tone="amber" className="shrink-0">not in the media library</Badge>}
             </button>
             {text && !disabled && (
-                <button type="button" onClick={() => onChange('')} aria-label="No picture" title="No picture" className="grid size-8 shrink-0 place-items-center rounded-lg text-muted hover:bg-subtle hover:text-ink">
-                    <X className="size-3.5" />
-                </button>
+                <IconButton label="No picture" icon={<X />} onClick={() => onChange('')} />
             )}
             <ImagePicker open={open} title={title} accept={accept} value={text} onPick={onChange} onClose={() => setOpen(false)} />
         </div>

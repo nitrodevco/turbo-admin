@@ -1,7 +1,7 @@
 import { Check, ChevronDown, Search } from 'lucide-react';
 import { type KeyboardEvent, useEffect, useId, useMemo, useRef, useState } from 'react';
 
-import { Badge } from '#/components/ui';
+import { Badge, FIELD_LOOK } from '#/components/ui';
 import { cx } from '#/lib/cx';
 
 /** Logics of the room's avatars, not furniture's. */
@@ -113,12 +113,9 @@ export const LogicSelect = ({ value, logics, onChange, disabled }: { value: stri
                 aria-haspopup="listbox"
                 aria-expanded={open}
                 aria-controls={`${id}-list`}
+                aria-label={`Logic: ${value || 'none picked'}`}
                 onClick={() => (open ? setOpen(false) : show())}
-                className={cx(
-                    'flex h-10 w-full items-center gap-2 rounded-lg border bg-canvas px-2.5 text-left text-base sm:h-8 sm:text-ui',
-                    'focus:border-accent focus:ring-2 focus:ring-accent/25 focus:outline-none disabled:opacity-60',
-                    open ? 'border-accent' : 'border-line hover:border-line-strong',
-                )}
+                className={cx('flex h-10 w-full items-center gap-2 px-2.5 text-left text-base sm:h-8 sm:text-ui', FIELD_LOOK, 'aria-expanded:border-accent')}
             >
                 <span className={cx('min-w-0 flex-1 truncate font-mono', !value && 'text-muted')}>{value || 'Pick a logic'}</span>
                 {!registered && <Badge tone="amber" className="shrink-0">not registered</Badge>}
@@ -139,10 +136,11 @@ export const LogicSelect = ({ value, logics, onChange, disabled }: { value: stri
                             onKeyDown={keys}
                             placeholder={`Find among ${(logics?.filter(x => !AVATAR_LOGICS.has(x)).length ?? 0).toLocaleString()} logics`}
                             role="combobox"
+                            aria-label="Find a logic"
                             aria-expanded
                             aria-controls={`${id}-list`}
                             aria-activedescendant={shown[active] ? `${id}-${active}` : undefined}
-                            className="h-10 min-w-0 flex-1 bg-transparent text-sm outline-none placeholder:text-muted/70"
+                            className="h-10 min-w-0 flex-1 bg-transparent text-sm outline-none placeholder:text-muted"
                         />
                     </div>
                     <ul ref={list} id={`${id}-list`} role="listbox" className="max-h-72 overflow-y-auto py-1">

@@ -39,7 +39,7 @@ const ColorRow = ({ color, canManage }: { color: GroupColor; canManage: boolean 
                 aria-label={`Colour ${color.colorId}`}
                 className={COLOUR_FIELD_CLASS}
             />
-            <Input value={hex} onChange={event => setHex(event.target.value.replace('#', ''))} className="w-24 font-mono" disabled={!canManage} />
+            <Input value={hex} onChange={event => setHex(event.target.value.replace('#', ''))} aria-label={`Colour ${color.colorId}, as hex`} className="w-24 font-mono" disabled={!canManage} />
             {canManage && hex !== color.color && <IconButton label="Save" icon={<Save />} disabled={save.isPending} onClick={() => save.mutate({ kind: 'colors', id: color.id, body: { color: hex } })} />}
             {save.error && <ErrorNotice error={save.error} />}
         </li>
@@ -82,7 +82,7 @@ const BadgeEditor = ({ canManage }: { canManage: boolean }) => {
                         <Select value={partType} onChange={event => setPartType(event.target.value)} aria-label="Kind" className="w-32">
                             {Object.entries(PART_TYPES).map(([ value, label ]) => <option key={value} value={value}>{label}</option>)}
                         </Select>
-                        <Input value={file} onChange={event => setFile(event.target.value)} placeholder="file name" className="min-w-0 flex-1 font-mono" />
+                        <Input value={file} onChange={event => setFile(event.target.value)} placeholder="file name" aria-label="New part's file name" className="min-w-0 flex-1 font-mono" />
                         <Button type="submit" variant="secondary" icon={<Plus />} disabled={!file.trim() || save.isPending}>Add</Button>
                     </AddRow>
                 )}
@@ -106,7 +106,7 @@ const BadgeEditor = ({ canManage }: { canManage: boolean }) => {
                         <Select value={slot} onChange={event => setSlot(event.target.value)} aria-label="Slot" className="w-36">
                             {Object.entries(COLOR_SLOTS).map(([ value, label ]) => <option key={value} value={value}>{label}</option>)}
                         </Select>
-                        <Input value={hex} onChange={event => setHex(event.target.value)} placeholder="ff8800" className="w-28 font-mono" />
+                        <Input value={hex} onChange={event => setHex(event.target.value)} placeholder="ff8800" aria-label="New colour, as hex" className="w-28 font-mono" />
                         <Button type="submit" variant="secondary" icon={<Plus />} disabled={!hex.trim() || save.isPending}>Add</Button>
                     </AddRow>
                 )}
