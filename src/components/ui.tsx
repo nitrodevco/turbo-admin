@@ -37,6 +37,8 @@ interface PageHeaderProps {
     children?: ReactNode;
     /** The whole width, as the page's `PageBody wide` under it. */
     wide?: boolean;
+    /** What the page is about, in the tile before the title in its navigation entry's icon's place: a player's head. */
+    icon?: ReactNode;
 }
 
 /**
@@ -47,13 +49,13 @@ interface PageHeaderProps {
  * button before the title and the hotel's state at a glance and the bell after it; from a laptop
  * up it scrolls away with the page, and the search and the bell sit in the sidebar.
  */
-export const PageHeader = ({ title, description, back, tabs, children, wide }: PageHeaderProps) => {
+export const PageHeader = ({ title, description, back, tabs, children, wide, icon }: PageHeaderProps) => {
     return (
         <header className="sticky top-0 z-30 border-b border-line bg-chrome/95 backdrop-blur lg:static lg:z-auto lg:bg-chrome lg:backdrop-blur-none">
             <div className={cx(pageWidth(wide), 'flex min-h-14 items-center gap-x-2.5 px-3 py-2 sm:gap-x-3 sm:px-6 lg:min-h-18 lg:px-8')}>
                 <MenuButton />
                 <BackArrow back={back} />
-                <HeaderIcon />
+                {icon ? <span className="shrink-0 max-sm:hidden">{icon}</span> : <HeaderIcon />}
                 <div data-title className="min-w-0 flex-1">
                     <h1 className="truncate text-base leading-7 font-semibold tracking-tight lg:text-lg">{title}</h1>
                     {description && (

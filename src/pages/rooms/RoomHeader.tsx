@@ -1,19 +1,21 @@
-import { Armchair, Bot, House, PawPrint, Settings } from 'lucide-react';
-import type { ReactNode } from 'react';
+import { Armchair, Bot, House, MessagesSquare, PawPrint, Settings } from 'lucide-react';
 
+import { useMe } from '#/api/queries';
 import type { RoomDetailResponse } from '#/api/types';
 import type { TabItem } from '#/components/Tabs';
-import { ErrorNotice, LiveBadge, PageHeader, SuccessNotice } from '#/components/ui';
+import { ButtonLink, ErrorNotice, LiveBadge, PageHeader, SuccessNotice } from '#/components/ui';
 import { useRememberRecent } from '#/lib/recent';
 
 import { doorModeLabel } from './labels';
 
 /**
- * The header of a room's pages: its name, the facts that identify it, whether it is live, and its
- * tabs. Settings is a tab only for staff who may change them.
+ * The header of a room's pages: its name, the facts that identify it, whether it is live, its
+ * chat log (for staff who may read it), and its tabs. Settings is a tab only for staff who may
+ * change them. A player's pages have the same header (`PlayerHeader`).
  */
-export const RoomHeader = ({ id, room, tab, children }: { id: number; room: RoomDetailResponse | undefined; tab: 'overview' | 'furniture' | 'bots' | 'pets' | 'settings'; children?: ReactNode }) => {
+export const RoomHeader = ({ id, room, tab }: { id: number; room: RoomDetailResponse | undefined; tab: 'overview' | 'furniture' | 'bots' | 'pets' | 'settings' }) => {
     useRememberRecent('room', id, room?.name);
+    const me = useMe().data;
 
     const tabs: TabItem[] = [
         { value: 'overview', label: 'Overview', icon: <House />, to: `/rooms/${id}/overview` },
@@ -40,7 +42,7 @@ export const RoomHeader = ({ id, room, tab, children }: { id: number; room: Room
                     {room.isLoaded ? `LIVE · ${room.playersInside.length}/${room.playersMax}` : 'NOT LOADED'}
                 </LiveBadge>
             )}
-            {children}
+            {me?.canViewChatlog && <ButtonLink to={`/chatlog?${new URLSearchParams({ room: String(id) })}`} icon={<MessagesSquare />}>Chat</ButtonLink>}
         </PageHeader>
     );
 };

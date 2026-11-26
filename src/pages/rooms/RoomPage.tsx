@@ -1,4 +1,4 @@
-import { Ban, DoorOpen, Ellipsis, Gavel, Megaphone, MessagesSquare, MicOff, Power, Trash2, UserX } from 'lucide-react';
+import { Ban, DoorOpen, Ellipsis, Gavel, Megaphone, MicOff, Power, Trash2, UserX } from 'lucide-react';
 import { type FormEvent, useState } from 'react';
 import { Link, useParams } from 'react-router';
 
@@ -9,7 +9,7 @@ import type { RoomDetailResponse, RoomPlayerRef } from '#/api/types';
 import { ask, type Question } from '#/components/confirm';
 import { Sheet, SheetItem } from '#/components/Sheet';
 import { TabbedPanel } from '#/components/TabbedPanel';
-import { AddRow, Ago, Avatar, Badge, Button, ButtonLink, EmptyState, ErrorNotice, IconButton, Input, Kv, Label, Loading, PageBody, Panel, Segmented, Select, Stat, Switch, Textarea, TextLink } from '#/components/ui';
+import { AddRow, Ago, Avatar, Badge, Button, EmptyState, ErrorNotice, IconButton, Input, Kv, Label, Loading, PageBody, Panel, Segmented, Select, Stat, Switch, Textarea, TextLink } from '#/components/ui';
 import { formatDateTime } from '#/lib/time';
 
 import { doorModeLabel, tradeModeLabel, whoLabel } from './labels';
@@ -304,11 +304,7 @@ export const RoomPage = () => {
 
     return (
         <>
-            <RoomHeader id={id} room={room} tab="overview">
-                {me?.canViewChatlog && (
-                    <ButtonLink to={`/chatlog?${new URLSearchParams({ room: String(id) })}`} icon={<MessagesSquare />}>Chat</ButtonLink>
-                )}
-            </RoomHeader>
+            <RoomHeader id={id} room={room} tab="overview" />
             <PageBody>
                 {isPending && <Loading />}
                 {error && <ErrorNotice error={error} />}

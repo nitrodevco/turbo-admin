@@ -1,10 +1,11 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { KeyRound, Trash2 } from 'lucide-react';
+import { Eye, EyeOff, KeyRound, Trash2 } from 'lucide-react';
 import { useState } from 'react';
 
 import { type IssuedTicket, issueTicket, revokeTicket, useTicketStatus } from '#/api/players';
 import { ask } from '#/components/confirm';
 import { Button, CopyButton, ErrorNotice, Label, Labeled, Panel, Select, Switch, WarningNotice } from '#/components/ui';
+import { cx } from '#/lib/cx';
 import { formatDateTime } from '#/lib/time';
 
 const LIFETIMES = [
@@ -15,20 +16,35 @@ const LIFETIMES = [
     { value: 'never', label: 'Never' },
 ];
 
-/** A value shown once, with a button that copies it. */
-const Copyable = ({ label, value }: { label: string; value: string }) => (
-    <div className="flex flex-col gap-1">
-        <Label>{label}</Label>
-        <div className="flex items-start gap-2">
-            <code className="min-w-0 flex-1 rounded-lg border border-line bg-canvas px-3 py-2 font-mono text-xs break-all select-all">{value}</code>
-            <CopyButton text={value} label={`Copy the ${label.toLowerCase()}`} className="shrink-0" />
+/** What a ticket shows as until it is asked for: the same however long the ticket is. */
+const MASK = '••••••-••••••';
+
+/**
+ * A value shown once, the ticket in it hidden behind `MASK` until Show is pressed (a login link
+ * keeps the rest of its address in sight), with a button that copies it whole either way.
+ */
+const Secret = ({ label, value, ticket }: { label: string; value: string; ticket: string }) => {
+    const [ shown, setShown ] = useState(false);
+    const name = label.toLowerCase();
+
+    return (
+        <div className="flex flex-col gap-1">
+            <Label>{label}</Label>
+            <div className="flex items-start gap-2">
+                <code className={cx('min-w-0 flex-1 rounded-lg border border-line bg-canvas px-3 py-2 font-mono text-xs break-all', shown && 'select-all')}>
+                    {shown ? value : value.includes(ticket) ? value.replaceAll(ticket, MASK) : MASK}
+                </code>
+                <Button variant="secondary" icon={shown ? <EyeOff /> : <Eye />} aria-label={shown ? `Hide the ${name}` : `Show the ${name}`} title={shown ? `Hide the ${name}` : `Show the ${name}`} aria-pressed={shown} onClick={() => setShown(!shown)} className="shrink-0" />
+                <CopyButton text={value} label={`Copy the ${name}`} className="shrink-0" />
+            </div>
         </div>
-    </div>
-);
+    );
+};
 
 /**
  * A player's login ticket: whether they have one and until when, and issuing a new one, which
- * replaces it. A ticket is shown once, when issued; nothing shows it again. It logs in as the
+ * replaces it. A ticket is shown once, when issued, and hidden until asked for even then; nothing
+ * shows it again. It logs in as the
  * player, so the server only issues one for a player whose every permission you hold.
  */
 export const LoginTicketCard = ({ playerId, playerName }: { playerId: number; playerName: string }) => {
@@ -75,8 +91,8 @@ export const LoginTicketCard = ({ playerId, playerName }: { playerId: number; pl
                 {issued
                     ? (
                             <>
-                                <Copyable label="Ticket" value={issued.ticket} />
-                                {issued.loginUrl && <Copyable label="Login link" value={issued.loginUrl} />}
+                                <Secret label="Ticket" value={issued.ticket} ticket={issued.ticket} />
+                                {issued.loginUrl && <Secret label="Login link" value={issued.loginUrl} ticket={issued.ticket} />}
                                 <p className="text-xs text-muted">
                                     Shown this once. It logs in as {playerName}
                                     {issued.reusable ? ', as often as it is used' : ', once'}

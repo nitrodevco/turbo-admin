@@ -3,11 +3,11 @@ import { type FormEvent, type ReactNode, useState } from 'react';
 
 import { type PlayerDetailResponse, type PlayerRestriction, usePlayerAbilities } from '#/api/players';
 import { Sheet } from '#/components/Sheet';
-import { Badge, Button, Input, Label, Labeled, Segmented, Textarea } from '#/components/ui';
+import { Button, Input, Label, Labeled, Panel, Segmented, Textarea } from '#/components/ui';
 import { formatDateTime } from '#/lib/time';
 
-import { ActionAnswer } from './ActionAnswer';
-import { type PlayerAction, usePlayerAction } from './usePlayerAction';
+import { activeBan, restrictionLabel } from './restrictions';
+import type { PlayerAction } from './usePlayerAction';
 
 const BAN_DURATIONS = [
     { value: '1h', label: '1 hour' },
@@ -30,7 +30,7 @@ const TRADELOCK_DURATIONS = [
     { value: 'perm', label: 'For good' },
 ];
 
-type Open = 'alert' | 'sanction' | 'mute' | 'tradelock' | null;
+type Open = 'sanction' | 'mute' | 'tradelock' | null;
 
 /** One part of a sheet: what it is, and its controls. */
 const Block = ({ title, children }: { title: string; children: ReactNode }) => (
@@ -47,50 +47,21 @@ const Holds = ({ what, restriction }: { what: string; restriction: PlayerRestric
     </p>
 );
 
-/** A message for them: a moderator's warning or a plain pop-up. */
-const AlertSheet = ({ player, action, open, onClose, warn, alert }: SheetProps & { warn: boolean; alert: boolean }) => {
-    const [ message, setMessage ] = useState('');
-    const [ kind, setKind ] = useState<'warn' | 'alert'>(warn ? 'warn' : 'alert');
-
-    const send = (event: FormEvent) => {
-        event.preventDefault();
-        action.run({ action: kind, reason: message.trim() }, undefined, () => {
-            setMessage('');
-            onClose();
-        });
-    };
-
-    return (
-        <Sheet title={`Alert ${player.name}`} open={open} onClose={onClose}>
-            <form onSubmit={send}>
-                <Block title="Message">
-                    {warn && alert && (
-                        <Segmented
-                            label="Kind of message"
-                            value={kind}
-                            onChange={value => setKind(value as 'warn' | 'alert')}
-                            options={[ { value: 'warn', label: 'Moderator warning' }, { value: 'alert', label: 'Pop-up' } ]}
-                        />
-                    )}
-                    <Textarea value={message} onChange={event => setMessage(event.target.value)} rows={4} placeholder={`What ${player.name} should read`} aria-label="Message" autoFocus />
-                    <p className="text-xs text-muted">
-                        {kind === 'warn' ? 'Shown as a message from the moderators, as the moderation tool sends one.' : 'Shown to them in a pop-up.'}
-                    </p>
-                    <Button type="submit" icon={<MessageSquareWarning />} disabled={action.busy || message.trim() === ''}>Send</Button>
-                </Block>
-            </form>
-        </Sheet>
-    );
-};
+interface SheetProps {
+    player: PlayerDetailResponse;
+    action: PlayerAction;
+    open: boolean;
+    onClose: () => void;
+}
 
 /** Banning them from the hotel, or lifting the ban they have. */
 const SanctionSheet = ({ player, action, open, onClose, ban, unban }: SheetProps & { ban: boolean; unban: boolean }) => {
     const [ duration, setDuration ] = useState('1d');
     const [ reason, setReason ] = useState('');
-    const active = player.sanctions.find(x => x.isActive && x.kind === 'Ban');
+    const active = activeBan(player);
 
     return (
-        <Sheet title={`Sanction ${player.name}`} open={open} onClose={onClose}>
+        <Sheet title={`Ban ${player.name}`} open={open} onClose={onClose}>
             {active && (
                 <Block title="Banned now">
                     <Holds what="Banned" restriction={{ untilUtc: active.expiresUtc }} />
@@ -125,7 +96,6 @@ const SanctionSheet = ({ player, action, open, onClose, ban, unban }: SheetProps
                     </Button>
                 </Block>
             )}
-            {!active && !ban && <p className="px-3 py-3 text-sm text-muted">Not banned.</p>}
         </Sheet>
     );
 };
@@ -161,64 +131,112 @@ const RestrictionSheet = ({ action, open, onClose, title, holds, restriction, du
     );
 };
 
-interface SheetProps {
-    player: PlayerDetailResponse;
-    action: PlayerAction;
-    open: boolean;
-    onClose: () => void;
-}
-
-/** A button of the actions row; marked when what it does already holds ("Muted"). */
-const ActionButton = ({ icon, label, holds, onClick, disabled, danger }: { icon: ReactNode; label: string; holds?: string; onClick: () => void; disabled?: boolean; danger?: boolean }) => (
-    <Button variant={danger ? 'danger' : 'secondary'} icon={icon} onClick={onClick} disabled={disabled} className="max-sm:flex-[1_1_9rem]">
-        {label}
-        {holds && <Badge tone="amber" className="ml-0.5 px-1 py-0 text-2xs">{holds}</Badge>}
-    </Button>
+/**
+ * A mute or a trade lock as a row of the controls, as a room's switches are: what it is and
+ * whether it holds now, and a button that opens its sheet (for how long, or lifting it).
+ */
+const RestrictionRow = ({ label, restriction, held, icon, busy, onOpen }: { label: string; restriction: PlayerRestriction | null; held: string; icon: ReactNode; busy: boolean; onOpen: () => void }) => (
+    <div className="flex min-h-12 items-center justify-between gap-4 py-1.5">
+        <span className="min-w-0">
+            <span className="block text-sm">{label}</span>
+            <span className={restriction ? 'block text-xs text-warn' : 'block text-xs text-muted'}>{restriction ? `${held}, ${restrictionLabel(restriction)}` : 'Not now'}</span>
+        </span>
+        <Button small variant="secondary" icon={icon} disabled={busy} onClick={onOpen}>{restriction ? 'Change' : label}</Button>
+    </div>
 );
 
+/** A message for them, as a room's alert is for everyone in it: a moderator's warning or a plain pop-up. Only while they are online, as in the hotel. */
+const AlertForm = ({ player, action, warn, alert }: { player: PlayerDetailResponse; action: PlayerAction; warn: boolean; alert: boolean }) => {
+    const offline = !player.isOnline;
+
+    const [ message, setMessage ] = useState('');
+    const [ kind, setKind ] = useState<'warn' | 'alert'>(warn ? 'warn' : 'alert');
+
+    const send = (event: FormEvent) => {
+        event.preventDefault();
+        action.run({ action: kind, reason: message.trim() }, undefined, () => setMessage(''));
+    };
+
+    return (
+        <form onSubmit={send} className="flex flex-col gap-2 border-t border-line px-4 py-3 first:border-t-0">
+            <Label>Alert</Label>
+            {warn && alert && (
+                <Segmented
+                    label="Kind of message"
+                    value={kind}
+                    onChange={value => setKind(value as 'warn' | 'alert')}
+                    options={[ { value: 'warn', label: 'Moderator warning' }, { value: 'alert', label: 'Pop-up' } ]}
+                    disabled={offline}
+                />
+            )}
+            <Textarea
+                value={message}
+                onChange={event => setMessage(event.target.value)}
+                rows={2}
+                placeholder={offline ? `${player.name} is offline: an alert needs them online` : kind === 'warn' ? `A warning from the moderators to ${player.name}` : `A pop-up for ${player.name}`}
+                aria-label="Alert"
+                disabled={offline}
+            />
+            <Button type="submit" variant="secondary" icon={<MessageSquareWarning />} disabled={action.busy || offline || message.trim() === ''}>Send alert</Button>
+        </form>
+    );
+};
+
 /**
- * What staff may do to a player, along the bottom of their card on every tab of their page:
- * alert them, sanction (ban) them, mute them and trade lock them, each in a sheet that also lifts
- * the one that holds, and disconnect them while they are online. Each is the hotel's own command,
- * run as the staff member, so the same permissions and the command log apply, and a player who
- * outranks them is refused by the command itself. Only what they may do is shown.
+ * What staff may do to a player, beside their page as a room's controls are beside the room's:
+ * muting them and locking their trading (each row saying what holds), an alert, and in the danger
+ * zone banning them (or lifting the ban) and closing their connection while they are online. Each
+ * is the hotel's own command, run as the staff member, so the same permissions and the command log
+ * apply, and a player who outranks them is refused by the command itself. Only what they may do is
+ * shown; what each did is told at the top of the page.
  */
-export const PlayerActions = ({ player }: { player: PlayerDetailResponse }) => {
+export const PlayerControls = ({ player, action }: { player: PlayerDetailResponse; action: PlayerAction }) => {
     const { data: can } = usePlayerAbilities();
-    const action = usePlayerAction(player);
     const [ open, setOpen ] = useState<Open>(null);
     const close = () => setOpen(null);
 
     if (!can)
         return null;
 
-    const banned = player.sanctions.find(x => x.isActive && x.kind === 'Ban');
-    const shown = (can.warn || can.alert) || (can.ban || can.unban) || can.silence || can.tradelock || (can.disconnect && player.isOnline);
+    const banned = activeBan(player);
+    const bans = can.ban || (can.unban && !!banned);
 
-    if (!shown)
+    if (!can.silence && !can.tradelock && !can.warn && !can.alert && !bans && !can.disconnect)
         return null;
 
     return (
-        <div className="flex flex-col gap-3 border-t border-line bg-canvas/50 px-4 py-3">
-            <div className="flex flex-wrap items-center gap-2">
-                <Label className="mr-1 max-sm:basis-full">Actions</Label>
-                {(can.warn || can.alert) && <ActionButton icon={<MessageSquareWarning />} label="Alert" onClick={() => setOpen('alert')} />}
-                {(can.ban || can.unban) && <ActionButton icon={<Gavel />} label="Sanction" holds={banned ? 'banned' : undefined} onClick={() => setOpen('sanction')} />}
-                {can.silence && <ActionButton icon={<MicOff />} label="Mute" holds={player.silenced ? 'muted' : undefined} onClick={() => setOpen('mute')} />}
-                {can.tradelock && <ActionButton icon={<Repeat2 />} label="Trade lock" holds={player.tradeLocked ? 'locked' : undefined} onClick={() => setOpen('tradelock')} />}
-                {can.disconnect && player.isOnline && (
-                    <ActionButton
-                        danger
-                        icon={<Unplug />}
-                        label="Disconnect"
-                        disabled={action.busy}
-                        onClick={() => action.run({ action: 'disconnect' }, { title: `Close ${player.name}'s connection?`, confirm: 'Disconnect', danger: true })}
-                    />
-                )}
-            </div>
-            <ActionAnswer action={action} />
+        <Panel title="Player controls">
+            {(can.silence || can.tradelock) && (
+                <div className="divide-y divide-line px-4">
+                    {can.silence && <RestrictionRow label="Mute" held="Muted" restriction={player.silenced} icon={<MicOff />} busy={action.busy} onOpen={() => setOpen('mute')} />}
+                    {can.tradelock && <RestrictionRow label="Trade lock" held="Locked" restriction={player.tradeLocked} icon={<Repeat2 />} busy={action.busy} onOpen={() => setOpen('tradelock')} />}
+                </div>
+            )}
+            {(can.warn || can.alert) && <AlertForm key={player.id} player={player} action={action} warn={can.warn} alert={can.alert} />}
+            {(bans || can.disconnect) && (
+                <div className="flex flex-col gap-2 border-t border-line px-4 py-3 first:border-t-0">
+                    <Label className="text-bad">Danger zone</Label>
+                    {banned && <p className="text-xs text-bad">{`Banned, ${restrictionLabel({ untilUtc: banned.expiresUtc })}.`}</p>}
+                    <div className="grid grid-cols-2 gap-2">
+                        {bans && (
+                            <Button variant="danger" icon={<Gavel />} disabled={action.busy} onClick={() => setOpen('sanction')}>
+                                {banned ? 'Ban or lift' : 'Ban'}
+                            </Button>
+                        )}
+                        {can.disconnect && (
+                            <Button
+                                variant="danger"
+                                icon={<Unplug />}
+                                disabled={action.busy || !player.isOnline}
+                                onClick={() => action.run({ action: 'disconnect' }, { title: `Close ${player.name}'s connection?`, confirm: 'Disconnect', danger: true })}
+                            >
+                                Disconnect
+                            </Button>
+                        )}
+                    </div>
+                </div>
+            )}
 
-            <AlertSheet player={player} action={action} open={open === 'alert'} onClose={close} warn={can.warn} alert={can.alert} />
             <SanctionSheet player={player} action={action} open={open === 'sanction'} onClose={close} ban={can.ban} unban={can.unban} />
             <RestrictionSheet
                 action={action}
@@ -250,6 +268,6 @@ export const PlayerActions = ({ player }: { player: PlayerDetailResponse }) => {
                 endLabel="Unlock trading"
                 icon={<Repeat2 />}
             />
-        </div>
+        </Panel>
     );
 };
