@@ -5,6 +5,7 @@ import { toast, toastError } from '#/components/toast';
 import { Ago, Badge, type BadgeTone, Button, EmptyState, ErrorNotice, Loading, PageBody, PageHeader, Panel } from '#/components/ui';
 import { useHubTabs } from '#/layout/nav';
 import { formatDuration } from '#/lib/format';
+import { plural } from '#/lib/plural';
 import { formatDateTime, fromNow } from '#/lib/time';
 
 const OUTCOMES: Record<ScheduledTaskOutcome, { label: string; tone: BadgeTone }> = {
@@ -76,7 +77,7 @@ export const PluginSchedulePage = () => {
                 {error && <ErrorNotice error={error} />}
                 {!data && !error && <Loading />}
                 {data && (
-                    <Panel title="Schedule" description={`${data.tasks.length.toLocaleString()} scheduled ${data.tasks.length === 1 ? 'task' : 'tasks'}.`} className="overflow-clip">
+                    <Panel title="Schedule" description={`${plural(data.tasks.length, 'scheduled task')}.`} className="overflow-clip">
                         {data.tasks.length === 0 && <EmptyState>No loaded plugin has a scheduled task.</EmptyState>}
                         <ul className="divide-y divide-line">
                             {data.tasks.map(task => <TaskRow key={task.key} task={task} canManage={data.canManage} />)}

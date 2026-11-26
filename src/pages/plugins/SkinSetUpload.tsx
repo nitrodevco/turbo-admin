@@ -7,6 +7,7 @@ import { useSaved } from '#/components/SaveFeedback';
 import { toastError } from '#/components/toast';
 import { Badge, Button, Panel, Select, Td, Th } from '#/components/ui';
 import { cx } from '#/lib/cx';
+import { plural } from '#/lib/plural';
 import { openZip } from '#/lib/zip';
 import { DesignPreview } from '#/preview/DesignPreview';
 import { dataUrlOf } from '#/preview/images';
@@ -232,7 +233,7 @@ export const SkinSetUpload = ({ skins, target, canManage }: { skins: SkinMap; ta
 
             setApplying('Saving…');
             await overlays.mutateAsync(set);
-            saved(`${matched.length} sprite(s) replaced in one change (${target})`);
+            saved(`${plural(matched.length, 'sprite')} replaced in one change (${target})`);
             setFiles([]);
         } catch (error) {
             toastError(error);
@@ -310,7 +311,7 @@ export const SkinSetUpload = ({ skins, target, canManage }: { skins: SkinMap; ta
                             <span className="ml-auto flex gap-2">
                                 <Button variant="ghost" icon={<X />} disabled={!!applying} onClick={() => setFiles([])}>Clear</Button>
                                 <Button icon={<Check />} disabled={!canManage || !!applying || matched.length === 0} onClick={() => void apply()}>
-                                    {applying ?? `Apply ${matched.length} sprite(s)`}
+                                    {applying ?? `Apply ${plural(matched.length, 'sprite')}`}
                                 </Button>
                             </span>
                         </p>

@@ -8,6 +8,7 @@ import { ask } from '#/components/confirm';
 import { toast } from '#/components/toast';
 import { Badge, Button, EmptyState, ErrorNotice, Field, Labeled, Loading, PageBody, PageHeader, Panel, Switch, Textarea, TextLink } from '#/components/ui';
 import { cx, rowFill } from '#/lib/cx';
+import { plural } from '#/lib/plural';
 
 import { catalogTabs } from './catalogTabs';
 
@@ -139,7 +140,7 @@ export const SongsPage = () => {
 
     return (
         <>
-            <PageHeader title="Catalog" tabs={catalogTabs('songs')} description={songs.data && `${songs.data.songs.length} songs · ${songs.data.songs.filter(x => x.official).length} official`}>
+            <PageHeader title="Catalog" tabs={catalogTabs('songs')} description={songs.data && `${plural(songs.data.songs.length, 'song')} · ${songs.data.songs.filter(x => x.official).length.toLocaleString()} official`}>
                 {canManage && <Button icon={<Plus />} onClick={() => open('new')}>New song</Button>}
             </PageHeader>
             <PageBody className="grid items-start gap-4 lg:gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.2fr)]">
@@ -158,7 +159,7 @@ export const SongsPage = () => {
                                                     <span className="block truncate text-sm">{x.name}</span>
                                                     <span className="block truncate text-xs text-muted">{x.author || 'unknown'}{x.code ? ` · ${x.code}` : ''}</span>
                                                 </span>
-                                                {x.discs > 0 && <Badge>{x.discs} disc{x.discs === 1 ? '' : 's'}</Badge>}
+                                                {x.discs > 0 && <Badge>{plural(x.discs, 'disc')}</Badge>}
                                                 {x.official && <Badge tone="accent">official</Badge>}
                                                 <span className="font-mono text-xs text-muted">{clock(x.length)}</span>
                                             </button>

@@ -11,6 +11,7 @@ import { toast, toastError } from '#/components/toast';
 import { Ago, Badge, Button, ButtonLink, EmptyState, ErrorNotice, FileButton, Loading, PageBody, PageHeader, Panel, WarningNotice } from '#/components/ui';
 import { useHubTabs } from '#/layout/nav';
 import { cx } from '#/lib/cx';
+import { plural } from '#/lib/plural';
 import { formatDateTime, fromNow } from '#/lib/time';
 import { JobPanel } from '#/pages/assets/JobPanel';
 
@@ -107,7 +108,7 @@ const PluginInspector = ({ pluginKey }: { pluginKey: string }) => {
                                         <span className="flex flex-wrap items-center gap-2">
                                             <Badge tone={issue.kind === 'patch.applied' ? 'green' : (issue.kind === 'patch.conflict' || issue.kind === 'patch.ineffective') ? 'amber' : 'red'}>{ISSUE_LABELS[issue.kind] ?? issue.kind}</Badge>
                                             <code className="break-all">{issue.subject}</code>
-                                            <span className="text-muted" title={formatDateTime(issue.lastReportedUtc)}>{issue.clients} {issue.clients === 1 ? 'player' : 'players'}, {fromNow(issue.lastReportedUtc)}</span>
+                                            <span className="text-muted" title={formatDateTime(issue.lastReportedUtc)}>{plural(issue.clients, 'player')}, {fromNow(issue.lastReportedUtc)}</span>
                                         </span>
                                         <span className="break-words">{issue.message}</span>
                                     </li>

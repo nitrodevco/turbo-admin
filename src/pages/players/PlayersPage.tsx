@@ -8,6 +8,7 @@ import { SearchWithButton } from '#/components/SearchInput';
 import { PhoneSort } from '#/components/SortHeader';
 import { Ago, Avatar, Badge, Button, EmptyState, ErrorNotice, LiveBadge, Loading, PageBody, PageHeader, Panel, Select, Switch, Table, Td, Th } from '#/components/ui';
 import { cx } from '#/lib/cx';
+import { plural } from '#/lib/plural';
 import { type ListOrder, orderOf, orderParams, pageOf, type Sorting } from '#/lib/sort';
 
 import { NewPlayerPanel } from './NewPlayerPanel';
@@ -69,7 +70,7 @@ export const PlayersPage = () => {
         <>
             <PageHeader
                 title="Players"
-                description={search.data && `${search.data.total.toLocaleString()} ${search.data.total === 1 ? 'player' : 'players'}${text ? ` matching "${text}"` : ''} · ${search.data.onlineNow.toLocaleString()} online now`}
+                description={search.data && `${plural(search.data.total, 'player')}${text ? ` matching "${text}"` : ''} · ${search.data.onlineNow.toLocaleString()} online now`}
             >
                 {canCreate && !creating && <Button icon={<UserPlus />} onClick={() => setCreating(true)}>New player</Button>}
             </PageHeader>

@@ -5,7 +5,7 @@ import { promoImageUrl, useClientAssets } from '#/api/assets';
 import type { CampaignGift } from '#/api/campaigns';
 import type { Currency } from '#/api/content';
 import { useProductLookup } from '#/api/gamedata';
-import { Button, Input, Labeled, Panel, Segmented, Select } from '#/components/ui';
+import { Button, CountInput, Input, Labeled, Panel, Segmented, Select } from '#/components/ui';
 import { cx } from '#/lib/cx';
 import { ItemPicker } from '#/pages/catalog/ProductsEditor';
 
@@ -69,7 +69,7 @@ export const GiftEditor = ({ gift, currencies, errorOf, onChange, onRemove }: {
                     </Labeled>
                     <div className="grid gap-3 sm:grid-cols-[8rem_minmax(0,1fr)_8rem]">
                         <Labeled label="Credits">
-                            <Input type="number" min={0} value={gift.credits} onChange={event => set('credits', whole(event.target.value))} className={cx('font-mono', marked(errorOf('credits')))} aria-label="Credits" />
+                            <CountInput wide label="Credits" min={0} value={gift.credits} onChange={credits => set('credits', credits)} className={marked(errorOf('credits'))} />
                             <FieldError message={errorOf('credits')} />
                         </Labeled>
                         <Labeled label="Currency">
@@ -81,7 +81,7 @@ export const GiftEditor = ({ gift, currencies, errorOf, onChange, onRemove }: {
                             <FieldError message={errorOf('currencyTypeId')} />
                         </Labeled>
                         <Labeled label="Amount">
-                            <Input type="number" min={0} value={gift.currencyAmount} disabled={gift.currencyTypeId === null} onChange={event => set('currencyAmount', whole(event.target.value))} className={cx('font-mono', marked(errorOf('currencyAmount')))} aria-label="Currency amount" />
+                            <CountInput wide label="Currency amount" min={0} value={gift.currencyAmount} disabled={gift.currencyTypeId === null} onChange={amount => set('currencyAmount', amount)} className={marked(errorOf('currencyAmount'))} />
                             <FieldError message={errorOf('currencyAmount')} />
                         </Labeled>
                     </div>

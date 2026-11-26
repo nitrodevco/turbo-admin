@@ -5,11 +5,10 @@ import { type AddFurniSort, catalogCalls, type CatalogTree, useCatalogEdit, useR
 import { Modal, ModalActions, ModalBody } from '#/components/Modal';
 import { toast, toastError } from '#/components/toast';
 import { Button, ErrorNotice, Loading, Segmented } from '#/components/ui';
+import { plural } from '#/lib/plural';
 
 import { SORT_HINTS, SORTS } from './subPageSorts';
 import { SubPagesTree } from './SubPagesTree';
-
-const plural = (count: number, one: string, many: string) => `${count.toLocaleString()} ${count === 1 ? one : many}`;
 
 /**
  * A page's offers sorted onto pages under it - by kind, by colour, or by kind and then colour -

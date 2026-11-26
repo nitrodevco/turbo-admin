@@ -5,6 +5,7 @@ import { Modal, ModalBody } from '#/components/Modal';
 import { Ago, Badge, type BadgeTone, EmptyState, ErrorNotice, Loading, TextButton } from '#/components/ui';
 import { cx } from '#/lib/cx';
 import { formatBytes } from '#/lib/format';
+import { plural } from '#/lib/plural';
 
 const RESULTS: Record<CompareResult, { label: string; tone: BadgeTone }> = {
     changed: { label: 'changed', tone: 'amber' },
@@ -82,7 +83,7 @@ const Texts = ({ texts }: { texts: CompareTexts[] }) => {
 
     return (
         <section aria-label="Texts" className="flex flex-col gap-1">
-            <h4 className="text-xs font-semibold">{`Texts (${texts.length} ${texts.length === 1 ? 'language' : 'languages'})`}</h4>
+            <h4 className="text-xs font-semibold">{`Texts (${plural(texts.length, 'language')})`}</h4>
             {[ ...groups.values() ].map(({ languages, texts: group }) => (
                 <details key={languages.join()} className="text-xs">
                     <summary className="cursor-pointer">
@@ -226,7 +227,7 @@ const summary = (items: AssetComparison[], total: number) => {
 
     const parts = [ ...counts ].map(([ result, n ]) => `${n.toLocaleString()} ${RESULTS[result].label}`).join(', ');
 
-    return `${total.toLocaleString()} changed ${total === 1 ? 'file' : 'files'}${items.length < total ? ` (the ${items.length} largest compared)` : ''}: ${parts}`;
+    return `${plural(total, 'changed file')}${items.length < total ? ` (the ${items.length} largest compared)` : ''}: ${parts}`;
 };
 
 /**

@@ -4,6 +4,7 @@ import type { HotelPatch, PluginStyle } from '#/api/noCode';
 import type { TemplateIndex } from '#/api/windows';
 import { windowOfStyle } from '#/appearance/styleValues';
 import { Badge, EmptyState, IconButton } from '#/components/ui';
+import { plural } from '#/lib/plural';
 
 import { type StudioDraft, useStudio } from './studio';
 import type { StudioWindow } from './windows';
@@ -50,8 +51,8 @@ export const ChangesTab = ({ index, windows, patches, draft, onJump }: { index: 
             id: `patch:${template}`,
             what: part ? `${template.split('/').pop()} (drawn inside)` : 'The window',
             detail: changed
-                ? (changed.length ? `${changed.length} change(s), unsaved` : 'Back to Habbo\'s own on Save')
-                : `${saved.reduce((sum, patch) => sum + opsCount(patch.ops), 0)} change(s)${saved.some(patch => patch.disabled) ? ', some off' : ''}`,
+                ? (changed.length ? `${plural(changed.length, 'change')}, unsaved` : 'Back to Habbo\'s own on Save')
+                : `${plural(saved.reduce((sum, patch) => sum + opsCount(patch.ops), 0), 'change')}${saved.some(patch => patch.disabled) ? ', some off' : ''}`,
             unsaved: changed !== undefined,
             drop: changed !== undefined ? () => studio.changeOps(template, undefined) : undefined,
             revert: saved.length && (changed === undefined || changed.length) ? () => studio.changeOps(template, []) : undefined,

@@ -8,6 +8,7 @@ import { PhoneSort } from '#/components/SortHeader';
 import { Ago, EmptyState, ErrorNotice, Loading, PageBody, PageHeader, Panel, Table, Td, Th } from '#/components/ui';
 import { useHubTabs } from '#/layout/nav';
 import { cx } from '#/lib/cx';
+import { plural } from '#/lib/plural';
 import { type ListOrder, orderOf, orderParams, pageOf, type Sorting } from '#/lib/sort';
 
 /** The columns the list sorts by, as the server names them. */
@@ -50,7 +51,7 @@ export const GroupsPage = () => {
             <PageHeader
                 title="Groups"
                 tabs={tabs}
-                description={search.data && `${search.data.total.toLocaleString()} ${search.data.total === 1 ? 'group' : 'groups'}${text ? ` matching "${text}"` : ''}`}
+                description={search.data && `${plural(search.data.total, 'group')}${text ? ` matching "${text}"` : ''}`}
             />
             <PageBody>
                 <Panel className="overflow-clip">

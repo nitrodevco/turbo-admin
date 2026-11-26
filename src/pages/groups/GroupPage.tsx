@@ -5,6 +5,7 @@ import { Link, useNavigate, useParams } from 'react-router';
 import { FORUM_PERMISSIONS, GROUP_RANKS, GROUP_TYPES, type GroupDetail, type GroupForum, type GroupForumSettings, useCanManageContent, useGroup, useGroupAction } from '#/api/content';
 import { ask } from '#/components/confirm';
 import { Badge, Button, EmptyState, ErrorNotice, IconButton, Input, Kv, Labeled, Loading, PageBody, PageHeader, Panel, Select, Stat, SuccessNotice, Textarea, TextLink } from '#/components/ui';
+import { plural } from '#/lib/plural';
 import { formatDateTime, fromNow } from '#/lib/time';
 
 type Act = ReturnType<typeof useGroupAction>;
@@ -76,7 +77,7 @@ const ForumPanel = ({ group, canManage, act }: { group: GroupDetail; canManage: 
     return (
         <Panel
             title={<span className="flex items-center gap-2"><MessagesSquare className="size-4" />Forum</span>}
-            description={`${forum.threadCount.toLocaleString()} threads, ${forum.messageCount.toLocaleString()} messages${forum.lastMessageAt ? `, the last ${fromNow(forum.lastMessageAt)}` : ''}`}
+            description={`${plural(forum.threadCount, 'thread')}, ${plural(forum.messageCount, 'message')}${forum.lastMessageAt ? `, the last ${fromNow(forum.lastMessageAt)}` : ''}`}
         >
             <form
                 className="flex flex-col gap-3 p-4"
@@ -137,7 +138,7 @@ export const GroupPage = () => {
                             onClick={() => ask(
                                 {
                                     title: `Delete ${group.name}?`,
-                                    body: `Its ${members.length} members are told, and its home room's group furni goes back to their owners.`,
+                                    body: `Its ${plural(members.length, 'member is', 'members are')} told, and its home room's group furni goes back to their owners.`,
                                     confirm: 'Delete',
                                 },
                                 () => act.mutate({ id, remove: true }, { onSuccess: () => navigate('/groups') }),

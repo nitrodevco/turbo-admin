@@ -4,6 +4,7 @@ import { useState } from 'react';
 import type { RewardTrack, RewardTrackLevel, RewardTrackTask } from '#/api/rewardTracks';
 import { Badge, Button, Checkbox, EmptyState, IconButton, Input, Labeled, Panel, Select } from '#/components/ui';
 import { cx } from '#/lib/cx';
+import { plural } from '#/lib/plural';
 
 import { blankTask, moved, nextId, taskPoints } from './model';
 
@@ -69,7 +70,7 @@ const TaskRow = ({ task, index, count, open, onOpen, actionTypes, onChange, onMo
                     {!counted && <Badge tone="amber">not counted</Badge>}
                     {task.premium && <Badge tone="accent">premium</Badge>}
                 </button>
-                <span className="font-mono text-xs text-muted tabular-nums">{task.levels.length} {task.levels.length === 1 ? 'level' : 'levels'} · {taskPoints(task).toLocaleString()} pts</span>
+                <span className="font-mono text-xs text-muted tabular-nums">{plural(task.levels.length, 'level')} · {taskPoints(task).toLocaleString()} pts</span>
                 <IconButton label="Move up" icon={<ArrowUp />} disabled={index === 0} onClick={() => onMove(-1)} />
                 <IconButton label="Move down" icon={<ArrowDown />} disabled={index === count - 1} onClick={() => onMove(1)} />
                 <IconButton label={`Remove ${task.id}`} icon={<Trash2 />} tone="bad" onClick={onRemove} />

@@ -8,6 +8,7 @@ import { SearchWithButton } from '#/components/SearchInput';
 import { PhoneSort } from '#/components/SortHeader';
 import { Ago, Badge, type BadgeTone, EmptyState, ErrorNotice, Loading, PageBody, PageHeader, Panel, Select, Table, Td, Th } from '#/components/ui';
 import { cx } from '#/lib/cx';
+import { plural } from '#/lib/plural';
 import { type ListOrder, orderOf, orderParams, pageOf, type Sorting } from '#/lib/sort';
 
 import { doorModeLabel } from './labels';
@@ -68,7 +69,7 @@ export const RoomsPage = () => {
         <>
             <PageHeader
                 title="Rooms"
-                description={search.data && `${search.data.total.toLocaleString()} ${search.data.total === 1 ? 'room' : 'rooms'}${text ? ` matching "${text}"` : ''}`}
+                description={search.data && `${plural(search.data.total, 'room')}${text ? ` matching "${text}"` : ''}`}
             />
             <PageBody>
                 <Panel className="overflow-clip">

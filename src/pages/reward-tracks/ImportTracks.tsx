@@ -6,6 +6,7 @@ import { previewRewardTrackImport, type RewardTrackImportChange, type RewardTrac
 import { ask } from '#/components/confirm';
 import { celebrate, toast, toastError } from '#/components/toast';
 import { Badge, Button, Checkbox, EmptyState, ErrorNotice, IconTile, Label, Stat } from '#/components/ui';
+import { plural } from '#/lib/plural';
 
 interface CaptureTrack {
     id?: unknown;
@@ -68,7 +69,7 @@ const TrackChange = ({ change, onOpen }: { change: RewardTrackImportChange; onOp
                 <details className="rounded-lg bg-warn-soft">
                     <summary className="flex cursor-pointer items-center gap-2 px-3 py-2 text-xs text-warn">
                         <TriangleAlert className="size-3.5" />
-                        {change.warnings.length} things this hotel cannot do of it
+                        {plural(change.warnings.length, 'thing')} this hotel cannot do of it
                     </summary>
                     <ul className="px-3 pb-2 font-mono text-2xs leading-relaxed">{change.warnings.map(x => <li key={x}>{x}</li>)}</ul>
                 </details>
@@ -174,7 +175,7 @@ export const ImportTracks = ({ onOpen }: { onOpen: (id: string) => void }) => {
                                 <Checkbox
                                     key={`${id}-${index}`}
                                     label={<span className="font-mono">{id || '(no id)'}</span>}
-                                    hint={`${track.tasks?.length ?? 0} tasks, ${track.prizes?.length ?? 0} prizes`}
+                                    hint={`${plural(track.tasks?.length ?? 0, 'task')}, ${plural(track.prizes?.length ?? 0, 'prize')}`}
                                     checked={!skipped.has(id)}
                                     onChange={on => toggle(id, on)}
                                 />

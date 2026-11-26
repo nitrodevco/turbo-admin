@@ -1,4 +1,5 @@
 import type { CatalogOffer } from '#/api/catalog';
+import { plural } from '#/lib/plural';
 
 import { type LayoutSpec, showsOffers } from './layouts';
 
@@ -38,7 +39,7 @@ export const checkLayout = (spec: LayoutSpec, offers: CatalogOffer[]): LayoutIss
             const loose = shown.filter(x => /\*[123]$/.test(classOf(x)) && !TROPHY_TYPE.test(x.localizationId));
 
             if (loose.length > 0)
-                issues.push({ tone: 'warn', text: `${loose.length} trophy colour${loose.length === 1 ? '' : 's'} won't group: the trophy page pairs gold, silver and bronze by name keys ending _g, _s and _b. The Trophies builder names them so.`, offers: ids(loose) });
+                issues.push({ tone: 'warn', text: `${plural(loose.length, 'trophy colour')} won't group: the trophy page pairs gold, silver and bronze by name keys ending _g, _s and _b. The Trophies builder names them so.`, offers: ids(loose) });
 
             break;
         }

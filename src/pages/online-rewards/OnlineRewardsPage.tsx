@@ -6,6 +6,7 @@ import { type ServerSetting, SOURCE, useResetSetting, useSaveSetting, useSetting
 import { ask } from '#/components/confirm';
 import { toast } from '#/components/toast';
 import { Button, CountInput, EmptyState, ErrorNotice, IconButton, Input, Labeled, Loading, PageBody, PageHeader, Panel, Select, Switch, Table, Td, TextLink, Th, WarningNotice } from '#/components/ui';
+import { plural } from '#/lib/plural';
 
 const SECTION = 'Turbo:OnlineRewards';
 
@@ -102,7 +103,7 @@ const jsonOf = (name: Name, draft: Draft) => {
 const shownOf = (name: Name, draft: Draft) => {
     switch (name) {
         case 'Enabled': return draft.enabled ? 'on' : 'off';
-        case 'Rules': return draft.rules.length === 1 ? '1 rule' : `${draft.rules.length} rules`;
+        case 'Rules': return plural(draft.rules.length, 'rule');
         case 'IdleMinutes': return draft.idleMinutes === 0 ? 'never' : `${draft.idleMinutes} min`;
         case 'SkipSleeping': return draft.skipSleeping ? 'yes' : 'no';
     }

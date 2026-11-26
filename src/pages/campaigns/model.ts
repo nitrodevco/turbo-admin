@@ -79,6 +79,3 @@ export const giftText = (gift: CampaignGift, currencyName: (id: number) => strin
     gift.badgeCode && `badge ${gift.badgeCode}`,
     gift.effectId !== null && `effect ${gift.effectId}`,
 ].filter(Boolean).join(', ') || 'Nothing given';
-
-/** A UTC time as the server keeps it, short: 2026-12-01 00:00. */
-export const utcText = (iso: string) => iso.replace('T', ' ').slice(0, 16);

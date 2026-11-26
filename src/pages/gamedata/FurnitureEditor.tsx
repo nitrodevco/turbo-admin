@@ -11,6 +11,7 @@ import { toast, toastError } from '#/components/toast';
 import { Ago, Badge, Button, CHECK_CLASS, ErrorNotice, FieldLabel, Input, Loading, Segmented, Select, Switch, Textarea, TextButton, TextLink } from '#/components/ui';
 import { cx } from '#/lib/cx';
 import { formatBytes } from '#/lib/format';
+import { plural } from '#/lib/plural';
 
 import { type FieldInfo, FIELDS, SPECIAL_TYPES, USAGE_POLICIES } from './fields';
 import { HandItemPreview } from './HandItemsPage';
@@ -294,7 +295,7 @@ const Overview = ({ definition, item, draft, differing, canManage, onUseHabbo, o
                 </div>
                 {canManage && differing > 0 && (
                     <div className="flex flex-col items-start gap-1.5 rounded-lg bg-warn-soft px-3 py-2.5 sm:max-w-56">
-                        <span className="text-xs text-warn">{`${differing} ${differing === 1 ? 'field differs' : 'fields differ'} from Habbo's.`}</span>
+                        <span className="text-xs text-warn">{`${plural(differing, 'field differs', 'fields differ')} from Habbo's.`}</span>
                         <Button variant="secondary" icon={<RotateCcw />} small onClick={onUseHabbo}>Use all of Habbo's</Button>
                     </div>
                 )}
@@ -556,7 +557,7 @@ const EditorBody = ({ definition, canManage, section, onSection, onUnsaved, save
                     {update.error
                         ? <span className="text-bad">{update.error instanceof Error ? update.error.message : 'It could not be saved.'}</span>
                         : changed.length > 0
-                            ? <span className="text-ink">{`${changed.length} unsaved ${changed.length === 1 ? 'change' : 'changes'}`}<span className="text-muted">{`: ${changed.map(x => x.label).join(', ')}`}</span></span>
+                            ? <span className="text-ink">{plural(changed.length, 'unsaved change')}<span className="text-muted">{`: ${changed.map(x => x.label).join(', ')}`}</span></span>
                             : <span className="text-muted">{update.isSuccess || saved ? 'Saved. Habbo\'s later updates leave what you changed as it is.' : canManage ? 'No changes.' : 'You can look, not change.'}</span>}
                 </div>
                 {canManage && (
@@ -617,7 +618,7 @@ export const FurnitureEditor = ({ id, canManage, onClose }: { id: number | null;
         <Modal
             open={id !== null}
             onClose={onClose}
-            leave={unsaved > 0 ? { title: 'Close without saving?', body: `${unsaved} unsaved ${unsaved === 1 ? 'change is' : 'changes are'} lost.`, confirm: 'Discard', danger: true } : null}
+            leave={unsaved > 0 ? { title: 'Close without saving?', body: `${plural(unsaved, 'unsaved change is', 'unsaved changes are')} lost.`, confirm: 'Discard', danger: true } : null}
             className="sm:min-h-[88dvh] sm:max-w-6xl"
             title={shown
                 ? (

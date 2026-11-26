@@ -5,6 +5,7 @@ import { ApiError } from '#/api/client';
 import { useVendingRepair, useVendingRepairPreview, type VendingRepairItem } from '#/api/gamedata';
 import { ask } from '#/components/confirm';
 import { Button, CHECK_CLASS, Checkbox, EmptyState, ErrorNotice, IconButton, Loading, Panel, SuccessNotice, WarningNotice } from '#/components/ui';
+import { plural } from '#/lib/plural';
 
 import { USAGE_POLICIES } from './fields';
 
@@ -108,7 +109,7 @@ export const VendingRepairPanel = ({ onClose }: { onClose: () => void }) => {
         }));
         if (!choices.length || choices.length > 100)
             return;
-        ask({ title: `Repair ${choices.length} vending ${choices.length === 1 ? 'definition' : 'definitions'}?`, body: 'Only the selected definitions and access choice will be applied. The change can be rolled back from history.', confirm: 'Repair vending' }, () => {
+        ask({ title: `Repair ${plural(choices.length, 'vending definition')}?`, body: 'Only the selected definitions and access choice will be applied. The change can be rolled back from history.', confirm: 'Repair vending' }, () => {
             repair.mutate({ items: choices }, {
                 onSuccess: () => setSelected({}),
                 onError: (error) => {
@@ -145,7 +146,7 @@ export const VendingRepairPanel = ({ onClose }: { onClose: () => void }) => {
             {preview.data && items.length > 0 && (
                 <>
                     <div className="flex flex-wrap items-center justify-between gap-2 border-b border-line px-4 py-2 text-xs text-muted">
-                        <span>{preview.data.total.toLocaleString()} definitions · {eligible.length} eligible on this page</span>
+                        <span>{plural(preview.data.total, 'definition')} · {eligible.length} eligible on this page</span>
                         <div className="flex items-center gap-2">
                             <Button variant="ghost" disabled={currentPage <= 0 || preview.isFetching || repair.isPending} onClick={() => changePage(currentPage - 1)}>Previous</Button>
                             <span>Page {currentPage + 1} of {Math.max(1, Math.ceil(preview.data.total / preview.data.pageSize))}</span>

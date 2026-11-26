@@ -3,6 +3,7 @@ import { useState } from 'react';
 
 import { type CatalogOffer, type PageDisplay, useRecolorablePalettes } from '#/api/catalog';
 import { cx } from '#/lib/cx';
+import { plural } from '#/lib/plural';
 
 import { inBuildersClub } from './labels';
 
@@ -43,7 +44,7 @@ export const RecolorablePalette = ({ offers, selectedOffer, display }: { offers:
                 <Palette className="size-3.5 text-accent" />
                 <span className="font-medium">Palette</span>
                 {furni && <span className="truncate font-mono text-muted">{furni}</span>}
-                {colours.length > 0 && <span className="ml-auto text-muted">{colours.length} colours</span>}
+                {colours.length > 0 && <span className="ml-auto text-muted">{plural(colours.length, 'colour')}</span>}
             </div>
             {colours.length > 0
                 ? (

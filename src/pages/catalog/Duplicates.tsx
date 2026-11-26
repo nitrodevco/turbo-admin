@@ -7,6 +7,7 @@ import { SearchInput } from '#/components/SearchInput';
 import { toast, toastError } from '#/components/toast';
 import { Button, EmptyState, ErrorNotice, IconButton, Loading, Switch, TextButton } from '#/components/ui';
 import { cx } from '#/lib/cx';
+import { plural } from '#/lib/plural';
 
 import { DuplicatePages } from './DuplicatePages';
 import { priceOf } from './offers';
@@ -59,7 +60,7 @@ export const Duplicates = ({ tree, onOpen }: { tree: CatalogTree; onOpen: (pageI
     const deleteOffers = (ids: number[], what: string) => remove.mutate([ ids ], {
         onSuccess: (result) => {
             toast(result.failures.length === 0
-                ? `Deleted ${result.done} ${result.done === 1 ? 'offer' : 'offers'}${what}.`
+                ? `Deleted ${plural(result.done, 'offer')}${what}.`
                 : `Deleted ${result.done}; ${result.failures.length} couldn't be: ${result.failures[0]!.error}`);
         },
         onError: toastError,
@@ -69,7 +70,7 @@ export const Duplicates = ({ tree, onOpen }: { tree: CatalogTree; onOpen: (pageI
         const ids = shown.flatMap(x => x.offers.filter(o => o !== keeperOf(x)).map(o => o.offerId));
 
         ask({
-            title: `Delete ${ids.length} offers, keeping one of each of the ${shown.length} furni (the first players see)?`,
+            title: `Delete ${plural(ids.length, 'offer')}, keeping one of each of the ${shown.length.toLocaleString()} furni (the first players see)?`,
             body: 'You can undo it.',
             confirm: 'Delete',
         }, () => deleteOffers(ids, ', one of each furni kept'));

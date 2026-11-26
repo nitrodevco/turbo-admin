@@ -7,6 +7,7 @@ import { Modal, ModalBody } from '#/components/Modal';
 import { toast, toastError } from '#/components/toast';
 import { Ago, Badge, Button, ErrorNotice, Kv, Label, Loading } from '#/components/ui';
 import { formatBytes } from '#/lib/format';
+import { plural } from '#/lib/plural';
 
 import { BundleIcon } from './BundleIcon';
 
@@ -65,7 +66,7 @@ export const BundleDetail = ({ bundle, canManage, onClose }: { bundle: { kind: B
                     <div>
                         <div className="mb-1.5 flex items-baseline justify-between gap-2">
                             <Label>In the zip</Label>
-                            <span className="font-mono text-xs text-muted">{`${data.files.length} files, ${formatBytes(total)}`}</span>
+                            <span className="font-mono text-xs text-muted">{`${plural(data.files.length, 'file')}, ${formatBytes(total)}`}</span>
                         </div>
                         {data.files.length > 0
                             ? (

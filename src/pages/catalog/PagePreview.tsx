@@ -6,6 +6,7 @@ import { catalogImageUrl, promoImageUrl, useClientAssets } from '#/api/assets';
 import type { CatalogFeaturedItem, CatalogOffer, CatalogPageDetail, CatalogTree, PageDisplay } from '#/api/catalog';
 import { EmptyState, FieldLabel } from '#/components/ui';
 import { cx } from '#/lib/cx';
+import { plural } from '#/lib/plural';
 
 import { checkLayout } from './layoutCheck';
 import { layoutOf, type LayoutSlot, showsOffers } from './layouts';
@@ -233,8 +234,8 @@ export const PagePreview = ({ tree, page, draft, featured, selectedOffer, onSele
                 {(spec.kind === 'club' || spec.kind === 'gifts') && (
                     <p className="text-xs text-muted">
                         {spec.kind === 'club'
-                            ? `The client fills this page with the ${tree.club.memberships} shown membership${tree.club.memberships === 1 ? '' : 's'} in the catalog.`
-                            : `The client fills this page with the ${tree.club.gifts} shown club gift${tree.club.gifts === 1 ? '' : 's'}.`}
+                            ? `The client fills this page with the ${plural(tree.club.memberships, 'shown membership')} in the catalog.`
+                            : `The client fills this page with the ${plural(tree.club.gifts, 'shown club gift')}.`}
                     </p>
                 )}
             </div>

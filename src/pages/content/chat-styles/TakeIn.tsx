@@ -5,6 +5,7 @@ import { type ChatStyleImportResult, useChatStyles, useImportChatStyles } from '
 import { Modal, ModalBody } from '#/components/Modal';
 import { Button, Checkbox, ErrorNotice } from '#/components/ui';
 import { cx } from '#/lib/cx';
+import { plural } from '#/lib/plural';
 
 interface Attempt {
     id: number;
@@ -130,7 +131,7 @@ export const TakeInDialog = ({ open, onClose }: { open: boolean; onClose: () => 
                         </div>
                         {changedHere > 0 && (
                             <Checkbox
-                                label={`Replace the ${changedHere} ${changedHere === 1 ? 'style' : 'styles'} changed here too`}
+                                label={`Replace the ${plural(changedHere, 'style')} changed here too`}
                                 hint="They were changed here since they were taken from Habbo's client. Left off, they are kept as they are."
                                 checked={replace}
                                 disabled={running}

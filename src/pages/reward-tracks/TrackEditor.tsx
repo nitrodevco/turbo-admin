@@ -4,8 +4,9 @@ import { useEffect, useMemo, useState } from 'react';
 import { type RewardTrack, useDeleteRewardTrack, useRewardTrack, useSaveRewardTrack } from '#/api/rewardTracks';
 import { ask } from '#/components/confirm';
 import { celebrate, toast, toastError } from '#/components/toast';
-import { Badge, Button, ErrorNotice, Input, Labeled, Loading, PageBody, PageHeader, Panel, Switch } from '#/components/ui';
+import { Badge, Button, CountInput, ErrorNotice, Input, Labeled, Loading, PageBody, PageHeader, Panel, Switch } from '#/components/ui';
 import { cx } from '#/lib/cx';
+import { plural } from '#/lib/plural';
 import { usePathTab } from '#/lib/tabs';
 import { inputToIso, isoToInput } from '#/lib/time';
 
@@ -25,8 +26,6 @@ const TABS = [
 ];
 
 /** Whole numbers from an input, not below a floor. */
-const whole = (text: string, min = 0) => Math.max(min, Math.floor(Number(text) || 0));
-
 /** On or off, the dates, the theme and premium. */
 const SettingsTab = ({ track, onChange }: { track: RewardTrack; onChange: (track: RewardTrack) => void }) => {
     const set = <K extends keyof RewardTrack>(key: K, value: RewardTrack[K]) => onChange({ ...track, [key]: value });
@@ -90,13 +89,13 @@ const SettingsTab = ({ track, onChange }: { track: RewardTrack; onChange: (track
                                 <Input type="number" min={1} step={0.05} value={premium.taskPointsBoost} onChange={event => set('premium', { ...premium, taskPointsBoost: Math.max(1, Number(event.target.value) || 1) })} className="font-mono" aria-label="Points boost" />
                             </Labeled>
                             <Labeled label="Points at once" hint="Given when bought.">
-                                <Input type="number" min={0} value={premium.instantPoints} onChange={event => set('premium', { ...premium, instantPoints: whole(event.target.value) })} className="font-mono" aria-label="Points at once" />
+                                <CountInput wide label="Points at once" min={0} value={premium.instantPoints} onChange={instantPoints => set('premium', { ...premium, instantPoints })} />
                             </Labeled>
                             <Labeled label="Credits">
-                                <Input type="number" min={0} value={premium.costCredits} onChange={event => set('premium', { ...premium, costCredits: whole(event.target.value) })} className="font-mono" aria-label="Cost in credits" />
+                                <CountInput wide label="Cost in credits" min={0} value={premium.costCredits} onChange={costCredits => set('premium', { ...premium, costCredits })} />
                             </Labeled>
                             <Labeled label="Diamonds">
-                                <Input type="number" min={0} value={premium.costDiamonds} onChange={event => set('premium', { ...premium, costDiamonds: whole(event.target.value) })} className="font-mono" aria-label="Cost in diamonds" />
+                                <CountInput wide label="Cost in diamonds" min={0} value={premium.costDiamonds} onChange={costDiamonds => set('premium', { ...premium, costDiamonds })} />
                             </Labeled>
                         </div>
                     )}
@@ -178,13 +177,13 @@ export const TrackEditor = ({ id, isNew, actionTypes, onBack }: { id: string; is
             <PageBody>
                 <div className="flex flex-wrap items-center gap-2 text-xs text-muted">
                     <Badge tone={STATUS[statusOf(track)].tone}>{STATUS[statusOf(track)].label}</Badge>
-                    <span>{track.tasks.length} tasks · {track.tasks.reduce((sum, x) => sum + x.levels.length, 0)} levels · {trackPoints(track).toLocaleString()} points to earn · {track.prizes.length} prizes</span>
+                    <span>{plural(track.tasks.length, 'task')} · {plural(track.tasks.reduce((sum, x) => sum + x.levels.length, 0), 'level')} · {plural(trackPoints(track), 'point')} to earn · {plural(track.prizes.length, 'prize')}</span>
                 </div>
                 {data && data.warnings.length > 0 && (
                     <details className="rounded-xl border border-warn-line bg-warn-soft">
                         <summary className="flex cursor-pointer items-center gap-2 px-4 py-2.5 text-sm text-warn">
                             <TriangleAlert className="size-4" />
-                            {data.warnings.length} things this hotel cannot do of the saved track
+                            {plural(data.warnings.length, 'thing')} this hotel cannot do of the saved track
                         </summary>
                         <ul className="px-4 pb-3 font-mono text-2xs leading-relaxed">
                             {data.warnings.map(x => <li key={x}>{x}</li>)}

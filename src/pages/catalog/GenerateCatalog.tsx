@@ -8,6 +8,7 @@ import { ImagePicker } from '#/components/ImagePicker';
 import { celebrate, toast, toastError } from '#/components/toast';
 import { Button, CHECK_CLASS, EmptyState, ErrorNotice, IconTile, Input, Label, Labeled, Stat, Switch, TextButton } from '#/components/ui';
 import { cx } from '#/lib/cx';
+import { plural } from '#/lib/plural';
 
 import { type Price, PriceFields } from './fields';
 import { CATALOG_ICON } from './images';
@@ -346,7 +347,7 @@ export const GenerateCatalog = ({ tree, onDone }: { tree: CatalogTree; onDone: (
                         {tree.canManage && (
                             <div className="save-bar flex flex-wrap items-center gap-3 p-3">
                                 <span className="mr-auto text-xs text-muted">
-                                    {edits.size > 0 && `${edits.size} ${edits.size === 1 ? 'change' : 'changes'} to the plan. `}
+                                    {edits.size > 0 && `${plural(edits.size, 'change')} to the plan. `}
                                     Nothing goes live until you publish.
                                 </span>
                                 <Button icon={<Wand2 />} disabled={generate.isPending} onClick={event => apply(event.currentTarget)}>

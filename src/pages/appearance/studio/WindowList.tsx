@@ -6,6 +6,7 @@ import type { TemplateIndex, WindowElement, WindowTemplate } from '#/api/windows
 import { SearchInput } from '#/components/SearchInput';
 import { cx, rowFill } from '#/lib/cx';
 import { useDebounced } from '#/lib/debounce';
+import { plural } from '#/lib/plural';
 
 import { AREAS, HUD_WINDOW, type StudioWindow, windowMatches } from './windows';
 
@@ -65,7 +66,7 @@ export const WindowList = ({ index, windows, value, onPick }: { index: TemplateI
         <div className="flex min-h-0 flex-col">
             <div className="flex shrink-0 flex-col gap-1 border-b border-line p-2">
                 <SearchInput value={text} onValueChange={setText} placeholder="A window, or what it shows" aria-label="Find a window" />
-                <span className="text-xs text-muted">{`${found.length} of ${windows.length} windows${shown.size ? `, ${shown.size} text(s) say those words` : ''}`}</span>
+                <span className="text-xs text-muted">{`${found.length} of ${plural(windows.length, 'window')}${shown.size ? `, ${plural(shown.size, 'text says', 'texts say')} those words` : ''}`}</span>
             </div>
             <div className="min-h-0 flex-1 overflow-y-auto">
                 {hud && (

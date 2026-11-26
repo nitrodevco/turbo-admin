@@ -6,21 +6,28 @@ import { type RewardTrackListItem, useReloadRewardTracks, useReorderRewardTracks
 import { toast, toastError } from '#/components/toast';
 import { Badge, Button, EmptyState, ErrorNotice, IconButton, Input, Loading, PageBody, PageHeader, Panel, Switch, Table, Td, Th } from '#/components/ui';
 import { cx } from '#/lib/cx';
+import { plural } from '#/lib/plural';
+import { formatDateTime, formatUtc, isoTime } from '#/lib/time';
 
 import { useMenuNames, useTrackNames } from './hooks';
 import { ImportTracks } from './ImportTracks';
-import { css, INTRODUCTION, MENU_ITEMS, menuTextKey, menuTracks, STATUS, statusOf, themeOf, utcText } from './model';
+import { css, INTRODUCTION, MENU_ITEMS, menuTextKey, menuTracks, STATUS, statusOf, themeOf } from './model';
 import { TrackEditor } from './TrackEditor';
 
+/**
+ * A track's dates in UTC (the column says so), as the hotel keeps them, and in the viewer's own
+ * time on hover. A narrow column breaks it at the arrow, never inside a date.
+ */
 const Schedule = ({ track }: { track: RewardTrackListItem }) => {
-    const starts = utcText(track.startsAt);
-    const ends = utcText(track.endsAt);
+    const { startsAt, endsAt } = track;
 
-    if (!starts && !ends) return <span className="text-muted">No dates</span>;
+    if (!startsAt && !endsAt) return <span className="text-muted">No dates</span>;
 
     return (
-        <span className="font-mono text-xs">
-            {starts ?? 'now'} <span className="text-muted">→</span> {ends ?? 'no end'}
+        <span className="font-mono text-xs" title={`Your time: ${startsAt ? formatDateTime(isoTime(startsAt) ?? 0) : 'now'} to ${endsAt ? formatDateTime(isoTime(endsAt) ?? 0) : 'no end'}`}>
+            <span className="whitespace-nowrap">{startsAt ? formatUtc(startsAt) : 'now'} <span className="text-muted">→</span></span>
+            {' '}
+            <span className="whitespace-nowrap">{endsAt ? formatUtc(endsAt) : 'no end'}</span>
         </span>
     );
 };
@@ -109,7 +116,7 @@ const TrackList = ({ tracks, onOpen }: { tracks: RewardTrackListItem[]; onOpen: 
                                 </button>
                             </Td>
                             <Td>
-                                <span className="block text-xs">{menuNames.get(track.id) ?? <span className="font-mono text-muted">{menuTextKey(track.id)}</span>}</span>
+                                <span className="block text-xs">{menuNames.get(track.id) ?? <span className="font-mono wrap-anywhere text-muted">{menuTextKey(track.id)}</span>}</span>
                                 {track.id === INTRODUCTION && <span className="block text-2xs text-muted">Always in the menu</span>}
                             </Td>
                             <Td><span title={status.meaning}><Badge tone={status.tone}>{status.label}</Badge></span></Td>
@@ -124,8 +131,8 @@ const TrackList = ({ tracks, onOpen }: { tracks: RewardTrackListItem[]; onOpen: 
                                 </span>
                             </Td>
                             <Td><Schedule track={track} /></Td>
-                            <Td className="text-right font-mono text-xs tabular-nums">{track.tasks} <span className="text-muted">/ {track.levels} levels</span></Td>
-                            <Td className="text-right font-mono text-xs tabular-nums">{track.prizes} <span className="text-muted">to {track.maxPoints.toLocaleString()} pts</span></Td>
+                            <Td className="text-right font-mono text-xs whitespace-nowrap tabular-nums">{track.tasks} <span className="text-muted">/ {plural(track.levels, 'level')}</span></Td>
+                            <Td className="text-right font-mono text-xs whitespace-nowrap tabular-nums">{track.prizes} <span className="text-muted">to {track.maxPoints.toLocaleString()} pts</span></Td>
                             <Td>{track.hasPremium ? <Badge tone="accent">Premium</Badge> : <span className="text-xs text-muted">None</span>}</Td>
                         </tr>
                     );

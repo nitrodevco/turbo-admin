@@ -7,6 +7,7 @@ import { RestartServer } from '#/components/RestartServer';
 import { toast } from '#/components/toast';
 import { Button, CountInput, ErrorNotice, FieldLabel, Input, Loading, PageBody, PageHeader, Panel, Switch, TextButton, ValueTag, WarningNotice } from '#/components/ui';
 import { cx } from '#/lib/cx';
+import { plural } from '#/lib/plural';
 
 import { catalogTabs } from './catalogTabs';
 
@@ -92,7 +93,7 @@ const jsonOf = (name: Name, ruleset: Ruleset) => {
 
 /** A setting's value as staff read it in the list of changes. */
 const shownOf = (name: Name, ruleset: Ruleset) => {
-    if (name === 'AdditionalBonusDiscountThresholdQuantities') return ruleset.thresholds.length === 0 ? 'none' : `${ruleset.thresholds.length} quantities`;
+    if (name === 'AdditionalBonusDiscountThresholdQuantities') return ruleset.thresholds.length === 0 ? 'none' : plural(ruleset.thresholds.length, 'quantity', 'quantities');
 
     if (name === 'BonusThreshold' && ruleset.bonusThreshold >= NO_BONUS) return 'off';
 
@@ -239,7 +240,7 @@ const ExtrasEditor = ({ thresholds, max, disabled, onChange }: { thresholds: num
                         </div>
                         <div className="flex flex-wrap items-center gap-2">
                             <Button variant="secondary" icon={<Plus />} disabled={runQuantities.length === 0} onClick={() => onChange(sorted([ ...thresholds, ...runQuantities.flatMap(x => Array<number>(run.each).fill(x)) ]))}>
-                                Add {runQuantities.length} {runQuantities.length === 1 ? 'quantity' : 'quantities'}
+                                Add {plural(runQuantities.length, 'quantity', 'quantities')}
                             </Button>
                             <span className="truncate font-mono text-xs text-muted">{runQuantities.slice(0, 6).join(', ')}{runQuantities.length > 6 ? ', ...' : ''}</span>
                         </div>

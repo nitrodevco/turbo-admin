@@ -2,7 +2,7 @@ import { ArrowDown, ArrowDownWideNarrow, ArrowUp, ChevronRight, Plus, Trash2 } f
 import { useState } from 'react';
 
 import type { RewardTrack, RewardTrackPrize, RewardTrackProductType } from '#/api/rewardTracks';
-import { Badge, Button, Checkbox, EmptyState, IconButton, Input, Labeled, Panel, Select, Textarea } from '#/components/ui';
+import { Badge, Button, Checkbox, CountInput, EmptyState, IconButton, Input, Labeled, Panel, Select, Textarea } from '#/components/ui';
 import { cx } from '#/lib/cx';
 import { ItemPicker, PetPicker } from '#/pages/catalog/ProductsEditor';
 
@@ -10,8 +10,6 @@ import { blankPrize, CURRENCIES, type FurniNames, moved, nextId, prizeText, PROD
 import { PrizeIcon } from './PrizeIcon';
 
 /** Whole numbers from an input, not below a floor. */
-const whole = (text: string, min = 0) => Math.max(min, Math.floor(Number(text) || 0));
-
 /** A prize turned into another kind: what it gives starts empty. */
 const asType = (prize: RewardTrackPrize, productType: RewardTrackProductType): RewardTrackPrize => ({
     ...prize,
@@ -28,7 +26,7 @@ const GiveFields = ({ prize, furni, onChange, onPickFurni }: { prize: RewardTrac
     const set = <K extends keyof RewardTrackPrize>(key: K, value: RewardTrackPrize[K]) => onChange({ ...prize, [key]: value });
     const amount = (label = 'How many') => (
         <Labeled label={label} className="w-32 shrink-0">
-            <Input type="number" min={1} value={prize.amount} onChange={event => set('amount', whole(event.target.value, 1))} className="font-mono" aria-label="Amount" />
+            <CountInput wide label="Amount" min={1} value={prize.amount} onChange={amount => set('amount', amount)} />
         </Labeled>
     );
     const id = (label: string, placeholder: string) => (
@@ -106,7 +104,7 @@ const GiveFields = ({ prize, furni, onChange, onPickFurni }: { prize: RewardTrac
                     <PetPicker value={petType} onChange={value => setFigure({ petType: value })} disabled={false} />
                     <div className="flex gap-2">
                         <Labeled label="Breed (palette)" className="w-36">
-                            <Input type="number" min={0} value={palette} onChange={event => setFigure({ palette: String(whole(event.target.value)) })} className="font-mono" aria-label="Pet palette" />
+                            <CountInput wide label="Pet palette" min={0} value={Number(palette) || 0} onChange={value => setFigure({ palette: String(value) })} />
                         </Labeled>
                         <Labeled label="Colour" className="w-36">
                             <Input value={colour} onChange={event => setFigure({ colour: event.target.value.trim().replace(/^#/, '') })} className="font-mono" aria-label="Pet colour" />
@@ -162,7 +160,7 @@ const PrizeRow = ({ prize, index, count, open, onOpen, furni, onChange, onPickFu
                         <Input value={prize.id} onChange={event => onChange({ ...prize, id: event.target.value.trim() })} className="font-mono" maxLength={64} aria-label="Prize id" spellCheck={false} />
                     </Labeled>
                     <Labeled label="Points">
-                        <Input type="number" min={0} value={prize.requiredPoints} onChange={event => onChange({ ...prize, requiredPoints: whole(event.target.value) })} className="font-mono" aria-label="Points needed" />
+                        <CountInput wide label="Points needed" min={0} value={prize.requiredPoints} onChange={requiredPoints => onChange({ ...prize, requiredPoints })} />
                     </Labeled>
                     <Checkbox label="Premium" checked={prize.premium} onChange={value => onChange({ ...prize, premium: value })} />
                 </div>

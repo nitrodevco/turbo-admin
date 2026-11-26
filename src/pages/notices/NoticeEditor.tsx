@@ -4,6 +4,7 @@ import { type ReactNode, useState } from 'react';
 import { useRewardTracks } from '#/api/rewardTracks';
 import { Badge, Button, COLOUR_FIELD_CLASS, Input, Label, Labeled, Segmented, Select, Td, Textarea, Th } from '#/components/ui';
 import { cx } from '#/lib/cx';
+import { plural } from '#/lib/plural';
 
 import {
     AUDIENCE_OPTIONS, AUTO_OPEN_NOT_CLAIMED, CLOSE_OPTIONS, CONDITION_REWARD_TRACK, DEFAULT_COLOR, descKey, fromLocalInput, habboDifferences, type Notice, NOTICE_TYPES, type NoticeField,
@@ -174,7 +175,7 @@ export const HabboCompare = ({ notice, habbo, wordsKnown, onTake, disabled }: { 
             <div className="flex flex-wrap items-center gap-3">
                 <NoticePreview notice={{ ...habbo, texts: { ...habbo.texts, desc: wordsKnown ? habbo.texts.desc : notice.texts.desc } }} />
                 <span className="flex flex-col gap-1 text-xs">
-                    {differences.length === 0 ? <Badge tone="green">Same as Habbo&apos;s</Badge> : <Badge tone="amber">{`${differences.length} ${differences.length === 1 ? 'difference' : 'differences'} from Habbo's`}</Badge>}
+                    {differences.length === 0 ? <Badge tone="green">Same as Habbo&apos;s</Badge> : <Badge tone="amber">{`${plural(differences.length, 'difference')} from Habbo's`}</Badge>}
                     {!wordsKnown && <span className="text-muted">Habbo&apos;s words aren&apos;t known yet.</span>}
                 </span>
             </div>

@@ -12,10 +12,12 @@ import { useWorkingOn } from '#/appearance/workingOn';
 import { WorkingOnPicker } from '#/appearance/WorkingOnPicker';
 import { useSaved } from '#/components/SaveFeedback';
 import { SearchInput } from '#/components/SearchInput';
-import { toast, toastError } from '#/components/toast';
+import { toastError } from '#/components/toast';
 import { Badge, Button, EmptyState, ErrorNotice, FileButton, Label, ListPanel, Loading, PageBody, PageHeader, Panel, Segmented, TextLink } from '#/components/ui';
 import { useHubTabs } from '#/layout/nav';
+import { copyText } from '#/lib/clipboard';
 import { useDebounced } from '#/lib/debounce';
+import { plural } from '#/lib/plural';
 import { usePathTab } from '#/lib/tabs';
 import { flatElements, windowName } from '#/pages/appearance/studio/windows';
 import { WindowPick } from '#/pages/appearance/WindowPick';
@@ -150,7 +152,7 @@ const SkinCard = ({ id, skin, sheet, replacing }: { id: string; skin: SkinEntry;
             <div className="flex flex-wrap items-center gap-2">
                 <span className="font-mono font-medium">{id}</span>
                 {skin.tintColor && <Badge><span className="inline-block size-2.5 rounded-sm" style={{ background: skin.tintColor }} />{`tint ${skin.tintColor}`}</Badge>}
-                <span className="text-xs text-muted">{`${skin.sprites.length} sprite(s), ${windows.length} window(s)`}</span>
+                <span className="text-xs text-muted">{`${plural(skin.sprites.length, 'sprite')}, ${plural(windows.length, 'window')}`}</span>
             </div>
             <ul className="flex flex-col gap-2">
                 {skin.sprites.map(sprite => (
@@ -165,7 +167,7 @@ const SkinCard = ({ id, skin, sheet, replacing }: { id: string; skin: SkinEntry;
                             variant="ghost"
                             icon={<Copy />}
                             title="Copy the asset.overlays entry: replaces this sprite, at its size, in every window drawing it"
-                            onClick={() => void navigator.clipboard.writeText(`"${sprite.overlay}": ""`).then(() => toast(`Copied ${sprite.overlay}: paste it into asset.overlays with the image's address.`))}
+                            onClick={() => void copyText(`"${sprite.overlay}": ""`, `Copied ${sprite.overlay}: paste it into asset.overlays with the image's address.`)}
                         >
                             overlay key
                         </Button>
@@ -331,7 +333,7 @@ const WindowsTab = () => {
             <ListPanel>
                 <div className="flex flex-col gap-1 border-b border-line px-4 py-3">
                     <SearchInput value={text} onValueChange={setText} placeholder="Window, element, text key or shown text" aria-label="Find windows" />
-                    {index && <span className="text-xs text-muted">{`${found.length} of ${ids.length} windows${shown.size ? `, ${shown.size} text(s) show those words` : ''}`}</span>}
+                    {index && <span className="text-xs text-muted">{`${found.length} of ${plural(ids.length, 'window')}${shown.size ? `, ${plural(shown.size, 'text shows', 'texts show')} those words` : ''}`}</span>}
                 </div>
                 {error && <div className="p-4"><ErrorNotice error={error} /></div>}
                 {!index && !error && <Loading />}

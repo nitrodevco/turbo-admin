@@ -7,6 +7,7 @@ import { Row, SortedRowList } from '#/components/RowList';
 import { SearchInput, SearchWithButton } from '#/components/SearchInput';
 import { Badge, EmptyState, ErrorNotice, Loading, PageBody, PageHeader, Panel } from '#/components/ui';
 import { useHubTabs } from '#/layout/nav';
+import { plural } from '#/lib/plural';
 import { type SortKeys, useSortedRows } from '#/lib/sort';
 
 import { AUDIT_KEYS, AUDIT_NEWEST } from './audit';
@@ -149,7 +150,7 @@ export const NodesPage = () => {
         <>
             <PermissionsHeader
                 section="nodes"
-                description={catalog.data && `${catalog.data.nodes.length} nodes and ${catalog.data.metaKeys.length} meta keys are registered`}
+                description={catalog.data && `${plural(catalog.data.nodes.length, 'node')} and ${plural(catalog.data.metaKeys.length, 'meta key')} are registered`}
             />
             <PageBody className="grid gap-4 lg:gap-6 xl:grid-cols-[1fr_22rem]">
                 <div className="min-w-0">

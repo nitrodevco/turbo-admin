@@ -4,6 +4,7 @@ import { LogOut, Unlink } from 'lucide-react';
 import { endSiteSessions, type PlayerDiscordInfo, unlinkDiscord } from '#/api/players';
 import { ask } from '#/components/confirm';
 import { Button, ErrorNotice, Kv, Panel } from '#/components/ui';
+import { plural } from '#/lib/plural';
 import { formatDateTime } from '#/lib/time';
 
 /**
@@ -24,7 +25,7 @@ export const DiscordCard = ({ playerId, playerName, discord, canManage }: { play
                 <Kv label="Username">@{discord.username}</Kv>
                 <Kv label="Discord id"><span className="font-mono text-xs">{discord.id}</span></Kv>
                 <Kv label="Linked">{formatDateTime(discord.linkedAtUtc)}</Kv>
-                <Kv label="Signed in on the site">{discord.activeSignIns === 0 ? 'nowhere' : `${discord.activeSignIns} ${discord.activeSignIns === 1 ? 'browser' : 'browsers'}`}</Kv>
+                <Kv label="Signed in on the site">{discord.activeSignIns === 0 ? 'nowhere' : plural(discord.activeSignIns, 'browser')}</Kv>
             </dl>
             {canManage && (
                 <div className="flex flex-wrap gap-2 border-t border-line px-4 py-3">

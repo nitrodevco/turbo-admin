@@ -4,10 +4,11 @@ import { useNavigate, useParams } from 'react-router';
 import { type CampaignCalendar, useCampaignCalendars, useSaveCampaignCalendar } from '#/api/campaigns';
 import { toast, toastError } from '#/components/toast';
 import { Badge, Button, EmptyState, ErrorNotice, Loading, PageBody, PageHeader, Panel, Switch, Table, Td, Th } from '#/components/ui';
-import { formatDateTime } from '#/lib/time';
+import { plural } from '#/lib/plural';
+import { formatDateTime, formatUtc } from '#/lib/time';
 
 import { CalendarEditor } from './CalendarEditor';
-import { currentDay, STATUS, statusOf, utcText } from './model';
+import { currentDay, STATUS, statusOf } from './model';
 
 /** Where a calendar is today: its day, or how far it is from its days. */
 const TodayText = ({ calendar }: { calendar: CampaignCalendar }) => {
@@ -58,11 +59,11 @@ const CalendarList = ({ calendars, onOpen }: { calendars: CampaignCalendar[]; on
                                 </span>
                             </Td>
                             <Td>
-                                <span className="block font-mono text-xs">{utcText(calendar.startsAt)}</span>
+                                <span className="block font-mono text-xs">{formatUtc(calendar.startsAt)}</span>
                                 <span className="block text-2xs text-muted">{formatDateTime(calendar.startsAt)} your time</span>
                             </Td>
                             <Td className="text-xs"><TodayText calendar={calendar} /></Td>
-                            <Td className="text-right font-mono text-xs tabular-nums">{calendar.rewards.length} <span className="text-muted">/ {calendar.days} days</span></Td>
+                            <Td className="text-right font-mono text-xs whitespace-nowrap tabular-nums">{calendar.rewards.length} <span className="text-muted">/ {plural(calendar.days, 'day')}</span></Td>
                         </tr>
                     );
                 })}

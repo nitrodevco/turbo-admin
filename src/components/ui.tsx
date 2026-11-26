@@ -1,5 +1,5 @@
-import { CheckCircle2, Menu, TriangleAlert, X, XCircle } from 'lucide-react';
-import { type ButtonHTMLAttributes, type FormEventHandler, type InputHTMLAttributes, type ReactNode, type Ref, type SelectHTMLAttributes, type TextareaHTMLAttributes, useId, useState } from 'react';
+import { Check, CheckCircle2, Copy, Menu, TriangleAlert, X, XCircle } from 'lucide-react';
+import { type ButtonHTMLAttributes, type FormEventHandler, type InputHTMLAttributes, type ReactNode, type Ref, type SelectHTMLAttributes, type TextareaHTMLAttributes, useEffect, useId, useState } from 'react';
 import { Link } from 'react-router';
 
 import { useClientAssets } from '#/api/assets';
@@ -7,6 +7,7 @@ import { useDrawer } from '#/layout/drawer';
 import { HotelStatusPill } from '#/layout/HotelStatus';
 import { useActiveNavItem } from '#/layout/nav';
 import { NotificationsBell } from '#/layout/NotificationsBell';
+import { copyText } from '#/lib/clipboard';
 import { cx } from '#/lib/cx';
 import { useFillHeight } from '#/lib/fillHeight';
 import type { SortDir, Sorting } from '#/lib/sort';
@@ -316,9 +317,10 @@ export const Select = ({ className, small, ...select }: SelectHTMLAttributes<HTM
 /**
  * A whole number typed in place, from `min` up (and `max` at most): what is typed stays as typed
  * until it is one in range, and is put back to the value on leaving. Centred, in the mono face;
- * `className` for its width only, 80px unless given.
+ * `className` for its width only, 80px unless given; `wide`, one filling its cell in a form,
+ * left-aligned like the fields beside it (`className` then adds to it, as an error's border).
  */
-export const CountInput = ({ value, onChange, min, max, label, disabled, className }: { value: number; onChange: (value: number) => void; min: number; max?: number; label: string; disabled?: boolean; className?: string }) => {
+export const CountInput = ({ value, onChange, min, max, label, disabled, wide, className }: { value: number; onChange: (value: number) => void; min: number; max?: number; label: string; disabled?: boolean; wide?: boolean; className?: string }) => {
     const [ text, setText ] = useState(String(value));
     const [ was, setWas ] = useState(value);
 
@@ -346,7 +348,7 @@ export const CountInput = ({ value, onChange, min, max, label, disabled, classNa
                 if (typed.trim() !== '' && Number.isInteger(number) && number >= min && (max === undefined || number <= max)) onChange(number);
             }}
             onBlur={() => setText(String(value))}
-            className={cx('text-center font-mono', className ?? 'w-20')}
+            className={cx('font-mono', wide ? cx('w-full', className) : cx('text-center', className ?? 'w-20'))}
         />
     );
 };
@@ -522,6 +524,33 @@ export const Button = ({ variant = 'primary', icon, small, className, children, 
         {children}
     </button>
 );
+
+/**
+ * A button that copies `text`: for a moment its icon turns to a tick and its words, if any, to
+ * "Copied", which a screen reader is told too. One with no words needs a `label`. Where the browser
+ * won't copy, a toast says so.
+ */
+export const CopyButton = ({ text, label, variant = 'secondary', small, className, children }: { text: string; label?: string; variant?: ButtonVariant; small?: boolean; className?: string; children?: ReactNode }) => {
+    const [ copied, setCopied ] = useState(false);
+
+    useEffect(() => {
+        if (!copied)
+            return;
+
+        const timer = setTimeout(() => setCopied(false), 2000);
+
+        return () => clearTimeout(timer);
+    }, [ copied ]);
+
+    return (
+        <>
+            <Button variant={variant} small={small} icon={copied ? <Check /> : <Copy />} aria-label={label} title={label} className={className} onClick={() => void copyText(text).then(setCopied)}>
+                {children && (copied ? 'Copied' : children)}
+            </Button>
+            <span className="sr-only" role="status">{copied ? 'Copied' : ''}</span>
+        </>
+    );
+};
 
 /**
  * A link that looks like a secondary `Button`, for a way to another page among buttons: in a page's

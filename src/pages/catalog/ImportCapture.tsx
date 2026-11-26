@@ -8,6 +8,7 @@ import { ask } from '#/components/confirm';
 import { celebrate, toast, toastError } from '#/components/toast';
 import { Button, EmptyState, ErrorNotice, IconTile, Label, Segmented, Stat, Switch } from '#/components/ui';
 import { cx } from '#/lib/cx';
+import { plural } from '#/lib/plural';
 
 const ACTIONS: Record<ImportPageChange['action'], { label: string; tone: string }> = {
     add: { label: 'add', tone: 'bg-accent-soft text-accent' },
@@ -66,7 +67,7 @@ const MissingPictures = ({ names, canManage }: { names: string[]; canManage: boo
     const fetch = useFetchCatalogPictures();
 
     const doFetch = () => fetch.mutate(names, {
-        onSuccess: () => toast(`Taking ${names.length.toLocaleString()} pictures in from Habbo: follow it on the Assets page, then publish the assets for players to see them.`),
+        onSuccess: () => toast(`Taking ${plural(names.length, 'picture')} in from Habbo: follow it on the Assets page, then publish the assets for players to see them.`),
         onError: toastError,
     });
 
@@ -74,7 +75,7 @@ const MissingPictures = ({ names, canManage }: { names: string[]; canManage: boo
         <details className="rounded-xl border border-warn-line bg-warn-soft/50">
             <summary className="flex cursor-pointer flex-wrap items-center gap-2 px-3 py-2 text-xs">
                 <ImageOff className="size-3.5 text-warn" />
-                <span className="min-w-0 flex-1">{names.length.toLocaleString()} headers and teasers this hotel has no picture of: the pages show nothing there until they are taken in.</span>
+                <span className="min-w-0 flex-1">{plural(names.length, 'header or teaser', 'headers and teasers')} this hotel has no picture of: the pages show nothing there until they are taken in.</span>
                 {canManage && (
                     <Button
                         variant="secondary"

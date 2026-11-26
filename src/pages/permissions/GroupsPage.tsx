@@ -6,6 +6,7 @@ import { groupCalls, type GroupListItem, useGroups, usePermissionChange } from '
 import { PhoneLabel, Row, SortedRowList } from '#/components/RowList';
 import { Badge, Button, EmptyState, ErrorNotice, Field, Loading, PageBody, Panel } from '#/components/ui';
 import { cx } from '#/lib/cx';
+import { plural } from '#/lib/plural';
 import type { SortKeys } from '#/lib/sort';
 
 import { PermissionsHeader } from './common';
@@ -81,7 +82,7 @@ export const GroupsPage = () => {
         <>
             <PermissionsHeader
                 section="groups"
-                description={data && `${data.groups.length} groups`}
+                description={data && plural(data.groups.length, 'group')}
             />
             <PageBody className="grid gap-4 lg:gap-6 xl:grid-cols-[1fr_20rem]">
                 {error && <ErrorNotice error={error} />}

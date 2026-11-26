@@ -5,7 +5,7 @@ import { type CampaignCalendar, refusalOf, useCampaignCalendar, useDeleteCampaig
 import { useCurrencies } from '#/api/content';
 import { ask } from '#/components/confirm';
 import { celebrate, toast, toastError } from '#/components/toast';
-import { Badge, Button, ErrorNotice, Input, Labeled, Loading, PageBody, PageHeader, Panel, Select, Switch } from '#/components/ui';
+import { Badge, Button, CountInput, ErrorNotice, Input, Labeled, Loading, PageBody, PageHeader, Panel, Select, Switch } from '#/components/ui';
 import { cx } from '#/lib/cx';
 import { formatDateTime, inputToIso, isoToInput } from '#/lib/time';
 
@@ -14,8 +14,6 @@ import { FieldError, GiftEditor } from './GiftEditor';
 import { blankCalendar, blankGift, currentDay, STATUS, statusOf } from './model';
 
 /** Whole numbers from an input, not below a floor. */
-const whole = (text: string, min = 0) => Math.max(min, Math.floor(Number(text) || 0));
-
 /**
  * One calendar's editor: its name, start, length and switch, a door per day with its gift, and the
  * doors as a player sees them today. Changes stay here until saved; the server checks the whole
@@ -111,7 +109,7 @@ export const CalendarEditor = ({ id, onBack, onSaved }: { id: number | null; onB
                             <Input type="datetime-local" value={isoToInput(calendar.startsAt)} onChange={event => set('startsAt', inputToIso(event.target.value) ?? calendar.startsAt)} aria-label="Starts (UTC)" />
                         </Labeled>
                         <Labeled label="Days" hint="1 to 366 doors.">
-                            <Input type="number" min={1} max={366} value={calendar.days} onChange={event => set('days', whole(event.target.value, 1))} className={cx('font-mono', errorOf('days') && 'border-bad')} aria-label="Days" />
+                            <CountInput wide label="Days" min={1} max={366} value={calendar.days} onChange={days => set('days', days)} className={cx(errorOf('days') && 'border-bad')} />
                             <FieldError message={errorOf('days')} />
                         </Labeled>
                     </div>

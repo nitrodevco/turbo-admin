@@ -1,4 +1,4 @@
-import { Copy, Download, Plus, Save, Sparkles, Trash2, X } from 'lucide-react';
+import { Download, Plus, Save, Sparkles, Trash2, X } from 'lucide-react';
 import { useState } from 'react';
 import { Link } from 'react-router';
 
@@ -8,10 +8,11 @@ import { ask } from '#/components/confirm';
 import { ListToolbar } from '#/components/ListToolbar';
 import { OpenRow } from '#/components/RowList';
 import { SearchInput } from '#/components/SearchInput';
-import { Badge, Button, EmptyState, ErrorNotice, FieldLabel, Input, Labeled, Loading, PageBody, PageHeader, Panel, Select, SuccessNotice, Switch, Textarea, Thumb } from '#/components/ui';
+import { Badge, Button, CopyButton, EmptyState, ErrorNotice, FieldLabel, Input, Labeled, Loading, PageBody, PageHeader, Panel, Select, SuccessNotice, Switch, Textarea, Thumb } from '#/components/ui';
 import { cx } from '#/lib/cx';
 import { useDebounced } from '#/lib/debounce';
-import { inputToIso, isoTime, isoToInput } from '#/lib/time';
+import { plural } from '#/lib/plural';
+import { formatUtc, inputToIso, isoTime, isoToInput } from '#/lib/time';
 
 import { catalogTabs } from './catalogTabs';
 import { ProductIcon } from './ProductIcon';
@@ -32,9 +33,6 @@ const EMPTY: VoucherDraft = {
 };
 
 const digits = (text: string) => Number(text.replace(/\D/g, '')) || 0;
-
-/** "2026-10-09 12:00" in UTC. */
-const utc = (iso: string) => new Date(isoTime(iso) ?? 0).toISOString().slice(0, 16).replace('T', ' ');
 
 /** What a voucher gives, in a few words. */
 const rewards = (item: VoucherItem, currencyName: (id: number) => string) => {
@@ -134,7 +132,7 @@ const Redemptions = ({ id }: { id: number }) => {
                 {data.redemptions.map(x => (
                     <li key={x.playerId} className="flex items-center gap-3 px-3 py-1.5">
                         <Link to={`/players/${x.playerId}`} className="min-w-0 flex-1 truncate hover:underline">{x.playerName || `#${x.playerId}`}</Link>
-                        <span className="text-xs text-muted tabular-nums">{utc(x.redeemedAt)} UTC</span>
+                        <span className="text-xs text-muted tabular-nums">{formatUtc(x.redeemedAt)} UTC</span>
                     </li>
                 ))}
             </ul>
@@ -195,7 +193,6 @@ const Generator = ({ onDone }: { onDone: () => void }) => {
     const [ furnitureName, setFurnitureName ] = useState<string | null>(null);
     const [ count, setCount ] = useState(10);
     const [ prefix, setPrefix ] = useState('');
-    const [ copied, setCopied ] = useState(false);
     const generate = useGenerateVouchers();
     const codes = generate.data?.vouchers.map(x => x.voucher.code).join('\n') ?? '';
     const set = (change: Partial<VoucherDraft>, name?: string | null) => {
@@ -215,10 +212,10 @@ const Generator = ({ onDone }: { onDone: () => void }) => {
     if (generate.data)
         return (
             <div className="flex flex-col gap-3">
-                <SuccessNotice>Made {generate.data.vouchers.length} vouchers.</SuccessNotice>
+                <SuccessNotice>Made {plural(generate.data.vouchers.length, 'voucher')}.</SuccessNotice>
                 <Textarea readOnly aria-label="The codes made" value={codes} rows={Math.min(12, generate.data.vouchers.length)} className="w-full font-mono" />
                 <div className="flex flex-wrap gap-2">
-                    <Button variant="secondary" icon={<Copy />} onClick={() => void navigator.clipboard.writeText(codes).then(() => setCopied(true))}>{copied ? 'Copied' : 'Copy'}</Button>
+                    <CopyButton text={codes}>Copy</CopyButton>
                     <Button variant="secondary" icon={<Download />} onClick={download}>Download</Button>
                     <Button variant="ghost" icon={<X />} onClick={onDone}>Close</Button>
                 </div>
@@ -267,7 +264,7 @@ export const VouchersPage = () => {
 
     return (
         <>
-            <PageHeader title="Catalog" tabs={catalogTabs('vouchers')} description={data && `${data.total} voucher${data.total === 1 ? '' : 's'}`}>
+            <PageHeader title="Catalog" tabs={catalogTabs('vouchers')} description={data && plural(data.total, 'voucher')}>
                 {canManage && (
                     <>
                         <Button variant="secondary" icon={<Sparkles />} onClick={() => setOpen('generate')} disabled={open === 'generate'}>Make many</Button>
@@ -309,7 +306,7 @@ export const VouchersPage = () => {
                                             <span className="font-mono text-sm">{voucher.code}</span>
                                             <span className="min-w-0 flex-1 truncate text-xs text-muted">{rewards(item, currencyName)}{voucher.note ? ` · ${voucher.note}` : ''}</span>
                                             <span className="text-xs text-muted tabular-nums">{voucher.uses}{voucher.maxUses === null ? '' : ` / ${voucher.maxUses}`} used</span>
-                                            {voucher.expiresAt && !expired && <Badge>until {utc(voucher.expiresAt)}</Badge>}
+                                            {voucher.expiresAt && !expired && <Badge>until {formatUtc(voucher.expiresAt)} UTC</Badge>}
                                             {!voucher.enabled && <Badge tone="amber">Off</Badge>}
                                             {expired && <Badge tone="red">Expired</Badge>}
                                             {usedUp && <Badge>Used up</Badge>}

@@ -5,6 +5,7 @@ import { FIGURE_KINDS, type FigurePalette, usePalettes, useSaveFigureBatch } fro
 import { ask } from '#/components/confirm';
 import { Badge, Button, COLOUR_FIELD_CLASS, EmptyState, ErrorNotice, Input, Labeled, ListPanel, Loading, Panel, Select, SuccessNotice, Switch, TextButton } from '#/components/ui';
 import { cx, rowFill } from '#/lib/cx';
+import { plural } from '#/lib/plural';
 
 /** A colour as the editor holds it: its record's fields, and Habbo's when Habbo has it. */
 interface Colour {
@@ -327,7 +328,7 @@ export const PaletteEditor = ({ canManage }: { canManage: boolean }) => {
                             title={`Palette ${current}`}
                             description={(
                                 <span className="flex flex-wrap items-center gap-1.5">
-                                    <span>{colours.length} colours</span>
+                                    <span>{plural(colours.length, 'colour')}</span>
                                     {usedBy.length > 0 ? <span>· colours {usedBy.map(type => <Badge key={type} className="ml-1">{type}</Badge>)}</span> : <span>· no clothing uses it yet: set a kind's palette to {current} under Kinds</span>}
                                 </span>
                             )}

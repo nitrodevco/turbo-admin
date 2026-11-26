@@ -87,7 +87,7 @@ const ByWindow = ({ index }: { index: TemplateIndex }) => {
 
     return (
         <div className="grid items-start gap-4 lg:gap-6 lg:grid-cols-[22rem_1fr]">
-            <ListPanel title="Windows" description={`${found.length} window(s) showing texts`}>
+            <ListPanel title="Windows" description={`${plural(found.length, 'window')} showing texts`}>
                 <div className="border-b border-line px-4 py-3"><SearchInput value={text} onValueChange={setText} placeholder="A window, its file, or a text key" aria-label="Find a window" /></div>
                 <ul className="max-h-[60dvh] min-h-0 overflow-y-auto lg:max-h-none">
                     {found.slice(0, LIST_LIMIT).map(each => (

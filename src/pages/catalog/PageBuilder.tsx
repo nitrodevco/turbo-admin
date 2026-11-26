@@ -8,6 +8,7 @@ import { Modal } from '#/components/Modal';
 import { toast } from '#/components/toast';
 import { Button, CHECK_CLASS, EmptyState, ErrorNotice, IconButton, Input, Labeled, Segmented, Select, Switch, TextButton, WarningNotice } from '#/components/ui';
 import { cx } from '#/lib/cx';
+import { plural } from '#/lib/plural';
 
 import { buildersFor, type BuilderSpec } from './builders';
 import { PageSelect } from './fields';
@@ -170,8 +171,8 @@ export const PageBuilder = ({ tree, page, open, onClose, onBuiltPage }: PageBuil
         } ], {
             onSuccess: (result) => {
                 const parts = [
-                    result.pagesCreated && `${result.pagesCreated} page${result.pagesCreated === 1 ? '' : 's'}`,
-                    result.offersCreated && `${result.offersCreated} offer${result.offersCreated === 1 ? '' : 's'}`,
+                    result.pagesCreated && plural(result.pagesCreated, 'page'),
+                    result.offersCreated && plural(result.offersCreated, 'offer'),
                     result.offersMoved && `${result.offersMoved} moved`,
                 ].filter(Boolean);
 
@@ -369,10 +370,10 @@ export const PageBuilder = ({ tree, page, open, onClose, onBuiltPage }: PageBuil
                                 <div className="flex items-center gap-2">
                                     <span className="mr-auto text-xs text-muted">
                                         {data.createsPages
-                                            ? `${picked.size} new page${picked.size === 1 ? '' : 's'} under ${onPage?.localization ?? newTitle.trim()}, each with its offer.`
+                                            ? `${plural(picked.size, 'new page')} under ${onPage?.localization ?? newTitle.trim()}, each with its offer.`
                                             : moving
-                                                ? `${picked.size} offer${picked.size === 1 ? '' : 's'} move here.`
-                                                : `${picked.size} new offer${picked.size === 1 ? '' : 's'} on ${onPage ? onPage.localization : `a new page, ${newTitle.trim() || '…'}, under ${parentTitle}`}.`}
+                                                ? `${plural(picked.size, 'offer moves', 'offers move')} here.`
+                                                : `${plural(picked.size, 'new offer')} on ${onPage ? onPage.localization : `a new page, ${newTitle.trim() || '…'}, under ${parentTitle}`}.`}
                                     </span>
                                     <Button icon={build.isSuccess && build.data.failures.length === 0 ? <Check /> : <Hammer />} disabled={picked.size === 0 || build.isPending} onClick={apply}>
                                         {build.isPending ? 'Building…' : 'Build'}

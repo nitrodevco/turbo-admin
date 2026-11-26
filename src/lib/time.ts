@@ -34,6 +34,13 @@ export const formatClock = (at: string | number) => new Date(at).toLocaleTimeStr
 export const isoTime = (iso: string | null) => (iso ? Date.parse(/Z$|[+-]\d\d:\d\d$/.test(iso) ? iso : `${iso}Z`) : null);
 
 /**
+ * A UTC time from the server in UTC, short: "2026-12-01 00:00", for a time the hotel keeps by the
+ * UTC day (a calendar's start, a track's dates, a voucher's expiry). Shown where "UTC" is said: in
+ * its column's heading, or beside it.
+ */
+export const formatUtc = (iso: string) => new Date(isoTime(iso) ?? 0).toISOString().slice(0, 16).replace('T', ' ');
+
+/**
  * A UTC time from the server for a `datetime-local` input, read as UTC, and back (null when it
  * is empty). A field that takes these says "(UTC)" in its label.
  */

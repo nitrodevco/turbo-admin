@@ -9,12 +9,13 @@ import { MediaThumb } from '#/components/ImagePicker';
 import { toast, toastError } from '#/components/toast';
 import { Button, EmptyState, ErrorNotice, FileButton, IconButton, Loading, PageBody, PageHeader, Panel } from '#/components/ui';
 import { useHubTabs } from '#/layout/nav';
+import { copyText } from '#/lib/clipboard';
 
 import { ThemePicker } from './ThemePicker';
 
 const IMAGE_TYPES = 'image/png,image/gif,image/jpeg,image/webp';
 
-const copy = (text: string) => void navigator.clipboard.writeText(text).then(() => toast(`Copied ${text}`));
+const copy = (text: string) => void copyText(text, `Copied ${text}`);
 
 /** A file's size as staff read it. */
 const sizeOf = (bytes: number) => (bytes < 1024 ? `${bytes} B` : `${(bytes / 1024).toFixed(1)} KB`);

@@ -7,6 +7,7 @@ import { type GamedataStatus, useCheckHabbo, useFigureImportPreview, useHabboVar
 import { toast, toastError } from '#/components/toast';
 import { Button, Label, PageBody, PageHeader, Panel } from '#/components/ui';
 import { cx } from '#/lib/cx';
+import { plural } from '#/lib/plural';
 import { usePathTab } from '#/lib/tabs';
 import { fromNow } from '#/lib/time';
 import { BundleUpdate } from '#/pages/assets/BundleUpdate';
@@ -140,7 +141,7 @@ const WaitingTab = ({ categories, assets, canManage }: { categories: Category[];
             {shownJob && <JobPanel job={shownJob} canManage={canManage} compact={shownJob.status !== 'running'} />}
 
             <Panel
-                title={total > 0 ? `${total.toLocaleString()} ${total === 1 ? 'update' : 'updates'} to take in` : 'Nothing to take in'}
+                title={total > 0 ? `${plural(total, 'update')} to take in` : 'Nothing to take in'}
                 description={total > 0 ? 'Each is taken in on its own, and can be rolled back from the history.' : 'The hotel has everything Habbo serves that it was checked for.'}
             >
                 <div className="grid items-start lg:grid-cols-[14rem_minmax(0,1fr)]">

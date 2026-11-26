@@ -5,6 +5,7 @@ import { type Currency, type CurrencyInput, type CurrencyKind, useCurrencies, us
 import { ask } from '#/components/confirm';
 import { toast, toastError } from '#/components/toast';
 import { Badge, Button, EmptyState, ErrorNotice, IconButton, IconTile, Input, Labeled, Loading, Panel, Select, Switch } from '#/components/ui';
+import { plural } from '#/lib/plural';
 
 const KINDS: { value: CurrencyKind; label: string }[] = [
     { value: 'credits', label: 'Credits' },
@@ -37,9 +38,9 @@ const kindOf = (currency: { type: CurrencyKind; activityPointType: number | null
 
 /** What uses a currency, as the few words worth showing. */
 const usesOf = (currency: Currency) => [
-    currency.holders > 0 && `${currency.holders.toLocaleString()} ${currency.holders === 1 ? 'player holds it' : 'players hold it'}`,
-    currency.offers > 0 && `${currency.offers.toLocaleString()} ${currency.offers === 1 ? 'offer' : 'offers'}`,
-    currency.vouchers > 0 && `${currency.vouchers.toLocaleString()} ${currency.vouchers === 1 ? 'voucher' : 'vouchers'}`,
+    currency.holders > 0 && plural(currency.holders, 'player holds it', 'players hold it'),
+    currency.offers > 0 && plural(currency.offers, 'offer'),
+    currency.vouchers > 0 && plural(currency.vouchers, 'voucher'),
 ].filter((x): x is string => !!x);
 
 /**

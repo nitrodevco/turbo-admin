@@ -7,6 +7,7 @@ import { roomCalls, useRoomAction, useRoomCategories } from '#/api/rooms';
 import type { RoomDetailResponse, RoomSettingsRequest } from '#/api/types';
 import { Button, ErrorNotice, Field, IconButton, Input, Label, Labeled, Loading, PageBody, Panel, Segmented, Select, Switch, Textarea, WarningNotice } from '#/components/ui';
 import { cx } from '#/lib/cx';
+import { plural } from '#/lib/plural';
 
 import { CHAT_FLOOD_OPTIONS, DOOR_MODE_OPTIONS, THICKNESS_OPTIONS, TRADE_MODE_OPTIONS, WHO_OPTIONS } from './labels';
 import { ActionOutcome, RoomHeader } from './RoomHeader';
@@ -220,7 +221,7 @@ const SettingsForm = ({ room }: { room: RoomDetailResponse }) => {
             <div className="save-bar flex items-center gap-3 px-4 py-3">
                 <span className="min-w-0 flex-1 text-ui text-muted">
                     <span aria-hidden className={cx('mr-2', changes > 0 ? 'text-warn' : 'text-good')}>●</span>
-                    {changes === 0 ? 'No unsaved changes' : changes === 1 ? '1 unsaved change' : `${changes} unsaved changes`}
+                    {changes === 0 ? 'No unsaved changes' : plural(changes, 'unsaved change')}
                 </span>
                 <Button type="submit" icon={<Save />} disabled={changes === 0 || save.isPending}>Save</Button>
             </div>

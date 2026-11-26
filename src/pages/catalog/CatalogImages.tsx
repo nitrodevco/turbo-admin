@@ -11,6 +11,7 @@ import { toast, toastError } from '#/components/toast';
 import { Button, EmptyState, ErrorNotice, IconButton, Input, Labeled, Loading, Segmented, TextButton, TextLink } from '#/components/ui';
 import { cx } from '#/lib/cx';
 import { useDebounced } from '#/lib/debounce';
+import { plural } from '#/lib/plural';
 
 import { CatalogImageThumb, CHECKS } from './CatalogImageThumb';
 
@@ -228,7 +229,7 @@ export const CatalogImages = ({ tree, onOpenPage }: { tree: CatalogTree; onOpenP
             <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-sm">
                 <span className="flex items-center gap-2 font-medium">
                     <Images className="size-4 text-accent" />
-                    {data ? `${data.total.toLocaleString()} ${data.total === 1 ? 'picture' : 'pictures'}` : '…'}
+                    {data ? plural(data.total, 'picture') : '…'}
                 </span>
                 <span className="text-xs text-muted">
                     Uploads reach players once the assets are

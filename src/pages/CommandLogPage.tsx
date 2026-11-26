@@ -11,6 +11,7 @@ import { SearchInput } from '#/components/SearchInput';
 import { Badge, type BadgeTone, Button, EmptyState, ErrorNotice, Input, Loading, PageBody, PageHeader, Panel, Select } from '#/components/ui';
 import { useHubTabs } from '#/layout/nav';
 import { cx } from '#/lib/cx';
+import { plural } from '#/lib/plural';
 import { type ListOrder, listQuery, orderOf, pageOf, type Sorting } from '#/lib/sort';
 
 /** How a command went, in the words the console uses for the same outcomes. */
@@ -120,7 +121,7 @@ export const CommandLogPage = () => {
             <PageHeader
                 title="Logs"
                 tabs={tabs}
-                description={log.data && `${log.data.total.toLocaleString()} ${log.data.total === 1 ? 'command' : 'commands'}${filtered ? ' matching' : ' logged'}`}
+                description={log.data && `${plural(log.data.total, 'command')}${filtered ? ' matching' : ' logged'}`}
             />
             <PageBody>
                 <Panel className="overflow-clip">

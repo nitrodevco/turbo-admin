@@ -141,9 +141,6 @@ export const moved = <T>(items: T[], index: number, by: -1 | 1) => {
     return next;
 };
 
-/** A UTC time from the server as the panel writes it: `2026-11-02 00:00`. */
-export const utcText = (iso: string | null) => (iso ? `${iso.replace('T', ' ').replace(/Z$/, '').slice(0, 16)}` : null);
-
 /** A prize's furni here, by prize id, from the track's `furni`. */
 export type FurniNames = ReadonlyMap<string, string>;
 

@@ -5,6 +5,7 @@ import { downloadPluginData, type PluginDataItem, type PluginUninstallMode, useP
 import { Modal, ModalActions, ModalBody } from '#/components/Modal';
 import { toast, toastError } from '#/components/toast';
 import { Button, ErrorNotice, Field, Labeled, Loading, Segmented, WarningNotice } from '#/components/ui';
+import { plural } from '#/lib/plural';
 
 const MODES: { value: PluginUninstallMode; label: string }[] = [
     { value: 'keep-data', label: 'Keep its data' },
@@ -22,12 +23,12 @@ const KINDS: Record<PluginDataItem['kind'], string> = {
 /** How much of one item: a table's rows, a grant's holders, a setting's value, a variable's or text's value. */
 const amount = (item: PluginDataItem) => {
     if (item.kind === 'table')
-        return `${item.count.toLocaleString()} ${item.count === 1 ? 'row' : 'rows'}`;
+        return plural(item.count, 'row');
 
     if (item.kind === 'setting')
         return item.detail ?? 'secret';
 
-    return item.detail ?? `${item.count.toLocaleString()} assignments`;
+    return item.detail ?? plural(item.count, 'assignment');
 };
 
 /** A list under a heading, or nothing when it is empty. */

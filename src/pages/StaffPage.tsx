@@ -1,20 +1,13 @@
-import { Copy, KeyRound } from 'lucide-react';
+import { KeyRound } from 'lucide-react';
 import { type FormEvent, useState } from 'react';
 
 import { post } from '#/api/client';
 import type { PasskeyLinkResponse } from '#/api/types';
-import { Button, ErrorNotice, Field, Input, PageBody, Panel, SuccessNotice, WarningNotice } from '#/components/ui';
+import { Button, CopyButton, ErrorNotice, Field, Input, PageBody, Panel, SuccessNotice, WarningNotice } from '#/components/ui';
 import { formatDateTime } from '#/lib/time';
 import { PermissionsHeader } from '#/pages/permissions/common';
 
 const LinkResult = ({ result }: { result: PasskeyLinkResponse }) => {
-    const [ copied, setCopied ] = useState(false);
-
-    const copy = async () => {
-        await navigator.clipboard.writeText(result.link);
-        setCopied(true);
-    };
-
     return (
         <div className="space-y-3">
             <SuccessNotice>
@@ -39,7 +32,7 @@ const LinkResult = ({ result }: { result: PasskeyLinkResponse }) => {
                     onFocus={event => event.target.select()}
                     className="min-w-0 flex-1 bg-subtle font-mono"
                 />
-                <Button variant="secondary" icon={<Copy />} onClick={copy}>{copied ? 'Copied' : 'Copy'}</Button>
+                <CopyButton text={result.link}>Copy</CopyButton>
             </div>
             <p className="text-xs text-muted">
                 Send it to them privately. Whoever opens it first makes the passkey that signs in as them.

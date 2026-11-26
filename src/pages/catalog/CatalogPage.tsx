@@ -42,6 +42,7 @@ import { celebrate, toast, toastError } from '#/components/toast';
 import { Badge, Button, EmptyState, ErrorNotice, Loading, PageBody, PageHeader, Segmented, WarningNotice } from '#/components/ui';
 import { cx } from '#/lib/cx';
 import { useFillHeight } from '#/lib/fillHeight';
+import { plural } from '#/lib/plural';
 
 import { Backups } from './Backups';
 import { CatalogHome } from './CatalogHome';
@@ -410,7 +411,7 @@ const CatalogEditor = ({ view }: { view: View }) => {
             publish.mutate([], {
                 onSuccess: (result) => {
                     celebrate(publishButton.current);
-                    toast(`Live! ${result.offers.toLocaleString()} offers on ${result.pages.toLocaleString()} pages; ${result.playersTold} ${result.playersTold === 1 ? 'player' : 'players'} told to refresh.`);
+                    toast(`Live! ${result.offers.toLocaleString()} offers on ${result.pages.toLocaleString()} pages; ${plural(result.playersTold, 'player')} told to refresh.`);
                 },
                 onError: toastError,
             });
@@ -421,7 +422,7 @@ const CatalogEditor = ({ view }: { view: View }) => {
         const steps = history.data?.undo.length ?? 0;
 
         ask({
-            title: `Throw away ${steps} ${steps === 1 ? 'change' : 'changes'}?`,
+            title: `Throw away ${plural(steps, 'change')}?`,
             body: 'The saved catalog goes back to the one players have. You can redo them afterwards.',
             confirm: 'Throw away',
         }, () => {
@@ -445,7 +446,7 @@ const CatalogEditor = ({ view }: { view: View }) => {
         <>
             <PageHeader
                 title="Catalog"
-                description={data && `${(data.pages.length - 1).toLocaleString()} pages · ${unpublished > 0 ? `${unpublished} ${unpublished === 1 ? 'change' : 'changes'} waiting to go live` : 'everything is live'}`}
+                description={data && `${(data.pages.length - 1).toLocaleString()} pages · ${unpublished > 0 ? `${plural(unpublished, 'change')} waiting to go live` : 'everything is live'}`}
                 tabs={{
                     ...catalogTabs(view === 'missing' || view === 'duplicates' ? 'audit' : view, true),
                     onChange: value => setView(value === 'audit' ? 'missing' : value as View),

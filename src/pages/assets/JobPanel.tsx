@@ -7,6 +7,7 @@ import { ask } from '#/components/confirm';
 import { toastError } from '#/components/toast';
 import { Badge, type BadgeTone, Button, ErrorNotice, Panel } from '#/components/ui';
 import { cx } from '#/lib/cx';
+import { plural } from '#/lib/plural';
 import { formatDateTime, fromNow } from '#/lib/time';
 
 const STATUS_TONES: Record<AssetJob['status'], BadgeTone> = { running: 'accent', done: 'green', failed: 'red', canceled: 'amber' };
@@ -127,7 +128,7 @@ export const JobPanel = ({ job, canManage, compact = false, actions }: { job: As
                         className="-mx-1 inline-flex min-h-9 items-center gap-1.5 rounded-md px-1 text-xs font-medium text-muted hover:text-ink"
                     >
                         <ChevronDown className={cx('size-3.5 transition-transform', !logOpen && '-rotate-90')} />
-                        {logOpen ? 'Hide the log' : `Show the log (${job.log.length.toLocaleString()} lines)`}
+                        {logOpen ? 'Hide the log' : `Show the log (${plural(job.log.length, 'line')})`}
                     </button>
                     {logOpen && <div className="mt-1.5"><JobLog log={job.log} running={running} /></div>}
                 </div>

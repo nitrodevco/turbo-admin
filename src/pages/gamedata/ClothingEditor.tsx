@@ -8,6 +8,7 @@ import { OpenRow } from '#/components/RowList';
 import { SearchInput } from '#/components/SearchInput';
 import { Badge, Button, Chip, EmptyState, ErrorNotice, FieldLabel, IconButton, Input, Labeled, ListPanel, Loading, Panel, Segmented, Select, Switch, Textarea, ValueTag } from '#/components/ui';
 import { cx, rowFill } from '#/lib/cx';
+import { plural } from '#/lib/plural';
 
 import { HabboDiffers } from './parts';
 
@@ -113,7 +114,7 @@ const PalettePicker = ({ value, onChange, disabled }: { value: number; onChange:
             <Labeled label="Coloured from">
                 <Select value={value} onChange={event => onChange(Number(event.target.value))} disabled={disabled}>
                     {!chosen && <option value={value}>Palette {value} (has no colours)</option>}
-                    {palettes?.map(x => <option key={x.id} value={x.id}>Palette {x.id} · {x.colors.length} colours</option>)}
+                    {palettes?.map(x => <option key={x.id} value={x.id}>Palette {x.id} · {plural(x.colors.length, 'colour')}</option>)}
                 </Select>
             </Labeled>
             <span className="flex h-2.5 overflow-hidden rounded">
@@ -143,7 +144,7 @@ const KindSettings = ({ kind, pieces, canManage, onRemoved }: { kind: FigureEntr
                     <span className="font-mono text-xs font-normal text-muted">{kind.key}</span>
                 </span>
             )}
-            description={`${pieces.toLocaleString()} ${pieces === 1 ? 'piece' : 'pieces'}${kind.fromHabbo ? '' : ' · the hotel\'s own kind'}`}
+            description={`${plural(pieces, 'piece')}${kind.fromHabbo ? '' : ' · the hotel\'s own kind'}`}
             actions={canManage && (
                 <>
                     {dirty && <Button variant="ghost" icon={<Undo2 />} onClick={() => setDraft(original)}>Discard</Button>}
@@ -212,7 +213,7 @@ const PieceSummary = ({ entry }: { entry: FigureEntry }) => {
                 {habbo && JSON.stringify(habbo) !== JSON.stringify(piece) && <Badge tone="amber">changed</Badge>}
             </span>
             <span className="truncate font-mono text-2xs text-muted max-sm:hidden" title={types.join(' ')}>{types.join(' ')}</span>
-            <span className="font-mono text-2xs text-muted max-sm:hidden">{piece.colorable && layers > 0 ? `${layers} ${layers === 1 ? 'colour' : 'colours'}` : 'no colour'}</span>
+            <span className="font-mono text-2xs text-muted max-sm:hidden">{piece.colorable && layers > 0 ? plural(layers, 'colour') : 'no colour'}</span>
         </div>
     );
 };

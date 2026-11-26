@@ -6,6 +6,7 @@ import { ACHIEVEMENT_STATES, type AchievementDefinition, type AchievementItem, u
 import { SearchInput } from '#/components/SearchInput';
 import { Badge, Button, EmptyState, ErrorNotice, GroupHeading, IconButton, Input, Labeled, ListPanel, Loading, Panel, Select, SuccessNotice, Textarea, Thumb } from '#/components/ui';
 import { cx, rowFill } from '#/lib/cx';
+import { plural } from '#/lib/plural';
 import { inputToIso, isoToInput } from '#/lib/time';
 
 const STATE_TONES: Record<number, 'green' | 'neutral' | 'amber' | 'red'> = { 0: 'red', 1: 'green', 2: 'neutral', 3: 'amber', 4: 'neutral' };
@@ -227,7 +228,7 @@ export const AchievementsTab = () => {
                                             <BadgeImage code={item.lastBadge} />
                                             <span className="min-w-0 flex-1">
                                                 <span className="block truncate font-mono text-ui">{item.key}</span>
-                                                <span className="block text-xs text-muted">{item.levels} levels · rev {item.revision}</span>
+                                                <span className="block text-xs text-muted">{plural(item.levels, 'level')} · rev {item.revision}</span>
                                             </span>
                                             {item.state !== 1 && <Badge tone={STATE_TONES[item.state] ?? 'neutral'}>{ACHIEVEMENT_STATES[item.state] ?? item.state}</Badge>}
                                         </button>

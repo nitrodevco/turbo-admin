@@ -1,10 +1,10 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { Check, Copy, KeyRound, Trash2 } from 'lucide-react';
+import { KeyRound, Trash2 } from 'lucide-react';
 import { useState } from 'react';
 
 import { type IssuedTicket, issueTicket, revokeTicket, useTicketStatus } from '#/api/players';
 import { ask } from '#/components/confirm';
-import { Button, ErrorNotice, Label, Labeled, Panel, Select, Switch, WarningNotice } from '#/components/ui';
+import { Button, CopyButton, ErrorNotice, Label, Labeled, Panel, Select, Switch, WarningNotice } from '#/components/ui';
 import { formatDateTime } from '#/lib/time';
 
 const LIFETIMES = [
@@ -16,25 +16,15 @@ const LIFETIMES = [
 ];
 
 /** A value shown once, with a button that copies it. */
-const Copyable = ({ label, value }: { label: string; value: string }) => {
-    const [ copied, setCopied ] = useState(false);
-
-    return (
-        <div className="flex flex-col gap-1">
-            <Label>{label}</Label>
-            <div className="flex items-start gap-2">
-                <code className="min-w-0 flex-1 rounded-lg border border-line bg-canvas px-3 py-2 font-mono text-xs break-all select-all">{value}</code>
-                <Button
-                    variant="secondary"
-                    icon={copied ? <Check /> : <Copy />}
-                    aria-label={`Copy the ${label.toLowerCase()}`}
-                    onClick={() => void navigator.clipboard.writeText(value).then(() => setCopied(true))}
-                    className="shrink-0"
-                />
-            </div>
+const Copyable = ({ label, value }: { label: string; value: string }) => (
+    <div className="flex flex-col gap-1">
+        <Label>{label}</Label>
+        <div className="flex items-start gap-2">
+            <code className="min-w-0 flex-1 rounded-lg border border-line bg-canvas px-3 py-2 font-mono text-xs break-all select-all">{value}</code>
+            <CopyButton text={value} label={`Copy the ${label.toLowerCase()}`} className="shrink-0" />
         </div>
-    );
-};
+    </div>
+);
 
 /**
  * A player's login ticket: whether they have one and until when, and issuing a new one, which

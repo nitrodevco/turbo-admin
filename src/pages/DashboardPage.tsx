@@ -13,6 +13,7 @@ import { phaseOf } from '#/layout/availability';
 import { useHotelSheet } from '#/layout/hotelSheet';
 import { useHubTabs } from '#/layout/nav';
 import { cx } from '#/lib/cx';
+import { plural } from '#/lib/plural';
 import { formatClock, formatDateTime } from '#/lib/time';
 
 import { Outcome } from './CommandLogPage';
@@ -110,7 +111,7 @@ const FailedPlugins = ({ plugins, canManage }: { plugins: Plugin[]; canManage: b
 
     return (
         <Panel
-            title={<span className="flex items-center gap-2 text-bad"><PlugZap className="size-4" />{`${plugins.length} ${plugins.length === 1 ? 'plugin' : 'plugins'} did not load`}</span>}
+            title={<span className="flex items-center gap-2 text-bad"><PlugZap className="size-4" />{`${plural(plugins.length, 'plugin')} did not load`}</span>}
             actions={<TextLink to="/plugins">Open plugins</TextLink>}
             className="border-bad-line"
         >

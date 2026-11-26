@@ -28,6 +28,7 @@ import { Tabs } from '#/components/Tabs';
 import { toast, toastError } from '#/components/toast';
 import { Badge, Button, ErrorNotice, IconButton, Input, Labeled, ListPanel, Loading, Panel, WarningNotice } from '#/components/ui';
 import { cx } from '#/lib/cx';
+import { plural } from '#/lib/plural';
 import { SAMPLE_LOOKS, useChatHead } from '#/preview/avatar';
 import type { Backdrop } from '#/preview/backdrops';
 import { CHAT_BUBBLE_WIDTH_NORMAL, CHAT_BUBBLE_WIDTH_THIN, CHAT_BUBBLE_WIDTH_WIDE, CHAT_FONT_SIZE_LABELS, CHAT_FONT_SIZE_SCALES, type ChatStyleRegPoints, DEFAULT_FONT_FACE, DEFAULT_FONT_SIZE, layoutBubble, NO_CHEST_COLOR, paintBubble, paintGuides, recolour, tintBackground } from '#/preview/chatBubble';
@@ -338,7 +339,7 @@ export const ChatStylesTab = ({ canManage }: { canManage: boolean }) => {
             <ListPanel
                 from="xl"
                 title="Styles"
-                description={`${items.length.toLocaleString()} styles, ${drawable.toLocaleString()} in ${LIBRARY}${data.bundle ? '' : ' (not built yet)'}.`}
+                description={`${plural(items.length, 'style')}, ${drawable.toLocaleString()} in ${LIBRARY}${data.bundle ? '' : ' (not built yet)'}.`}
             >
                 <div className="flex flex-col gap-2 p-3">
                     <SearchInput value={text} onValueChange={setText} placeholder="Name or id" aria-label="Find chat styles" className="w-full" />

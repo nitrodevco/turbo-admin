@@ -1,7 +1,8 @@
-import { type CSSProperties, type ReactNode, useEffect, useRef, useState } from 'react';
+import { type CSSProperties, type ReactNode } from 'react';
 
 import { useClientAssets } from '#/api/assets';
 import { cx } from '#/lib/cx';
+import { useWidth } from '#/lib/width';
 
 import type { HotelViewDraft } from './draft';
 import { slotShows, usePaneWidths, useResolveImage, useWidgetText } from './hooks';
@@ -143,24 +144,6 @@ const useBackgrounds = (draft: HotelViewDraft, now: number, code?: string) => {
     })) as Record<string, { visible: boolean; url: string }>;
 };
 
-/** The width of an element, followed as it changes. */
-const useWidth = () => {
-    const ref = useRef<HTMLDivElement>(null);
-    const [ width, setWidth ] = useState(0);
-
-    useEffect(() => {
-        if (!ref.current) return;
-
-        const observer = new ResizeObserver(entries => setWidth(entries[0]?.contentRect.width ?? 0));
-
-        observer.observe(ref.current);
-
-        return () => observer.disconnect();
-    }, []);
-
-    return { ref, width };
-};
-
 /**
  * The reception as a player sees it on a laptop at the time given: its backgrounds, the widget
  * slots and what each shows, drawn with the client's layout. A slot can be clicked to edit it, and
@@ -174,7 +157,7 @@ export const ReceptionPreview = ({ draft, now, backgroundCode, selected, onSlot,
     onSlot?: (slot: number) => void;
     onBackground?: () => void;
 }) => {
-    const { ref, width } = useWidth();
+    const [ width, ref ] = useWidth();
     const assets = useClientAssets();
     const layers = useBackgrounds(draft, now, backgroundCode);
     const panes = usePaneWidths(draft);

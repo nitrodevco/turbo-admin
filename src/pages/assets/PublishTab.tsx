@@ -10,6 +10,7 @@ import { toast, toastError } from '#/components/toast';
 import { Ago, Badge, Button, EmptyState, ErrorNotice, IconButton, Loading, Panel, SuccessNotice, Switch } from '#/components/ui';
 import { cx } from '#/lib/cx';
 import { formatBytes } from '#/lib/format';
+import { plural } from '#/lib/plural';
 
 import { CompareModal } from './CompareModal';
 import { TargetForm } from './TargetForm';
@@ -82,7 +83,7 @@ const PendingList = ({ target, canManage }: { target: AssetTarget; canManage: bo
                 <>
                     <div className="flex items-center gap-2">
                         <p className="min-w-0 flex-1 text-xs text-muted">
-                            {`${data.count.toLocaleString()} ${data.count === 1 ? 'file' : 'files'}, ${formatBytes(data.bytes)}: ${data.new.toLocaleString()} never sent, ${data.changed.toLocaleString()} changed since sent`}
+                            {`${plural(data.count, 'file')}, ${formatBytes(data.bytes)}: ${data.new.toLocaleString()} never sent, ${data.changed.toLocaleString()} changed since sent`}
                         </p>
                         {data.changed > 0 && (canManage
                             ? (

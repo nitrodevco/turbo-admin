@@ -7,6 +7,7 @@ import { ask } from '#/components/confirm';
 import { toastError } from '#/components/toast';
 import { Badge, IconButton, Label } from '#/components/ui';
 import { formatBytes } from '#/lib/format';
+import { plural } from '#/lib/plural';
 import { fromNow } from '#/lib/time';
 
 const KINDS: Record<HabboClientBuiltLibrary['kind'], string> = {
@@ -95,7 +96,7 @@ export const HabboClientDetails = ({ client, build, canManage }: { client: Habbo
             {build && build.problems.length > 0 && (
                 <div className="px-4 py-2.5 text-xs">
                     <button type="button" className="text-muted hover:text-accent" onClick={() => setShowProblems(!showProblems)}>
-                        {`${build.problems.length} template ${build.problems.length === 1 ? 'problem' : 'problems'}: a bitmap no library has, or a layout the client would refuse`}
+                        {`${plural(build.problems.length, 'template problem')}: a bitmap no library has, or a layout the client would refuse`}
                     </button>
                     {showProblems && <ul className="mt-1 font-mono text-2xs leading-5 text-muted">{build.problems.map(x => <li key={x}>{x}</li>)}</ul>}
                 </div>

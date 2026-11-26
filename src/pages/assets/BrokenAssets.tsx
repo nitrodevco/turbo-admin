@@ -8,6 +8,7 @@ import { Modal, ModalActions, ModalBody } from '#/components/Modal';
 import { toast, toastError } from '#/components/toast';
 import { Badge, Button, ButtonLink, Checkbox, EmptyState, ErrorNotice, Loading, Panel, Segmented, Textarea } from '#/components/ui';
 import { cx } from '#/lib/cx';
+import { plural } from '#/lib/plural';
 import { fromNow } from '#/lib/time';
 import { UploadDialog } from '#/pages/gamedata/UploadDialog';
 
@@ -17,8 +18,6 @@ const SHOWS = [ { value: 'open', label: 'To fix' }, { value: 'ignored', label: '
 const pictureKinds = new Set([ 'badge', 'catalog-image' ]);
 
 const idOf = (asset: BrokenAsset) => `${asset.source}:${asset.key}`;
-
-const plural = (count: number, one: string) => `${count.toLocaleString()} ${one}${count === 1 ? '' : 's'}`;
 
 /**
  * Takes broken assets from Habbo: catalog pictures by name, the rest by a sync, which takes all of

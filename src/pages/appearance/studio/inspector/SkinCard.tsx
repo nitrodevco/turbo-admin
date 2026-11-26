@@ -5,6 +5,7 @@ import { uploadPluginImage, usePluginImages } from '#/api/noCode';
 import { type SkinSprite, useSkinMap, useThemeSheet } from '#/api/windows';
 import { toastError } from '#/components/toast';
 import { Badge, IconButton } from '#/components/ui';
+import { plural } from '#/lib/plural';
 import { skinComponentOf } from '#/preview/patchOps';
 import { SheetSprite } from '#/preview/VisualEditor';
 
@@ -113,7 +114,7 @@ export const SkinCard = ({ tag, style }: { tag: string; style: string | undefine
         <section aria-label="Skin art" className="flex flex-col gap-2 rounded-lg border border-line p-2">
             <header className="flex flex-wrap items-baseline gap-x-2 text-xs">
                 <span className="font-medium">{`Skin ${id}`}</span>
-                <span className="text-muted">{`${windows} window(s) draw it: new art changes each`}</span>
+                <span className="text-muted">{`${plural(windows, 'window draws', 'windows draw')} it: new art changes each`}</span>
             </header>
             <ul className="flex flex-col gap-1.5">
                 {skin.sprites.map(sprite => <SpriteRow key={sprite.part} sprite={sprite} />)}

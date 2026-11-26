@@ -10,8 +10,10 @@ import { Pagination } from '#/components/Pagination';
 import { SearchInput } from '#/components/SearchInput';
 import { toast, toastError } from '#/components/toast';
 import { Badge, Button, Chip, EmptyState, ErrorNotice, IconButton, Input, Kv, Labeled, Loading, PageBody, PageHeader, Panel, Segmented, Select, TextLink } from '#/components/ui';
+import { copyText } from '#/lib/clipboard';
 import { cx, rowFill } from '#/lib/cx';
 import { useDebounced } from '#/lib/debounce';
+import { plural } from '#/lib/plural';
 import { formatDateTime } from '#/lib/time';
 import { CHECKS } from '#/pages/catalog/CatalogImageThumb';
 import { apiImageQuery } from '#/preview/images';
@@ -55,7 +57,7 @@ const ACCEPT = 'image/png,image/gif,image/jpeg,image/webp,.png,.gif,.jpg,.jpeg,.
 
 const sizeOf = (bytes: number) => (bytes < 1024 ? `${bytes} B` : `${(bytes / 1024).toFixed(bytes < 10_240 ? 1 : 0)} KB`);
 
-const copy = (text: string) => void navigator.clipboard.writeText(text).then(() => toast(`Copied ${text}`));
+const copy = (text: string) => void copyText(text, `Copied ${text}`);
 
 /** An image as this server has it, on checks, fitted into its box. */
 const MediaThumb = ({ image, className }: { image: MediaImage; className?: string }) => {
@@ -212,7 +214,7 @@ const UploadBar = ({ onUploaded }: { onUploaded: (ids: string[]) => void }) => {
 
         upload.mutate({ files, folder, kind: kind === 'library' ? '' : CATALOG_PICTURE }, {
             onSuccess: (result) => {
-                if (result.items.length) toast(`Uploaded ${result.items.length} ${result.items.length === 1 ? 'image' : 'images'}. Publish the assets for players to see them.`);
+                if (result.items.length) toast(`Uploaded ${plural(result.items.length, 'image')}. Publish the assets for players to see them.`);
                 for (const refusal of result.refused) toastError(new Error(`${refusal.file}: ${refusal.why}`));
                 onUploaded(result.items.map(x => x.id));
             },

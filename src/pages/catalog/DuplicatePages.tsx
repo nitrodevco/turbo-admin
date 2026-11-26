@@ -3,6 +3,7 @@ import { useState } from 'react';
 
 import { type CatalogTree, type DuplicatePage, type DuplicatePageItem, useDuplicatePages } from '#/api/catalog';
 import { Badge, type BadgeTone, EmptyState, ErrorNotice, Loading, TextButton } from '#/components/ui';
+import { plural } from '#/lib/plural';
 
 import { MergePagesDialog } from './MergePagesDialog';
 
@@ -12,8 +13,6 @@ const DISPLAYS: Record<string, { label: string; tone: BadgeTone }> = {
     both: { label: 'Both', tone: 'green' },
     invisible: { label: 'Hidden', tone: 'amber' },
 };
-
-const plural = (count: number, one: string, many: string) => `${count.toLocaleString()} ${count === 1 ? one : many}`;
 
 const PageRow = ({ page, canManage, onOpen, onMerge }: { page: DuplicatePageItem; canManage: boolean; onOpen: () => void; onMerge: () => void }) => {
     const display = DISPLAYS[page.display] ?? DISPLAYS.regular!;
@@ -59,7 +58,7 @@ export const DuplicatePages = ({ tree, onOpen }: { tree: CatalogTree; onOpen: (p
         <section className="flex flex-col gap-3">
             <h3 className="flex items-center gap-2 text-sm font-semibold">
                 <Merge className="size-4 text-accent" />
-                {duplicates.data ? `${items.length.toLocaleString()} page names used more than once` : 'Pages by the same name'}
+                {duplicates.data ? `${plural(items.length, 'page name')} used more than once` : 'Pages by the same name'}
             </h3>
             {duplicates.error && <ErrorNotice error={duplicates.error} />}
             {duplicates.isPending && <Loading />}

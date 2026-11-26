@@ -7,6 +7,7 @@ import { type NoticeData, type NoticeSave, useNotices, useSaveNotices } from '#/
 import { ask } from '#/components/confirm';
 import { toast, toastError } from '#/components/toast';
 import { Badge, Button, EmptyState, ErrorNotice, Input, Loading, PageBody, PageHeader, Panel, SuccessNotice, Switch, WarningNotice } from '#/components/ui';
+import { plural } from '#/lib/plural';
 
 import { HabboNotices } from './HabboNotices';
 import { useHabboSet } from './hooks';
@@ -266,7 +267,7 @@ const Notices = ({ server, canManage, save }: { server: NoticeData; canManage: b
                                 <span className="text-sm" data-testid="notice-state">
                                     {isNew(key) ? 'A new notice, not saved' : 'Changes to this notice not saved'}
                                     <span className="text-muted max-sm:hidden"> · players see it when they next load the client</span>
-                                    {others > 0 && <span className="text-muted max-sm:hidden">{` · ${others} other ${others === 1 ? 'notice' : 'notices'} unsaved on the list`}</span>}
+                                    {others > 0 && <span className="text-muted max-sm:hidden">{` · ${plural(others, 'other notice')} unsaved on the list`}</span>}
                                 </span>
                                 <span className="ml-auto flex gap-2">
                                     <Button variant="ghost" icon={<RotateCcw />} disabled={save.isPending || !dirty(key)} onClick={() => discardNotice(key)}>Discard</Button>
@@ -292,7 +293,7 @@ const Notices = ({ server, canManage, save }: { server: NoticeData; canManage: b
                 {count > 0 && <Button variant="ghost" icon={<RotateCcw />} onClick={discardAll}>Discard all</Button>}
                 {canManage && (
                     <Button variant={count > 0 ? 'primary' : 'secondary'} icon={<Save />} disabled={count === 0 || save.isPending} onClick={saveAll}>
-                        {count > 0 ? `Save all (${count} ${count === 1 ? 'change' : 'changes'})` : 'All saved'}
+                        {count > 0 ? `Save all (${plural(count, 'change')})` : 'All saved'}
                     </Button>
                 )}
                 {canManage && <Button icon={<Plus />} onClick={() => setMaking(x => !x)} aria-pressed={making}>New notice</Button>}

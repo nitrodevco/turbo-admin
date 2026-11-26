@@ -4,6 +4,7 @@ import { type ReactNode, type Ref, useEffect, useRef, useState } from 'react';
 import type { CatalogHistory } from '#/api/catalog';
 import { Button } from '#/components/ui';
 import { cx } from '#/lib/cx';
+import { plural } from '#/lib/plural';
 import { formatClock } from '#/lib/time';
 
 import { stepLabel } from './labels';
@@ -82,7 +83,7 @@ export const ChangesBar = ({ history, unpublished, busy, onUndo, onRedo, onDisca
                     : <CheckCircle2 className="size-5 shrink-0 text-good" />}
                 <div className="min-w-0 text-sm">
                     <div className="truncate font-medium">
-                        {unpublished > 0 ? `${unpublished} ${unpublished === 1 ? 'change' : 'changes'} waiting to go live` : 'Everything is live'}
+                        {unpublished > 0 ? `${plural(unpublished, 'change')} waiting to go live` : 'Everything is live'}
                     </div>
                     <div className="truncate text-xs text-muted">
                         {last ? `Last: ${stepLabel(last)} · ${ago(last.atUtc)}` : unpublished > 0 ? 'Saved before the server last started, or limited series: these can\'t be undone.' : 'Edits are saved as you make them and go live when you publish.'}

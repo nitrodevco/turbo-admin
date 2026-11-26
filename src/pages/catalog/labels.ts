@@ -1,4 +1,5 @@
 import type { CatalogHistoryItem, PageDisplay } from '#/api/catalog';
+import { plural } from '#/lib/plural';
 
 const DAYS_PER_MONTH = 31;
 
@@ -20,10 +21,10 @@ export const lengthOf = (days: number) => {
     const parts = [];
 
     if (months > 0)
-        parts.push(`${months} ${months === 1 ? 'month' : 'months'}`);
+        parts.push(plural(months, 'month'));
 
     if (rest > 0 || months === 0)
-        parts.push(`${rest} ${rest === 1 ? 'day' : 'days'}`);
+        parts.push(plural(rest, 'day'));
 
     return parts.join(' and ');
 };

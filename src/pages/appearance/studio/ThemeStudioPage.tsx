@@ -1,5 +1,5 @@
 import { Eye, Package, Plus, Redo2, Save, Undo2, X } from 'lucide-react';
-import { type ReactNode, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { type ReactNode, useEffect, useMemo, useRef, useState } from 'react';
 import { useSearchParams } from 'react-router';
 
 import { useThemeAudiences, useThemes } from '#/api/appearance';
@@ -18,6 +18,8 @@ import { toastError } from '#/components/toast';
 import { Badge, Button, ErrorNotice, IconButton, Loading, PageBody, PageHeader, Segmented, Select, TextLink } from '#/components/ui';
 import { useHubTabs } from '#/layout/nav';
 import { useFillHeight } from '#/lib/fillHeight';
+import { plural } from '#/lib/plural';
+import { useWidth } from '#/lib/width';
 import { hasLiveDefault, previewLink, reachOf, themeName, themeTree } from '#/pages/appearance/themes';
 import { DefaultTag, ReachLine, StatusPill } from '#/pages/appearance/ThemeTags';
 import { PackageDialog } from '#/pages/plugins/PackageDialog';
@@ -56,22 +58,6 @@ function without<T>(record: Record<string, T>, key: string): Record<string, T> {
     return Object.fromEntries(Object.entries(record).filter(([ name ]) => name !== key));
 }
 
-/** The width of an element, as it changes. */
-const useWidth = () => {
-    const [ width, setWidth ] = useState(0);
-    const observer = useRef<ResizeObserver | null>(null);
-    const ref = useCallback((element: HTMLDivElement | null) => {
-        observer.current?.disconnect();
-
-        if (!element) return;
-
-        observer.current = new ResizeObserver(([ entry ]) => setWidth(entry?.contentRect.width ?? 0));
-        observer.current.observe(element);
-    }, []);
-
-    return [ width, ref ] as const;
-};
-
 /** The theme edited, who gets it, and what it would do to a player who opened the client as it. */
 const ThemeBar = ({ unsaved, onPick }: { unsaved: number; onPick: (key: string) => void }) => {
     const working = useWorkingOn();
@@ -94,7 +80,7 @@ const ThemeBar = ({ unsaved, onPick }: { unsaved: number; onPick: (key: string) 
                         const next = event.target.value;
 
                         if (!unsaved) onPick(next);
-                        else ask({ title: `Leave ${unsaved} unsaved change(s)?`, body: 'They are dropped: save them first to keep them.', confirm: 'Drop them', danger: true }, () => onPick(next));
+                        else ask({ title: `Leave ${plural(unsaved, 'unsaved change')}?`, body: 'They are dropped: save them first to keep them.', confirm: 'Drop them', danger: true }, () => onPick(next));
                     }}
                 >
                     {!tree.some(node => node.theme.key === working.key) && <option value={working.key}>{working.name}</option>}
@@ -332,7 +318,7 @@ export const ThemeStudioPage = () => {
             if (Object.keys(draft.overlays).length) await overlaysChange.mutateAsync(draft.overlays);
 
             history.clear();
-            saved(`${unsaved} change(s) to ${working.name}`);
+            saved(`${plural(unsaved, 'change')} to ${working.name}`);
         } catch (failure) {
             toastError(failure);
         } finally {
@@ -425,9 +411,9 @@ export const ThemeStudioPage = () => {
                     <span className="ml-auto flex flex-wrap items-center gap-2">
                         <IconButton label="Undo (Ctrl+Z)" icon={<Undo2 />} disabled={!history.canUndo} onClick={undo} />
                         <IconButton label="Redo (Ctrl+Y)" icon={<Redo2 />} disabled={!history.canRedo} onClick={redo} />
-                        <span className="text-sm tabular-nums" aria-live="polite" data-unsaved={unsaved}>{unsaved ? `${unsaved} unsaved change(s)` : 'All saved'}</span>
+                        <span className="text-sm tabular-nums" aria-live="polite" data-unsaved={unsaved}>{unsaved ? plural(unsaved, 'unsaved change') : 'All saved'}</span>
                         <Button icon={<Save />} disabled={!unsaved || saving || !canManage} onClick={() => void save()}>{saving ? 'Saving…' : 'Save'}</Button>
-                        <Button variant="ghost" icon={<X />} disabled={!unsaved || saving} onClick={() => ask({ title: `Drop ${unsaved} unsaved change(s)?`, confirm: 'Discard', danger: true }, history.clear)}>Discard</Button>
+                        <Button variant="ghost" icon={<X />} disabled={!unsaved || saving} onClick={() => ask({ title: `Drop ${plural(unsaved, 'unsaved change')}?`, confirm: 'Discard', danger: true }, history.clear)}>Discard</Button>
                         {canManage && <IconButton label="Make a plugin of this theme" icon={<Package />} onClick={() => setPackaging(true)} />}
                     </span>
                 </div>
@@ -444,7 +430,7 @@ export const ThemeStudioPage = () => {
                             <div className="flex flex-wrap items-center gap-2">
                                 <h2 className="text-base font-semibold">{shownWindow?.name ?? windowId ?? 'Pick a window'}</h2>
                                 {shownWindow && <Badge>{shownWindow.area}</Badge>}
-                                {shownWindow && shownWindow.parts.length > 0 && <span className="text-xs text-muted">{`${shownWindow.parts.length} part(s) drawn inside: click them in the window`}</span>}
+                                {shownWindow && shownWindow.parts.length > 0 && <span className="text-xs text-muted">{`${plural(shownWindow.parts.length, 'part')} drawn inside: click them in the window`}</span>}
                                 <span className="ml-auto flex items-center gap-2">
                                     {shownWindow && shownWindow.states.length > 0 && (
                                         <Select aria-label="State" value={state ?? shownWindow.states[0]!.id} className="w-auto" onChange={event => setParam({ state: event.target.value })}>

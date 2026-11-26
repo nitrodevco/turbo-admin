@@ -6,6 +6,7 @@ import { Modal, ModalActions, ModalBody } from '#/components/Modal';
 import { toast, toastError } from '#/components/toast';
 import { Button, ErrorNotice, Label, Loading } from '#/components/ui';
 import { cx } from '#/lib/cx';
+import { plural } from '#/lib/plural';
 
 import { PageSelect } from './fields';
 import { priceOf } from './offers';
@@ -16,8 +17,6 @@ const SHOWN_IN: Record<string, string> = {
     both: 'both catalogues',
     invisible: 'neither catalogue',
 };
-
-const plural = (count: number, one: string, many: string) => `${count.toLocaleString()} ${count === 1 ? one : many}`;
 
 /** The titles of a page and those above it, from the tab down; the root left out. */
 const pathOf = (tree: CatalogTree, pageId: number) => {

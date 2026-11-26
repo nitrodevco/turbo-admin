@@ -4,6 +4,7 @@ import { type ReactNode, useMemo, useState } from 'react';
 import { type HotelViewHabboEntry, useHabboHotelView, useHabboHotelViewTexts } from '#/api/hotelView';
 import { Modal, ModalBody } from '#/components/Modal';
 import { Badge, Button, Checkbox, EmptyState, ErrorNotice, GroupHeading, Loading } from '#/components/ui';
+import { plural } from '#/lib/plural';
 import { fromNow } from '#/lib/time';
 
 import type { HotelViewDraft } from './draft';
@@ -116,7 +117,7 @@ export const HabboPull = ({ open, onClose, draft }: { open: boolean; onClose: ()
                         <div className="flex flex-wrap items-center justify-end gap-2">
                             <Button variant="ghost" onClick={onClose}>Cancel</Button>
                             <Button icon={<CloudDownload />} disabled={total === 0 || isFetching} onClick={take}>
-                                {total > 0 ? `Take ${total.toLocaleString()} ${total === 1 ? 'change' : 'changes'}` : 'Nothing to take'}
+                                {total > 0 ? `Take ${plural(total, 'change')}` : 'Nothing to take'}
                             </Button>
                         </div>
                     </div>

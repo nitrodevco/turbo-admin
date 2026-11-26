@@ -11,6 +11,7 @@ import { toast, toastError } from '#/components/toast';
 import { Badge, Button, CHECK_CLASS, EmptyState, ErrorNotice, Loading, Select } from '#/components/ui';
 import { cx } from '#/lib/cx';
 import { formatBytes } from '#/lib/format';
+import { plural } from '#/lib/plural';
 import { BundleDetail } from '#/pages/assets/BundleDetail';
 import { BundleIcon } from '#/pages/assets/BundleIcon';
 import { FurniThumb } from '#/pages/catalog/ProductIcon';
@@ -144,7 +145,7 @@ const LogicBar = ({ picked, mismatched, onDone }: { picked: number[]; mismatched
     const set = useSetLogic();
     const [ logic, setLogic ] = useState('');
     const done = (count: number | undefined) => {
-        toast(count ? `${count} ${count === 1 ? 'logic' : 'logics'} changed. Rooms load them as they reload.` : 'Every one already had that logic.');
+        toast(count ? `${plural(count, 'logic')} changed. Rooms load them as they reload.` : 'Every one already had that logic.');
         onDone();
     };
     const run = (input: { ids?: number[]; logic?: string }) => set.mutate(input, { onSuccess: result => done(result.changeSet?.changeCount), onError: toastError });

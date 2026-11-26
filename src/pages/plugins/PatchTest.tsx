@@ -3,6 +3,7 @@ import { useState } from 'react';
 
 import { useTemplateIndex, windowOf } from '#/api/windows';
 import { Button, ErrorNotice } from '#/components/ui';
+import { plural } from '#/lib/plural';
 
 import { testPatch } from './windowTest';
 import { WindowTree } from './WindowTree';
@@ -23,7 +24,7 @@ export const PatchTest = ({ template, ops }: { template: string; ops: readonly u
             <div className="flex flex-wrap items-center gap-2">
                 <Button variant="secondary" icon={<FlaskConical />} disabled={!template} onClick={() => setOpen(!open)}>{open ? 'Hide test' : 'Test'}</Button>
                 {open && index && !found && <span className="text-xs text-warn">{`The client has no window ${template}: check the template id on Plugins > Windows & skins.`}</span>}
-                {result && <span className="text-xs text-muted">{`${result.applied.length} of ${ops.length} op(s) change the window, ${result.unmatched.length} match nothing.`}</span>}
+                {result && <span className="text-xs text-muted">{`${result.applied.length} of ${plural(ops.length, 'op')} ${result.applied.length === 1 ? 'changes' : 'change'} the window, ${result.unmatched.length} ${result.unmatched.length === 1 ? 'matches' : 'match'} nothing.`}</span>}
             </div>
             {open && error && <ErrorNotice error={error} />}
             {result && (
