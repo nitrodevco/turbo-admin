@@ -1,0 +1,17 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "turbo-admin-dev",
+      "runtimeExecutable": "node",
+      "runtimeArgs": ["node_modules/vite/bin/vite.js"],
+      "port": 5173
+    },
+    {
+      "name": "turbo-admin-mock",
+      "runtimeExecutable": "node",
+      "runtimeArgs": ["node_modules/vite/bin/vite.js", "--config", ".claude/vite.mock.config.ts"],
+      "port": 5174
+    }
+  ]
+}
