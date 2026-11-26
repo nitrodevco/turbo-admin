@@ -7,7 +7,7 @@ import { endpointOf, type PluginAction, pluginBlob, type PluginBlock, type Plugi
 import { ask } from '#/components/confirm';
 import { ListToolbar } from '#/components/ListToolbar';
 import { toast, toastError } from '#/components/toast';
-import { Badge, Button, Checkbox, EmptyState, ErrorNotice, Input, Kv, Labeled, Loading, PageBody, PageHeader, Panel, Select, Stat, Td, Textarea, TextLink, Th, WarningNotice } from '#/components/ui';
+import { Badge, Button, Checkbox, EmptyState, ErrorNotice, Input, Kv, Labeled, Loading, PageBody, PageHeader, Panel, Select, Stat, Table, Td, Textarea, TextLink, Th, WarningNotice } from '#/components/ui';
 import { fromNow } from '#/lib/time';
 
 type Item = Record<string, unknown>;
@@ -120,24 +120,22 @@ const TableBlock = ({ block, context }: { block: PluginBlock; context: Context }
             {!error && !data && <Loading />}
             {data && data.items.length === 0 && <EmptyState>{isFetching ? 'Looking...' : 'Nothing here.'}</EmptyState>}
             {data && data.items.length > 0 && (
-                <div className="overflow-x-auto">
-                    <table className="w-full text-sm">
-                        <thead><tr>{columns.map(column => <Th key={column.key}>{column.label}</Th>)}</tr></thead>
-                        <tbody className="[&>tr:last-child>td]:border-b-0">
-                            {data.items.map((item, i) => (
-                                <tr key={String(item.id ?? i)} className="hover:bg-subtle/60">
-                                    {columns.map((column, c) => (
-                                        <Td key={column.key} className={column.key === 'text' ? 'max-w-96 truncate' : undefined}>
-                                            {c === 0 && rowLink(item)
-                                                ? <Link to={rowLink(item)!} className="font-medium hover:text-accent"><Cell column={column} value={item[column.key]} /></Link>
-                                                : <Cell column={column} value={item[column.key]} />}
-                                        </Td>
-                                    ))}
-                                </tr>
-                            ))}
-                        </tbody>
-                    </table>
-                </div>
+                <Table>
+                    <thead><tr>{columns.map(column => <Th key={column.key}>{column.label}</Th>)}</tr></thead>
+                    <tbody>
+                        {data.items.map((item, i) => (
+                            <tr key={String(item.id ?? i)} className="hover:bg-subtle/60">
+                                {columns.map((column, c) => (
+                                    <Td key={column.key} className={column.key === 'text' ? 'max-w-96 truncate' : undefined}>
+                                        {c === 0 && rowLink(item)
+                                            ? <Link to={rowLink(item)!} className="font-medium hover:text-accent"><Cell column={column} value={item[column.key]} /></Link>
+                                            : <Cell column={column} value={item[column.key]} />}
+                                    </Td>
+                                ))}
+                            </tr>
+                        ))}
+                    </tbody>
+                </Table>
             )}
         </Panel>
     );

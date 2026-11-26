@@ -1,7 +1,7 @@
 import { ArrowDown, ArrowUp } from 'lucide-react';
 import type { ReactNode } from 'react';
 
-import { Badge, EmptyState, IconButton, Switch, Td, Th } from '#/components/ui';
+import { Badge, EmptyState, IconButton, Switch, Table, Td, Th } from '#/components/ui';
 
 import { AUDIENCE_OPTIONS, CONDITION_REWARD_TRACK, type HabboStatus, hiddenReason, type Notice, splitCondition } from './model';
 import { NoticePreview } from './NoticePreview';
@@ -64,58 +64,56 @@ export const NoticeTable = ({ notices, ordered, empty, dirty, isNew, habboOf, di
     if (notices.length === 0) return <EmptyState>{empty}</EmptyState>;
 
     return (
-        <div className="overflow-x-auto">
-            <table className="w-full text-sm">
-                <thead>
-                    <tr>
-                        {ordered && <Th className="w-0">Order</Th>}
-                        <Th className="w-0">Notice</Th>
-                        <Th>When (server time)</Th>
-                        <Th>Who sees it</Th>
-                        <Th className="w-0">Shown</Th>
-                    </tr>
-                </thead>
-                <tbody className="[&>tr:last-child>td]:border-b-0" data-testid={ordered ? 'shown-notices' : 'hidden-notices'}>
-                    {notices.map((notice, index) => {
-                        const habbo = habboOf(notice);
+        <Table>
+            <thead>
+                <tr>
+                    {ordered && <Th className="w-0">Order</Th>}
+                    <Th className="w-0">Notice</Th>
+                    <Th>When (server time)</Th>
+                    <Th>Who sees it</Th>
+                    <Th className="w-0">Shown</Th>
+                </tr>
+            </thead>
+            <tbody data-testid={ordered ? 'shown-notices' : 'hidden-notices'}>
+                {notices.map((notice, index) => {
+                    const habbo = habboOf(notice);
 
-                        return (
-                            <tr key={notice.key} onClick={() => onOpen(notice.key)} className="cursor-pointer hover:bg-subtle/60">
-                                {ordered && (
-                                    <Td>
-                                        {/* The row's click opens the notice: these keep theirs. */}
-                                        <span className="flex items-center gap-0.5" onClick={event => event.stopPropagation()}>
-                                            <span className="w-6 font-mono text-xs text-muted tabular-nums">#{index + 1}</span>
-                                            <IconButton small label={`Move ${notice.key} up`} icon={<ArrowUp />} disabled={disabled || index === 0} onClick={() => onMove(notice.key, -1)} />
-                                            <IconButton small label={`Move ${notice.key} down`} icon={<ArrowDown />} disabled={disabled || index === notices.length - 1} onClick={() => onMove(notice.key, 1)} />
-                                        </span>
-                                    </Td>
-                                )}
+                    return (
+                        <tr key={notice.key} onClick={() => onOpen(notice.key)} className="cursor-pointer hover:bg-subtle/60">
+                            {ordered && (
                                 <Td>
-                                    {/* A button for the keyboard: its click goes on to the row's. */}
-                                    <button type="button" aria-label={`Edit ${notice.key}`} className="flex w-48 flex-col items-start gap-1.5 rounded text-left">
-                                        <NoticePreview notice={notice} />
-                                        <span className="font-mono text-xs break-all">{notice.key}</span>
-                                        <span className="flex flex-wrap gap-1">
-                                            {isNew(notice.key) && <Badge tone="accent">new</Badge>}
-                                            {dirty(notice.key) && <Badge tone="accent">unsaved</Badge>}
-                                            {!notice.texts.desc && <Badge tone="amber">no words</Badge>}
-                                            {habbo && HABBO_BADGE[habbo]}
-                                        </span>
-                                    </button>
-                                </Td>
-                                <Td><When notice={notice} /></Td>
-                                <Td><Who notice={notice} /></Td>
-                                <Td>
-                                    <span onClick={event => event.stopPropagation()}>
-                                        <Switch label={<span className="sr-only">{`${notice.key} shown`}</span>} checked={ordered} disabled={disabled} onChange={show => onShow(notice.key, show)} />
+                                    {/* The row's click opens the notice: these keep theirs. */}
+                                    <span className="flex items-center gap-0.5" onClick={event => event.stopPropagation()}>
+                                        <span className="w-6 font-mono text-xs text-muted tabular-nums">#{index + 1}</span>
+                                        <IconButton small label={`Move ${notice.key} up`} icon={<ArrowUp />} disabled={disabled || index === 0} onClick={() => onMove(notice.key, -1)} />
+                                        <IconButton small label={`Move ${notice.key} down`} icon={<ArrowDown />} disabled={disabled || index === notices.length - 1} onClick={() => onMove(notice.key, 1)} />
                                     </span>
                                 </Td>
-                            </tr>
-                        );
-                    })}
-                </tbody>
-            </table>
-        </div>
+                            )}
+                            <Td>
+                                {/* A button for the keyboard: its click goes on to the row's. */}
+                                <button type="button" aria-label={`Edit ${notice.key}`} className="flex w-48 flex-col items-start gap-1.5 rounded text-left">
+                                    <NoticePreview notice={notice} />
+                                    <span className="font-mono text-xs break-all">{notice.key}</span>
+                                    <span className="flex flex-wrap gap-1">
+                                        {isNew(notice.key) && <Badge tone="accent">new</Badge>}
+                                        {dirty(notice.key) && <Badge tone="accent">unsaved</Badge>}
+                                        {!notice.texts.desc && <Badge tone="amber">no words</Badge>}
+                                        {habbo && HABBO_BADGE[habbo]}
+                                    </span>
+                                </button>
+                            </Td>
+                            <Td><When notice={notice} /></Td>
+                            <Td><Who notice={notice} /></Td>
+                            <Td>
+                                <span onClick={event => event.stopPropagation()}>
+                                    <Switch label={<span className="sr-only">{`${notice.key} shown`}</span>} checked={ordered} disabled={disabled} onChange={show => onShow(notice.key, show)} />
+                                </span>
+                            </Td>
+                        </tr>
+                    );
+                })}
+            </tbody>
+        </Table>
     );
 };

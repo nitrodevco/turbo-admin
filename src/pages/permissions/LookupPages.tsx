@@ -4,8 +4,8 @@ import { Link, useSearchParams } from 'react-router';
 import { type Holder, useCatalog, useHolders, useLog } from '#/api/permissions';
 import { ListToolbar } from '#/components/ListToolbar';
 import { Row, SortedRowList } from '#/components/RowList';
-import { SearchInput } from '#/components/SearchInput';
-import { Badge, Button, EmptyState, ErrorNotice, Loading, PageBody, PageHeader, Panel } from '#/components/ui';
+import { SearchInput, SearchWithButton } from '#/components/SearchInput';
+import { Badge, EmptyState, ErrorNotice, Loading, PageBody, PageHeader, Panel } from '#/components/ui';
 import { useHubTabs } from '#/layout/nav';
 import { type SortKeys, useSortedRows } from '#/lib/sort';
 
@@ -39,11 +39,10 @@ export const SearchPage = () => {
                 <Panel className="overflow-clip">
                     <ListToolbar watch={[ node ]}>
                         <form onSubmit={handleSubmit} className="flex min-w-0 flex-1 gap-2">
-                            <SearchInput value={draft} onValueChange={setDraft} placeholder="A node, like room.enter.locked" list={listId} spellCheck={false} autoComplete="off" className="min-w-48 flex-1 sm:max-w-80" />
+                            <SearchWithButton value={draft} onValueChange={setDraft} placeholder="A node, like room.enter.locked" list={listId} spellCheck={false} autoComplete="off" disabled={draft.trim() === ''} />
                             <datalist id={listId}>
                                 {catalog.data?.nodes.map(x => <option key={x.node} value={x.node}>{x.description}</option>)}
                             </datalist>
-                            <Button type="submit" disabled={draft.trim() === ''}>Search</Button>
                         </form>
                     </ListToolbar>
                     {node === '' && <EmptyState>Name a node to see every group and player given it.</EmptyState>}
@@ -112,8 +111,7 @@ export const LogPage = () => {
                         page={{ offset, limit: PAGE_SIZE, total: log.data?.length, onChange: setOffset }}
                     >
                         <form onSubmit={handleSubmit} className="flex min-w-0 flex-1 gap-2">
-                            <SearchInput value={draft} onValueChange={setDraft} placeholder="Node, key or group name" spellCheck={false} autoComplete="off" className="min-w-48 flex-1 sm:max-w-80" />
-                            <Button type="submit">Search</Button>
+                            <SearchWithButton value={draft} onValueChange={setDraft} placeholder="Node, key or group name" spellCheck={false} autoComplete="off" />
                         </form>
                     </ListToolbar>
                     {log.error && <div className="p-4"><ErrorNotice error={log.error} /></div>}

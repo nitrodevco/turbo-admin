@@ -1,4 +1,4 @@
-import { type KeyboardEvent, type ReactNode, useEffect, useRef, useState } from 'react';
+import { type KeyboardEvent, type ReactNode, type RefObject, useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router';
 
 import { cx } from '#/lib/cx';
@@ -40,6 +40,51 @@ const tabClass = (active: boolean) => cx(
     'flex shrink-0 items-center gap-1.5 px-3 py-2.5 text-sm font-medium whitespace-nowrap transition-colors [&>svg]:size-4',
     active ? 'text-accent' : 'text-muted hover:text-ink',
 );
+
+type Edges = { start: boolean; end: boolean };
+
+/**
+ * Which ends of a row that scrolls sideways have more of it past them: none while it all fits,
+ * kept as it scrolls and as it or its tabs change size.
+ */
+const useOverflowEdges = (row: RefObject<HTMLElement | null>, group: string) => {
+    const [ edges, setEdges ] = useState<Edges>({ start: false, end: false });
+
+    useEffect(() => {
+        const element = row.current;
+
+        if (!element)
+            return;
+
+        const measure = () => {
+            const start = element.scrollLeft > 1;
+            const end = element.scrollLeft + element.clientWidth < element.scrollWidth - 1;
+
+            setEdges(was => (was.start === start && was.end === end ? was : { start, end }));
+        };
+
+        const resized = new ResizeObserver(measure);
+
+        // The row, and each tab in it: a count that grows makes the row overflow without resizing it.
+        for (const each of [ element, ...element.children ])
+            resized.observe(each);
+
+        element.addEventListener('scroll', measure, { passive: true });
+        measure();
+
+        return () => {
+            resized.disconnect();
+            element.removeEventListener('scroll', measure);
+        };
+    }, [ row, group ]);
+
+    return edges;
+};
+
+/** The row's ends fading out where tabs go on past them, so a phone shows there are more to scroll to. */
+const fadeOf = ({ start, end }: Edges) => (start || end
+    ? `linear-gradient(to right, ${start ? 'transparent' : '#000'}, #000 2rem, #000 calc(100% - 2rem), ${end ? 'transparent' : '#000'})`
+    : undefined);
 
 /**
  * How many a thing holds, in a pill beside its name: a tab's, a card's title (`Panel count`).
@@ -117,6 +162,7 @@ export const Tabs = ({ value, tabs, onChange, ids, rule = true, label, className
         list.current?.querySelectorAll<HTMLElement>('[role="tab"]')[target]?.focus();
     };
 
+    const edges = useOverflowEdges(list, group);
     const linked = tabs.some(tab => tab.to !== undefined);
 
     return (
@@ -126,6 +172,7 @@ export const Tabs = ({ value, tabs, onChange, ids, rule = true, label, className
             aria-label={label}
             // Its rule is a shadow, not a border, so the line sits on it rather than under it.
             className={cx('no-scrollbar relative flex gap-1 overflow-x-auto', rule && 'shadow-[inset_0_-1px_0_var(--color-line)]', className)}
+            style={{ maskImage: fadeOf(edges) }}
         >
             {tabs.map((tab, index) => {
                 const active = tab.value === value;

@@ -4,9 +4,9 @@ import { Link, useSearchParams } from 'react-router';
 
 import { type PlayerListItem, type PlayerSearchMode, usePlayerAbilities, usePlayerSearch } from '#/api/players';
 import { ListToolbar } from '#/components/ListToolbar';
-import { SearchInput } from '#/components/SearchInput';
+import { SearchWithButton } from '#/components/SearchInput';
 import { PhoneSort } from '#/components/SortHeader';
-import { Ago, Avatar, Badge, Button, EmptyState, ErrorNotice, LiveBadge, Loading, PageBody, PageHeader, Panel, Select, Switch, Td, Th } from '#/components/ui';
+import { Ago, Avatar, Badge, Button, EmptyState, ErrorNotice, LiveBadge, Loading, PageBody, PageHeader, Panel, Select, Switch, Table, Td, Th } from '#/components/ui';
 import { cx } from '#/lib/cx';
 import { type ListOrder, orderOf, orderParams, pageOf, type Sorting } from '#/lib/sort';
 
@@ -89,15 +89,13 @@ export const PlayersPage = () => {
                             <Select value={draftBy} onChange={event => setDraftBy(modeOf(event.target.value))} aria-label="Search by">
                                 {MODES.map(mode => <option key={mode.value} value={mode.value}>{mode.label}</option>)}
                             </Select>
-                            <SearchInput
+                            <SearchWithButton
                                 value={draft}
                                 onValueChange={setDraft}
                                 placeholder={MODES.find(x => x.value === draftBy)?.placeholder}
                                 aria-label="Search"
                                 inputMode={draftBy === 'id' ? 'numeric' : undefined}
-                                className="min-w-48 flex-1 sm:max-w-80"
                             />
-                            <Button type="submit">Search</Button>
                             <Switch label="Online only" checked={online} onChange={value => go({ online: value, page: 1 })} className="min-h-9 gap-3 sm:ml-2" />
                         </form>
                     </ListToolbar>
@@ -125,40 +123,38 @@ export const PlayersPage = () => {
                                                 </li>
                                             ))}
                                         </ul>
-                                        <div className="hidden overflow-x-auto sm:block">
-                                            <table className="w-full text-sm">
-                                                <thead>
-                                                    <tr>
-                                                        <Th sort="name" sorting={sorting}>Player</Th>
-                                                        <Th sort="seen" first="desc" sorting={sorting}>Seen</Th>
-                                                        <Th className="text-right" sort="rooms" first="desc" sorting={sorting}>Rooms</Th>
-                                                        <Th sort="joined" first="desc" sorting={sorting}>Joined</Th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody className="[&>tr:last-child>td]:border-b-0">
-                                                    {search.data.players.map(player => (
-                                                        <tr key={player.id} className="hover:bg-subtle/60">
-                                                            <Td>
-                                                                <Link to={`/players/${player.id}`} className="flex items-center gap-3">
-                                                                    <Avatar id={player.id} name={player.name} figure={player.figure} />
-                                                                    <span className="min-w-0">
-                                                                        <span className="block font-medium hover:text-accent">
-                                                                            {player.name}
-                                                                            <span className="ml-2 font-mono text-2xs font-normal text-muted">#{player.id}</span>
-                                                                            {player.discordUsername && <Badge tone="accent" className="ml-2">discord</Badge>}
-                                                                        </span>
-                                                                        {player.motto && <span className="block max-w-80 truncate text-xs text-muted">{player.motto}</span>}
+                                        <Table className="hidden sm:block">
+                                            <thead>
+                                                <tr>
+                                                    <Th sort="name" sorting={sorting}>Player</Th>
+                                                    <Th sort="seen" first="desc" sorting={sorting}>Seen</Th>
+                                                    <Th className="text-right" sort="rooms" first="desc" sorting={sorting}>Rooms</Th>
+                                                    <Th sort="joined" first="desc" sorting={sorting}>Joined</Th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {search.data.players.map(player => (
+                                                    <tr key={player.id} className="hover:bg-subtle/60">
+                                                        <Td>
+                                                            <Link to={`/players/${player.id}`} className="flex items-center gap-3">
+                                                                <Avatar id={player.id} name={player.name} figure={player.figure} />
+                                                                <span className="min-w-0">
+                                                                    <span className="block font-medium hover:text-accent">
+                                                                        {player.name}
+                                                                        <span className="ml-2 font-mono text-2xs font-normal text-muted">#{player.id}</span>
+                                                                        {player.discordUsername && <Badge tone="accent" className="ml-2">discord</Badge>}
                                                                     </span>
-                                                                </Link>
-                                                            </Td>
-                                                            <Td><Seen player={player} /></Td>
-                                                            <Td className="text-right font-mono tabular-nums">{player.roomsOwned}</Td>
-                                                            <Td className="text-xs text-muted"><Ago at={player.joinedUtc} /></Td>
-                                                        </tr>
-                                                    ))}
-                                                </tbody>
-                                            </table>
-                                        </div>
+                                                                    {player.motto && <span className="block max-w-80 truncate text-xs text-muted">{player.motto}</span>}
+                                                                </span>
+                                                            </Link>
+                                                        </Td>
+                                                        <Td><Seen player={player} /></Td>
+                                                        <Td className="text-right font-mono tabular-nums">{player.roomsOwned}</Td>
+                                                        <Td className="text-xs text-muted"><Ago at={player.joinedUtc} /></Td>
+                                                    </tr>
+                                                ))}
+                                            </tbody>
+                                        </Table>
                                     </div>
                                 )
                     )}

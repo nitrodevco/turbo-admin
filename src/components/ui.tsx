@@ -427,11 +427,28 @@ export const Switch = ({ label, checked, onChange, disabled, hint, className }: 
     </label>
 );
 
+/** Past this many options, a phone gets a drop-down in a `Segmented`'s place: a row of more runs off its screen. */
+const SEGMENTS_ON_A_PHONE = 4;
+
 /**
- * A choice of a few, all in sight: a row of buttons, the chosen one raised. For four options or
- * fewer; more belong in a drop-down.
+ * A choice of a few, all in sight: a row of buttons, the chosen one raised. Best with four options
+ * or fewer: with more, a phone shows a drop-down of them instead (and a choice of many belongs in
+ * one everywhere).
  */
 export const Segmented = ({ label, value, onChange, options, disabled }: { label: string; value: string; onChange: (value: string) => void; options: { value: string; label: string }[]; disabled?: boolean }) => (
+    options.length > SEGMENTS_ON_A_PHONE
+        ? (
+                <>
+                    <Select aria-label={label} value={value} disabled={disabled} onChange={event => onChange(event.target.value)} className="sm:hidden">
+                        {options.map(option => <option key={option.value} value={option.value}>{option.label}</option>)}
+                    </Select>
+                    <div className="max-sm:hidden"><SegmentRow label={label} value={value} onChange={onChange} options={options} disabled={disabled} /></div>
+                </>
+            )
+        : <SegmentRow label={label} value={value} onChange={onChange} options={options} disabled={disabled} />
+);
+
+const SegmentRow = ({ label, value, onChange, options, disabled }: { label: string; value: string; onChange: (value: string) => void; options: { value: string; label: string }[]; disabled?: boolean }) => (
     // Each option as wide as its words at least: the row grows past a narrow box rather than cutting them.
     <div role="radiogroup" aria-label={label} className="flex min-w-max gap-0.5 rounded-lg bg-canvas p-0.5">
         {options.map(option => (
@@ -634,6 +651,17 @@ export const Kv = ({ label, mono, children }: { label: string; mono?: boolean; c
  * which was given last. A header is left-aligned by the base styles (index.css), so `text-right`
  * or `text-center` in `className` turns it.
  */
+
+/**
+ * A table in a card, its `thead` and `tbody` as children: as wide as the card, scrolling sideways
+ * in itself when its columns don't fit, and its last row's rule left to the card's own edge.
+ * `className` is the box's (`hidden sm:block`, where a phone lists the rows another way).
+ */
+export const Table = ({ children, className }: { children: ReactNode; className?: string }) => (
+    <div className={cx('overflow-x-auto', className)}>
+        <table className="w-full text-sm [&>tbody>tr:last-child>td]:border-b-0">{children}</table>
+    </div>
+);
 
 /**
  * A table's column header. With `sort` (a key the table sorts by) and `sorting`, a click sorts the

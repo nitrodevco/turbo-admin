@@ -3,7 +3,7 @@ import type { InputHTMLAttributes } from 'react';
 
 import { cx } from '#/lib/cx';
 
-import { FIELD_CLASS } from './ui';
+import { Button, FIELD_CLASS } from './ui';
 
 type SearchInputProps = Omit<InputHTMLAttributes<HTMLInputElement>, 'value' | 'onChange' | 'type'> & {
     value: string;
@@ -39,4 +39,16 @@ export const SearchInput = ({ value, onValueChange, className, placeholder, ...i
             </button>
         )}
     </div>
+);
+
+/**
+ * A search the server runs, typed and then sent: the box and its Search button (`disabled` while
+ * there is nothing to search for), kept on one line however the row around them wraps, so on a
+ * phone the button is never left on a line of its own. It goes in the form that sends it.
+ */
+export const SearchWithButton = ({ disabled, ...input }: Omit<SearchInputProps, 'className'> & { disabled?: boolean }) => (
+    <span className="flex min-w-[min(100%,18rem)] flex-1 gap-2 sm:max-w-96">
+        <SearchInput {...input} className="min-w-0 flex-1" />
+        <Button type="submit" disabled={disabled}>Search</Button>
+    </span>
 );

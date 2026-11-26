@@ -5,7 +5,7 @@ import { useCurrencies } from '#/api/content';
 import { type ServerSetting, SOURCE, useResetSetting, useSaveSetting, useSettings } from '#/api/settings';
 import { ask } from '#/components/confirm';
 import { toast } from '#/components/toast';
-import { Button, CountInput, EmptyState, ErrorNotice, IconButton, Input, Labeled, Loading, PageBody, PageHeader, Panel, Select, Switch, Td, TextLink, Th, WarningNotice } from '#/components/ui';
+import { Button, CountInput, EmptyState, ErrorNotice, IconButton, Input, Labeled, Loading, PageBody, PageHeader, Panel, Select, Switch, Table, Td, TextLink, Th, WarningNotice } from '#/components/ui';
 
 const SECTION = 'Turbo:OnlineRewards';
 
@@ -169,66 +169,64 @@ const RulesTable = ({ rules, currencies, disabled, onChange }: { rules: Rule[]; 
             {rules.length === 0
                 ? <EmptyState>No rules yet: nothing is paid. Add one for each currency to pay.</EmptyState>
                 : (
-                        <div className="overflow-x-auto">
-                            <table className="w-full text-sm">
-                                <thead>
-                                    <tr>
-                                        <Th>Currency</Th>
-                                        <Th>Amount</Th>
-                                        <Th>Every (minutes)</Th>
-                                        <Th>HC bonus</Th>
-                                        <Th>Daily cap</Th>
-                                        <Th>Rooms only</Th>
-                                        <Th>Idle after</Th>
-                                        <Th>Sleeping</Th>
-                                        <Th>On</Th>
-                                        <Th><span className="sr-only">Remove</span></Th>
-                                    </tr>
-                                </thead>
-                                <tbody className="[&>tr:last-child>td]:border-b-0">
-                                    {rules.map((rule, index) => {
-                                        const problem = problemOf(rule, rules, currencies);
+                        <Table>
+                            <thead>
+                                <tr>
+                                    <Th>Currency</Th>
+                                    <Th>Amount</Th>
+                                    <Th>Every (minutes)</Th>
+                                    <Th>HC bonus</Th>
+                                    <Th>Daily cap</Th>
+                                    <Th>Rooms only</Th>
+                                    <Th>Idle after</Th>
+                                    <Th>Sleeping</Th>
+                                    <Th>On</Th>
+                                    <Th><span className="sr-only">Remove</span></Th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {rules.map((rule, index) => {
+                                    const problem = problemOf(rule, rules, currencies);
 
-                                        return (
-                                            // A rule has no id of its own: its place in the list is what the server keeps.
-                                            <tr key={index}>
-                                                <Td>
-                                                    {currencies
-                                                        ? (
-                                                                <Select value={rule.Currency} disabled={disabled} aria-label="Currency" onChange={event => set(index, { Currency: event.target.value })} className="w-36">
-                                                                    {rule.Currency === '' && <option value="">Pick one</option>}
-                                                                    {!currencies.includes(rule.Currency) && rule.Currency !== '' && <option value={rule.Currency}>{rule.Currency}</option>}
-                                                                    {currencies.map(name => <option key={name} value={name}>{name}</option>)}
-                                                                </Select>
-                                                            )
-                                                        : <Input value={rule.Currency} disabled={disabled} aria-label="Currency" onChange={event => set(index, { Currency: event.target.value.trim() })} className="w-36 font-mono" />}
-                                                    {problem && <span className="mt-1 block text-xs text-warn">{problem}</span>}
-                                                </Td>
-                                                <Td><CountInput label="Amount" value={rule.Amount} min={1} disabled={disabled} className="w-24" onChange={Amount => set(index, { Amount })} /></Td>
-                                                <Td><CountInput label="Every (minutes)" value={rule.IntervalMinutes} min={1} disabled={disabled} className="w-24" onChange={IntervalMinutes => set(index, { IntervalMinutes })} /></Td>
-                                                <Td><CountInput label="HC bonus" value={rule.HcBonus} min={0} disabled={disabled} className="w-24" onChange={HcBonus => set(index, { HcBonus })} /></Td>
-                                                <Td><CountInput label="Daily cap" value={rule.DailyCap} min={0} disabled={disabled} className="w-24" onChange={DailyCap => set(index, { DailyCap })} /></Td>
-                                                <Td><Switch label={<span className="sr-only">Rooms only</span>} checked={rule.InRoomOnly} disabled={disabled} onChange={InRoomOnly => set(index, { InRoomOnly })} className="min-h-0" /></Td>
-                                                <Td><OwnCount label="Idle after (minutes)" value={rule.IdleMinutes} disabled={disabled} onChange={IdleMinutes => set(index, { IdleMinutes })} /></Td>
-                                                <Td>
-                                                    <Select
-                                                        value={rule.SkipSleeping === null ? 'hotel' : rule.SkipSleeping ? 'yes' : 'no'}
-                                                        disabled={disabled}
-                                                        aria-label="Sleeping"
-                                                        onChange={event => set(index, { SkipSleeping: event.target.value === 'hotel' ? null : event.target.value === 'yes' })}
-                                                        className="w-28"
-                                                    >
-                                                        {Object.entries(SLEEPING).map(([ key, text ]) => <option key={key} value={key}>{text}</option>)}
-                                                    </Select>
-                                                </Td>
-                                                <Td><Switch label={<span className="sr-only">On</span>} checked={rule.Enabled} disabled={disabled} onChange={Enabled => set(index, { Enabled })} className="min-h-0" /></Td>
-                                                <Td><IconButton label="Remove this rule" icon={<Trash2 />} tone="bad" disabled={disabled} onClick={() => onChange(rules.filter((_, i) => i !== index))} /></Td>
-                                            </tr>
-                                        );
-                                    })}
-                                </tbody>
-                            </table>
-                        </div>
+                                    return (
+                                        // A rule has no id of its own: its place in the list is what the server keeps.
+                                        <tr key={index}>
+                                            <Td>
+                                                {currencies
+                                                    ? (
+                                                            <Select value={rule.Currency} disabled={disabled} aria-label="Currency" onChange={event => set(index, { Currency: event.target.value })} className="w-36">
+                                                                {rule.Currency === '' && <option value="">Pick one</option>}
+                                                                {!currencies.includes(rule.Currency) && rule.Currency !== '' && <option value={rule.Currency}>{rule.Currency}</option>}
+                                                                {currencies.map(name => <option key={name} value={name}>{name}</option>)}
+                                                            </Select>
+                                                        )
+                                                    : <Input value={rule.Currency} disabled={disabled} aria-label="Currency" onChange={event => set(index, { Currency: event.target.value.trim() })} className="w-36 font-mono" />}
+                                                {problem && <span className="mt-1 block text-xs text-warn">{problem}</span>}
+                                            </Td>
+                                            <Td><CountInput label="Amount" value={rule.Amount} min={1} disabled={disabled} className="w-24" onChange={Amount => set(index, { Amount })} /></Td>
+                                            <Td><CountInput label="Every (minutes)" value={rule.IntervalMinutes} min={1} disabled={disabled} className="w-24" onChange={IntervalMinutes => set(index, { IntervalMinutes })} /></Td>
+                                            <Td><CountInput label="HC bonus" value={rule.HcBonus} min={0} disabled={disabled} className="w-24" onChange={HcBonus => set(index, { HcBonus })} /></Td>
+                                            <Td><CountInput label="Daily cap" value={rule.DailyCap} min={0} disabled={disabled} className="w-24" onChange={DailyCap => set(index, { DailyCap })} /></Td>
+                                            <Td><Switch label={<span className="sr-only">Rooms only</span>} checked={rule.InRoomOnly} disabled={disabled} onChange={InRoomOnly => set(index, { InRoomOnly })} className="min-h-0" /></Td>
+                                            <Td><OwnCount label="Idle after (minutes)" value={rule.IdleMinutes} disabled={disabled} onChange={IdleMinutes => set(index, { IdleMinutes })} /></Td>
+                                            <Td>
+                                                <Select
+                                                    value={rule.SkipSleeping === null ? 'hotel' : rule.SkipSleeping ? 'yes' : 'no'}
+                                                    disabled={disabled}
+                                                    aria-label="Sleeping"
+                                                    onChange={event => set(index, { SkipSleeping: event.target.value === 'hotel' ? null : event.target.value === 'yes' })}
+                                                    className="w-28"
+                                                >
+                                                    {Object.entries(SLEEPING).map(([ key, text ]) => <option key={key} value={key}>{text}</option>)}
+                                                </Select>
+                                            </Td>
+                                            <Td><Switch label={<span className="sr-only">On</span>} checked={rule.Enabled} disabled={disabled} onChange={Enabled => set(index, { Enabled })} className="min-h-0" /></Td>
+                                            <Td><IconButton label="Remove this rule" icon={<Trash2 />} tone="bad" disabled={disabled} onClick={() => onChange(rules.filter((_, i) => i !== index))} /></Td>
+                                        </tr>
+                                    );
+                                })}
+                            </tbody>
+                        </Table>
                     )}
             {!disabled && (currencies === null || unused.length > 0) && (
                 <div className="border-t border-line px-4 py-3">

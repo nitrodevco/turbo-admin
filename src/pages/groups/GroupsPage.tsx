@@ -3,9 +3,9 @@ import { Link, useSearchParams } from 'react-router';
 
 import { GROUP_TYPES, useGroups } from '#/api/content';
 import { ListToolbar } from '#/components/ListToolbar';
-import { SearchInput } from '#/components/SearchInput';
+import { SearchWithButton } from '#/components/SearchInput';
 import { PhoneSort } from '#/components/SortHeader';
-import { Ago, Button, EmptyState, ErrorNotice, Loading, PageBody, PageHeader, Panel, Td, Th } from '#/components/ui';
+import { Ago, EmptyState, ErrorNotice, Loading, PageBody, PageHeader, Panel, Table, Td, Th } from '#/components/ui';
 import { useHubTabs } from '#/layout/nav';
 import { cx } from '#/lib/cx';
 import { type ListOrder, orderOf, orderParams, pageOf, type Sorting } from '#/lib/sort';
@@ -64,14 +64,12 @@ export const GroupsPage = () => {
                         }}
                     >
                         <form onSubmit={handleSubmit} className="flex min-w-0 flex-1 flex-wrap gap-2">
-                            <SearchInput
+                            <SearchWithButton
                                 value={draft}
                                 onValueChange={setDraft}
                                 placeholder="Name, owner, group or room id"
                                 aria-label="Find groups"
-                                className="min-w-48 flex-1 sm:max-w-80"
                             />
-                            <Button type="submit">Search</Button>
                         </form>
                     </ListToolbar>
 
@@ -97,35 +95,33 @@ export const GroupsPage = () => {
                                                 </li>
                                             ))}
                                         </ul>
-                                        <div className="hidden overflow-x-auto sm:block">
-                                            <table className="w-full text-sm">
-                                                <thead>
-                                                    <tr>
-                                                        <Th sort="name" sorting={sorting}>Group</Th>
-                                                        <Th sort="owner" sorting={sorting}>Owner</Th>
-                                                        <Th sort="room" sorting={sorting}>Home room</Th>
-                                                        <Th sort="kind" sorting={sorting}>Kind</Th>
-                                                        <Th className="text-right" sort="members" first="desc" sorting={sorting}>Members</Th>
-                                                        <Th sort="created" first="desc" sorting={sorting}>Created</Th>
+                                        <Table className="hidden sm:block">
+                                            <thead>
+                                                <tr>
+                                                    <Th sort="name" sorting={sorting}>Group</Th>
+                                                    <Th sort="owner" sorting={sorting}>Owner</Th>
+                                                    <Th sort="room" sorting={sorting}>Home room</Th>
+                                                    <Th sort="kind" sorting={sorting}>Kind</Th>
+                                                    <Th className="text-right" sort="members" first="desc" sorting={sorting}>Members</Th>
+                                                    <Th sort="created" first="desc" sorting={sorting}>Created</Th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {search.data.groups.map(group => (
+                                                    <tr key={group.id} className="hover:bg-subtle/60">
+                                                        <Td>
+                                                            <Link to={`/groups/${group.id}`} className="font-medium hover:text-accent">{group.name}</Link>
+                                                            <span className="ml-2 font-mono text-2xs text-muted">#{group.id}</span>
+                                                        </Td>
+                                                        <Td><Link to={`/players/${group.ownerId}`} className="text-muted hover:text-accent">{group.ownerName}</Link></Td>
+                                                        <Td><Link to={`/rooms/${group.roomId}`} className="text-muted hover:text-accent">{group.roomName}</Link></Td>
+                                                        <Td>{GROUP_TYPES[group.type] ?? group.type}</Td>
+                                                        <Td className="text-right font-mono tabular-nums">{group.members.toLocaleString()}</Td>
+                                                        <Td className="text-muted"><Ago at={group.createdAt} /></Td>
                                                     </tr>
-                                                </thead>
-                                                <tbody className="[&>tr:last-child>td]:border-b-0">
-                                                    {search.data.groups.map(group => (
-                                                        <tr key={group.id} className="hover:bg-subtle/60">
-                                                            <Td>
-                                                                <Link to={`/groups/${group.id}`} className="font-medium hover:text-accent">{group.name}</Link>
-                                                                <span className="ml-2 font-mono text-2xs text-muted">#{group.id}</span>
-                                                            </Td>
-                                                            <Td><Link to={`/players/${group.ownerId}`} className="text-muted hover:text-accent">{group.ownerName}</Link></Td>
-                                                            <Td><Link to={`/rooms/${group.roomId}`} className="text-muted hover:text-accent">{group.roomName}</Link></Td>
-                                                            <Td>{GROUP_TYPES[group.type] ?? group.type}</Td>
-                                                            <Td className="text-right font-mono tabular-nums">{group.members.toLocaleString()}</Td>
-                                                            <Td className="text-muted"><Ago at={group.createdAt} /></Td>
-                                                        </tr>
-                                                    ))}
-                                                </tbody>
-                                            </table>
-                                        </div>
+                                                ))}
+                                            </tbody>
+                                        </Table>
                                     </div>
                                 )
                     )}

@@ -4,7 +4,7 @@ import { useNavigate, useParams } from 'react-router';
 
 import { type RewardTrackListItem, useReloadRewardTracks, useReorderRewardTracks, useRewardTracks, useSetRewardTrackEnabled } from '#/api/rewardTracks';
 import { toast, toastError } from '#/components/toast';
-import { Badge, Button, EmptyState, ErrorNotice, IconButton, Input, Loading, PageBody, PageHeader, Panel, Switch, Td, Th } from '#/components/ui';
+import { Badge, Button, EmptyState, ErrorNotice, IconButton, Input, Loading, PageBody, PageHeader, Panel, Switch, Table, Td, Th } from '#/components/ui';
 import { cx } from '#/lib/cx';
 
 import { useMenuNames, useTrackNames } from './hooks';
@@ -71,69 +71,67 @@ const TrackList = ({ tracks, onOpen }: { tracks: RewardTrackListItem[]; onOpen: 
     if (tracks.length === 0) return <EmptyState>No reward tracks yet. Make one, or take Habbo's in from a capture.</EmptyState>;
 
     return (
-        <div className="overflow-x-auto">
-            <table className="w-full text-sm">
-                <thead>
-                    <tr>
-                        <Th className="w-0">Order</Th>
-                        <Th>Track</Th>
-                        <Th>Menu item</Th>
-                        <Th>Status</Th>
-                        <Th className="w-0">On</Th>
-                        <Th>Schedule (UTC)</Th>
-                        <Th className="text-right">Tasks</Th>
-                        <Th className="text-right">Prizes</Th>
-                        <Th>Premium</Th>
-                    </tr>
-                </thead>
-                <tbody className="[&>tr:last-child>td]:border-b-0">
-                    {tracks.map((track, index) => {
-                        const status = STATUS[statusOf(track)];
+        <Table>
+            <thead>
+                <tr>
+                    <Th className="w-0">Order</Th>
+                    <Th>Track</Th>
+                    <Th>Menu item</Th>
+                    <Th>Status</Th>
+                    <Th className="w-0">On</Th>
+                    <Th>Schedule (UTC)</Th>
+                    <Th className="text-right">Tasks</Th>
+                    <Th className="text-right">Prizes</Th>
+                    <Th>Premium</Th>
+                </tr>
+            </thead>
+            <tbody>
+                {tracks.map((track, index) => {
+                    const status = STATUS[statusOf(track)];
 
-                        return (
-                            <tr key={track.id} onClick={() => onOpen(track.id)} className="cursor-pointer hover:bg-subtle/60">
-                                <Td>
-                                    {/* The row's click opens the track: these keep theirs. */}
-                                    <span className="flex gap-0.5" onClick={event => event.stopPropagation()}>
-                                        <IconButton small label={`Move ${track.id} up`} icon={<ArrowUp />} disabled={index === 0 || reorder.isPending} onClick={() => move(index, -1)} />
-                                        <IconButton small label={`Move ${track.id} down`} icon={<ArrowDown />} disabled={index === tracks.length - 1 || reorder.isPending} onClick={() => move(index, 1)} />
+                    return (
+                        <tr key={track.id} onClick={() => onOpen(track.id)} className="cursor-pointer hover:bg-subtle/60">
+                            <Td>
+                                {/* The row's click opens the track: these keep theirs. */}
+                                <span className="flex gap-0.5" onClick={event => event.stopPropagation()}>
+                                    <IconButton small label={`Move ${track.id} up`} icon={<ArrowUp />} disabled={index === 0 || reorder.isPending} onClick={() => move(index, -1)} />
+                                    <IconButton small label={`Move ${track.id} down`} icon={<ArrowDown />} disabled={index === tracks.length - 1 || reorder.isPending} onClick={() => move(index, 1)} />
+                                </span>
+                            </Td>
+                            <Td>
+                                {/* A button for the keyboard: its click goes on to the row's. */}
+                                <button type="button" className="flex items-center gap-2.5 rounded text-left">
+                                    <span className="size-4 shrink-0 rounded border border-black/15" style={{ background: css(themeOf(track.theme).dark) }} title={`Theme ${track.theme || 'blue'}`} />
+                                    <span className="min-w-0">
+                                        {names.has(track.id) && <span className="block truncate font-medium">{names.get(track.id)}</span>}
+                                        <span className={cx('block font-mono', names.has(track.id) ? 'text-2xs text-muted' : 'text-sm')}>{track.id}</span>
                                     </span>
-                                </Td>
-                                <Td>
-                                    {/* A button for the keyboard: its click goes on to the row's. */}
-                                    <button type="button" className="flex items-center gap-2.5 rounded text-left">
-                                        <span className="size-4 shrink-0 rounded border border-black/15" style={{ background: css(themeOf(track.theme).dark) }} title={`Theme ${track.theme || 'blue'}`} />
-                                        <span className="min-w-0">
-                                            {names.has(track.id) && <span className="block truncate font-medium">{names.get(track.id)}</span>}
-                                            <span className={cx('block font-mono', names.has(track.id) ? 'text-2xs text-muted' : 'text-sm')}>{track.id}</span>
-                                        </span>
-                                    </button>
-                                </Td>
-                                <Td>
-                                    <span className="block text-xs">{menuNames.get(track.id) ?? <span className="font-mono text-muted">{menuTextKey(track.id)}</span>}</span>
-                                    {track.id === INTRODUCTION && <span className="block text-2xs text-muted">Always in the menu</span>}
-                                </Td>
-                                <Td><span title={status.meaning}><Badge tone={status.tone}>{status.label}</Badge></span></Td>
-                                <Td>
-                                    <span onClick={event => event.stopPropagation()}>
-                                        <Switch
-                                            label={<span className="sr-only">{`${track.id} on`}</span>}
-                                            checked={track.enabled}
-                                            disabled={setEnabled.isPending}
-                                            onChange={enabled => setEnabled.mutate({ id: track.id, enabled }, { onSuccess: () => toast(`${track.id} is ${enabled ? 'on' : 'off'}: sent to everyone online.`), onError: toastError })}
-                                        />
-                                    </span>
-                                </Td>
-                                <Td><Schedule track={track} /></Td>
-                                <Td className="text-right font-mono text-xs tabular-nums">{track.tasks} <span className="text-muted">/ {track.levels} levels</span></Td>
-                                <Td className="text-right font-mono text-xs tabular-nums">{track.prizes} <span className="text-muted">to {track.maxPoints.toLocaleString()} pts</span></Td>
-                                <Td>{track.hasPremium ? <Badge tone="accent">Premium</Badge> : <span className="text-xs text-muted">None</span>}</Td>
-                            </tr>
-                        );
-                    })}
-                </tbody>
-            </table>
-        </div>
+                                </button>
+                            </Td>
+                            <Td>
+                                <span className="block text-xs">{menuNames.get(track.id) ?? <span className="font-mono text-muted">{menuTextKey(track.id)}</span>}</span>
+                                {track.id === INTRODUCTION && <span className="block text-2xs text-muted">Always in the menu</span>}
+                            </Td>
+                            <Td><span title={status.meaning}><Badge tone={status.tone}>{status.label}</Badge></span></Td>
+                            <Td>
+                                <span onClick={event => event.stopPropagation()}>
+                                    <Switch
+                                        label={<span className="sr-only">{`${track.id} on`}</span>}
+                                        checked={track.enabled}
+                                        disabled={setEnabled.isPending}
+                                        onChange={enabled => setEnabled.mutate({ id: track.id, enabled }, { onSuccess: () => toast(`${track.id} is ${enabled ? 'on' : 'off'}: sent to everyone online.`), onError: toastError })}
+                                    />
+                                </span>
+                            </Td>
+                            <Td><Schedule track={track} /></Td>
+                            <Td className="text-right font-mono text-xs tabular-nums">{track.tasks} <span className="text-muted">/ {track.levels} levels</span></Td>
+                            <Td className="text-right font-mono text-xs tabular-nums">{track.prizes} <span className="text-muted">to {track.maxPoints.toLocaleString()} pts</span></Td>
+                            <Td>{track.hasPremium ? <Badge tone="accent">Premium</Badge> : <span className="text-xs text-muted">None</span>}</Td>
+                        </tr>
+                    );
+                })}
+            </tbody>
+        </Table>
     );
 };
 

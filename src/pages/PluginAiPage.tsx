@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { type AiProvider, setAiKey, testAi, useAi } from '#/api/ai';
 import { type ServerSetting, useSaveSetting, useSettings } from '#/api/settings';
 import { toast, toastError } from '#/components/toast';
-import { Badge, Button, EmptyState, ErrorNotice, Input, Label, Loading, PageBody, PageHeader, Panel, Select, Td, Textarea, Th } from '#/components/ui';
+import { Badge, Button, EmptyState, ErrorNotice, Input, Label, Loading, PageBody, PageHeader, Panel, Select, Table, Td, Textarea, Th } from '#/components/ui';
 import { useHubTabs } from '#/layout/nav';
 
 const Provider = ({ provider, canManage }: { provider: AiProvider; canManage: boolean }) => {
@@ -136,32 +136,30 @@ export const PluginAiPage = () => {
                         >
                             {!data.usage.length && <EmptyState>No usage in this period.</EmptyState>}
                             {data.usage.length > 0 && (
-                                <div className="overflow-x-auto">
-                                    <table className="w-full text-sm">
-                                        <thead>
-                                            <tr>
-                                                <Th>UTC day</Th>
-                                                <Th>Plugin</Th>
-                                                <Th>Provider / model</Th>
-                                                <Th className="text-right">Calls / failed</Th>
-                                                <Th className="text-right">Tokens in / out</Th>
-                                                <Th className="text-right">Cost</Th>
+                                <Table>
+                                    <thead>
+                                        <tr>
+                                            <Th>UTC day</Th>
+                                            <Th>Plugin</Th>
+                                            <Th>Provider / model</Th>
+                                            <Th className="text-right">Calls / failed</Th>
+                                            <Th className="text-right">Tokens in / out</Th>
+                                            <Th className="text-right">Cost</Th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {data.usage.map(row => (
+                                            <tr key={`${row.day}:${row.plugin}:${row.provider}:${row.model}`} className="hover:bg-subtle/60">
+                                                <Td className="font-mono text-xs whitespace-nowrap">{row.day.slice(0, 10)}</Td>
+                                                <Td>{row.plugin}</Td>
+                                                <Td>{row.provider} <span className="text-muted">/ {row.model}</span></Td>
+                                                <Td className="text-right font-mono tabular-nums">{row.calls.toLocaleString()} <span className="text-muted">/ {row.failed.toLocaleString()}</span></Td>
+                                                <Td className="text-right font-mono tabular-nums">{row.inputTokens.toLocaleString()} <span className="text-muted">/ {row.outputTokens.toLocaleString()}</span></Td>
+                                                <Td className="text-right font-mono tabular-nums">{row.cost.toLocaleString(undefined, { maximumFractionDigits: 6 })}</Td>
                                             </tr>
-                                        </thead>
-                                        <tbody className="[&>tr:last-child>td]:border-b-0">
-                                            {data.usage.map(row => (
-                                                <tr key={`${row.day}:${row.plugin}:${row.provider}:${row.model}`} className="hover:bg-subtle/60">
-                                                    <Td className="font-mono text-xs whitespace-nowrap">{row.day.slice(0, 10)}</Td>
-                                                    <Td>{row.plugin}</Td>
-                                                    <Td>{row.provider} <span className="text-muted">/ {row.model}</span></Td>
-                                                    <Td className="text-right font-mono tabular-nums">{row.calls.toLocaleString()} <span className="text-muted">/ {row.failed.toLocaleString()}</span></Td>
-                                                    <Td className="text-right font-mono tabular-nums">{row.inputTokens.toLocaleString()} <span className="text-muted">/ {row.outputTokens.toLocaleString()}</span></Td>
-                                                    <Td className="text-right font-mono tabular-nums">{row.cost.toLocaleString(undefined, { maximumFractionDigits: 6 })}</Td>
-                                                </tr>
-                                            ))}
-                                        </tbody>
-                                    </table>
-                                </div>
+                                        ))}
+                                    </tbody>
+                                </Table>
                             )}
                         </Panel>
                     </>
