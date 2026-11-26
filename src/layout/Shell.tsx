@@ -155,7 +155,8 @@ const RailBody = ({ onPick }: { onPick?: () => void }) => {
 
     return (
         <>
-            <Link to="/" onClick={onPick} aria-label="Turbo Admin, overview" className="flex h-16 shrink-0 items-center px-4">
+            {/* Ringed inside its edges: it spans the sidebar, whose edges (and the menu's) would cut a ring outside them to a line. */}
+            <Link to="/" onClick={onPick} aria-label="Turbo Admin, overview" className="flex h-16 shrink-0 items-center rounded-lg px-4 focus-visible:-outline-offset-2">
                 <Logo />
             </Link>
             <div className="flex shrink-0 items-center gap-1.5 px-3 pb-3">
@@ -211,12 +212,21 @@ const MenuDrawer = () => {
     const setOpen = useDrawer(state => state.setOpen);
     const close = () => setOpen(false);
     const dialog = useModalDialog(open, close);
+    const { ref } = dialog;
+
+    // Opened, the menu holds the focus itself and Tab starts at its top. The browser would give it
+    // to the logo's link, and Safari on a phone rings that after a tap: a line across the menu.
+    useEffect(() => {
+        if (open)
+            ref.current?.focus();
+    }, [ open, ref ]);
 
     return (
         <dialog
             {...dialog}
             aria-label="Menu"
-            className="m-0 h-dvh max-h-none w-72 max-w-[85vw] animate-drawer border-r border-line bg-chrome p-0 text-ink shadow-overlay lg:hidden"
+            tabIndex={-1}
+            className="m-0 h-dvh max-h-none w-72 max-w-[85vw] animate-drawer border-r border-line bg-chrome p-0 text-ink shadow-overlay outline-none lg:hidden"
         >
             {open && (
                 <nav aria-label="Main" className="flex h-full flex-col pt-[env(safe-area-inset-top)]">
