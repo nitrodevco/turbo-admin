@@ -7,6 +7,7 @@ import { useMe } from '#/api/queries';
 import { ask } from '#/components/confirm';
 import { SearchInput } from '#/components/SearchInput';
 import { Badge, Button, ButtonLink, EmptyState, ErrorNotice, IconButton, Input, Labeled, Loading, PageBody, Panel, Select } from '#/components/ui';
+import { formatClock, isoTime } from '#/lib/time';
 
 import { MetaCard, NodesCard } from './AssignmentCards';
 import { ADD_FORM_CLASS, AuditTable, Expiry, PermissionsHeader, TimingFields, Verdict } from './common';
@@ -142,7 +143,13 @@ const CheckCard = ({ playerId }: { playerId: number }) => {
                         <code className="font-mono text-xs">{result.node}</code>
                         <Badge tone={result.granted ? 'green' : 'red'}>{result.granted ? 'granted' : 'denied'}</Badge>
                         {!result.isRegistered && <Badge tone="amber">not registered</Badge>}
+                        {result.preview && <Badge tone="amber">as {result.preview.displayName}</Badge>}
                     </div>
+                    {result.preview && (
+                        <p className="text-xs text-muted">
+                            They are viewing as {result.preview.displayName}, so this is what a plain member of it gets, not what they hold of their own.
+                        </p>
+                    )}
                     <ul className="space-y-1">
                         {result.decision
                             ? <SourceLine label="Decided by" source={result.decision} />
@@ -231,6 +238,11 @@ export const PlayerPage = () => {
             >
                 {player && !player.canEdit && <Badge>Read-only</Badge>}
                 {isMe && <Badge tone="amber">You</Badge>}
+                {player?.preview && (
+                    <Badge tone="amber">
+                        viewing as {player.preview.displayName} until {formatClock(isoTime(player.preview.endsAtUtc) ?? 0)}
+                    </Badge>
+                )}
                 {player && canViewPlayers && (
                     <ButtonLink to={`/players/${player.id}`} icon={<UserRound />}>Profile</ButtonLink>
                 )}

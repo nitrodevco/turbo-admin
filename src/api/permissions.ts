@@ -1,6 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 import { api, post, put, remove } from './client';
+import type { PermissionPreview } from './types';
 
 export interface GroupRef {
     name: string;
@@ -60,6 +61,8 @@ export interface GroupResponse {
     meta: MetaAssignment[];
     level: LevelView;
     canEdit: boolean;
+    /** Why the signed-in staff member may not view as this group; null when they may. */
+    previewRefusal: string | null;
 }
 
 export interface MemberView {
@@ -107,6 +110,8 @@ export interface PlayerPermissions {
     };
     level: LevelView;
     canEdit: boolean;
+    /** The group they are viewing as: everything above is still their own. */
+    preview: PermissionPreview | null;
 }
 
 export interface CheckSource {
@@ -125,6 +130,8 @@ export interface CheckResponse {
     granted: boolean;
     decision: CheckSource | null;
     overridden: CheckSource[];
+    /** The group they are viewing as: the answer is that group's, not their own. */
+    preview: PermissionPreview | null;
 }
 
 export interface Catalog {

@@ -1,10 +1,12 @@
-import { Plus, Save, Trash2, X } from 'lucide-react';
+import { Eye, Plus, Save, Trash2, X } from 'lucide-react';
 import { type FormEvent, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router';
 
 import { groupCalls, type GroupResponse, useGroup, useGroupAudit, useGroupMembers, useGroups, usePermissionChange } from '#/api/permissions';
+import { useStartPreview } from '#/api/preview';
 import { ask } from '#/components/confirm';
 import { TabbedPanel } from '#/components/TabbedPanel';
+import { toastError } from '#/components/toast';
 import { AddRow, Badge, Button, EmptyState, ErrorNotice, Field, IconButton, Loading, PageBody, Panel, Select } from '#/components/ui';
 
 import { MetaCard, NodesCard } from './AssignmentCards';
@@ -152,6 +154,33 @@ const Members = ({ name, isDefault }: { name: string; isDefault: boolean }) => {
             );
 };
 
+/**
+ * Seeing the panel and the hotel as the group's members do, for up to an hour. Only a group
+ * lighter than the staff member's own that gives them nothing they lack: otherwise the button
+ * says why not.
+ */
+const ViewAsButton = ({ group }: { group: GroupResponse }) => {
+    const navigate = useNavigate();
+    const start = useStartPreview();
+
+    const handleClick = () => {
+        ask({
+            title: `View as ${group.displayName}?`,
+            body: 'For up to an hour the panel and the hotel treat you as a plain member of this group: you see what they see and can do only what they can. A banner at the top of every page takes you back.',
+            confirm: 'View as',
+        }, () => {
+            // The group may not see this page, so start from the front page.
+            start.mutate(group.name, { onSuccess: () => navigate('/'), onError: toastError });
+        });
+    };
+
+    return (
+        <Button variant="secondary" icon={<Eye />} onClick={handleClick} disabled={group.previewRefusal !== null || start.isPending} title={group.previewRefusal ?? undefined}>
+            View as
+        </Button>
+    );
+};
+
 const GroupHistory = ({ name }: { name: string }) => {
     const audit = useGroupAudit(name);
 
@@ -175,6 +204,7 @@ export const GroupPage = () => {
                 description={group && `${group.name}, weight ${group.weight}`}
             >
                 {group && !group.canEdit && <Badge>Read-only</Badge>}
+                {group && <ViewAsButton group={group} />}
             </PermissionsHeader>
             <PageBody>
                 {isPending && <Loading />}

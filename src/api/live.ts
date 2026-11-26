@@ -5,6 +5,7 @@ import { create } from 'zustand';
 import { useSession } from '#/auth/session';
 
 import { API_URL } from './client';
+import type { MeResponse } from './types';
 
 /** How often a page asks again while the live stream is up: for what no change is sent about. */
 export const LIVE_FALLBACK_MS = 60_000;
@@ -76,6 +77,10 @@ const apply = (queryClient: QueryClient, changes: LiveChanges) => {
 
     if (changes.permissions.length > 0)
         void queryClient.invalidateQueries({ queryKey: [ 'permissions', 'staff' ] });
+
+    // Their own changed (a group edited, a preview over): what the panel shows them may have too.
+    if (changes.permissions.includes(queryClient.getQueryData<MeResponse>([ 'me' ])?.id ?? -1))
+        void queryClient.invalidateQueries();
 };
 
 /** Everything a page may be showing that changes on its own, asked again after time away. */

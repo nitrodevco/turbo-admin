@@ -21,6 +21,7 @@ import { HotelSheet, HotelStatusCard } from './HotelStatus';
 import { type ShownEntry, useIsActive, useNav } from './nav';
 import { NotificationsBell } from './NotificationsBell';
 import { useShortcutsSheet } from './palette';
+import { PreviewBanner } from './PreviewBanner';
 import { Shortcuts } from './Shortcuts';
 
 const THEMES: { value: ThemeChoice; label: string; icon: ReactNode }[] = [
@@ -283,6 +284,7 @@ export const Shell = () => {
             <ConfirmHost />
             <Toasts />
             <main ref={main} data-scroll-root className="flex min-h-0 min-w-0 flex-1 flex-col pb-[env(safe-area-inset-bottom)] max-lg:overflow-y-auto max-lg:overscroll-contain">
+                <PreviewBanner />
                 <PageErrorBoundary key={pageKeyOf(pathname)} resetKey={pathname}>
                     <Outlet />
                 </PageErrorBoundary>

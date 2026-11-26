@@ -13,6 +13,17 @@ export interface SessionResponse {
     player: AdminPlayer;
 }
 
+/**
+ * A group the signed-in staff member is viewing the panel and the hotel as: until `endsAtUtc`, or
+ * until they stop, they see and may do only what a plain member of it may.
+ */
+export interface PermissionPreview {
+    group: string;
+    displayName: string;
+    endsAtUtc: string;
+}
+
+/** Who is signed in and which parts of the panel apply to them: while `preview` is set, those of the group they view as. */
 export interface MeResponse {
     id: number;
     name: string;
@@ -53,6 +64,8 @@ export interface MeResponse {
     canViewApprovals: boolean;
     /** Holds `admin.database.backup`: may back up the database's tables and download them as SQL. */
     canBackupDatabase: boolean;
+    /** The group they are viewing as, or null when they are themselves. */
+    preview: PermissionPreview | null;
 }
 
 export interface DashboardRoom {
