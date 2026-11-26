@@ -109,7 +109,7 @@ export const ThemeAudienceDialog = ({ audience, name, groups, onClose }: { audie
                 {set.error && <ErrorNotice error={set.error} />}
                 <ModalActions>
                     <Button variant="ghost" onClick={onClose}>Cancel</Button>
-                    <Button type="submit" disabled={set.isPending}>{set.isPending ? 'Saving...' : 'Save'}</Button>
+                    <Button type="submit" disabled={set.isPending}>{set.isPending ? 'Saving…' : 'Save'}</Button>
                 </ModalActions>
             </ModalBody>
         </Modal>

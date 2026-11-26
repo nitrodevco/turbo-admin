@@ -241,7 +241,7 @@ export const AchievementsTab = () => {
                     ))}
                 </div>
             </ListPanel>
-            {!selected && <Panel><EmptyState>Choose an achievement.</EmptyState></Panel>}
+            {!selected && <EmptyState framed>Pick an achievement.</EmptyState>}
             {selected && (
                 <Panel key={selected.id} title={<span className="font-mono">{selected.key}</span>} description={`Id ${selected.id}, revision ${selected.revision}, counted from ${selected.source}.`}>
                     <div className="p-4">

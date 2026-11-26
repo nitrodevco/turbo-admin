@@ -123,8 +123,8 @@ const AddPasskey = ({ onAdded }: { onAdded: () => void }) => {
 
     const label = {
         idle: 'Add passkey',
-        confirm: 'Confirm with a passkey you have...',
-        create: 'Create the new passkey...',
+        confirm: 'Confirm with a passkey you have…',
+        create: 'Create the new passkey…',
     }[step];
 
     return (

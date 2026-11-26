@@ -426,7 +426,7 @@ export const ThemeStudioPage = () => {
                         <IconButton label="Undo (Ctrl+Z)" icon={<Undo2 />} disabled={!history.canUndo} onClick={undo} />
                         <IconButton label="Redo (Ctrl+Y)" icon={<Redo2 />} disabled={!history.canRedo} onClick={redo} />
                         <span className="text-sm tabular-nums" aria-live="polite" data-unsaved={unsaved}>{unsaved ? `${unsaved} unsaved change(s)` : 'All saved'}</span>
-                        <Button icon={<Save />} disabled={!unsaved || saving || !canManage} onClick={() => void save()}>{saving ? 'Saving...' : 'Save'}</Button>
+                        <Button icon={<Save />} disabled={!unsaved || saving || !canManage} onClick={() => void save()}>{saving ? 'Saving…' : 'Save'}</Button>
                         <Button variant="ghost" icon={<X />} disabled={!unsaved || saving} onClick={() => ask({ title: `Drop ${unsaved} unsaved change(s)?`, confirm: 'Discard', danger: true }, history.clear)}>Discard</Button>
                         {canManage && <IconButton label="Make a plugin of this theme" icon={<Package />} onClick={() => setPackaging(true)} />}
                     </span>
@@ -522,7 +522,7 @@ export const ThemeStudioPage = () => {
                                                 )}
                                             />
                                         )
-                                    : <p className="p-6 text-center text-sm text-muted">Pick a window on the left: the catalogue, the purse, the navigator...</p>}
+                                    : <p className="p-6 text-center text-sm text-muted">Pick a window on the left: the catalogue, the purse, the navigator…</p>}
                             </div>
                         </section>
                         <section aria-label="Inspector" className="card min-h-[16rem] overflow-y-auto">

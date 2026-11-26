@@ -65,7 +65,7 @@ const SpriteRow = ({ sprite }: { sprite: SkinSprite }) => {
             {studio.canManage && (
                 <label className={`inline-flex shrink-0 items-center gap-1 text-accent ${busy ? 'opacity-50' : 'cursor-pointer hover:underline'}`}>
                     <Upload className="size-3.5" />
-                    {busy ? 'Uploading...' : 'Replace art'}
+                    {busy ? 'Uploading…' : 'Replace art'}
                     <input
                         type="file"
                         accept={IMAGE_TYPES}

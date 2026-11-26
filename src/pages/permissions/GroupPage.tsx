@@ -103,7 +103,7 @@ const ParentsCard = ({ group }: { group: GroupResponse }) => {
             {group.canEdit && choices.length > 0 && (
                 <AddRow onSubmit={handleSubmit}>
                     <Select value={parent} onChange={event => setParent(event.target.value)} aria-label="Group to inherit" className="min-w-0 flex-1">
-                        <option value="">Choose a group</option>
+                        <option value="">Pick a group</option>
                         {choices.map(x => <option key={x.name} value={x.name}>{x.displayName} ({x.weight})</option>)}
                     </Select>
                     <Button type="submit" variant="secondary" icon={<Plus />} disabled={parent === '' || add.isPending}>Inherit</Button>

@@ -100,7 +100,7 @@ const SimpleList = ({ list, title, description, rows, placeholder, canManage }: 
                                         className="w-16"
                                     />
                                 )}
-                                <IconButton label={row.visible ? 'Hide' : 'Show'} icon={row.visible ? <EyeOff /> : <Eye />} onClick={() => save.mutate({ list, id: row.id, body: { [field]: row.name, visible: !row.visible } })} />
+                                <IconButton label={row.visible ? 'Hide' : 'Show'} icon={row.visible ? <EyeOff /> : <Eye />} disabled={save.isPending} onClick={() => save.mutate({ list, id: row.id, body: { [field]: row.name, visible: !row.visible } })} />
                                 <IconButton label="Remove" icon={<Trash2 />} tone="bad" onClick={() => ask({ title: `Remove ${row.name}?`, confirm: 'Remove' }, () => remove.mutate({ list, id: row.id }))} />
                             </>
                         )}

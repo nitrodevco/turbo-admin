@@ -133,7 +133,7 @@ const SpriteReplacement = ({ sprite, replacing }: { sprite: SkinSprite; replacin
             )}
             {replacing.canManage && (
                 <FileButton small accept={IMAGE_TYPES} icon={<Upload />} busy={busy} title={`A replacement for ${sprite.sprite}: PNG, GIF, JPEG or WebP, at most 2 MB`} onFile={file => void upload(file)}>
-                    {busy ? 'Uploading...' : 'Upload replacement'}
+                    {busy ? 'Uploading…' : 'Upload replacement'}
                 </FileButton>
             )}
             {current && replacing.canManage && <Button small variant="ghost" icon={<RotateCcw />} disabled={busy} onClick={() => void giveBack()}>Habbo&apos;s again</Button>}

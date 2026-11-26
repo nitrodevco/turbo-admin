@@ -109,11 +109,11 @@ export const SetupPage = () => {
                         maxLength={64}
                     />
                     <Button type="submit" className="w-full" disabled={busy || !passkeysSupported()}>
-                        {busy ? 'Waiting for your passkey...' : 'Create passkey and sign in'}
+                        {busy ? 'Waiting for your passkey…' : 'Create passkey and sign in'}
                     </Button>
                 </form>
             )}
-            {!info && error === null && <p className="text-sm text-muted">Checking your setup link...</p>}
+            {!info && error === null && <p className="text-sm text-muted">Checking your setup link…</p>}
         </AuthCard>
     );
 };

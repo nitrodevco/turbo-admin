@@ -29,7 +29,7 @@ const outcomeOf = (entry: Entry) => {
         return { label: 'Failed', tone: 'text-bad' };
 
     if (!entry.response)
-        return { label: 'Running...', tone: 'text-muted' };
+        return { label: 'Running…', tone: 'text-muted' };
 
     if (!entry.response.found)
         return { label: 'Unknown command', tone: 'text-bad' };

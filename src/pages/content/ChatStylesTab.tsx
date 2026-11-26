@@ -371,7 +371,7 @@ export const ChatStylesTab = ({ canManage }: { canManage: boolean }) => {
                     empty={(
                         <div className="rounded-xl bg-surface/95 px-6 py-5 text-center shadow-card">
                             <Sparkles className="mx-auto mb-2 size-6 text-accent" />
-                            <div className="text-sm font-medium">{regPoints && !base ? 'Drawing it...' : 'Nothing to draw'}</div>
+                            <div className="text-sm font-medium">{regPoints && !base ? 'Drawing it…' : 'Nothing to draw'}</div>
                             <div className="text-xs text-muted">{current && !current.drawable ? 'It has no look yet: change it below to give it one.' : 'Pick a style with a look.'}</div>
                         </div>
                     )}

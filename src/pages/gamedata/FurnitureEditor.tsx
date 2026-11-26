@@ -41,7 +41,7 @@ const VendingEditor = ({ raw, onChange, disabled }: { raw: string; onChange: (va
         <section className="flex flex-col gap-3 rounded-xl border border-line bg-canvas/50 p-4">
             <div>
                 <h4 className="text-sm font-semibold">Items this vending machine gives</h4>
-                <p className="mt-1 text-xs text-muted">Choose one or more hand items. Existing IDs stay selected even when they are not in the current catalogue.</p>
+                <p className="mt-1 text-xs text-muted">Pick one or more hand items. Existing IDs stay selected even when they are not in the current catalogue.</p>
             </div>
             {!parsed && <p role="alert" className="rounded-lg bg-bad-soft px-3 py-2 text-xs text-bad">Extra data or its vending section is invalid. Correct it in the raw JSON field below to use these controls; it will not be replaced automatically.</p>}
             {missing.length > 0 && (
@@ -460,7 +460,7 @@ const EditorBody = ({ definition, canManage, section, onSection, onUnsaved, save
             {field.kind === 'colors' && colorsOf(String(draft[field.key] ?? '')).length > 0 && (
                 <span className="flex flex-wrap gap-1">
                     {colorsOf(String(draft[field.key])).map((color, index) => (
-                        <span key={`${color}:${index}`} title={color} className="size-5 rounded-md border border-line" style={{ background: color }} />
+                        <span key={`${color}:${index}`} title={color} className="size-5 rounded-md border border-swatch-edge" style={{ background: color }} />
                     ))}
                 </span>
             )}

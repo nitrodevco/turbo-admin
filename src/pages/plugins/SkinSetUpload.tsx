@@ -230,7 +230,7 @@ export const SkinSetUpload = ({ skins, target, canManage }: { skins: SkinMap; ta
                 }
             }));
 
-            setApplying('Saving...');
+            setApplying('Saving…');
             await overlays.mutateAsync(set);
             saved(`${matched.length} sprite(s) replaced in one change (${target})`);
             setFiles([]);
@@ -261,7 +261,7 @@ export const SkinSetUpload = ({ skins, target, canManage }: { skins: SkinMap; ta
                         onDragLeave={() => setDropping(false)}
                         onDrop={event => void onDrop(event)}
                     >
-                        <span className="text-muted">{reading ? 'Reading the files...' : 'Drop the files, a folder or a zip here, or'}</span>
+                        <span className="text-muted">{reading ? 'Reading the files…' : 'Drop the files, a folder or a zip here, or'}</span>
                         <label className="inline-flex cursor-pointer items-center gap-1 text-accent hover:underline">
                             <Upload className="size-4" />
                             choose files

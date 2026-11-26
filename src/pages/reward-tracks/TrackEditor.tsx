@@ -63,7 +63,7 @@ const SettingsTab = ({ track, onChange }: { track: RewardTrack; onChange: (track
                                     aria-pressed={track.theme === name}
                                     className={cx('flex items-center gap-2 rounded-lg border px-2.5 py-1.5 text-xs', track.theme === name ? 'border-accent bg-accent-soft text-accent' : 'border-line hover:bg-subtle')}
                                 >
-                                    <span className="flex overflow-hidden rounded border border-black/15">
+                                    <span className="flex overflow-hidden rounded border border-swatch-edge">
                                         {[ theme.dark, theme.medium, theme.light, theme.active ].map(color => <span key={color} className="size-4" style={{ background: css(color) }} />)}
                                     </span>
                                     {name}

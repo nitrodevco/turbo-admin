@@ -58,7 +58,7 @@ const ImagesPanel = ({ pluginKey }: { pluginKey: string }) => {
                     title="PNG, GIF, JPEG or WebP, at most 2 MB; one of the same name is replaced"
                     onFile={file => change.mutate({ file }, { onSuccess: image => toast(`Uploaded ${image!.path}.`), onError: toastError })}
                 >
-                    {change.isPending ? 'Uploading...' : 'Upload image'}
+                    {change.isPending ? 'Uploading…' : 'Upload image'}
                 </FileButton>
             )}
         >
@@ -165,7 +165,7 @@ const FontsPanel = ({ pluginKey }: { pluginKey: string }) => {
                     title="WOFF2, WOFF, TrueType or OpenType, at most 2 MB"
                     onFile={file => change.mutate({ file }, { onSuccess: font => toast(`Uploaded ${font!.path}: clients load it as ${font!.family}.`), onError: toastError })}
                 >
-                    {change.isPending ? 'Uploading...' : 'Upload font'}
+                    {change.isPending ? 'Uploading…' : 'Upload font'}
                 </FileButton>
             )}
         >

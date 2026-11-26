@@ -138,7 +138,7 @@ export const PatchEditor = ({ patch, onDone }: { patch: HotelPatch | null; onDon
             {!problem && pasted && <PatchTest template={pasted.template ?? template} ops={pasted.ops as unknown[]} />}
             {save.error && <ErrorNotice error={save.error} />}
             <div className="flex gap-2">
-                <Button type="submit" icon={<Save />} disabled={save.isPending || !!problem || !name.trim()}>{save.isPending ? 'Saving...' : 'Save'}</Button>
+                <Button type="submit" icon={<Save />} disabled={save.isPending || !!problem || !name.trim()}>{save.isPending ? 'Saving…' : 'Save'}</Button>
                 <Button variant="ghost" icon={<X />} onClick={onDone}>Cancel</Button>
                 {/* The hotel's plugin is loaded again to serve the new file, which takes a few seconds: said, so a click is not taken for nothing. */}
                 {save.isPending && <span className="self-center text-xs text-muted">{`Writing it into ${folderOf(target)} and loading that plugin again; this takes a few seconds.`}</span>}

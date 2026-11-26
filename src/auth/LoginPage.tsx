@@ -50,7 +50,7 @@ export const LoginPage = () => {
                     Sign in with your passkey: Face ID, Touch ID, Windows Hello, your phone or a security key.
                 </p>
                 <Button className="w-full" icon={<KeyRound />} onClick={handleSignIn} disabled={busy || !passkeysSupported()}>
-                    {busy ? 'Waiting for your passkey...' : 'Sign in with passkey'}
+                    {busy ? 'Waiting for your passkey…' : 'Sign in with passkey'}
                 </Button>
             </div>
             <p className="mt-6 text-xs text-muted">

@@ -59,7 +59,7 @@ const GroupsCard = ({ player }: { player: PlayerPermissions }) => {
                 <form onSubmit={handleSubmit} className={ADD_FORM_CLASS}>
                     <Labeled label="Group" className="sm:min-w-40 sm:flex-1">
                         <Select value={group} onChange={event => setGroup(event.target.value)} className="w-full">
-                            <option value="">Choose a group</option>
+                            <option value="">Pick a group</option>
                             {choices.map(x => <option key={x.name} value={x.name}>{x.displayName} ({x.weight})</option>)}
                         </Select>
                     </Labeled>

@@ -182,7 +182,7 @@ export const SongsPage = () => {
                     </div>
                 )}
                 {selected === null && songs.data && songs.data.songs.length > 0 && (
-                    <Panel className="max-lg:hidden"><EmptyState>Pick a song, or <TextLink inline to="/catalog">go back to the catalog</TextLink>.</EmptyState></Panel>
+                    <div className="max-lg:hidden"><EmptyState framed>Pick a song, or <TextLink inline to="/catalog">go back to the catalog</TextLink>.</EmptyState></div>
                 )}
             </PageBody>
         </>

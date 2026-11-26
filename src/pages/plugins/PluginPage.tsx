@@ -118,7 +118,7 @@ const TableBlock = ({ block, context }: { block: PluginBlock; context: Context }
             </ListToolbar>
             {error && <div className="p-4"><ErrorNotice error={error} /></div>}
             {!error && !data && <Loading />}
-            {data && data.items.length === 0 && <EmptyState>{isFetching ? 'Looking...' : 'Nothing here.'}</EmptyState>}
+            {data && data.items.length === 0 && <EmptyState>{isFetching ? 'Looking…' : 'Nothing here.'}</EmptyState>}
             {data && data.items.length > 0 && (
                 <Table>
                     <thead><tr>{columns.map(column => <Th key={column.key}>{column.label}</Th>)}</tr></thead>

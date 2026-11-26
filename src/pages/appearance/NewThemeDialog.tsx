@@ -72,7 +72,7 @@ export const NewThemeDialog = ({ open, copyOf, onClose }: { open: boolean; copyO
                 <ModalActions>
                     <Button variant="ghost" onClick={onClose}>Cancel</Button>
                     <Button type="submit" icon={<Palette />} disabled={create.isPending || !typedKey || !name.trim()}>
-                        {create.isPending ? 'Making it...' : source ? 'Duplicate' : 'Make the theme'}
+                        {create.isPending ? 'Making it…' : source ? 'Duplicate' : 'Make the theme'}
                     </Button>
                 </ModalActions>
             </ModalBody>

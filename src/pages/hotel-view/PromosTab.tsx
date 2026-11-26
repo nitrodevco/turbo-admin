@@ -255,7 +255,7 @@ export const PromosTab = ({ draft, codes, now, open, onOpen, onOpenSlot, disable
                         })}
                     </ul>
                 </ListPanel>
-                {!selected && <Panel><EmptyState>Choose a promo to edit, or make a new one.</EmptyState></Panel>}
+                {!selected && <EmptyState framed>Pick a promo to edit, or make a new one.</EmptyState>}
                 {selected && (() => {
                     const type = draft.text(codeKey(selected, 'widget'));
                     const uses = usesOf(draft, selected, now);

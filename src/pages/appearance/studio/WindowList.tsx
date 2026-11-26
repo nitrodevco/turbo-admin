@@ -79,7 +79,7 @@ export const WindowList = ({ index, windows, value, onPick }: { index: TemplateI
                         <Monitor className="size-5 shrink-0" />
                         <span className="flex flex-col">
                             <span>{hud.name}</span>
-                            <span className="text-xs font-normal text-muted">Toolbar, purse, friend bar, chat, room tools...</span>
+                            <span className="text-xs font-normal text-muted">Toolbar, purse, friend bar, chat, room tools…</span>
                         </span>
                     </button>
                 )}

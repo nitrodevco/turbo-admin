@@ -85,7 +85,7 @@ const Swatch = ({ colour, selected, isNew, onSelect, draggable, onDragStart, onD
         }}
         className={cx(
             'relative aspect-square w-full rounded-lg border transition-[box-shadow,transform] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent',
-            selected ? 'border-transparent shadow-[0_0_0_2px_var(--color-surface),0_0_0_4px_var(--color-accent)]' : 'border-black/15 hover:scale-105',
+            selected ? 'border-transparent shadow-[0_0_0_2px_var(--color-surface),0_0_0_4px_var(--color-accent)]' : 'border-swatch-edge hover:scale-105',
             dropping && 'shadow-[-4px_0_0_0_var(--color-accent)]',
             draggable && 'cursor-grab active:cursor-grabbing',
         )}
@@ -125,7 +125,7 @@ const Inspector = ({ colour, index, count, canManage, onChange, onMove, onRemove
     return (
         <div className="flex flex-col gap-4">
             <div className="flex items-center gap-3">
-                <span className="size-14 shrink-0 rounded-xl border border-black/15" style={{ background: `#${colour.hex}` }} />
+                <span className="size-14 shrink-0 rounded-xl border border-swatch-edge" style={{ background: `#${colour.hex}` }} />
                 <div className="min-w-0">
                     <div className="font-mono text-lg font-semibold">#{colour.hex}</div>
                     <div className="font-mono text-2xs text-muted">id {colour.id} · {index + 1} of {count}</div>
@@ -152,7 +152,7 @@ const Inspector = ({ colour, index, count, canManage, onChange, onMove, onRemove
             <Switch label="Offered in the editor" hint="A hidden colour stays on anyone already wearing it." checked={colour.selectable} onChange={selectable => onChange({ ...colour, selectable })} disabled={!canManage} />
             {colour.habbo && differsFromHabbo(colour) && (
                 <div className="flex flex-wrap items-center gap-2 rounded-lg border border-warn-line bg-warn-soft px-3 py-2 text-xs text-warn">
-                    <span className="size-3 rounded border border-black/15" style={{ background: `#${colour.habbo.hex}` }} />
+                    <span className="size-3 rounded border border-swatch-edge" style={{ background: `#${colour.habbo.hex}` }} />
                     <span>Habbo: #{colour.habbo.hex}, {CLUB_NAMES[colour.habbo.club]?.toLowerCase()}{colour.habbo.selectable ? '' : ', hidden'}</span>
                     {canManage && <TextButton inline className="ml-auto" onClick={() => onChange({ ...colour, ...colour.habbo! })}>Use Habbo's</TextButton>}
                 </div>

@@ -197,7 +197,7 @@ const Palette = ({ onClose }: { onClose: () => void }) => {
             <div ref={list} className="max-h-[60dvh] overflow-y-auto overscroll-contain py-2">
                 {hits.length === 0 && (
                     <p className="px-4 py-6 text-center text-sm text-muted">
-                        {loading ? 'Searching...' : searching ? 'Nothing found.' : 'Type a name or an id.'}
+                        {loading ? 'Searching…' : searching ? 'Nothing found.' : 'Type a name or an id.'}
                     </p>
                 )}
                 {groups.map(group => (

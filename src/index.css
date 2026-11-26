@@ -80,6 +80,9 @@
     /* The hotel view's sky, behind its pictures as the client draws them: one colour in both themes. */
     --color-hotel-sky: #aae0f0;
 
+    /* The edge of a colour swatch: dark on the light theme, light on the dark one, so a swatch of any colour keeps its outline. */
+    --color-swatch-edge: rgb(0 0 0 / 0.15);
+
     /* States: live and fine, needs attention, destructive or refused. Each with a fill and a line. */
     --color-good: #157a45;
     --color-good-soft: #e3f5ec;
@@ -133,6 +136,8 @@
 
     --color-coin: #f59e0b;
     --color-vip: #c084fc;
+
+    --color-swatch-edge: rgb(255 255 255 / 0.18);
 
     --color-good: #5bd68a;
     --color-good-soft: #0f2219;
