@@ -3,7 +3,7 @@ import { useDeferredValue, useState } from 'react';
 
 import { type AssetPublishEntry, type AssetTarget, DEFAULT_PORTS, PROTOCOLS, useDeleteTarget, useForgetHostKey, usePublish, useTargetHistory, useTargetPending, useTargets, useTestTarget } from '#/api/bundles';
 import { ask } from '#/components/confirm';
-import { Modal } from '#/components/Modal';
+import { Modal, ModalBody } from '#/components/Modal';
 import { Pagination } from '#/components/Pagination';
 import { SearchInput } from '#/components/SearchInput';
 import { toast, toastError } from '#/components/toast';
@@ -35,7 +35,7 @@ const HistoryModal = ({ target, onClose }: { target: AssetTarget | null; onClose
 
     return (
         <Modal open={!!target} onClose={onClose} title={target ? `${target.name}: publishes` : ''} className="sm:h-fit! sm:max-w-2xl">
-            {error && <div className="p-4 sm:p-5"><ErrorNotice error={error} /></div>}
+            {error && <ModalBody><ErrorNotice error={error} /></ModalBody>}
             {!data && !error && <Loading />}
             {data && data.items.length === 0 && <EmptyState>Nothing has been published to it yet.</EmptyState>}
             {data && data.items.length > 0 && (

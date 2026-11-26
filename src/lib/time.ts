@@ -22,3 +22,7 @@ export const fromNow = (utc: string, now = Date.now()) => {
 
     return relative.format(Math.round(amount), 'year');
 };
+
+/** A moment as the viewer's clock and calendar have it: "Nov 25, 2026, 3:42 PM". */
+export const formatDateTime = (utc: string) =>
+    new Date(utc).toLocaleString(undefined, { dateStyle: 'medium', timeStyle: 'short' });

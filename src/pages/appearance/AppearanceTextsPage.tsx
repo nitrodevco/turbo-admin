@@ -1,16 +1,15 @@
 import { Languages, Save } from 'lucide-react';
 import { useMemo, useState } from 'react';
-import { Link, useNavigate, useSearchParams } from 'react-router';
+import { useNavigate, useSearchParams } from 'react-router';
 
 import { type TextEntry, useSaveText, useTextSearch } from '#/api/gamedata';
 import { type TemplateIndex, useTemplateIndex } from '#/api/windows';
 import { useSaved } from '#/components/SaveFeedback';
 import { SearchInput } from '#/components/SearchInput';
 import { toastError } from '#/components/toast';
-import { Button, ButtonLink, EmptyState, ErrorNotice, Input, Loading, PageBody, PageHeader, Panel, Segmented } from '#/components/ui';
+import { Button, ButtonLink, EmptyState, ErrorNotice, Input, ListPanel, Loading, PageBody, PageHeader, Panel, Segmented, TextLink } from '#/components/ui';
 import { useHubTabs } from '#/layout/nav';
 import { useDebounced } from '#/lib/debounce';
-import { useFillHeight } from '#/lib/fillHeight';
 import { plural } from '#/lib/plural';
 import { usePathTab } from '#/lib/tabs';
 
@@ -43,7 +42,7 @@ const TextRow = ({ entry, textKey, where }: { entry: TextEntry | undefined; text
                 {where && where.length > 0 && (
                     <span className="flex flex-wrap gap-x-2 text-xs">
                         <span className="text-muted">Shown in</span>
-                        {where.slice(0, 4).map(window => <Link key={window.id} to={`/appearance/studio?${new URLSearchParams({ window: window.id })}`} title={window.id} className="text-accent hover:underline">{window.name}</Link>)}
+                        {where.slice(0, 4).map(window => <TextLink inline key={window.id} to={`/appearance/studio?${new URLSearchParams({ window: window.id })}`} title={window.id}>{window.name}</TextLink>)}
                         {where.length > 4 && <span className="text-muted">{`and ${where.length - 4} more`}</span>}
                     </span>
                 )}
@@ -85,11 +84,10 @@ const ByWindow = ({ index }: { index: TemplateIndex }) => {
         .map(([ each ]) => ({ id: each, name: windowName(index, each) }))
         .sort((a, b) => a.name.localeCompare(b.name));
     const keys = id ? texts.get(id) ?? [] : [];
-    const fillList = useFillHeight<HTMLElement>();
 
     return (
         <div className="grid items-start gap-4 lg:gap-6 lg:grid-cols-[22rem_1fr]">
-            <Panel ref={fillList} title="Windows" description={`${found.length} window(s) showing texts`} className="flex flex-col overflow-clip lg:sticky lg:top-4 lg:max-h-(--fill-height)">
+            <ListPanel title="Windows" description={`${found.length} window(s) showing texts`}>
                 <div className="border-b border-line px-4 py-3"><SearchInput value={text} onValueChange={setText} placeholder="A window, its file, or a text key" aria-label="Find a window" /></div>
                 <ul className="max-h-[60dvh] min-h-0 overflow-y-auto lg:max-h-none">
                     {found.slice(0, LIST_LIMIT).map(each => (
@@ -99,7 +97,7 @@ const ByWindow = ({ index }: { index: TemplateIndex }) => {
                     ))}
                 </ul>
                 {found.length > LIST_LIMIT && <p className="border-t border-line px-4 py-3 text-xs text-muted">{`${found.length - LIST_LIMIT} more: narrow the search.`}</p>}
-            </Panel>
+            </ListPanel>
             {id
                 ? (
                         <Panel title={windowName(index, id)} description={<><span className="font-mono">{id}</span>{` · ${plural(keys.length, 'text')}`}</>}>

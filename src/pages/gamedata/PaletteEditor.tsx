@@ -3,9 +3,8 @@ import { useMemo, useState } from 'react';
 
 import { FIGURE_KINDS, type FigurePalette, usePalettes, useSaveFigureBatch } from '#/api/gamedata';
 import { ask } from '#/components/confirm';
-import { Badge, Button, COLOUR_FIELD_CLASS, EmptyState, ErrorNotice, Input, Labeled, Loading, Panel, Select, SuccessNotice, Switch } from '#/components/ui';
+import { Badge, Button, COLOUR_FIELD_CLASS, EmptyState, ErrorNotice, Input, Labeled, ListPanel, Loading, Panel, Select, SuccessNotice, Switch, TextButton } from '#/components/ui';
 import { cx, rowFill } from '#/lib/cx';
-import { useFillHeight } from '#/lib/fillHeight';
 
 /** A colour as the editor holds it: its record's fields, and Habbo's when Habbo has it. */
 interface Colour {
@@ -155,14 +154,14 @@ const Inspector = ({ colour, index, count, canManage, onChange, onMove, onRemove
                 <div className="flex flex-wrap items-center gap-2 rounded-lg border border-warn-line bg-warn-soft px-3 py-2 text-xs text-warn">
                     <span className="size-3 rounded border border-black/15" style={{ background: `#${colour.habbo.hex}` }} />
                     <span>Habbo: #{colour.habbo.hex}, {CLUB_NAMES[colour.habbo.club]?.toLowerCase()}{colour.habbo.selectable ? '' : ', hidden'}</span>
-                    {canManage && <button type="button" className="ml-auto font-medium text-accent hover:underline" onClick={() => onChange({ ...colour, ...colour.habbo! })}>Use Habbo's</button>}
+                    {canManage && <TextButton inline className="ml-auto" onClick={() => onChange({ ...colour, ...colour.habbo! })}>Use Habbo's</TextButton>}
                 </div>
             )}
             {canManage && (
                 <div className="flex flex-wrap items-center gap-2 border-t border-line pt-4">
                     <Button variant="secondary" icon={<ArrowLeft />} disabled={index === 0} onClick={() => onMove(index - 1)} aria-label="Move earlier" title="Move earlier" />
                     <Button variant="secondary" icon={<ArrowRight />} disabled={index === count - 1} onClick={() => onMove(index + 1)} aria-label="Move later" title="Move later" />
-                    <Button variant="ghost" icon={<Trash2 />} className="ml-auto text-bad hover:text-bad" onClick={onRemove}>Remove</Button>
+                    <Button variant="danger-ghost" icon={<Trash2 />} className="ml-auto" onClick={onRemove}>Remove</Button>
                 </div>
             )}
         </div>
@@ -277,8 +276,6 @@ export const PaletteEditor = ({ canManage }: { canManage: boolean }) => {
         }, { onSuccess: () => setDraft(null) });
     };
 
-    const fillList = useFillHeight<HTMLElement>();
-
     if (error)
         return <ErrorNotice error={error} />;
 
@@ -289,7 +286,7 @@ export const PaletteEditor = ({ canManage }: { canManage: boolean }) => {
 
     return (
         <div className="grid items-start gap-4 lg:gap-6 lg:grid-cols-[14rem_1fr]">
-            <Panel ref={fillList} className="flex flex-col overflow-clip lg:sticky lg:top-4 lg:max-h-(--fill-height)">
+            <ListPanel>
                 <ul className="max-h-[60dvh] min-h-0 divide-y divide-line overflow-y-auto lg:max-h-none">
                     {ids.map((id) => {
                         const of = palettes.find(x => x.id === id);
@@ -320,7 +317,7 @@ export const PaletteEditor = ({ canManage }: { canManage: boolean }) => {
                         <Button variant="secondary" icon={<Plus />} className="w-full" onClick={addPalette}>New palette</Button>
                     </div>
                 )}
-            </Panel>
+            </ListPanel>
 
             {current === null
                 ? <Panel><EmptyState>No palettes yet: take Habbo’s figure data in above, or start a new one.</EmptyState></Panel>

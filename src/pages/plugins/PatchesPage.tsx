@@ -12,7 +12,7 @@ import { WorkingOnPicker } from '#/appearance/WorkingOnPicker';
 import { ask } from '#/components/confirm';
 import { useSaved } from '#/components/SaveFeedback';
 import { toast, toastError } from '#/components/toast';
-import { Badge, Button, EmptyState, ErrorNotice, IconButton, Input, Labeled, Loading, PageBody, PageHeader, Panel, Textarea, TextButton, TextLink, WarningNotice } from '#/components/ui';
+import { Badge, Button, EmptyState, ErrorNotice, FieldLabel, IconButton, Input, Labeled, Loading, PageBody, PageHeader, Panel, Textarea, TextButton, TextLink, WarningNotice } from '#/components/ui';
 import { useHubTabs } from '#/layout/nav';
 import { cx } from '#/lib/cx';
 import { plural } from '#/lib/plural';
@@ -105,12 +105,12 @@ export const PatchEditor = ({ patch, onDone }: { patch: HotelPatch | null; onDon
         >
             <div className="grid gap-3 sm:grid-cols-[1fr_1fr_8rem]">
                 <Labeled label="Name"><Input value={name} onChange={event => setName(event.target.value)} placeholder="Green help button" className="w-full" /></Labeled>
-                <Labeled label="Template" hint={<>{'<library>/<asset>, as '}<Link to="/appearance/windows" className="text-accent hover:underline">Windows &amp; skins</Link>{' lists it.'}</>}><Input value={pasted?.template ?? template} onChange={event => setTemplate(event.target.value)} placeholder="habbo-toolbar-com/purse_xml" className="w-full font-mono" /></Labeled>
+                <Labeled label="Template" hint={<>{'<library>/<asset>, as '}<TextLink inline to="/appearance/windows">Windows &amp; skins</TextLink>{' lists it.'}</>}><Input value={pasted?.template ?? template} onChange={event => setTemplate(event.target.value)} placeholder="habbo-toolbar-com/purse_xml" className="w-full font-mono" /></Labeled>
                 <Labeled label="Order" hint="Lower first; a theme takes a negative one."><Input type="number" value={order} onChange={event => setOrder(event.target.value)} className="w-full" /></Labeled>
             </div>
             {patched && list && (
                 <div className="flex flex-col gap-1.5">
-                    <span className="text-xs font-medium text-muted">The window as players will see it once saved, drawn by the client as you change it: click an element, drag it or its handles, or change it on the right</span>
+                    <FieldLabel>The window as players will see it once saved, drawn by the client as you change it: click an element, drag it or its handles, or change it on the right</FieldLabel>
                     <VisualEditor
                         template={patched}
                         ops={list}

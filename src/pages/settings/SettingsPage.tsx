@@ -8,9 +8,8 @@ import { ListToolbar } from '#/components/ListToolbar';
 import { RestartServer } from '#/components/RestartServer';
 import { OpenRow } from '#/components/RowList';
 import { SearchInput } from '#/components/SearchInput';
-import { Badge, Button, EmptyState, ErrorNotice, Input, Label, Labeled, Loading, PageBody, PageHeader, Panel, Select, Switch, Textarea, WarningNotice } from '#/components/ui';
+import { Badge, Button, EmptyState, ErrorNotice, Input, Label, Labeled, ListPanel, Loading, PageBody, PageHeader, Panel, Select, Switch, Textarea, TextLink, WarningNotice } from '#/components/ui';
 import { cx } from '#/lib/cx';
-import { useFillHeight } from '#/lib/fillHeight';
 import { usePathTab } from '#/lib/tabs';
 import { fromNow } from '#/lib/time';
 
@@ -246,7 +245,6 @@ const SettingsTab = () => {
     const [ filter, setFilter ] = useState('all');
     const [ open, setOpen ] = useState<string | null>(() => params.get('open'));
     const { data, error } = useSettings();
-    const fillList = useFillHeight<HTMLElement>();
 
     const found = useMemo(() => {
         const words = text.trim().toLowerCase();
@@ -296,7 +294,7 @@ const SettingsTab = () => {
                 </WarningNotice>
             )}
             <div className="grid items-start gap-4 lg:gap-6 lg:grid-cols-[17rem_minmax(0,1fr)]">
-                <Panel ref={fillList} className="flex flex-col overflow-clip lg:sticky lg:top-4 lg:max-h-(--fill-height)">
+                <ListPanel>
                     <div className="flex flex-col gap-2 border-b border-line p-3">
                         <SearchInput value={text} onValueChange={setText} placeholder="Name, text or value" aria-label="Find settings" />
                         <Select value={filter} onChange={event => setFilter(event.target.value)} aria-label="Show" className="w-full">
@@ -314,7 +312,7 @@ const SettingsTab = () => {
                             </div>
                         ))}
                     </nav>
-                </Panel>
+                </ListPanel>
                 {shownName && shownSettings && (
                     <Panel
                         key={shownName}
@@ -380,7 +378,7 @@ const HistoryTab = () => {
                                 {!change.secret && change.after === null && <span className="text-muted">put back (was {change.before})</span>}
                                 {!change.secret && change.after !== null && <>{change.before !== null && <span className="text-muted">{change.before} → </span>}{change.after}</>}
                             </span>
-                            <span className="text-xs sm:text-right">{change.playerId !== null && <Link to={`/players/${change.playerId}`} className="text-accent hover:underline">#{change.playerId}</Link>}</span>
+                            <span className="text-xs sm:text-right">{change.playerId !== null && <TextLink inline to={`/players/${change.playerId}`}>#{change.playerId}</TextLink>}</span>
                         </li>
                     ))}
                 </ul>

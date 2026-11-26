@@ -6,7 +6,7 @@ import { catalogCalls, type CatalogTree, type GeneratedPage, type GenerateMode, 
 import { ask } from '#/components/confirm';
 import { ImagePicker } from '#/components/ImagePicker';
 import { celebrate, toast, toastError } from '#/components/toast';
-import { Button, CHECK_CLASS, EmptyState, ErrorNotice, Input, Label, Labeled, Stat, Switch, TextButton } from '#/components/ui';
+import { Button, CHECK_CLASS, EmptyState, ErrorNotice, IconTile, Input, Label, Labeled, Stat, Switch, TextButton } from '#/components/ui';
 import { cx } from '#/lib/cx';
 
 import { type Price, PriceFields } from './fields';
@@ -34,7 +34,7 @@ const ModeCard = ({ active, icon, title, blurb, onClick }: { active: boolean; ic
         onClick={onClick}
         className={cx('flex flex-1 items-start gap-3 rounded-xl border p-3 text-left transition', active ? 'border-accent bg-accent-soft' : 'border-line bg-canvas hover:border-line-strong')}
     >
-        <span className={cx('mt-0.5 grid size-8 shrink-0 place-items-center rounded-lg [&>svg]:size-4', active ? 'bg-accent-solid text-on-accent' : 'bg-subtle text-muted')}>{icon}</span>
+        <IconTile small tone={active ? 'solid' : 'muted'} className="mt-0.5">{icon}</IconTile>
         <span className="min-w-0">
             <span className="block text-sm font-semibold">{title}</span>
             <span className="block text-xs leading-snug text-muted">{blurb}</span>
@@ -226,7 +226,7 @@ export const GenerateCatalog = ({ tree, onDone }: { tree: CatalogTree; onDone: (
         <div className="grid items-start gap-4 lg:gap-6 xl:grid-cols-[24rem_minmax(0,1fr)]">
             <div className="card flex flex-col gap-4 p-4 xl:sticky xl:top-4">
                 <div className="flex items-start gap-3">
-                    <span className="grid size-10 shrink-0 place-items-center rounded-xl bg-accent-soft text-accent"><Wand2 className="size-5" /></span>
+                    <IconTile><Wand2 /></IconTile>
                     <div>
                         <h2 className="text-sm font-semibold">Generate a catalog</h2>
                         <p className="text-xs leading-relaxed text-muted">From the hotel's own furniture, pets, effects and songs: tabs that make sense, each page with the layout and icon it should have. You look over the plan before anything is made.</p>

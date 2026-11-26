@@ -2,7 +2,7 @@ import { Plus, Save } from 'lucide-react';
 import { useState } from 'react';
 
 import { COLOR_SLOTS, type GroupBadgePart, type GroupColor, PART_TYPES, useCanManageContent, useGroupEditor, useSaveGroupEditor } from '#/api/content';
-import { Button, COLOUR_FIELD_CLASS, ErrorNotice, IconButton, Input, Loading, PageBody, PageHeader, Panel, Select } from '#/components/ui';
+import { AddRow, Button, COLOUR_FIELD_CLASS, ErrorNotice, GroupHeading, IconButton, Input, Loading, PageBody, PageHeader, Panel, Select } from '#/components/ui';
 import { useHubTabs } from '#/layout/nav';
 
 /** A part's files, edited where it is listed. */
@@ -66,15 +66,14 @@ const BadgeEditor = ({ canManage }: { canManage: boolean }) => {
             <Panel title="Badge parts" description="The client loads badgepart_<file>.png." className="overflow-clip">
                 {[ 0, 1 ].map(type => (
                     <section key={type}>
-                        <h3 className="border-b border-line bg-subtle px-4 py-1.5 font-mono text-2xs font-medium tracking-[0.08em] text-muted uppercase">{PART_TYPES[type]}s</h3>
+                        <GroupHeading>{`${PART_TYPES[type]}s`}</GroupHeading>
                         <ul className="divide-y divide-line">
                             {data.parts.filter(x => x.partType === type).map(part => <PartRow key={part.id} part={part} canManage={canManage} />)}
                         </ul>
                     </section>
                 ))}
                 {canManage && (
-                    <form
-                        className="flex flex-wrap gap-2 border-t border-line px-4 py-3"
+                    <AddRow
                         onSubmit={(event) => {
                             event.preventDefault();
                             save.mutate({ kind: 'parts', id: null, body: { partType: Number(partType), fileName: file.trim() } }, { onSuccess: () => setFile('') });
@@ -85,21 +84,20 @@ const BadgeEditor = ({ canManage }: { canManage: boolean }) => {
                         </Select>
                         <Input value={file} onChange={event => setFile(event.target.value)} placeholder="file name" className="min-w-0 flex-1 font-mono" />
                         <Button type="submit" variant="secondary" icon={<Plus />} disabled={!file.trim() || save.isPending}>Add</Button>
-                    </form>
+                    </AddRow>
                 )}
             </Panel>
             <Panel title="Colours" description="Changing one repaints every badge that uses it." className="overflow-clip">
                 {[ 0, 1, 2 ].map(colorSlot => (
                     <section key={colorSlot}>
-                        <h3 className="border-b border-line bg-subtle px-4 py-1.5 font-mono text-2xs font-medium tracking-[0.08em] text-muted uppercase">{COLOR_SLOTS[colorSlot]}</h3>
+                        <GroupHeading>{COLOR_SLOTS[colorSlot]}</GroupHeading>
                         <ul className="divide-y divide-line">
                             {data.colors.filter(x => x.slot === colorSlot).map(color => <ColorRow key={color.id} color={color} canManage={canManage} />)}
                         </ul>
                     </section>
                 ))}
                 {canManage && (
-                    <form
-                        className="flex flex-wrap gap-2 border-t border-line px-4 py-3"
+                    <AddRow
                         onSubmit={(event) => {
                             event.preventDefault();
                             save.mutate({ kind: 'colors', id: null, body: { slot: Number(slot), color: hex.trim() } }, { onSuccess: () => setHex('') });
@@ -110,7 +108,7 @@ const BadgeEditor = ({ canManage }: { canManage: boolean }) => {
                         </Select>
                         <Input value={hex} onChange={event => setHex(event.target.value)} placeholder="ff8800" className="w-28 font-mono" />
                         <Button type="submit" variant="secondary" icon={<Plus />} disabled={!hex.trim() || save.isPending}>Add</Button>
-                    </form>
+                    </AddRow>
                 )}
                 {save.error && <div className="p-4"><ErrorNotice error={save.error} /></div>}
             </Panel>

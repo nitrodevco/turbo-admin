@@ -5,7 +5,7 @@ import { useGrantClothing, useProductSuggestions } from '#/api/gamedata';
 import type { PlayerDetailResponse } from '#/api/players';
 import { useMe } from '#/api/queries';
 import { Sheet } from '#/components/Sheet';
-import { Button, ErrorNotice, Input, Labeled, Switch, Textarea } from '#/components/ui';
+import { Button, ErrorNotice, Input, Labeled, Switch, Textarea, Thumb } from '#/components/ui';
 import { cx } from '#/lib/cx';
 import { ProductIcon } from '#/pages/catalog/ProductIcon';
 
@@ -20,9 +20,9 @@ interface GrantSheetProps {
 
 /** What the furni or badge being named looks like, once there is a name to look up. */
 const Preview = ({ type, name }: { type: 'floor' | 'badge'; name: string }) => (
-    <span aria-hidden className={cx('grid size-10 shrink-0 place-items-center rounded-lg border border-line bg-canvas sm:size-8', !name && 'border-dashed')}>
+    <Thumb className={cx('sm:size-8', !name && 'border-dashed')}>
         {name && <ProductIcon type={type} name={name} className="size-7 sm:size-6" />}
-    </span>
+    </Thumb>
 );
 
 /**

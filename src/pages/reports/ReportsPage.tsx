@@ -5,15 +5,13 @@ import { Link, useSearchParams } from 'react-router';
 import { useMe } from '#/api/queries';
 import { type ReportFilter, useReports } from '#/api/reports';
 import { ListToolbar } from '#/components/ListToolbar';
-import { PhoneLabel, Row, RowList } from '#/components/RowList';
+import { PhoneLabel, Row, RowList, WhenCell } from '#/components/RowList';
 import { SearchInput } from '#/components/SearchInput';
 import { Button, EmptyState, ErrorNotice, Loading, PageBody, PageHeader, Panel, Segmented } from '#/components/ui';
 import { useHubTabs } from '#/layout/nav';
 import { cx } from '#/lib/cx';
 import { plural } from '#/lib/plural';
 import { type ListOrder, listQuery, orderOf, pageOf, type Sorting } from '#/lib/sort';
-import { fromNow } from '#/lib/time';
-import { formatDateTime } from '#/pages/rooms/labels';
 
 import { SOURCES } from './labels';
 import { PlayerLink, StateBadge } from './parts';
@@ -124,9 +122,7 @@ export const ReportsPage = () => {
                                     >
                                         {entries.map(report => (
                                             <Row key={report.id}>
-                                                <span className="text-xs whitespace-nowrap text-muted sm:text-sm" title={formatDateTime(report.atUtc)}>
-                                                    {fromNow(report.atUtc)}
-                                                </span>
+                                                <WhenCell at={report.atUtc} />
                                                 <span className="min-w-0 truncate">
                                                     <Link to={`/reports/${report.id}`} className="font-medium hover:text-accent">{report.topic}</Link>
                                                     <span className="block truncate text-xs text-muted">{SOURCES[report.source]}{report.category ? ` · ${report.category}` : ''}</span>

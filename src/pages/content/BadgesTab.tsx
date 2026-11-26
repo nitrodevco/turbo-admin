@@ -1,6 +1,5 @@
 import { Save, UserMinus } from 'lucide-react';
 import { useState } from 'react';
-import { Link } from 'react-router';
 
 import { badgeUrl, useClientAssets } from '#/api/assets';
 import { BADGE_RARITIES, type BadgeItem, useBadgeHolders, useBadges, useGiveBadge, useSaveText, useSetBadgeRarity, useTakeBadge } from '#/api/content';
@@ -8,7 +7,7 @@ import { useHotelViewTexts } from '#/api/hotelView';
 import { useMe } from '#/api/queries';
 import { ask } from '#/components/confirm';
 import { SearchInput } from '#/components/SearchInput';
-import { Button, EmptyState, ErrorNotice, IconButton, Input, Labeled, Loading, Panel, Select } from '#/components/ui';
+import { Button, EmptyState, ErrorNotice, IconButton, Input, Labeled, Loading, Panel, Select, TextLink, Thumb } from '#/components/ui';
 import { cx } from '#/lib/cx';
 import { useDebounced } from '#/lib/debounce';
 
@@ -67,7 +66,7 @@ const BadgeDetail = ({ badge, canManage }: { badge: BadgeItem; canManage: boolea
                     <ul className="flex flex-wrap gap-2">
                         {data.holders.map(holder => (
                             <li key={holder.playerId} className="flex items-center gap-1 rounded-lg border border-line py-0.5 pr-1 pl-2.5 text-sm">
-                                <Link to={`/players/${holder.playerId}`} className="text-accent hover:underline">{holder.name}</Link>
+                                <TextLink inline to={`/players/${holder.playerId}`}>{holder.name}</TextLink>
                                 {holder.slot !== null && <span className="text-xs text-muted">worn</span>}
                                 {canManage && (
                                     <IconButton
@@ -126,9 +125,9 @@ export const BadgesTab = ({ canManage }: { canManage: boolean }) => {
                     <li key={badge.code}>
                         <div className="flex flex-wrap items-center gap-x-3 gap-y-2 px-4 py-2">
                             <button type="button" className="flex min-w-0 flex-1 items-center gap-3 text-left" onClick={() => setOpen(open === badge.code ? null : badge.code)}>
-                                <span className="grid size-10 shrink-0 place-items-center rounded-lg border border-line bg-canvas">
+                                <Thumb>
                                     {badgeUrl(assets, badge.code) && <img src={badgeUrl(assets, badge.code)!} alt="" className="max-h-full max-w-full [image-rendering:pixelated]" />}
-                                </span>
+                                </Thumb>
                                 <span className="truncate font-mono text-ui">{badge.code}</span>
                                 <span className="text-xs text-muted">{badge.holders === 0 ? 'held by no one' : `${badge.holders} hold it`}</span>
                             </button>

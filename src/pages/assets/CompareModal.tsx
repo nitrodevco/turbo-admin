@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react';
 
 import { type AssetComparison, type AssetTarget, type BundleKind, comparedImage, type CompareEntry, type CompareResult, type CompareTexts, type CompareWindow, type DiffChange, useTargetCompare } from '#/api/bundles';
-import { Modal } from '#/components/Modal';
-import { Badge, type BadgeTone, EmptyState, ErrorNotice, Loading } from '#/components/ui';
+import { Modal, ModalBody } from '#/components/Modal';
+import { Badge, type BadgeTone, EmptyState, ErrorNotice, Loading, TextButton } from '#/components/ui';
 import { cx } from '#/lib/cx';
 import { fromNow } from '#/lib/time';
 
@@ -160,7 +160,7 @@ const Entries = ({ targetId, item }: { targetId: number; item: AssetComparison }
         <section aria-label="Files" className="flex flex-col gap-1">
             <div className="flex items-center gap-2">
                 <h4 className="text-xs font-semibold">{`Files (${item.entriesChanged.toLocaleString()})`}</h4>
-                {!thumbs && <button type="button" className="text-xs text-accent hover:underline" onClick={() => setThumbs(true)}>{`Show the ${images} images`}</button>}
+                {!thumbs && <TextButton onClick={() => setThumbs(true)}>{`Show the ${images} images`}</TextButton>}
             </div>
             <ul className="flex flex-col gap-1.5">
                 {item.entries.map(entry => (
@@ -243,7 +243,7 @@ export const CompareModal = ({ target, path, onClose }: { target: AssetTarget; p
 
     return (
         <Modal open={path !== null} onClose={onClose} title={`${target.name}: ${path ? `compare ${path.split('/').pop()}` : 'compare all changed'}`} className="sm:h-fit! sm:max-w-3xl">
-            {error && <div className="p-4 sm:p-5"><ErrorNotice error={error} /></div>}
+            {error && <ModalBody><ErrorNotice error={error} /></ModalBody>}
             {!data && !error && <Loading />}
             {data && data.items.length === 0 && <EmptyState>Nothing is pending as changed.</EmptyState>}
             {data && data.items.length > 0 && (

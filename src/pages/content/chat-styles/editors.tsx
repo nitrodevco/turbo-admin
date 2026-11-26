@@ -14,7 +14,7 @@ import { Eye, EyeOff, Upload, X } from 'lucide-react';
 import type { ReactNode } from 'react';
 
 import type { ChatStyleFile } from '#/api/content';
-import { Button, Checkbox, COLOUR_FIELD_CLASS, IconButton, Input, Labeled, Select } from '#/components/ui';
+import { Button, Checkbox, COLOUR_FIELD_CLASS, IconButton, Input, Labeled, Select, TextButton } from '#/components/ui';
 import { cx } from '#/lib/cx';
 import { type ChatStylePoint, type ChatStyleRect, type ChatStyleRegPoints, DEFAULT_FONT_FACE, DEFAULT_FONT_SIZE, GUIDE_COLORS, POINTER_MARGIN_LEFT, POINTER_MARGIN_RIGHT } from '#/preview/chatBubble';
 
@@ -146,10 +146,6 @@ const Legend = ({ color, children }: { color?: string; children: ReactNode }) =>
     </legend>
 );
 
-const TextButton = ({ onClick, children }: { onClick: () => void; children: ReactNode }) => (
-    <button type="button" onClick={onClick} className="shrink-0 text-accent hover:underline">{children}</button>
-);
-
 export const ShapeEditor = ({ regPoints, baseHeight, guides, onGuides, onChange }: { regPoints: ChatStyleRegPoints; baseHeight: number; guides: boolean; onGuides: (on: boolean) => void; onChange: (next: Partial<ChatStyleRegPoints>) => void }) => {
     const [ left, right ] = [ regPoints.pointerXMargins?.[0] ?? POINTER_MARGIN_LEFT, regPoints.pointerXMargins?.[1] ?? POINTER_MARGIN_RIGHT ];
 
@@ -179,7 +175,7 @@ export const ShapeEditor = ({ regPoints, baseHeight, guides, onGuides, onChange 
                                 : <Button variant="secondary" className="self-start" onClick={() => onChange({ [rect.key]: { x: 0, y: 0, width: 0, height: 0 } })}>Give it one</Button>}
                             <span className="flex items-start justify-between gap-2 text-xs text-muted">
                                 {rect.hint}
-                                {rect.optional && value && <TextButton onClick={() => onChange({ [rect.key]: undefined })}>Leave it out</TextButton>}
+                                {rect.optional && value && <TextButton inline className="shrink-0" onClick={() => onChange({ [rect.key]: undefined })}>Leave it out</TextButton>}
                             </span>
                         </fieldset>
                     );
@@ -199,7 +195,7 @@ export const ShapeEditor = ({ regPoints, baseHeight, guides, onGuides, onChange 
                     </div>
                     <span className="flex items-start justify-between gap-2 text-xs text-muted">
                         {`The row of the bubble bitmap the pointer's top sits on, and how close to the bubble's edges it may go (the client's ${POINTER_MARGIN_LEFT} and ${POINTER_MARGIN_RIGHT} unless set). In a room it sits at its left margin.`}
-                        {regPoints.pointerXMargins && <TextButton onClick={() => onChange({ pointerXMargins: undefined })}>{`Back to ${POINTER_MARGIN_LEFT} and ${POINTER_MARGIN_RIGHT}`}</TextButton>}
+                        {regPoints.pointerXMargins && <TextButton inline className="shrink-0" onClick={() => onChange({ pointerXMargins: undefined })}>{`Back to ${POINTER_MARGIN_LEFT} and ${POINTER_MARGIN_RIGHT}`}</TextButton>}
                     </span>
                 </fieldset>
                 {POINTS.map((point) => {

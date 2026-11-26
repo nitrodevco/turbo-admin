@@ -4,9 +4,8 @@ import { Link, useNavigate, useParams } from 'react-router';
 
 import { FORUM_PERMISSIONS, GROUP_RANKS, GROUP_TYPES, type GroupDetail, type GroupForum, type GroupForumSettings, useCanManageContent, useGroup, useGroupAction } from '#/api/content';
 import { ask } from '#/components/confirm';
-import { Badge, Button, EmptyState, ErrorNotice, IconButton, Input, Kv, Labeled, Loading, PageBody, PageHeader, Panel, Select, Stat, SuccessNotice, Textarea } from '#/components/ui';
-import { fromNow } from '#/lib/time';
-import { formatDateTime } from '#/pages/rooms/labels';
+import { Badge, Button, EmptyState, ErrorNotice, IconButton, Input, Kv, Labeled, Loading, PageBody, PageHeader, Panel, Select, Stat, SuccessNotice, Textarea, TextLink } from '#/components/ui';
+import { formatDateTime, fromNow } from '#/lib/time';
 
 type Act = ReturnType<typeof useGroupAction>;
 
@@ -132,9 +131,8 @@ export const GroupPage = () => {
                             Reset badge
                         </Button>
                         <Button
-                            variant="ghost"
+                            variant="danger-ghost"
                             icon={<Trash2 />}
-                            className="text-bad hover:text-bad"
                             disabled={act.isPending}
                             onClick={() => ask(
                                 {
@@ -200,8 +198,8 @@ export const GroupPage = () => {
                                 </div>
                                 <Panel title="Group" className="max-lg:order-first max-lg:w-full">
                                     <dl>
-                                        <Kv label="Owner"><Link to={`/players/${group.ownerId}`} className="text-accent hover:underline">{group.ownerName}</Link></Kv>
-                                        <Kv label="Home room"><Link to={`/rooms/${group.roomId}`} className="text-accent hover:underline">{group.roomName}</Link></Kv>
+                                        <Kv label="Owner"><TextLink inline to={`/players/${group.ownerId}`}>{group.ownerName}</TextLink></Kv>
+                                        <Kv label="Home room"><TextLink inline to={`/rooms/${group.roomId}`}>{group.roomName}</TextLink></Kv>
                                         <Kv label="Kind">{GROUP_TYPES[group.type] ?? group.type}</Kv>
                                         <Kv label="Badge" mono><span className="select-all">{group.badgeCode}</span></Kv>
                                         <Kv label="Created">{formatDateTime(group.createdAt)}</Kv>

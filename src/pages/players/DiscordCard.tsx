@@ -4,7 +4,7 @@ import { LogOut, Unlink } from 'lucide-react';
 import { endSiteSessions, type PlayerDiscordInfo, unlinkDiscord } from '#/api/players';
 import { ask } from '#/components/confirm';
 import { Button, ErrorNotice, Kv, Panel } from '#/components/ui';
-import { formatDateTime } from '#/pages/rooms/labels';
+import { formatDateTime } from '#/lib/time';
 
 /**
  * The Discord account a player signs in to the public site with, and what staff with

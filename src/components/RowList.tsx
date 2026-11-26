@@ -5,6 +5,7 @@ import { cx } from '#/lib/cx';
 import { type ListOrder, type Sorting, type SortKeys, useSortedRows } from '#/lib/sort';
 
 import { PhoneSort, SortButton, type SortColumn } from './SortHeader';
+import { Ago } from './ui';
 
 /** A column's header; with `sort`, a key the list sorts by, it sorts the list when clicked. */
 export interface RowListColumn extends SortColumn {
@@ -65,6 +66,14 @@ export const Row = ({ children, className }: { children: ReactNode; className?: 
     >
         {children}
     </li>
+);
+
+/**
+ * A row's When, its first column in a log: how long ago (or, with `format`, a clock time), the
+ * date and time in full on hover. Smaller on a phone, where it sits on a line over the rest.
+ */
+export const WhenCell = ({ at, format }: { at: string; format?: (utc: string) => string }) => (
+    <Ago at={at} format={format} className="text-xs whitespace-nowrap text-muted sm:text-sm" />
 );
 
 /** Words a cell needs on a phone, where there is no column header to say what it is. */

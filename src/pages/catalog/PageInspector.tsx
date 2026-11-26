@@ -8,7 +8,7 @@ import { ask } from '#/components/confirm';
 import { ImageInput } from '#/components/ImageInput';
 import { ImagePicker } from '#/components/ImagePicker';
 import { toast } from '#/components/toast';
-import { Button, EmptyState, ErrorNotice, Field, IconButton, Input, Label, Labeled, Switch, Textarea } from '#/components/ui';
+import { Button, EmptyState, ErrorNotice, Field, FieldLabel, IconButton, IconTile, Input, Label, Labeled, Switch, Textarea } from '#/components/ui';
 import { cx } from '#/lib/cx';
 
 import { CatalogImageThumb, CHECKS } from './CatalogImageThumb';
@@ -58,7 +58,7 @@ const ImageField = ({ id, label, hint, role, value, onChange, disabled, highligh
                         </span>
                     )}
             <div className="flex min-w-0 flex-1 flex-col gap-1">
-                <label htmlFor={id} className="text-xs font-medium text-muted">{label}</label>
+                <FieldLabel htmlFor={id}>{label}</FieldLabel>
                 <ImageInput id={id} value={value} onChange={onChange} accept={{ ...CATALOG_PICTURE, usedIn: `catalog.${role ?? 'image'}` }} title={label} preview={false} disabled={disabled} />
                 {hint && <span className="text-2xs text-muted">{hint}</span>}
             </div>
@@ -250,7 +250,7 @@ export const PageInspector = ({ tree, page, draft, onDraft, focus, onOpen }: Pag
                             disabled={!canManage}
                             className="flex items-start gap-3 rounded-xl border border-line bg-canvas p-3 text-left transition hover:border-accent hover:shadow-card disabled:pointer-events-none"
                         >
-                            <span className="grid size-9 shrink-0 place-items-center rounded-lg bg-accent-soft text-accent"><LayoutTemplate className="size-5" /></span>
+                            <IconTile><LayoutTemplate /></IconTile>
                             <span className="min-w-0 flex-1">
                                 <span className="block text-sm font-semibold">{spec.title}</span>
                                 <span className="block text-xs text-muted">{spec.blurb}</span>

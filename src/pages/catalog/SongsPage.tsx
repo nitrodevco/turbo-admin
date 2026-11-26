@@ -1,12 +1,12 @@
 import { ArrowLeft, Disc3, Plus, Save, Trash2 } from 'lucide-react';
 import { type FormEvent, useEffect, useRef, useState } from 'react';
-import { Link, useSearchParams } from 'react-router';
+import { useSearchParams } from 'react-router';
 
 import { useCatalogTree } from '#/api/catalog';
 import { songCalls, type SongDetail, type SongInput, useSong, useSongEdit, useSongs } from '#/api/songs';
 import { ask } from '#/components/confirm';
 import { toast } from '#/components/toast';
-import { Badge, Button, EmptyState, ErrorNotice, Field, Labeled, Loading, PageBody, PageHeader, Panel, Switch, Textarea } from '#/components/ui';
+import { Badge, Button, EmptyState, ErrorNotice, Field, Labeled, Loading, PageBody, PageHeader, Panel, Switch, Textarea, TextLink } from '#/components/ui';
 import { cx, rowFill } from '#/lib/cx';
 
 import { catalogTabs } from './catalogTabs';
@@ -93,9 +93,9 @@ const SongEditor = ({ song, canManage, onSaved, onDeleted }: { song: SongDetail 
                     )}
                     {song && (
                         <Button
-                            variant="ghost"
+                            variant="danger-ghost"
                             icon={<Trash2 />}
-                            className={cx('text-bad hover:text-bad', song.discs === 0 && 'ml-auto')}
+                            className={song.discs === 0 ? 'ml-auto' : undefined}
                             disabled={remove.isPending || song.discs > 0}
                             onClick={() => ask({ title: `Delete ${song.name}?`, confirm: 'Delete' }, () => remove.mutate([ song.id ], {
                                 onSuccess: () => {
@@ -182,7 +182,7 @@ export const SongsPage = () => {
                     </div>
                 )}
                 {selected === null && songs.data && songs.data.songs.length > 0 && (
-                    <Panel className="max-lg:hidden"><EmptyState>Pick a song, or <Link to="/catalog" className="text-accent hover:underline">go back to the catalog</Link>.</EmptyState></Panel>
+                    <Panel className="max-lg:hidden"><EmptyState>Pick a song, or <TextLink inline to="/catalog">go back to the catalog</TextLink>.</EmptyState></Panel>
                 )}
             </PageBody>
         </>

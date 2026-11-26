@@ -3,9 +3,9 @@ import { useState } from 'react';
 
 import type { DataWindowFile, DataWindowTemplate } from '#/api/dataWindows';
 import { ImageInput } from '#/components/ImageInput';
-import { Modal, ModalActions } from '#/components/Modal';
+import { Modal, ModalActions, ModalBody } from '#/components/Modal';
 import { toastError } from '#/components/toast';
-import { Button, Checkbox, Input, Labeled, Segmented, Select, Textarea } from '#/components/ui';
+import { Button, Checkbox, FieldLabel, Input, Labeled, Segmented, Select, Textarea } from '#/components/ui';
 
 import { FRAME_STYLES, newWindowFile, STARTERS, windowNameOf, type WindowStart } from './dataWindows';
 import type { StudioWindow } from './windows';
@@ -56,12 +56,12 @@ export const NewWindowDialog = ({ open, onClose, theme, taken, windows, source, 
 
     return (
         <Modal title="New window" open={open} onClose={onClose}>
-            <div className="flex flex-col gap-4 p-4 sm:p-5" data-testid="new-window">
+            <ModalBody data-testid="new-window">
                 <Labeled label="Title" hint="Shown in its header, and on its me menu entry">
                     <Input value={start.title} onChange={event => set({ title: event.target.value })} placeholder="Welcome" autoFocus />
                 </Labeled>
                 <div className="flex flex-col gap-1.5">
-                    <span className="text-xs font-medium text-muted">Start from</span>
+                    <FieldLabel>Start from</FieldLabel>
                     <Segmented label="Start from" value={start.starter} onChange={value => set({ starter: value as WindowStart['starter'] })} options={STARTERS.map(each => ({ value: each.value, label: each.label }))} />
                     <span className="text-xs text-muted">{STARTERS.find(each => each.value === start.starter)?.hint}</span>
                 </div>
@@ -107,7 +107,7 @@ export const NewWindowDialog = ({ open, onClose, theme, taken, windows, source, 
                     <Button variant="ghost" onClick={onClose}>Cancel</Button>
                     <Button icon={<Plus />} disabled={busy || (start.starter === 'copy' && !copyOf)} onClick={() => void create()} data-testid="new-window-create">Create</Button>
                 </ModalActions>
-            </div>
+            </ModalBody>
         </Modal>
     );
 };

@@ -6,10 +6,9 @@ import { type PlayerListItem, type PlayerSearchMode, usePlayerAbilities, usePlay
 import { ListToolbar } from '#/components/ListToolbar';
 import { SearchInput } from '#/components/SearchInput';
 import { PhoneSort } from '#/components/SortHeader';
-import { Avatar, Badge, Button, EmptyState, ErrorNotice, LiveBadge, Loading, PageBody, PageHeader, Panel, Select, Switch, Td, Th } from '#/components/ui';
+import { Ago, Avatar, Badge, Button, EmptyState, ErrorNotice, LiveBadge, Loading, PageBody, PageHeader, Panel, Select, Switch, Td, Th } from '#/components/ui';
 import { cx } from '#/lib/cx';
 import { type ListOrder, orderOf, orderParams, pageOf, type Sorting } from '#/lib/sort';
-import { fromNow } from '#/lib/time';
 
 import { NewPlayerPanel } from './NewPlayerPanel';
 
@@ -26,7 +25,7 @@ const modeOf = (value: string | null): PlayerSearchMode =>
 const Seen = ({ player }: { player: PlayerListItem }) =>
     player.isOnline
         ? <LiveBadge live>ONLINE</LiveBadge>
-        : <span className="text-xs text-muted">{player.lastLoginUtc ? fromNow(player.lastLoginUtc) : 'never'}</span>;
+        : <span className="text-xs text-muted">{player.lastLoginUtc ? <Ago at={player.lastLoginUtc} /> : 'never'}</span>;
 
 /** The columns the list sorts by, as the server names them. */
 const SORT_COLUMNS = [
@@ -154,7 +153,7 @@ export const PlayersPage = () => {
                                                             </Td>
                                                             <Td><Seen player={player} /></Td>
                                                             <Td className="text-right font-mono tabular-nums">{player.roomsOwned}</Td>
-                                                            <Td className="text-xs text-muted">{fromNow(player.joinedUtc)}</Td>
+                                                            <Td className="text-xs text-muted"><Ago at={player.joinedUtc} /></Td>
                                                         </tr>
                                                     ))}
                                                 </tbody>

@@ -26,9 +26,8 @@ import { ask } from '#/components/confirm';
 import { SearchInput } from '#/components/SearchInput';
 import { Tabs } from '#/components/Tabs';
 import { toast, toastError } from '#/components/toast';
-import { Badge, Button, ErrorNotice, IconButton, Input, Labeled, Loading, Panel, WarningNotice } from '#/components/ui';
+import { Badge, Button, ErrorNotice, IconButton, Input, Labeled, ListPanel, Loading, Panel, WarningNotice } from '#/components/ui';
 import { cx } from '#/lib/cx';
-import { useFillHeight } from '#/lib/fillHeight';
 import { SAMPLE_LOOKS, useChatHead } from '#/preview/avatar';
 import type { Backdrop } from '#/preview/backdrops';
 import { CHAT_BUBBLE_WIDTH_NORMAL, CHAT_BUBBLE_WIDTH_THIN, CHAT_BUBBLE_WIDTH_WIDE, CHAT_FONT_SIZE_LABELS, CHAT_FONT_SIZE_SCALES, type ChatStyleRegPoints, DEFAULT_FONT_FACE, DEFAULT_FONT_SIZE, layoutBubble, NO_CHEST_COLOR, paintBubble, paintGuides, recolour, tintBackground } from '#/preview/chatBubble';
@@ -195,7 +194,6 @@ export const ChatStylesTab = ({ canManage }: { canManage: boolean }) => {
     const [ fontSizeMode, setFontSizeMode ] = useState(0);
     const [ zoom, setZoom ] = useState(2);
     const [ backdrop, setBackdrop ] = useState<Backdrop>('room');
-    const fillStyles = useFillHeight<HTMLElement>('(min-width: 80rem)');
     const { head, chestColor, unavailable } = useChatHead(figure);
 
     const items = useMemo(() => data?.items ?? [], [ data ]);
@@ -337,11 +335,10 @@ export const ChatStylesTab = ({ canManage }: { canManage: boolean }) => {
 
     return (
         <div className="grid grid-cols-1 items-start gap-4 lg:gap-6 xl:grid-cols-[22rem_minmax(0,1fr)]">
-            <Panel
+            <ListPanel
+                from="xl"
                 title="Styles"
                 description={`${items.length.toLocaleString()} styles, ${drawable.toLocaleString()} in ${LIBRARY}${data.bundle ? '' : ' (not built yet)'}.`}
-                ref={fillStyles}
-                className="flex flex-col overflow-clip xl:sticky xl:top-4 xl:max-h-(--fill-height)"
             >
                 <div className="flex flex-col gap-2 p-3">
                     <SearchInput value={text} onValueChange={setText} placeholder="Name or id" aria-label="Find chat styles" className="w-full" />
@@ -359,7 +356,7 @@ export const ChatStylesTab = ({ canManage }: { canManage: boolean }) => {
                     ))}
                     {shown.length === 0 && <p className="col-span-full py-4 text-sm text-muted">{items.length === 0 ? 'No chat styles yet.' : 'No chat style is like that.'}</p>}
                 </div>
-            </Panel>
+            </ListPanel>
             <div className="flex min-w-0 flex-col gap-4">
                 {items.length > 0 && drawable === 0 && (
                     <WarningNotice>{`No style has a look yet, so nothing is built into ${LIBRARY}. Take them in from Habbo's client or a bundle file with Take in, at the top of the page.`}</WarningNotice>

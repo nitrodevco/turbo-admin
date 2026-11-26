@@ -154,9 +154,9 @@ const VariableEditor = ({ variable, linking, canManage, onDone }: { variable: Va
                     <Button variant="ghost" icon={<X />} onClick={onDone}>Cancel</Button>
                     {variable && (
                         <Button
-                            variant="ghost"
+                            variant="danger-ghost"
                             icon={<Trash2 />}
-                            className="ml-auto text-bad hover:text-bad"
+                            className="ml-auto"
                             disabled={remove.isPending}
                             onClick={() => ask(
                                 { title: `Remove the variable ${variable.key}?`, body: 'The client falls back to its own default for it.', confirm: 'Remove' },

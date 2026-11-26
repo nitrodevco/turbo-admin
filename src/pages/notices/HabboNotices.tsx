@@ -2,7 +2,7 @@ import { CloudDownload, Download } from 'lucide-react';
 import { useMemo, useState } from 'react';
 
 import { ask } from '#/components/confirm';
-import { Modal } from '#/components/Modal';
+import { Modal, ModalBody } from '#/components/Modal';
 import { Badge, Button, Checkbox, EmptyState, ErrorNotice, Loading } from '#/components/ui';
 import { fromNow } from '#/lib/time';
 
@@ -51,7 +51,7 @@ export const HabboNotices = ({ open, onClose, current, dirty, onTake, onTakeOne 
 
     return (
         <Modal open={open} onClose={onClose} title={domain ? `Habbo's notices, from habbo.${domain}` : 'Habbo\'s notices'} className="sm:h-fit! sm:max-w-3xl">
-            {error && <div className="p-4 sm:p-5"><ErrorNotice error={error} /></div>}
+            {error && <ModalBody><ErrorNotice error={error} /></ModalBody>}
             {!habbo && !error && <Loading />}
             {habbo && (
                 <div className="flex flex-col">

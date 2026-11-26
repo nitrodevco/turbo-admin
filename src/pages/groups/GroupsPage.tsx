@@ -5,12 +5,10 @@ import { GROUP_TYPES, useGroups } from '#/api/content';
 import { ListToolbar } from '#/components/ListToolbar';
 import { SearchInput } from '#/components/SearchInput';
 import { PhoneSort } from '#/components/SortHeader';
-import { Button, EmptyState, ErrorNotice, Loading, PageBody, PageHeader, Panel, Td, Th } from '#/components/ui';
+import { Ago, Button, EmptyState, ErrorNotice, Loading, PageBody, PageHeader, Panel, Td, Th } from '#/components/ui';
 import { useHubTabs } from '#/layout/nav';
 import { cx } from '#/lib/cx';
 import { type ListOrder, orderOf, orderParams, pageOf, type Sorting } from '#/lib/sort';
-import { fromNow } from '#/lib/time';
-import { formatDateTime } from '#/pages/rooms/labels';
 
 /** The columns the list sorts by, as the server names them. */
 const SORT_COLUMNS = [
@@ -122,7 +120,7 @@ export const GroupsPage = () => {
                                                             <Td><Link to={`/rooms/${group.roomId}`} className="text-muted hover:text-accent">{group.roomName}</Link></Td>
                                                             <Td>{GROUP_TYPES[group.type] ?? group.type}</Td>
                                                             <Td className="text-right font-mono tabular-nums">{group.members.toLocaleString()}</Td>
-                                                            <Td className="text-muted"><span title={formatDateTime(group.createdAt)}>{fromNow(group.createdAt)}</span></Td>
+                                                            <Td className="text-muted"><Ago at={group.createdAt} /></Td>
                                                         </tr>
                                                     ))}
                                                 </tbody>

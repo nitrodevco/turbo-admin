@@ -356,10 +356,9 @@ export const OfferInspector = ({ tree, pageId, offer, start, featured, onDone, o
                                 <span className="order-last w-full text-xs text-muted">The front page shows {FEATURED_MAX} featured items; take one off there to feature this.</span>
                             )}
                             <Button
-                                variant="ghost"
+                                variant="danger-ghost"
                                 icon={<Trash2 />}
                                 disabled={remove.isPending}
-                                className="text-bad hover:text-bad"
                                 onClick={() => ask({ title: 'Delete this offer?', body: 'What was bought from it stays bought.', confirm: 'Delete' }, () => remove.mutate([ offer.id ], {
                                     onSuccess: () => {
                                         toast('Offer deleted.');

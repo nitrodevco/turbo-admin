@@ -1,6 +1,5 @@
 import { Images, RefreshCw, Trash2, Upload } from 'lucide-react';
 import { type DragEvent, useEffect, useMemo, useRef, useState } from 'react';
-import { Link } from 'react-router';
 
 import { type CatalogTree } from '#/api/catalog';
 import { type CatalogImage, type CatalogImageShow, useCatalogImages, useDeleteCatalogImage, useUploadCatalogImage } from '#/api/catalogImages';
@@ -9,7 +8,7 @@ import { Modal } from '#/components/Modal';
 import { Pagination } from '#/components/Pagination';
 import { SearchInput } from '#/components/SearchInput';
 import { toast, toastError } from '#/components/toast';
-import { Button, EmptyState, ErrorNotice, IconButton, Input, Labeled, Loading, Segmented } from '#/components/ui';
+import { Button, EmptyState, ErrorNotice, IconButton, Input, Labeled, Loading, Segmented, TextButton, TextLink } from '#/components/ui';
 import { cx } from '#/lib/cx';
 import { useDebounced } from '#/lib/debounce';
 
@@ -39,7 +38,7 @@ const ShownOn = ({ image, onOpenPage }: { image: CatalogImage; onOpenPage: (id: 
             {image.pages.slice(0, 2).map((page, i) => (
                 <span key={page.id}>
                     {i > 0 && ', '}
-                    <button type="button" onClick={() => onOpenPage(page.id)} className="text-accent hover:underline">{page.title}</button>
+                    <TextButton inline onClick={() => onOpenPage(page.id)}>{page.title}</TextButton>
                 </span>
             ))}
             {image.pages.length > 2 && <span title={image.pages.slice(2).map(x => x.title).join(', ')}>{` and ${image.pages.length - 2} more`}</span>}
@@ -234,7 +233,7 @@ export const CatalogImages = ({ tree, onOpenPage }: { tree: CatalogTree; onOpenP
                 <span className="text-xs text-muted">
                     Uploads reach players once the assets are
                     {' '}
-                    <Link to="/gamedata/publish" className="text-accent hover:underline">published</Link>
+                    <TextLink inline to="/gamedata/publish">published</TextLink>
                     .
                 </span>
                 <span className="ml-auto">

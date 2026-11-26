@@ -3,7 +3,7 @@ import { type ReactNode, useState } from 'react';
 
 import { type FurnitureFieldChange, IMPORT_ACTIONS, useCheckHabbo, useImportJob } from '#/api/gamedata';
 import { ask, type Question } from '#/components/confirm';
-import { Badge, type BadgeTone, Button, ErrorNotice, Label, Loading, Panel, WarningNotice } from '#/components/ui';
+import { Badge, type BadgeTone, Button, ErrorNotice, Label, Loading, Panel, TextButton, WarningNotice } from '#/components/ui';
 import { cx } from '#/lib/cx';
 import { fromNow } from '#/lib/time';
 
@@ -163,7 +163,7 @@ export const ReviewItem = ({ action, name, kind, children }: { action: number; n
 export const HabboDiffers = ({ habbo, onUse, canManage }: { habbo: ReactNode; onUse: () => void; canManage: boolean }) => (
     <div className="flex flex-wrap items-center gap-2 text-xs">
         <span className="text-warn">Habbo: {habbo}</span>
-        {canManage && <button type="button" onClick={onUse} className="font-medium text-accent hover:underline">Use Habbo's</button>}
+        {canManage && <TextButton inline onClick={onUse}>Use Habbo's</TextButton>}
     </div>
 );
 

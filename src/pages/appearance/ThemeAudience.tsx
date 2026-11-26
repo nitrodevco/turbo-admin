@@ -3,9 +3,9 @@ import { useState } from 'react';
 
 import { type ThemeAudience, type ThemeAudienceChange, type ThemeStatus, useSetThemeAudience } from '#/api/appearance';
 import { HOTEL } from '#/appearance/workingOn';
-import { Modal, ModalActions } from '#/components/Modal';
+import { Modal, ModalActions, ModalBody } from '#/components/Modal';
 import { useSaved } from '#/components/SaveFeedback';
-import { Button, Chip, ErrorNotice, Input, Labeled, Segmented, Switch } from '#/components/ui';
+import { Button, Chip, ErrorNotice, FieldLabel, Input, Labeled, Segmented, Switch } from '#/components/ui';
 
 import { STATUS_LABEL } from './themes';
 
@@ -57,8 +57,7 @@ export const ThemeAudienceDialog = ({ audience, name, groups, onClose }: { audie
 
     return (
         <Modal title={`Who gets ${name}`} open onClose={onClose} className="sm:h-fit! sm:max-w-lg">
-            <form
-                className="flex flex-col gap-4 p-4 sm:p-5"
+            <ModalBody
                 data-theme-editor={audience.key}
                 onSubmit={(event) => {
                     event.preventDefault();
@@ -66,7 +65,7 @@ export const ThemeAudienceDialog = ({ audience, name, groups, onClose }: { audie
                 }}
             >
                 <div className="flex flex-col gap-1.5">
-                    <span className="text-xs font-medium text-muted">Status</span>
+                    <FieldLabel>Status</FieldLabel>
                     <Segmented label="Status" value={status} onChange={value => setStatus(value as ThemeStatus)} options={STATUSES} disabled={!!fixed} />
                     <span className="text-xs text-muted">{fixed ?? STATUS_HINT[status]}</span>
                 </div>
@@ -88,7 +87,7 @@ export const ThemeAudienceDialog = ({ audience, name, groups, onClose }: { audie
                             <Input aria-label="Audience players" value={players} onChange={event => setPlayers(event.target.value)} placeholder="Name, Another name" />
                         </Labeled>
                         <div className="flex flex-col gap-1.5">
-                            <span id="audience-groups" className="text-xs font-medium text-muted">Permission groups</span>
+                            <FieldLabel id="audience-groups">Permission groups</FieldLabel>
                             {groups.length > 0
                                 ? (
                                         <div role="group" aria-labelledby="audience-groups" className="flex flex-wrap gap-1.5">
@@ -112,7 +111,7 @@ export const ThemeAudienceDialog = ({ audience, name, groups, onClose }: { audie
                     <Button variant="ghost" onClick={onClose}>Cancel</Button>
                     <Button type="submit" disabled={set.isPending}>{set.isPending ? 'Saving...' : 'Save'}</Button>
                 </ModalActions>
-            </form>
+            </ModalBody>
         </Modal>
     );
 };

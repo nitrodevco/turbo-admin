@@ -47,6 +47,3 @@ export const doorModeLabel = (mode: string) => DOOR_MODES[mode] ?? mode;
 export const tradeModeLabel = (mode: string) => TRADE_MODES[mode] ?? mode;
 export const whoLabel = (who: string) => WHO[who] ?? who;
 export const chatFloodLabel = (setting: string) => CHAT_FLOOD[setting] ?? setting;
-
-export const formatDateTime = (utc: string) =>
-    new Date(utc).toLocaleString(undefined, { dateStyle: 'medium', timeStyle: 'short' });

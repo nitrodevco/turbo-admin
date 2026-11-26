@@ -2,7 +2,7 @@ import { Download } from 'lucide-react';
 import { type ReactNode, useState } from 'react';
 
 import { useRewardTracks } from '#/api/rewardTracks';
-import { Badge, Button, COLOUR_FIELD_CLASS, Input, Label, Labeled, Segmented, Select, Textarea } from '#/components/ui';
+import { Badge, Button, COLOUR_FIELD_CLASS, Input, Label, Labeled, Segmented, Select, Td, Textarea, Th } from '#/components/ui';
 import { cx } from '#/lib/cx';
 
 import {
@@ -180,18 +180,20 @@ export const HabboCompare = ({ notice, habbo, wordsKnown, onTake, disabled }: { 
             </div>
             <Button variant="secondary" icon={<Download />} disabled={disabled || differences.length === 0} onClick={onTake}>Use Habbo&apos;s version</Button>
             {differences.length > 0 && (
-                <table className="w-full text-xs">
-                    <thead><tr className="text-left text-muted"><th className="py-1 pr-2 font-medium">Field</th><th className="py-1 pr-2 font-medium">Yours</th><th className="py-1 font-medium">Habbo&apos;s</th></tr></thead>
-                    <tbody>
-                        {differences.map(x => (
-                            <tr key={x} className="border-t border-line align-top">
-                                <td className="py-1 pr-2 font-mono">{x}</td>
-                                <td className="py-1 pr-2 font-mono break-all">{(x === 'desc' ? notice.texts.desc : notice.fields[x]) || <span className="text-muted">none</span>}</td>
-                                <td className="py-1 font-mono break-all">{(x === 'desc' ? habbo.texts.desc : habbo.fields[x]) || <span className="text-muted">none</span>}</td>
-                            </tr>
-                        ))}
-                    </tbody>
-                </table>
+                <div className="overflow-x-auto rounded-lg border border-line">
+                    <table className="w-full text-xs [&_tbody_tr:last-child>td]:border-b-0">
+                        <thead><tr><Th dense>Field</Th><Th dense>Yours</Th><Th dense>Habbo&apos;s</Th></tr></thead>
+                        <tbody>
+                            {differences.map(x => (
+                                <tr key={x}>
+                                    <Td dense className="font-mono">{x}</Td>
+                                    <Td dense className="font-mono break-all">{(x === 'desc' ? notice.texts.desc : notice.fields[x]) || <span className="text-muted">none</span>}</Td>
+                                    <Td dense className="font-mono break-all">{(x === 'desc' ? habbo.texts.desc : habbo.fields[x]) || <span className="text-muted">none</span>}</Td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                </div>
             )}
         </div>
     );

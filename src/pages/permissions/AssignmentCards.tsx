@@ -81,7 +81,8 @@ export const NodesCard = ({ target, nodes, canEdit }: { target: Target; nodes: N
 
     return (
         <Panel
-            title={`Nodes (${nodes.length})`}
+            title="Nodes"
+            count={nodes.length}
             description="A denial beats a grant at the same place; an exact node beats a wildcard."
             className="overflow-hidden"
         >
@@ -191,7 +192,7 @@ export const MetaCard = ({ target, meta, canEdit }: { target: Target; meta: Meta
     };
 
     return (
-        <Panel title={`Meta (${meta.length})`} className="overflow-hidden">
+        <Panel title="Meta" count={meta.length} className="overflow-hidden">
             {meta.length === 0
                 ? <EmptyState>No meta is set here.</EmptyState>
                 : (

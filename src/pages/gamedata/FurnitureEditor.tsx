@@ -1,17 +1,15 @@
 import { ArrowLeftRight, Box, Download, Fingerprint, LayoutGrid, Palette, RotateCcw, Save, Settings2, Store, Type, Undo2, Upload, Wrench } from 'lucide-react';
 import { type ReactNode, useEffect, useState } from 'react';
-import { Link } from 'react-router';
 
 import { furniIconUrl, useClientAssets } from '#/api/assets';
 import { downloadBundle, useBundle } from '#/api/bundles';
 import { ApiError } from '#/api/client';
 import { FURNITURE_KINDS, type FurnitureDefinition, furnitureTag, useFurnitureDefinition, useHandItems, useLogicTypes, useUpdateDefinition } from '#/api/gamedata';
-import { Modal } from '#/components/Modal';
+import { Modal, ModalBody } from '#/components/Modal';
 import { SearchInput } from '#/components/SearchInput';
 import { toast, toastError } from '#/components/toast';
-import { Badge, Button, CHECK_CLASS, ErrorNotice, Input, Loading, Segmented, Select, Switch, Textarea } from '#/components/ui';
+import { Ago, Badge, Button, CHECK_CLASS, ErrorNotice, Input, Loading, Segmented, Select, Switch, Textarea, TextButton, TextLink } from '#/components/ui';
 import { cx } from '#/lib/cx';
-import { fromNow } from '#/lib/time';
 import { formatBytes } from '#/pages/assets/format';
 
 import { type FieldInfo, FIELDS, SPECIAL_TYPES, USAGE_POLICIES } from './fields';
@@ -228,7 +226,7 @@ const BundleCard = ({ definition, canManage }: { definition: FurnitureDefinition
                     </Fact>
                     <Fact label="Revision">{data.revision ?? '-'}</Fact>
                     <Fact label="Size">{data.error ? '-' : formatBytes(data.size)}</Fact>
-                    <Fact label="Updated">{fromNow(data.updatedAt)}</Fact>
+                    <Fact label="Updated"><Ago at={data.updatedAt} /></Fact>
                     {data.error && <p className="py-2 text-xs text-bad">{data.error}</p>}
                     {!data.error && data.hash && (
                         <div className="py-2.5">
@@ -306,7 +304,7 @@ const Overview = ({ definition, item, draft, differing, canManage, onUseHabbo, o
                         <Fact label="Offer">{showValue(JSON.stringify(item.offerid))}</Fact>
                         <Fact label="Builders Club offer">{showValue(JSON.stringify(item.bcofferid))}</Fact>
                     </dl>
-                    {notSold && <p className="pb-3 text-xs text-muted">No visible offer sells it. <Link to="/catalog" className="font-medium text-accent hover:underline">Open the catalog</Link> to put it on a page.</p>}
+                    {notSold && <p className="pb-3 text-xs text-muted">No visible offer sells it. <TextLink inline to="/catalog">Open the catalog</TextLink> to put it on a page.</p>}
                 </Card>
                 <BundleCard definition={definition} canManage={canManage} />
                 {(file || definition.habboFile) && (
@@ -401,7 +399,7 @@ const EditorBody = ({ definition, canManage, section, onSection, onUnsaved, save
         <span className="flex min-w-0 items-center gap-1.5 text-xs">
             <span className="size-1.5 shrink-0 rounded-full bg-warn" aria-hidden />
             <span className="min-w-0 truncate text-warn" title={habboText(field)}>{`Habbo: ${habboText(field)}`}</span>
-            {canManage && <button type="button" onClick={() => set(field.key, habboOf(field)!)} className="shrink-0 font-medium text-accent hover:underline">Use</button>}
+            {canManage && <TextButton inline className="shrink-0" onClick={() => set(field.key, habboOf(field)!)}>Use</TextButton>}
         </span>
     );
 
@@ -622,7 +620,7 @@ export const FurnitureEditor = ({ id, canManage, onClose }: { id: number | null;
                     )
                 : 'Furniture'}
         >
-            {error && <div className="p-4 sm:p-5"><ErrorNotice error={error} /></div>}
+            {error && <ModalBody><ErrorNotice error={error} /></ModalBody>}
             {!shown && !error && <Loading />}
             {shown && (
                 <EditorBody

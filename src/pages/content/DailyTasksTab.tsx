@@ -4,8 +4,7 @@ import { useState } from 'react';
 import { type DailyTask, type DailyTaskInput, useDailyTaskChange, useDailyTasks } from '#/api/quests';
 import { ask } from '#/components/confirm';
 import { toast, toastError } from '#/components/toast';
-import { Badge, Button, EmptyState, ErrorNotice, IconButton, Input, Labeled, Loading, Panel, Select, Switch, WarningNotice } from '#/components/ui';
-import { cx } from '#/lib/cx';
+import { Badge, Button, EmptyState, ErrorNotice, IconButton, IconTile, Input, Labeled, Loading, Panel, Select, Switch, WarningNotice } from '#/components/ui';
 import { plural } from '#/lib/plural';
 
 const TYPES: Record<string, string> = {
@@ -113,9 +112,7 @@ const DailyTaskRow = ({ task, canManage, editing, onEdit, onDone }: { task: Dail
     return (
         <li>
             <div className="flex flex-wrap items-center gap-x-3 gap-y-2 px-4 py-3">
-                <span className={cx('grid size-10 shrink-0 place-items-center rounded-xl [&>svg]:size-5', task.enabled && !task.problem ? 'bg-accent-soft text-accent' : 'bg-subtle text-muted')}>
-                    <CalendarCheck />
-                </span>
+                <IconTile tone={task.enabled && !task.problem ? 'accent' : 'muted'}><CalendarCheck /></IconTile>
                 <div className="min-w-0 flex-1">
                     <div className="flex flex-wrap items-center gap-2">
                         <span className="font-mono text-sm font-medium">{task.code}</span>

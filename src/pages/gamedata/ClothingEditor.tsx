@@ -6,9 +6,8 @@ import { ask } from '#/components/confirm';
 import { ListToolbar } from '#/components/ListToolbar';
 import { OpenRow } from '#/components/RowList';
 import { SearchInput } from '#/components/SearchInput';
-import { Badge, Button, EmptyState, ErrorNotice, IconButton, Input, Labeled, Loading, Panel, Segmented, Select, Switch, Textarea } from '#/components/ui';
+import { Badge, Button, Chip, EmptyState, ErrorNotice, FieldLabel, IconButton, Input, Labeled, ListPanel, Loading, Panel, Segmented, Select, Switch, Textarea } from '#/components/ui';
 import { cx, rowFill } from '#/lib/cx';
-import { useFillHeight } from '#/lib/fillHeight';
 
 import { HabboDiffers } from './parts';
 
@@ -126,22 +125,6 @@ const PalettePicker = ({ value, onChange, disabled }: { value: number; onChange:
     );
 };
 
-/** Toggle chips: each on or off, all in sight. */
-const Chip = ({ on, onChange, disabled, children }: { on: boolean; onChange: (on: boolean) => void; disabled: boolean; children: string }) => (
-    <button
-        type="button"
-        aria-pressed={on}
-        disabled={disabled}
-        onClick={() => onChange(!on)}
-        className={cx(
-            'h-10 rounded-lg border px-3 text-ui font-medium transition-colors disabled:opacity-60 sm:h-8',
-            on ? 'border-accent/40 bg-accent-soft text-accent' : 'border-line text-muted hover:text-ink',
-        )}
-    >
-        {children}
-    </button>
-);
-
 /** A kind's own settings: the palette its pieces are coloured from, and who must always wear one. */
 const KindSettings = ({ kind, pieces, canManage, onRemoved }: { kind: FigureEntry; pieces: number; canManage: boolean; onRemoved: () => void }) => {
     const original = useMemo(() => read<Kind>(kind.data)!, [ kind.data ]);
@@ -187,10 +170,10 @@ const KindSettings = ({ kind, pieces, canManage, onRemoved }: { kind: FigureEntr
             <div className="grid gap-5 p-4 sm:grid-cols-[minmax(12rem,16rem)_1fr]">
                 <PalettePicker value={draft.paletteid} onChange={paletteid => setDraft({ ...draft, paletteid })} disabled={!canManage} />
                 <div className="flex flex-col gap-1.5">
-                    <span className="text-xs font-medium text-muted">Always worn by</span>
+                    <FieldLabel>Always worn by</FieldLabel>
                     <div className="flex flex-wrap gap-2">
                         {MUST_WEAR.map(({ field, label }) => (
-                            <Chip key={field} on={draft[field] === true} onChange={on => setDraft({ ...draft, [field]: on })} disabled={!canManage}>{label}</Chip>
+                            <Chip key={field} active={draft[field] === true} onClick={() => setDraft({ ...draft, [field]: draft[field] !== true })} disabled={!canManage}>{label}</Chip>
                         ))}
                     </div>
                     <span className="text-xs text-muted">A figure without one gets the first piece its wearer may have.</span>
@@ -383,11 +366,11 @@ const PieceEditor = ({ entry, type, nextId, canManage, onDone }: { entry: Figure
                     </Labeled>
                 )}
                 <div className="flex flex-col gap-1.5 max-sm:w-full">
-                    <span className="text-xs font-medium text-muted">For</span>
+                    <FieldLabel>For</FieldLabel>
                     <div className="w-full sm:w-60"><Segmented label="For" value={piece.gender} onChange={gender => set({ gender })} options={GENDERS} disabled={disabled} /></div>
                 </div>
                 <div className="flex flex-col gap-1.5 max-sm:w-full">
-                    <span className="text-xs font-medium text-muted">Who may wear it</span>
+                    <FieldLabel>Who may wear it</FieldLabel>
                     <div className="w-full sm:w-60"><Segmented label="Who may wear it" value={String(piece.club)} onChange={club => set({ club: Number(club) })} options={CLUBS} disabled={disabled} /></div>
                 </div>
             </div>
@@ -398,11 +381,11 @@ const PieceEditor = ({ entry, type, nextId, canManage, onDone }: { entry: Figure
                 <Switch label="Takes colours" checked={piece.colorable} onChange={colorable => set({ colorable })} disabled={disabled} />
             </div>
             <div className="flex flex-col gap-2">
-                <span className="text-xs font-medium text-muted">Parts</span>
+                <FieldLabel>Parts</FieldLabel>
                 <PartsTable parts={piece.parts} onChange={parts => set({ parts })} disabled={disabled} />
             </div>
             <div className="flex flex-col gap-2">
-                <span className="text-xs font-medium text-muted">Hides while worn</span>
+                <FieldLabel>Hides while worn</FieldLabel>
                 <HiddenLayers layers={piece.hiddenlayers} onChange={hiddenlayers => set({ hiddenlayers })} disabled={disabled} />
             </div>
             {json !== null && (
@@ -435,9 +418,9 @@ const PieceEditor = ({ entry, type, nextId, canManage, onDone }: { entry: Figure
                 <Button variant="ghost" icon={<Braces />} onClick={() => setJson(json === null ? JSON.stringify(piece, null, 2) : null)}>{json === null ? 'JSON' : 'Hide JSON'}</Button>
                 {canManage && entry && (
                     <Button
-                        variant="ghost"
+                        variant="danger-ghost"
                         icon={<Trash2 />}
-                        className="ml-auto text-bad hover:text-bad"
+                        className="ml-auto"
                         disabled={remove.isPending}
                         onClick={() => ask(
                             {
@@ -548,7 +531,7 @@ const NewKind = ({ kinds, onAdded }: { kinds: FigureKindEntry[]; onAdded: (type:
         >
             <div className="flex gap-2">
                 <Input value={type} onChange={event => setType(event.target.value)} placeholder="New kind, e.g. xx" maxLength={8} className="min-w-0 flex-1 font-mono" aria-label="New kind" />
-                <IconButton label="Add kind" icon={<Plus />} type="submit" disabled={!valid || save.isPending} className="border-line bg-subtle" />
+                <Button type="submit" variant="secondary" icon={<Plus />} disabled={!valid || save.isPending}>Add</Button>
             </div>
             {save.error && <ErrorNotice error={save.error} />}
         </form>
@@ -562,7 +545,6 @@ const NewKind = ({ kinds, onAdded }: { kinds: FigureKindEntry[]; onAdded: (type:
 export const ClothingEditor = ({ canManage }: { canManage: boolean }) => {
     const { data, error } = useFigureKinds();
     const [ chosen, setChosen ] = useState<string | null>(null);
-    const fillKinds = useFillHeight<HTMLElement>();
 
     if (error)
         return <ErrorNotice error={error} />;
@@ -574,7 +556,7 @@ export const ClothingEditor = ({ canManage }: { canManage: boolean }) => {
 
     return (
         <div className="grid items-start gap-4 lg:gap-6 lg:grid-cols-[14rem_1fr]">
-            <Panel ref={fillKinds} className="flex flex-col overflow-clip lg:sticky lg:top-16 lg:max-h-(--fill-height)">
+            <ListPanel>
                 {data.kinds.length === 0 && <EmptyState>No kinds yet: take Habbo’s figure data in above.</EmptyState>}
                 <ul className="max-h-[60dvh] min-h-0 divide-y divide-line overflow-y-auto lg:max-h-none">
                     {data.kinds.map(({ entry, pieces }) => (
@@ -592,7 +574,7 @@ export const ClothingEditor = ({ canManage }: { canManage: boolean }) => {
                     ))}
                 </ul>
                 {canManage && <NewKind kinds={data.kinds} onAdded={setChosen} />}
-            </Panel>
+            </ListPanel>
             {current && (
                 <div className="flex min-w-0 flex-col gap-4">
                     <KindSettings key={`${current.entry.key}:${current.entry.data}`} kind={current.entry} pieces={current.pieces} canManage={canManage} onRemoved={() => setChosen(null)} />

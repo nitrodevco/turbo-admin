@@ -5,7 +5,7 @@ import { uploadPluginImage, useOverlaysChange } from '#/api/noCode';
 import type { SkinMap } from '#/api/windows';
 import { useSaved } from '#/components/SaveFeedback';
 import { toastError } from '#/components/toast';
-import { Badge, Button, Panel, Select } from '#/components/ui';
+import { Badge, Button, Panel, Select, Td, Th } from '#/components/ui';
 import { cx } from '#/lib/cx';
 import { openZip } from '#/lib/zip';
 import { DesignPreview } from '#/preview/DesignPreview';
@@ -315,29 +315,29 @@ export const SkinSetUpload = ({ skins, target, canManage }: { skins: SkinMap; ta
                             </span>
                         </p>
                         <div className="max-h-[40dvh] overflow-auto rounded-lg border border-line">
-                            <table className="w-full text-left text-ui">
-                                <thead className="sticky top-0 bg-surface text-xs text-muted">
-                                    <tr><th className="p-2">File</th><th className="p-2">Sprite</th><th className="p-2">Size</th><th className="p-2">Skins</th></tr>
+                            <table className="w-full text-ui [&_tbody_tr:last-child>td]:border-b-0">
+                                <thead className="sticky top-0 bg-surface">
+                                    <tr><Th dense>File</Th><Th dense>Sprite</Th><Th dense>Size</Th><Th dense>Skins</Th></tr>
                                 </thead>
-                                <tbody className="divide-y divide-line">
+                                <tbody>
                                     {files.map(file => (
                                         <tr key={file.name} data-match={file.target ? (used.get(file.target.overlay) === file ? 'matched' : 'left') : 'unmatched'}>
-                                            <td className="p-2">
+                                            <Td dense>
                                                 <span className="flex items-center gap-2">
                                                     <img src={file.url} alt="" className="max-h-8 max-w-16 border border-line bg-subtle object-contain [image-rendering:pixelated]" />
                                                     <span className="font-mono text-xs">{file.name}</span>
                                                 </span>
-                                            </td>
-                                            <td className="p-2">
+                                            </Td>
+                                            <Td dense>
                                                 {file.target
                                                     ? <span className="font-mono text-xs">{file.target.sprite}{used.get(file.target.overlay) !== file && <span className="ml-2 text-muted">(left out)</span>}</span>
                                                     : <span className="text-xs text-bad">{file.problem}</span>}
-                                            </td>
-                                            <td className="p-2 text-xs">
+                                            </Td>
+                                            <Td dense className="text-xs">
                                                 {`${file.width}x${file.height}`}
                                                 {mismatch(file) && <span className="ml-2 text-warn">{`sprite ${file.target!.width}x${file.target!.height}${file.target!.slice ? `, nine-slice ${file.target!.slice.left} ${file.target!.slice.top} ${file.target!.slice.right} ${file.target!.slice.bottom}` : ''}`}</span>}
-                                            </td>
-                                            <td className="p-2 font-mono text-xs text-muted">{file.target?.skins.slice(0, 4).join(' ') ?? ''}{(file.target?.skins.length ?? 0) > 4 ? ` +${file.target!.skins.length - 4}` : ''}</td>
+                                            </Td>
+                                            <Td dense className="font-mono text-xs text-muted">{file.target?.skins.slice(0, 4).join(' ') ?? ''}{(file.target?.skins.length ?? 0) > 4 ? ` +${file.target!.skins.length - 4}` : ''}</Td>
                                         </tr>
                                     ))}
                                 </tbody>

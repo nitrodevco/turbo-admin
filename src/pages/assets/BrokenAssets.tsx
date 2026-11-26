@@ -4,7 +4,7 @@ import { useRef, useState } from 'react';
 import { type BrokenAsset, type BrokenAssetSource, useBrokenAssets, useIgnoreBrokenAssets, useUploadBadgePicture } from '#/api/brokenAssets';
 import { useStartSync } from '#/api/bundles';
 import { useFetchCatalogPictures, useUploadCatalogImage } from '#/api/catalogImages';
-import { Modal, ModalActions } from '#/components/Modal';
+import { Modal, ModalActions, ModalBody } from '#/components/Modal';
 import { toast, toastError } from '#/components/toast';
 import { Badge, Button, ButtonLink, Checkbox, EmptyState, ErrorNotice, Loading, Panel, Segmented, Textarea } from '#/components/ui';
 import { cx } from '#/lib/cx';
@@ -63,8 +63,7 @@ const IgnoreDialog = ({ assets, onClose, onIgnored }: { assets: BrokenAsset[]; o
 
     return (
         <Modal open onClose={onClose} title={assets.length === 1 ? `Ignore ${assets[0]?.title}?` : `Ignore ${plural(assets.length, 'asset')}?`} className="sm:h-fit! sm:max-w-lg">
-            <form
-                className="flex flex-col gap-4 p-4 sm:p-5"
+            <ModalBody
                 onSubmit={(event) => {
                     event.preventDefault();
                     ignore.mutate({ assets, note }, {
@@ -83,7 +82,7 @@ const IgnoreDialog = ({ assets, onClose, onIgnored }: { assets: BrokenAsset[]; o
                     <Button variant="ghost" onClick={onClose}>Cancel</Button>
                     <Button type="submit" icon={<EyeOff />} disabled={ignore.isPending}>Ignore</Button>
                 </ModalActions>
-            </form>
+            </ModalBody>
         </Modal>
     );
 };

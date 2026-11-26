@@ -1,9 +1,10 @@
 import { type FormEvent, type KeyboardEvent, useEffect, useMemo, useRef, useState } from 'react';
-import { Link, useSearchParams } from 'react-router';
+import { useSearchParams } from 'react-router';
 
 import { useCommands, useMe, useRunCommand } from '#/api/queries';
 import type { CommandInfo, RunCommandResponse } from '#/api/types';
-import { Button, ErrorNotice, FIELD_CLASS, Input, Loading, PageBody, PageHeader, Panel } from '#/components/ui';
+import { SearchInput } from '#/components/SearchInput';
+import { Button, EmptyState, ErrorNotice, FIELD_CLASS, Label, ListPanel, Loading, PageBody, PageHeader, Panel, TextLink } from '#/components/ui';
 import { cx } from '#/lib/cx';
 import { useFillHeight } from '#/lib/fillHeight';
 
@@ -57,25 +58,18 @@ const CommandList = ({ commands, picked, onPick }: { commands: CommandInfo[]; pi
     }, [ commands, filter ]);
 
     const anyRoomOnly = commands.some(command => command.needsRoom);
-    const fillCommands = useFillHeight<HTMLElement>();
 
     return (
-        <Panel ref={fillCommands} title="Commands" className="flex max-h-[70dvh] flex-col lg:max-h-(--fill-height)">
+        <ListPanel title="Commands" className="max-h-[70dvh]">
             <div className="flex flex-col gap-2 border-b border-line px-4 py-3">
-                <Input
-                    type="search"
-                    value={filter}
-                    onChange={event => setFilter(event.target.value)}
-                    placeholder="Find a command"
-                    aria-label="Find a command"
-                />
+                <SearchInput value={filter} onValueChange={setFilter} placeholder="Find a command" />
                 {anyRoomOnly && <p className="text-xs text-muted">Commands marked room only act on the room you are standing in, so run them in game.</p>}
             </div>
             <div className="min-h-0 overflow-y-auto px-4 py-2">
-                {groups.length === 0 && <p className="p-2 text-sm text-muted">No command matches.</p>}
+                {groups.length === 0 && <EmptyState>No command matches.</EmptyState>}
                 {groups.map(([ category, list ]) => (
                     <div key={category} className="mb-3">
-                        <div className="px-2 py-1 font-mono text-2xs font-medium tracking-[0.08em] text-muted uppercase">{category}</div>
+                        <Label as="h3" className="block px-2 py-1">{category}</Label>
                         {list?.map(command => (
                             <button
                                 key={command.name}
@@ -98,7 +92,7 @@ const CommandList = ({ commands, picked, onPick }: { commands: CommandInfo[]; pi
                     </div>
                 ))}
             </div>
-        </Panel>
+        </ListPanel>
     );
 };
 
@@ -291,7 +285,7 @@ export const ConsolePage = () => {
                     {canViewCommandLog && (
                         <p className="text-xs text-muted">
                             {'Every command run here is logged as yours. '}
-                            <Link to="/command-log?source=panel" className="font-medium text-accent hover:underline">See the log</Link>
+                            <TextLink inline to="/command-log?source=panel">See the log</TextLink>
                         </p>
                     )}
                 </div>

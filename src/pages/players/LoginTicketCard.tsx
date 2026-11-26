@@ -5,7 +5,7 @@ import { useState } from 'react';
 import { type IssuedTicket, issueTicket, revokeTicket, useTicketStatus } from '#/api/players';
 import { ask } from '#/components/confirm';
 import { Button, ErrorNotice, Label, Labeled, Panel, Select, Switch, WarningNotice } from '#/components/ui';
-import { formatDateTime } from '#/pages/rooms/labels';
+import { formatDateTime } from '#/lib/time';
 
 const LIFETIMES = [
     { value: '15', label: '15 min' },

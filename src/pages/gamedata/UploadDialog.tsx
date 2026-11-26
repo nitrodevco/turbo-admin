@@ -3,8 +3,8 @@ import { type DragEvent, useRef, useState } from 'react';
 import { useNavigate } from 'react-router';
 
 import { type AssetUpload, BUNDLE_KINDS, type BundleKind, GAMEDATA_FILE_NAMES, type GamedataFileKind, useUploadFile } from '#/api/bundles';
-import { Modal } from '#/components/Modal';
-import { Button, ErrorNotice } from '#/components/ui';
+import { Modal, ModalBody } from '#/components/Modal';
+import { Button, ErrorNotice, TextButton } from '#/components/ui';
 import { cx } from '#/lib/cx';
 import { BundleDetail } from '#/pages/assets/BundleDetail';
 import { formatBytes } from '#/pages/assets/format';
@@ -59,11 +59,11 @@ const Outcome = ({ entry, onOpen, onReview, onMake }: OutcomeProps) => {
                 <span className="inline-flex items-center gap-1.5 text-good"><CheckCircle2 className="size-3.5" /> {`Kept as the ${kindName(result.bundle.kind)} bundle`}</span>
                 <span className="font-mono">{result.bundle.name}</span>
                 {!result.bundle.used && <span className="text-warn">nothing in the hotel uses it yet</span>}
-                <button type="button" onClick={() => onOpen(result.bundle)} className="font-medium text-accent hover:underline">Open</button>
+                <TextButton inline onClick={() => onOpen(result.bundle)}>Open</TextButton>
                 {onMake && result.bundle.kind === 'furniture' && (
-                    <button type="button" onClick={() => onMake(result.bundle.name)} className="font-medium text-accent hover:underline">
+                    <TextButton inline onClick={() => onMake(result.bundle.name)}>
                         {result.bundle.used ? 'Make another definition' : 'Make a definition'}
-                    </button>
+                    </TextButton>
                 )}
             </span>
         );
@@ -74,7 +74,7 @@ const Outcome = ({ entry, onOpen, onReview, onMake }: OutcomeProps) => {
                 <span className="inline-flex items-center gap-1.5 text-warn"><AlertTriangle className="size-3.5" /> {`This is ${GAMEDATA_FILE_NAMES[result.gamedata]}: recognised, not taken.`}</span>
                 <span className="text-muted">{NOT_TAKEN[result.gamedata]}</span>
                 {result.gamedata === 'variables' && (
-                    <button type="button" onClick={() => onReview(entry.file)} className="self-start font-medium text-accent hover:underline">Review the import</button>
+                    <TextButton inline className="self-start" onClick={() => onReview(entry.file)}>Review the import</TextButton>
                 )}
             </span>
         );
@@ -159,7 +159,7 @@ export const UploadDialog = ({ open, onClose, name }: { open: boolean; onClose: 
     return (
         <>
             <Modal open={open} onClose={close} title={name ? `Replace the bundle ${name}` : 'Upload'} className="sm:h-fit! sm:max-w-2xl">
-                <div className="flex flex-col gap-4 p-4 sm:p-5">
+                <ModalBody>
                     <label
                         onDragOver={(event) => {
                             event.preventDefault();
@@ -211,7 +211,7 @@ export const UploadDialog = ({ open, onClose, name }: { open: boolean; onClose: 
                         </span>
                         <Button variant={running ? 'ghost' : 'primary'} disabled={running} onClick={close}>{running ? 'Uploading' : 'Done'}</Button>
                     </div>
-                </div>
+                </ModalBody>
             </Modal>
             <BundleDetail bundle={opened} canManage onClose={() => setOpened(null)} />
             <NewFurnitureDialog bundle={making} onClose={() => setMaking(null)} />

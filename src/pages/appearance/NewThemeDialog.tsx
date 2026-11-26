@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { useThemes } from '#/api/appearance';
 import { useCreateTheme } from '#/api/noCode';
 import { folderOf, useWorkingOn } from '#/appearance/workingOn';
-import { Modal, ModalActions } from '#/components/Modal';
+import { Modal, ModalActions, ModalBody } from '#/components/Modal';
 import { toast } from '#/components/toast';
 import { Button, ErrorNotice, Input, Labeled, Select } from '#/components/ui';
 
@@ -32,8 +32,7 @@ export const NewThemeDialog = ({ open, copyOf, onClose }: { open: boolean; copyO
 
     return (
         <Modal title={source ? `Duplicate ${themeName(source)}` : 'New theme'} open={open} onClose={onClose} className="sm:h-fit! sm:max-w-lg">
-            <form
-                className="flex flex-col gap-3 p-4 sm:p-5"
+            <ModalBody
                 onSubmit={(event) => {
                     event.preventDefault();
                     create.mutate(
@@ -76,7 +75,7 @@ export const NewThemeDialog = ({ open, copyOf, onClose }: { open: boolean; copyO
                         {create.isPending ? 'Making it...' : source ? 'Duplicate' : 'Make the theme'}
                     </Button>
                 </ModalActions>
-            </form>
+            </ModalBody>
         </Modal>
     );
 };

@@ -4,11 +4,10 @@ import { Link, useParams } from 'react-router';
 
 import { type PlayerDetailResponse, type PlayerSanctionItem, usePlayer, usePlayerAbilities } from '#/api/players';
 import { useMe } from '#/api/queries';
-import { Avatar, Badge, ButtonLink, ErrorNotice, Kv, Label, LiveBadge, Loading, PageBody, PageHeader, Panel } from '#/components/ui';
+import { Ago, Avatar, Badge, ButtonLink, ErrorNotice, Kv, Label, LiveBadge, Loading, PageBody, PageHeader, Panel, TextLink } from '#/components/ui';
 import { useRememberRecent } from '#/lib/recent';
 import { usePathTab } from '#/lib/tabs';
-import { fromNow } from '#/lib/time';
-import { formatDateTime } from '#/pages/rooms/labels';
+import { formatDateTime, fromNow } from '#/lib/time';
 
 import { CurrenciesPanel } from './CurrenciesPanel';
 import { DiscordCard } from './DiscordCard';
@@ -195,11 +194,11 @@ const Overview = ({ player }: { player: PlayerDetailResponse }) => {
                         {player.currentRoom && (
                             <Kv label="In room">
                                 {canViewRooms
-                                    ? <Link to={`/rooms/${player.currentRoom.id}`} className="text-accent hover:underline">{player.currentRoom.name}</Link>
+                                    ? <TextLink inline to={`/rooms/${player.currentRoom.id}`}>{player.currentRoom.name}</TextLink>
                                     : player.currentRoom.name}
                             </Kv>
                         )}
-                        <Kv label="Last login">{player.lastLoginUtc ? <span title={formatDateTime(player.lastLoginUtc)}>{fromNow(player.lastLoginUtc)}</span> : 'never'}</Kv>
+                        <Kv label="Last login">{player.lastLoginUtc ? <Ago at={player.lastLoginUtc} /> : 'never'}</Kv>
                         <Kv label="Joined">{formatDateTime(player.joinedUtc)}</Kv>
                         <Kv label="Gender">{player.gender.toLowerCase()}</Kv>
                         <Kv label="Respect" mono>{player.respectPoints.toLocaleString()}</Kv>

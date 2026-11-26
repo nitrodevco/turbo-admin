@@ -9,10 +9,9 @@ import { useSession } from '#/auth/session';
 import { type Ceremony, createPasskey, getPasskey, passkeysSupported } from '#/auth/webauthn';
 import { confirmAsync } from '#/components/confirm';
 import { Button, EmptyState, ErrorNotice, Field, Loading, PageBody, PageHeader, Panel } from '#/components/ui';
+import { formatDateTime } from '#/lib/time';
 
 type Options = Ceremony<Record<string, unknown>>;
-
-const formatDate = (utc: string) => new Date(utc).toLocaleString(undefined, { dateStyle: 'medium', timeStyle: 'short' });
 
 const PasskeyRow = ({ passkey, isLast, onRemoved }: { passkey: AccountPasskey; isLast: boolean; onRemoved: () => void }) => {
     const [ error, setError ] = useState<unknown>(null);
@@ -39,8 +38,8 @@ const PasskeyRow = ({ passkey, isLast, onRemoved }: { passkey: AccountPasskey; i
             <div>
                 <div className="font-medium">{passkey.name}</div>
                 <div className="text-xs text-muted">
-                    Added {formatDate(passkey.createdAtUtc)}
-                    {passkey.lastUsedAtUtc ? `, last used ${formatDate(passkey.lastUsedAtUtc)}` : ', not used yet'}
+                    Added {formatDateTime(passkey.createdAtUtc)}
+                    {passkey.lastUsedAtUtc ? `, last used ${formatDateTime(passkey.lastUsedAtUtc)}` : ', not used yet'}
                 </div>
                 {isLast && <div className="mt-1 text-xs text-muted">Your only passkey, so it cannot be removed. Add another first.</div>}
                 {error !== null && <div className="mt-2"><ErrorNotice error={error} /></div>}
@@ -77,7 +76,7 @@ const SessionRow = ({ session, onEnded }: { session: AccountSession; onEnded: ()
             <div>
                 <div className="font-medium">{session.current ? 'This browser' : 'Another browser'}</div>
                 <div className="text-xs text-muted">
-                    Signed in {formatDate(session.signedInAtUtc)}, ends {formatDate(session.expiresAtUtc)}
+                    Signed in {formatDateTime(session.signedInAtUtc)}, ends {formatDateTime(session.expiresAtUtc)}
                 </div>
                 {error !== null && <div className="mt-2"><ErrorNotice error={error} /></div>}
             </div>

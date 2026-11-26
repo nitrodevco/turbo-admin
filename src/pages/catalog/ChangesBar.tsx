@@ -153,7 +153,7 @@ export const ChangesBar = ({ history, unpublished, busy, onUndo, onRedo, onDisca
                         </div>
                     )}
                 </div>
-                <Button variant="ghost" icon={<Trash2 />} disabled={busy || undo.length === 0} onClick={onDiscard} title="Undo every change since the last publish" className="text-bad hover:text-bad">
+                <Button variant="danger-ghost" icon={<Trash2 />} disabled={busy || undo.length === 0} onClick={onDiscard} title="Undo every change since the last publish">
                     <span className="max-sm:hidden">Discard</span>
                 </Button>
                 <Button variant="secondary" icon={<Wand2 />} disabled={busy} onClick={onBuild} title="Fill the open page, or a new one, from the hotel's furniture, pets and effects">

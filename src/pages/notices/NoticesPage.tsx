@@ -232,7 +232,7 @@ const Notices = ({ server, canManage, save }: { server: NoticeData; canManage: b
                         <Panel title="Notice">
                             <NoticeEditor key={key} notice={notice} onChange={update} disabled={disabled} />
                         </Panel>
-                        <aside className="flex flex-col gap-4 lg:sticky lg:top-6 lg:gap-6">
+                        <aside className="flex flex-col gap-4 lg:sticky lg:top-4 lg:gap-6">
                             <Panel title="As docked">
                                 <div className="flex justify-center rounded-b-xl bg-[#0e1a2b] p-6" data-testid="notice-live-preview">
                                     <NoticePreview notice={notice} />

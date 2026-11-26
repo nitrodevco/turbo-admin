@@ -5,8 +5,7 @@ import { Link } from 'react-router';
 import { type PollDetail, type PollInput, type PollQuestion, type PollQuestionResult, type PollQuestionType, usePoll, usePollChange, usePolls } from '#/api/polls';
 import { ask } from '#/components/confirm';
 import { toast, toastError } from '#/components/toast';
-import { Badge, Button, EmptyState, ErrorNotice, IconButton, Input, Labeled, Loading, Panel, Select, Switch, Textarea } from '#/components/ui';
-import { cx } from '#/lib/cx';
+import { Badge, Button, EmptyState, ErrorNotice, IconButton, IconTile, Input, Labeled, Loading, Panel, Select, Switch, Textarea } from '#/components/ui';
 import { plural } from '#/lib/plural';
 
 const TYPES: { value: PollQuestionType; label: string }[] = [
@@ -291,9 +290,7 @@ export const PollsTab = () => {
                             {data.polls.map(poll => (
                                 <li key={poll.id}>
                                     <button type="button" onClick={() => setOpen(poll.id)} className="flex w-full flex-wrap items-center gap-x-3 gap-y-2 px-4 py-3 text-left hover:bg-subtle/60">
-                                        <span className={cx('grid size-10 shrink-0 place-items-center rounded-xl [&>svg]:size-5', poll.enabled ? 'bg-accent-soft text-accent' : 'bg-subtle text-muted')}>
-                                            <Vote />
-                                        </span>
+                                        <IconTile tone={poll.enabled ? 'accent' : 'muted'}><Vote /></IconTile>
                                         <span className="min-w-0 flex-1">
                                             <span className="flex flex-wrap items-center gap-2">
                                                 <span className="text-sm font-medium">{poll.headline}</span>

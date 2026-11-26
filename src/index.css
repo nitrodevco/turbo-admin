@@ -31,11 +31,15 @@
  *            card's list pointed at; `rowFill` gives the chosen row its accent instead) ·
  *            hover:bg-subtle (an item of a menu, or one in a rounded box of its own) ·
  *            bg-subtle/40 (a band or strip inside a card, a row held open: `OpenRow`) ·
+ *            bg-subtle (a list's group heading, opaque as it sticks: `GroupHeading`) ·
  *            bg-canvas/50 (an inset well) · bg-warn-soft/50, bg-bad-soft/50 (a row or tile in
  *            that state)
+ *   tiles    an icon on a tint (`IconTile`): 40px with a 20px icon, 32px with a 16px one in a
+ *            dense row; a picture from the game in a well (`Thumb`): 40px, 48px beside its field
  *   spacing  4px steps. A page sits 16px from the window's edge on a phone, 24px on a tablet and
  *            32px from a laptop up; its cards are 16px apart (gap-4), 24px from a laptop up
- *            (lg:gap-6); a card's content sits 16px (px-4) from its edge
+ *            (lg:gap-6); a card's content sits 16px (px-4) from its edge; a column that follows
+ *            the page as it scrolls sticks 16px under the window's top (top-4: `ListPanel`)
  */
 @theme {
     --font-sans: "IBM Plex Sans", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;

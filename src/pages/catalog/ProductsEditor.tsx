@@ -5,7 +5,7 @@ import { badgeUrl, useClientAssets } from '#/api/assets';
 import { type CatalogFurniture, type CatalogProductInput, type EditableKind, type Membership, useFurnitureSearch } from '#/api/catalog';
 import { useProductLookup } from '#/api/gamedata';
 import { SearchInput } from '#/components/SearchInput';
-import { Chip, IconButton, Input, Labeled, Segmented, Select, Textarea } from '#/components/ui';
+import { Chip, IconButton, Input, Labeled, Segmented, Select, Textarea, Thumb } from '#/components/ui';
 import { cx } from '#/lib/cx';
 
 import { lengthOf } from './labels';
@@ -37,11 +37,15 @@ const blank = (type: EditableKind): CatalogProductInput => ({
     subscriptionDays: type === 'club' ? 31 : 0,
 });
 
-/** Picking the item a product gives, by the start of its class name or its id. */
-export const ItemPicker = ({ type, value, onPick, disabled }: { type: 'floor' | 'wall'; value: { id: number | null; name: string | null }; onPick: (item: CatalogFurniture) => void; disabled: boolean }) => {
+/**
+ * Picking furniture by the start of its class name or its id: the item a product gives (of its
+ * `type`), or (no `type`) any furniture, for a voucher or a reward.
+ */
+export const ItemPicker = ({ type, value, onPick, disabled }: { type?: 'floor' | 'wall'; value: { id: number | null; name: string | null }; onPick: (item: CatalogFurniture) => void; disabled?: boolean }) => {
     const [ text, setText ] = useState('');
     const search = useFurnitureSearch(text);
-    const items = (search.data ?? []).filter(x => x.type === type);
+    const items = (search.data ?? []).filter(x => !type || x.type === type);
+    const what = type ? `${type} item` : 'furniture';
 
     return (
         <div className="flex min-w-0 flex-col gap-1.5">
@@ -49,7 +53,7 @@ export const ItemPicker = ({ type, value, onPick, disabled }: { type: 'floor' | 
                 <SearchInput
                     value={text}
                     onValueChange={setText}
-                    placeholder={value.id ? 'Swap for another…' : `Find a ${type} item by class name or id`}
+                    placeholder={value.id || value.name ? 'Swap for another…' : `Find ${type ? `a ${what}` : what} by class name or id`}
                     aria-label="Find an item"
                     spellCheck={false}
                     autoComplete="off"
@@ -59,7 +63,7 @@ export const ItemPicker = ({ type, value, onPick, disabled }: { type: 'floor' | 
             {text.trim() && (
                 <ul className="max-h-52 overflow-y-auto rounded-lg border border-line bg-surface">
                     {items.length === 0
-                        ? <li className="px-3 py-2 text-sm text-muted">{search.isFetching ? 'Looking…' : `No ${type} item matches.`}</li>
+                        ? <li className="px-3 py-2 text-sm text-muted">{search.isFetching ? 'Looking…' : `No ${what} matches.`}</li>
                         : items.map(item => (
                                 <li key={item.id}>
                                     <button
@@ -150,9 +154,9 @@ const ProductFields = ({ product, onChange, disabled, locked }: { product: Produ
         case 'badge':
             return (
                 <div className="flex items-center gap-3">
-                    <span className="grid size-12 shrink-0 place-items-center rounded-lg border border-line bg-canvas">
+                    <Thumb large>
                         {badgeUrl(assets, product.extraParam) && <img src={badgeUrl(assets, product.extraParam)!} alt="" className="[image-rendering:pixelated]" onError={event => (event.currentTarget.style.display = 'none')} />}
-                    </span>
+                    </Thumb>
                     <Input value={product.extraParam ?? ''} onChange={event => set('extraParam', event.target.value.trim() || null)} placeholder="Badge code, e.g. ADM" aria-label="Badge code" className="w-full font-mono" disabled={disabled} />
                 </div>
             );

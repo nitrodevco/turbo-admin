@@ -2,7 +2,7 @@ import { Merge } from 'lucide-react';
 import { useState } from 'react';
 
 import { catalogCalls, type CatalogTree, useCatalogEdit, usePageMergePlan } from '#/api/catalog';
-import { Modal, ModalActions } from '#/components/Modal';
+import { Modal, ModalActions, ModalBody } from '#/components/Modal';
 import { toast, toastError } from '#/components/toast';
 import { Button, ErrorNotice, Label, Loading } from '#/components/ui';
 import { cx } from '#/lib/cx';
@@ -106,7 +106,7 @@ export const MergePagesDialog = ({ tree, pageIds, keepId, onClose, onMerged }: M
 
     return (
         <Modal title={<span className="flex items-center gap-2"><Merge className="size-4 text-accent" />Merge pages</span>} open onClose={onClose} className="sm:h-fit! sm:max-w-2xl">
-            <div className="flex flex-col gap-4 p-4 sm:p-5">
+            <ModalBody>
                 {pageIds.length === 1 && (
                     <div className="flex flex-col gap-1.5">
                         <Label as="h3">{`Merge ${title(pageIds[0]!)} with`}</Label>
@@ -166,7 +166,7 @@ export const MergePagesDialog = ({ tree, pageIds, keepId, onClose, onMerged }: M
                         {merge.isPending ? 'Merging…' : 'Merge'}
                     </Button>
                 </ModalActions>
-            </div>
+            </ModalBody>
         </Modal>
     );
 };

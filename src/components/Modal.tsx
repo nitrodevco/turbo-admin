@@ -1,5 +1,5 @@
 import { X } from 'lucide-react';
-import type { ReactNode } from 'react';
+import type { FormEventHandler, ReactNode } from 'react';
 
 import { cx } from '#/lib/cx';
 
@@ -40,6 +40,18 @@ export const Modal = ({ title, open, onClose, children, className, leave }: { ti
         </dialog>
     );
 };
+
+const BODY = 'flex flex-col gap-4 p-4 sm:p-5';
+
+/**
+ * A dialog's content: 16px from its edges on a phone and 20px from a tablet up, as its header is,
+ * its parts 16px apart. With `onSubmit` it is the dialog's form, its `ModalActions` last.
+ */
+export const ModalBody = ({ onSubmit, children, 'data-testid': testId }: { onSubmit?: FormEventHandler<HTMLFormElement>; children: ReactNode; 'data-testid'?: string }) => (
+    onSubmit
+        ? <form onSubmit={onSubmit} className={BODY} data-testid={testId}>{children}</form>
+        : <div className={BODY} data-testid={testId}>{children}</div>
+);
 
 /**
  * The buttons at the foot of a dialog's form, on a rule of their own and to the right: Cancel (a

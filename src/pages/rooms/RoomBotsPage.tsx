@@ -1,13 +1,12 @@
 import { LogOut, Save } from 'lucide-react';
 import { useState } from 'react';
-import { Link, useParams } from 'react-router';
+import { useParams } from 'react-router';
 
 import { useMe, useRoom } from '#/api/queries';
 import { DANCES, type RoomBotItem, roomCalls, useRoomAction, useRoomBots } from '#/api/rooms';
 import { ask } from '#/components/confirm';
-import { Avatar, Button, EmptyState, ErrorNotice, Input, Labeled, Loading, PageBody, Panel, Select, Switch, Textarea } from '#/components/ui';
+import { Avatar, Button, EmptyState, ErrorNotice, Input, Labeled, ListPanel, Loading, PageBody, Panel, Select, Switch, Textarea, TextLink } from '#/components/ui';
 import { cx, rowFill } from '#/lib/cx';
-import { useFillHeight } from '#/lib/fillHeight';
 
 import { ActionOutcome, RoomHeader } from './RoomHeader';
 
@@ -22,7 +21,7 @@ const BotEditor = ({ roomId, bot, canManage, linked }: { roomId: number; bot: Ro
     return (
         <Panel
             title={bot.name}
-            description={<>Owned by {linked ? <Link to={`/players/${bot.ownerId}`} className="text-accent hover:underline">{bot.ownerName}</Link> : bot.ownerName}.</>}
+            description={<>Owned by {linked ? <TextLink inline to={`/players/${bot.ownerId}`}>{bot.ownerName}</TextLink> : bot.ownerName}.</>}
             actions={canManage && (
                 <Button
                     variant="ghost"
@@ -99,7 +98,6 @@ export const RoomBotsPage = () => {
     const { data: bots, error, isPending } = useRoomBots(id);
     const [ open, setOpen ] = useState<number | null>(null);
     const linked = useMe().data?.canViewPlayers ?? false;
-    const fillList = useFillHeight<HTMLElement>();
     const canManage = room?.can.manageBotsAndPets ?? false;
     const selected = bots?.find(x => x.id === open) ?? bots?.[0] ?? null;
 
@@ -112,7 +110,7 @@ export const RoomBotsPage = () => {
                 {bots && bots.length === 0 && <Panel><EmptyState>No bot stands in this room.</EmptyState></Panel>}
                 {bots && selected && (
                     <div className="grid items-start gap-4 lg:grid-cols-[20rem_minmax(0,1fr)] lg:gap-6">
-                        <Panel ref={fillList} title={`Bots (${bots.length})`} className="flex flex-col overflow-clip lg:sticky lg:top-4 lg:max-h-(--fill-height)">
+                        <ListPanel title="Bots" count={bots.length}>
                             <ul className="max-h-[60dvh] min-h-0 overflow-y-auto lg:max-h-none">
                                 {bots.map(bot => (
                                     <li key={bot.id} className="border-t border-line first:border-t-0">
@@ -126,7 +124,7 @@ export const RoomBotsPage = () => {
                                     </li>
                                 ))}
                             </ul>
-                        </Panel>
+                        </ListPanel>
                         {/* Keyed by what was saved, so the form starts again from it. */}
                         <BotEditor key={JSON.stringify(selected)} roomId={id} bot={selected} canManage={canManage} linked={linked} />
                     </div>

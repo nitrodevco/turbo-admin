@@ -8,7 +8,7 @@ import { ListToolbar } from '#/components/ListToolbar';
 import { Modal } from '#/components/Modal';
 import { OpenRow } from '#/components/RowList';
 import { SearchInput } from '#/components/SearchInput';
-import { Badge, Button, EmptyState, ErrorNotice, Input, Labeled, Loading, Panel, Textarea } from '#/components/ui';
+import { Badge, Button, EmptyState, ErrorNotice, Input, Labeled, Loading, Panel, Textarea, TextButton } from '#/components/ui';
 import { cx } from '#/lib/cx';
 import { useDebounced } from '#/lib/debounce';
 
@@ -77,7 +77,7 @@ const TextEditor = ({ text, canManage, onDone }: { text: TextEntry | null; canMa
                 {text?.plugin && text.pluginValue !== null && text.pluginValue !== undefined && text.pluginValue !== value && (
                     <p className="flex flex-wrap items-center gap-2 text-xs text-muted">
                         <span>{`${text.plugin}'s default: ${text.pluginValue || '""'}`}</span>
-                        {canManage && <button type="button" className="text-accent hover:underline" onClick={() => setValue(text.pluginValue!)}>Use the plugin&apos;s</button>}
+                        {canManage && <TextButton inline onClick={() => setValue(text.pluginValue!)}>Use the plugin&apos;s</TextButton>}
                     </p>
                 )}
             </div>
@@ -87,9 +87,9 @@ const TextEditor = ({ text, canManage, onDone }: { text: TextEntry | null; canMa
                     <Button variant="ghost" icon={<X />} onClick={onDone}>Cancel</Button>
                     {text && (
                         <Button
-                            variant="ghost"
+                            variant="danger-ghost"
                             icon={<Trash2 />}
-                            className="ml-auto text-bad hover:text-bad"
+                            className="ml-auto"
                             disabled={remove.isPending}
                             onClick={() => ask(
                                 {

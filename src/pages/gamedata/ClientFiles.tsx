@@ -3,9 +3,8 @@ import { useState } from 'react';
 
 import { FILES, type GamedataFile, type GamedataStatus, useRebuild, useSetFileKey } from '#/api/gamedata';
 import { PhoneLabel, Row, SortedRowList } from '#/components/RowList';
-import { Badge, Button, ErrorNotice, IconButton, Input, Panel, SuccessNotice } from '#/components/ui';
+import { Ago, Badge, Button, ErrorNotice, IconButton, Input, Panel, SuccessNotice } from '#/components/ui';
 import type { SortKeys } from '#/lib/sort';
-import { fromNow } from '#/lib/time';
 
 import { formatSize } from './labels';
 
@@ -133,7 +132,7 @@ export const ClientFiles = ({ status }: { status: GamedataStatus }) => {
                                 : <span className="truncate font-mono text-xs"><PhoneLabel>Setting </PhoneLabel>{row.setting}</span>}
                             <span className="font-mono text-xs" title={row.file.hash}>{row.file.hash.slice(0, 10)}</span>
                             <span className="font-mono text-xs text-muted tabular-nums sm:text-right">{formatSize(row.file.size)}</span>
-                            <span className="text-xs text-muted">{fromNow(row.file.builtAt)}</span>
+                            <Ago at={row.file.builtAt} className="text-xs text-muted" />
                         </Row>
                     );
                 }}

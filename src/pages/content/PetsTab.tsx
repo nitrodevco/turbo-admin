@@ -3,8 +3,7 @@ import { useState } from 'react';
 
 import { type PetBreed, type PetLine, useDeletePetLine, usePets, useSavePet } from '#/api/content';
 import { ask } from '#/components/confirm';
-import { Badge, Button, CHECK_CLASS, EmptyState, ErrorNotice, IconButton, Input, Loading, Panel, Select } from '#/components/ui';
-import { useFillHeight } from '#/lib/fillHeight';
+import { AddRow, Badge, Button, CHECK_CLASS, EmptyState, ErrorNotice, GroupHeading, IconButton, Input, ListPanel, Loading, Select } from '#/components/ui';
 
 /** A pet type by its number; the hotel's texts name them in the client. */
 const typeName = (typeId: number | null) => (typeId === null ? 'Every type' : `Type ${typeId}`);
@@ -66,8 +65,6 @@ export const PetsTab = ({ canManage }: { canManage: boolean }) => {
     const save = useSavePet();
     const [ breed, setBreed ] = useState({ typeId: '', paletteId: '' });
     const [ line, setLine ] = useState({ typeId: '', text: '' });
-    const fillPalettes = useFillHeight<HTMLElement>('(min-width: 80rem)');
-    const fillLines = useFillHeight<HTMLElement>('(min-width: 80rem)');
 
     if (error) return <ErrorNotice error={error} />;
     if (!data) return <Loading />;
@@ -77,12 +74,12 @@ export const PetsTab = ({ canManage }: { canManage: boolean }) => {
 
     return (
         <div className="grid items-start gap-4 lg:gap-6 xl:grid-cols-2">
-            <Panel title="Palettes" description="Breed is the body the info stand names; rarity weighs breeding; the catalogue sells only the sold ones." ref={fillPalettes} className="flex flex-col overflow-clip xl:max-h-(--fill-height)">
+            <ListPanel from="xl" title="Palettes" description="Breed is the body the info stand names; rarity weighs breeding; the catalogue sells only the sold ones.">
                 {types.length === 0 && <EmptyState>No palettes.</EmptyState>}
                 <div className="max-h-[60dvh] min-h-0 overflow-y-auto xl:max-h-none">
                     {types.map(type => (
                         <section key={type}>
-                            <h3 className="sticky top-0 border-b border-line bg-subtle px-4 py-1.5 font-mono text-2xs font-medium tracking-[0.08em] text-muted uppercase">{typeName(type)}</h3>
+                            <GroupHeading sticky>{typeName(type)}</GroupHeading>
                             <ul className="divide-y divide-line">
                                 {data.breeds.filter(x => x.typeId === type).map(x => <BreedRow key={x.id} breed={x} canManage={canManage} />)}
                             </ul>
@@ -90,8 +87,7 @@ export const PetsTab = ({ canManage }: { canManage: boolean }) => {
                     ))}
                 </div>
                 {canManage && (
-                    <form
-                        className="flex flex-wrap gap-2 border-t border-line px-4 py-3"
+                    <AddRow
                         onSubmit={(event) => {
                             event.preventDefault();
                             save.mutate({ kind: 'breeds', id: null, body: { typeId: Number(breed.typeId), paletteId: Number(breed.paletteId), sellable: true } }, { onSuccess: () => setBreed({ typeId: '', paletteId: '' }) });
@@ -100,18 +96,18 @@ export const PetsTab = ({ canManage }: { canManage: boolean }) => {
                         <Input value={breed.typeId} onChange={event => setBreed({ ...breed, typeId: event.target.value.replace(/\D/g, '') })} placeholder="type" className="w-24" aria-label="Pet type" />
                         <Input value={breed.paletteId} onChange={event => setBreed({ ...breed, paletteId: event.target.value.replace(/\D/g, '') })} placeholder="palette" className="w-24" aria-label="Palette" />
                         <Button type="submit" variant="secondary" icon={<Plus />} disabled={!breed.typeId || !breed.paletteId || save.isPending}>Add palette</Button>
-                    </form>
+                    </AddRow>
                 )}
-            </Panel>
-            <Panel title="What pets say" description="A type with lines of its own says those; the rest say the lines for every type." ref={fillLines} className="flex flex-col overflow-clip xl:max-h-(--fill-height)">
+            </ListPanel>
+            <ListPanel from="xl" title="What pets say" description="A type with lines of its own says those; the rest say the lines for every type.">
                 {lineTypes.length === 0 && <EmptyState>No lines.</EmptyState>}
                 <div className="max-h-[60dvh] min-h-0 overflow-y-auto xl:max-h-none">
                     {lineTypes.map(type => (
                         <section key={type ?? 'all'}>
-                            <h3 className="sticky top-0 flex items-center gap-2 border-b border-line bg-subtle px-4 py-1.5 font-mono text-2xs font-medium tracking-[0.08em] text-muted uppercase">
+                            <GroupHeading sticky>
                                 {typeName(type)}
                                 {type === null && <Badge>shared</Badge>}
-                            </h3>
+                            </GroupHeading>
                             <ul className="divide-y divide-line">
                                 {data.speech.filter(x => x.typeId === type).map(x => <LineRow key={x.id} line={x} canManage={canManage} />)}
                             </ul>
@@ -119,8 +115,7 @@ export const PetsTab = ({ canManage }: { canManage: boolean }) => {
                     ))}
                 </div>
                 {canManage && (
-                    <form
-                        className="flex flex-wrap gap-2 border-t border-line px-4 py-3"
+                    <AddRow
                         onSubmit={(event) => {
                             event.preventDefault();
                             save.mutate({ kind: 'speech', id: null, body: { typeId: line.typeId === '' ? null : Number(line.typeId), line: line.text } }, { onSuccess: () => setLine({ ...line, text: '' }) });
@@ -132,10 +127,10 @@ export const PetsTab = ({ canManage }: { canManage: boolean }) => {
                         </Select>
                         <Input value={line.text} onChange={event => setLine({ ...line, text: event.target.value })} placeholder="Woof!" className="min-w-0 flex-1" aria-label="Line" />
                         <Button type="submit" variant="secondary" icon={<Plus />} disabled={!line.text.trim() || save.isPending}>Add line</Button>
-                    </form>
+                    </AddRow>
                 )}
                 {save.error && <div className="p-4"><ErrorNotice error={save.error} /></div>}
-            </Panel>
+            </ListPanel>
         </div>
     );
 };

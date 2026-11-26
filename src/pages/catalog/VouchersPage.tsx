@@ -2,19 +2,20 @@ import { Copy, Download, Plus, Save, Sparkles, Trash2, X } from 'lucide-react';
 import { useState } from 'react';
 import { Link } from 'react-router';
 
-import { furniIconUrl, useClientAssets } from '#/api/assets';
-import { useCatalogTree, useFurnitureSearch } from '#/api/catalog';
+import { useCatalogTree } from '#/api/catalog';
 import { useDeleteVoucher, useGenerateVouchers, useSaveVoucher, useVoucherRedemptions, useVouchers, type VoucherDraft, type VoucherItem } from '#/api/vouchers';
 import { ask } from '#/components/confirm';
 import { ListToolbar } from '#/components/ListToolbar';
 import { OpenRow } from '#/components/RowList';
 import { SearchInput } from '#/components/SearchInput';
-import { Badge, Button, EmptyState, ErrorNotice, Input, Labeled, Loading, PageBody, PageHeader, Panel, Select, SuccessNotice, Switch } from '#/components/ui';
+import { Badge, Button, EmptyState, ErrorNotice, FieldLabel, Input, Labeled, Loading, PageBody, PageHeader, Panel, Select, SuccessNotice, Switch, Thumb } from '#/components/ui';
 import { cx } from '#/lib/cx';
 import { useDebounced } from '#/lib/debounce';
 import { inputToIso, isoTime, isoToInput } from '#/pages/hotel-view/model';
 
 import { catalogTabs } from './catalogTabs';
+import { ProductIcon } from './ProductIcon';
+import { ItemPicker } from './ProductsEditor';
 
 const EMPTY: VoucherDraft = {
     code: '',
@@ -49,44 +50,18 @@ const rewards = (item: VoucherItem, currencyName: (id: number) => string) => {
 };
 
 /** The furniture a voucher gives, found by name, kept by its definition. */
-const FurniturePicker = ({ id, name, onChange, disabled }: { id: number | null; name: string | null; onChange: (id: number | null, name: string | null) => void; disabled?: boolean }) => {
-    const assets = useClientAssets();
-    const [ text, setText ] = useState('');
-    const { data: found } = useFurnitureSearch(useDebounced(text));
-    const icon = furniIconUrl(assets, name);
-
-    return (
-        <Labeled label="Furniture">
-            <div className="flex flex-col gap-2">
-                <div className="flex items-center gap-3">
-                    <span className="grid size-10 shrink-0 place-items-center rounded-lg border border-line bg-canvas">{icon && <img src={icon} alt="" className="max-h-8 max-w-8" />}</span>
-                    <span className={cx('min-w-0 flex-1 truncate font-mono text-sm', id === null && 'text-muted')}>{id === null ? 'none' : name ?? `#${id}`}</span>
-                    {id !== null && !disabled && <Button variant="ghost" icon={<X />} onClick={() => onChange(null, null)}>Clear</Button>}
-                </div>
-                {!disabled && <Input type="search" value={text} onChange={event => setText(event.target.value)} placeholder="Find furniture" aria-label="Find furniture" />}
-                {found && found.length > 0 && text.trim() && (
-                    <ul className="max-h-48 divide-y divide-line overflow-y-auto rounded-lg border border-line">
-                        {found.slice(0, 20).map(furni => (
-                            <li key={furni.id}>
-                                <button
-                                    type="button"
-                                    onClick={() => {
-                                        onChange(furni.id, furni.name);
-                                        setText('');
-                                    }}
-                                    className="flex w-full items-center gap-3 px-3 py-1.5 text-left text-sm hover:bg-subtle"
-                                >
-                                    <img src={furniIconUrl(assets, furni.name) ?? ''} alt="" className="max-h-6 max-w-6" />
-                                    <span className="font-mono text-xs">{furni.name}</span>
-                                </button>
-                            </li>
-                        ))}
-                    </ul>
-                )}
+const FurniturePicker = ({ id, name, onChange, disabled }: { id: number | null; name: string | null; onChange: (id: number | null, name: string | null) => void; disabled?: boolean }) => (
+    <Labeled label="Furniture" group>
+        <div className="flex flex-col gap-2">
+            <div className="flex items-center gap-3">
+                <Thumb>{name && <ProductIcon type="floor" name={name} />}</Thumb>
+                <span className={cx('min-w-0 flex-1 truncate font-mono text-sm', id === null && 'text-muted')}>{id === null ? 'none' : name ?? `#${id}`}</span>
+                {id !== null && !disabled && <Button variant="ghost" icon={<X />} onClick={() => onChange(null, null)}>Clear</Button>}
             </div>
-        </Labeled>
-    );
-};
+            <ItemPicker value={{ id, name }} onPick={item => onChange(item.id, item.name)} disabled={disabled} />
+        </div>
+    </Labeled>
+);
 
 /** What a voucher gives and when it can be redeemed: the fields one voucher and a batch share. */
 const RewardFields = ({ draft, furnitureName, set, disabled }: { draft: VoucherDraft; furnitureName: string | null; set: (change: Partial<VoucherDraft>, furnitureName?: string | null) => void; disabled?: boolean }) => {
@@ -154,7 +129,7 @@ const Redemptions = ({ id }: { id: number }) => {
 
     return (
         <div className="flex flex-col gap-1">
-            <span className="text-xs font-medium text-muted">Redeemed by</span>
+            <FieldLabel>Redeemed by</FieldLabel>
             <ul className="max-h-48 divide-y divide-line overflow-y-auto rounded-lg border border-line text-sm">
                 {data.redemptions.map(x => (
                     <li key={x.playerId} className="flex items-center gap-3 px-3 py-1.5">
@@ -196,9 +171,9 @@ const VoucherEditor = ({ item, onDone, disabled }: { item: VoucherItem | null; o
                     <Button variant="ghost" icon={<X />} onClick={onDone}>{item ? 'Close' : 'Cancel'}</Button>
                     {item && (
                         <Button
-                            variant="ghost"
+                            variant="danger-ghost"
                             icon={<Trash2 />}
-                            className="ml-auto text-bad hover:text-bad"
+                            className="ml-auto"
                             disabled={remove.isPending}
                             onClick={() => ask({ title: `Delete the voucher ${item.voucher.code}?`, body: 'Who redeemed it is forgotten too.', confirm: 'Delete' }, () => remove.mutate(item.voucher.id, { onSuccess: onDone }))}
                         >

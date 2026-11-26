@@ -1,6 +1,7 @@
 import { Link2, Plus, Trash2 } from 'lucide-react';
 import { useState } from 'react';
 
+import { SearchInput } from '#/components/SearchInput';
 import { Badge, Button, EmptyState, IconButton, Input, Panel } from '#/components/ui';
 import { cx } from '#/lib/cx';
 
@@ -54,7 +55,7 @@ export const AllTab = ({ draft, disabled }: { draft: HotelViewDraft; disabled?: 
     return (
         <Panel className="overflow-clip">
             <div className="flex flex-wrap items-center gap-2 border-b border-line px-4 py-3">
-                <Input type="search" value={filter} onChange={event => setFilter(event.target.value)} placeholder="Key or value" aria-label="Find variables" className="min-w-48 flex-1 sm:max-w-96" />
+                <SearchInput value={filter} onValueChange={setFilter} placeholder="Key or value" aria-label="Find variables" className="min-w-48 flex-1 sm:max-w-96" />
                 <span className="text-xs text-muted">{keys.length} of {draft.keys.length}</span>
                 {!disabled && (
                     <form

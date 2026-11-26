@@ -1,7 +1,7 @@
 import { useQueryClient } from '@tanstack/react-query';
 import { Copy, Plus, RefreshCw, RotateCcw, Upload } from 'lucide-react';
 import { type ReactNode, useMemo, useState } from 'react';
-import { Link, useNavigate, useSearchParams } from 'react-router';
+import { useNavigate, useSearchParams } from 'react-router';
 
 import { useClientAssets } from '#/api/assets';
 import { useTextSearch } from '#/api/gamedata';
@@ -13,10 +13,9 @@ import { WorkingOnPicker } from '#/appearance/WorkingOnPicker';
 import { useSaved } from '#/components/SaveFeedback';
 import { SearchInput } from '#/components/SearchInput';
 import { toast, toastError } from '#/components/toast';
-import { Badge, Button, EmptyState, ErrorNotice, FileButton, Label, Loading, PageBody, PageHeader, Panel, Segmented, TextLink } from '#/components/ui';
+import { Badge, Button, EmptyState, ErrorNotice, FileButton, Label, ListPanel, Loading, PageBody, PageHeader, Panel, Segmented, TextLink } from '#/components/ui';
 import { useHubTabs } from '#/layout/nav';
 import { useDebounced } from '#/lib/debounce';
-import { useFillHeight } from '#/lib/fillHeight';
 import { usePathTab } from '#/lib/tabs';
 import { flatElements, windowName } from '#/pages/appearance/studio/windows';
 import { WindowPick } from '#/pages/appearance/WindowPick';
@@ -178,7 +177,7 @@ const SkinCard = ({ id, skin, sheet, replacing }: { id: string; skin: SkinEntry;
                 <p className="flex flex-wrap gap-x-3 gap-y-1 text-xs">
                     <span className="text-muted">Drawn by:</span>
                     {windows.map(([ win, keys ]) => (
-                        <Link key={win} to={`/appearance/windows/windows?${new URLSearchParams({ id: win })}`} className="font-mono text-accent hover:underline">{`${win} ${keys.map(key => `'${key}'`).join(' ')}`}</Link>
+                        <TextLink inline key={win} to={`/appearance/windows/windows?${new URLSearchParams({ id: win })}`} className="font-mono">{`${win} ${keys.map(key => `'${key}'`).join(' ')}`}</TextLink>
                     ))}
                 </p>
             )}
@@ -326,11 +325,10 @@ const WindowsTab = () => {
     const shown = useMemo(() => new Set(words.length >= 3 ? texts?.items.map(item => item.key) ?? [] : []), [ texts, words ]);
     const ids = useMemo(() => (index ? [ ...Object.keys(index.templates), ...Object.keys(index.frames) ].sort() : []), [ index ]);
     const found = useMemo(() => (index ? ids.filter(each => matches(index, each, words, shown)) : []), [ index, ids, words, shown ]);
-    const fillList = useFillHeight<HTMLElement>();
 
     return (
         <div className="grid items-start gap-4 lg:gap-6 lg:grid-cols-[minmax(16rem,24rem)_1fr]">
-            <Panel ref={fillList} className="flex flex-col overflow-clip lg:sticky lg:top-4 lg:max-h-(--fill-height)">
+            <ListPanel>
                 <div className="flex flex-col gap-1 border-b border-line px-4 py-3">
                     <SearchInput value={text} onValueChange={setText} placeholder="Window, element, text key or shown text" aria-label="Find windows" />
                     {index && <span className="text-xs text-muted">{`${found.length} of ${ids.length} windows${shown.size ? `, ${shown.size} text(s) show those words` : ''}`}</span>}
@@ -351,7 +349,7 @@ const WindowsTab = () => {
                     ))}
                 </ul>
                 {found.length > LIST_LIMIT && <p className="p-3 text-xs text-muted">{`${found.length - LIST_LIMIT} more: narrow the search.`}</p>}
-            </Panel>
+            </ListPanel>
             {index && id ? <WindowDetail index={index} skins={skins} id={id} /> : <EmptyState framed>Pick a window.</EmptyState>}
         </div>
     );

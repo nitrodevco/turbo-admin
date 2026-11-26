@@ -6,14 +6,12 @@ import { type MessageLogEntry, type MessageLogFilter, useMessageLog } from '#/ap
 import { useMe } from '#/api/queries';
 import { ListToolbar } from '#/components/ListToolbar';
 import { LogFilters } from '#/components/LogFilters';
-import { PhoneLabel, Row, RowList } from '#/components/RowList';
+import { PhoneLabel, Row, RowList, WhenCell } from '#/components/RowList';
 import { SearchInput } from '#/components/SearchInput';
 import { Badge, Button, EmptyState, ErrorNotice, Input, Loading, PageBody, PageHeader, Panel } from '#/components/ui';
 import { useHubTabs } from '#/layout/nav';
 import { cx } from '#/lib/cx';
 import { type ListOrder, listQuery, orderOf, pageOf, type Sorting } from '#/lib/sort';
-import { fromNow } from '#/lib/time';
-import { formatDateTime } from '#/pages/rooms/labels';
 
 /** A player on a message: a link to their page when you may look at players. */
 const Who = ({ id, name, linked }: { id: number; name: string | null; linked: boolean }) => {
@@ -124,7 +122,7 @@ export const MessagesPage = () => {
                                     >
                                         {entries.map(entry => (
                                             <Row key={entry.id}>
-                                                <span className="text-xs whitespace-nowrap text-muted sm:text-sm" title={formatDateTime(entry.atUtc)}>{fromNow(entry.atUtc)}</span>
+                                                <WhenCell at={entry.atUtc} />
                                                 <span className="truncate"><Who id={entry.senderId} name={entry.senderName} linked={linked} /></span>
                                                 <span className="min-w-0 truncate">
                                                     <PhoneLabel><ArrowRight className="mr-1 inline size-3.5" /></PhoneLabel>

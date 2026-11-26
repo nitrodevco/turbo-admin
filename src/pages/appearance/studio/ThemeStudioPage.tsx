@@ -1,6 +1,6 @@
 import { Eye, Package, Plus, Redo2, Save, Undo2, X } from 'lucide-react';
 import { type ReactNode, useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { Link, useSearchParams } from 'react-router';
+import { useSearchParams } from 'react-router';
 
 import { useThemeAudiences, useThemes } from '#/api/appearance';
 import { useClientAssets } from '#/api/assets';
@@ -473,7 +473,7 @@ export const ThemeStudioPage = () => {
                             {windowId === HUD_WINDOW && (
                                 <p className="text-xs text-muted" data-testid="hud-hint">
                                     {'Every piece is its own window: click it to change it. To move a whole piece, pick "the window" under its name in Element and drag it. The chat bubbles are chat styles: '}
-                                    <Link to="/appearance/chat-bubbles" className="text-accent hover:underline">Chat bubbles</Link>
+                                    <TextLink inline to="/appearance/chat-bubbles">Chat bubbles</TextLink>
                                     .
                                 </p>
                             )}

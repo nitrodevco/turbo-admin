@@ -62,7 +62,8 @@ export const InventoryTab = ({ player }: { player: PlayerDetailResponse }) => {
 
             <div className="grid items-start gap-4 lg:grid-cols-[minmax(0,3fr)_minmax(0,2fr)] lg:gap-6">
                 <Panel
-                    title={`Furniture (${inventory.furniture.length.toLocaleString()} kinds)`}
+                    title="Furniture"
+                    count={inventory.furniture.length}
                     actions={(
                         <>
                             {inventory.furniture.length > 0 && (
@@ -90,7 +91,8 @@ export const InventoryTab = ({ player }: { player: PlayerDetailResponse }) => {
 
                 <div className="flex flex-col gap-4 lg:gap-6">
                     <Panel
-                        title={`Badges (${inventory.badges.length.toLocaleString()})`}
+                        title="Badges"
+                        count={inventory.badges.length}
                         actions={(
                             <>
                                 {inventory.badges.length > 0 && (
@@ -132,7 +134,8 @@ export const InventoryTab = ({ player }: { player: PlayerDetailResponse }) => {
 
                     {seesClothing && (
                         <Panel
-                            title={`Clothing for sale${owned ? ` (${owned.setIds.length.toLocaleString()})` : ''}`}
+                            title="Clothing for sale"
+                            count={owned?.setIds.length}
                             description="Pieces marked as sold are worn only by their owners; taking one takes it off them at once."
                             actions={grantsClothing && <Button variant="secondary" icon={<Plus />} onClick={() => setAdding('clothing')}>Add</Button>}
                         >

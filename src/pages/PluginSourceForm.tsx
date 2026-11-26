@@ -2,7 +2,7 @@ import { Link2, Save } from 'lucide-react';
 import { useState } from 'react';
 
 import { type PluginSource, type PluginSourceFollow, type PluginSourceInput, useAddPluginSource, useEditPluginSource } from '#/api/plugins';
-import { Modal, ModalActions } from '#/components/Modal';
+import { Modal, ModalActions, ModalBody } from '#/components/Modal';
 import { toast } from '#/components/toast';
 import { Button, Checkbox, ErrorNotice, Field, Labeled, Segmented, Switch } from '#/components/ui';
 
@@ -52,8 +52,7 @@ export const PluginSourceForm = ({ source, allowed, onClose }: { source: PluginS
 
     return (
         <Modal open onClose={onClose} title={source ? `Edit ${source.repository}` : 'Link a GitHub repository'} className="sm:h-fit! sm:max-w-xl">
-            <form
-                className="flex flex-col gap-4 p-4 sm:p-5"
+            <ModalBody
                 onSubmit={(event) => {
                     event.preventDefault();
                     submit();
@@ -129,7 +128,7 @@ export const PluginSourceForm = ({ source, allowed, onClose }: { source: PluginS
                         {source ? 'Save' : 'Link and install'}
                     </Button>
                 </ModalActions>
-            </form>
+            </ModalBody>
         </Modal>
     );
 };

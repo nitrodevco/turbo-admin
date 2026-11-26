@@ -3,7 +3,7 @@ import { useState } from 'react';
 
 import { type BundleKind, downloadBundle, useBundle, useDeleteBundle } from '#/api/bundles';
 import { ask } from '#/components/confirm';
-import { Modal } from '#/components/Modal';
+import { Modal, ModalBody } from '#/components/Modal';
 import { toast, toastError } from '#/components/toast';
 import { Badge, Button, ErrorNotice, Kv, Label, Loading } from '#/components/ui';
 import { fromNow } from '#/lib/time';
@@ -41,10 +41,10 @@ export const BundleDetail = ({ bundle, canManage, onClose }: { bundle: { kind: B
                 </span>
             )}
         >
-            {error && <div className="p-4 sm:p-5"><ErrorNotice error={error} /></div>}
+            {error && <ModalBody><ErrorNotice error={error} /></ModalBody>}
             {!data && !error && <Loading />}
             {data && bundle && (
-                <div className="flex flex-col gap-4 p-4 sm:p-5">
+                <ModalBody>
                     <div className="flex flex-wrap items-center gap-1.5">
                         <Badge>{data.kind}</Badge>
                         <Badge tone={data.source === 'habbo' ? 'neutral' : 'accent'}>{data.source}</Badge>
@@ -108,7 +108,7 @@ export const BundleDetail = ({ bundle, canManage, onClose }: { bundle: { kind: B
                             {downloading ? 'Downloading' : 'Download .nitro'}
                         </Button>
                     </div>
-                </div>
+                </ModalBody>
             )}
         </Modal>
     );

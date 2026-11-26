@@ -5,7 +5,7 @@ import { useState } from 'react';
 import { previewRewardTrackImport, type RewardTrackImportChange, type RewardTrackImportRequest, useImportRewardTracks } from '#/api/rewardTracks';
 import { ask } from '#/components/confirm';
 import { celebrate, toast, toastError } from '#/components/toast';
-import { Badge, Button, Checkbox, EmptyState, ErrorNotice, Label, Stat } from '#/components/ui';
+import { Badge, Button, Checkbox, EmptyState, ErrorNotice, IconTile, Label, Stat } from '#/components/ui';
 
 interface CaptureTrack {
     id?: unknown;
@@ -150,7 +150,7 @@ export const ImportTracks = ({ onOpen }: { onOpen: (id: string) => void }) => {
         <div className="grid items-start gap-4 lg:gap-6 xl:grid-cols-[24rem_minmax(0,1fr)]">
             <div className="card flex flex-col gap-4 p-4 xl:sticky xl:top-4">
                 <div className="flex items-start gap-3">
-                    <span className="grid size-10 shrink-0 place-items-center rounded-xl bg-accent-soft text-accent"><FileUp className="size-5" /></span>
+                    <IconTile><FileUp /></IconTile>
                     <div>
                         <h2 className="text-sm font-semibold">Import from a Habbo capture</h2>
                         <p className="text-xs leading-relaxed text-muted">The RewardTracks message Habbo's client is sent at login, decoded: its tracks, tasks, levels, prizes and premium become the hotel's. You see what changes before anything is made.</p>

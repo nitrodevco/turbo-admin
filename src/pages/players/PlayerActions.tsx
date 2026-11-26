@@ -4,7 +4,7 @@ import { type FormEvent, type ReactNode, useState } from 'react';
 import { type PlayerDetailResponse, type PlayerRestriction, usePlayerAbilities } from '#/api/players';
 import { Sheet } from '#/components/Sheet';
 import { Badge, Button, Input, Label, Labeled, Segmented, Textarea } from '#/components/ui';
-import { formatDateTime } from '#/pages/rooms/labels';
+import { formatDateTime } from '#/lib/time';
 
 import { ActionAnswer } from './ActionAnswer';
 import { type PlayerAction, usePlayerAction } from './usePlayerAction';

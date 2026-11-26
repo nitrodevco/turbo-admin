@@ -2,7 +2,7 @@ import { Play } from 'lucide-react';
 
 import { type ScheduledTask, type ScheduledTaskOutcome, useRunScheduledTask, useScheduledTasks } from '#/api/schedule';
 import { toast, toastError } from '#/components/toast';
-import { Badge, type BadgeTone, Button, EmptyState, ErrorNotice, Loading, PageBody, PageHeader, Panel } from '#/components/ui';
+import { Ago, Badge, type BadgeTone, Button, EmptyState, ErrorNotice, Loading, PageBody, PageHeader, Panel } from '#/components/ui';
 import { useHubTabs } from '#/layout/nav';
 import { fromNow } from '#/lib/time';
 
@@ -49,7 +49,7 @@ const TaskRow = ({ task, canManage }: { task: ScheduledTask; canManage: boolean 
                 <span title={task.nextRunAt ?? undefined}>
                     Next run:
                     {' '}
-                    {task.nextRunAt ? fromNow(task.nextRunAt) : 'none scheduled'}
+                    {task.nextRunAt ? <Ago at={task.nextRunAt} /> : 'none scheduled'}
                 </span>
                 {task.runningSince && <span title={task.runningSince}>Running since {fromNow(task.runningSince)}</span>}
                 {task.skipped > 0 && <span>{task.skipped.toLocaleString()} skipped (the run before was still going)</span>}

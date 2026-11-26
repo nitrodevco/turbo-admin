@@ -7,7 +7,7 @@ import { endpointOf, type PluginAction, pluginBlob, type PluginBlock, type Plugi
 import { ask } from '#/components/confirm';
 import { ListToolbar } from '#/components/ListToolbar';
 import { toast, toastError } from '#/components/toast';
-import { Badge, Button, Checkbox, EmptyState, ErrorNotice, Input, Kv, Labeled, Loading, PageBody, PageHeader, Panel, Select, Stat, Td, Textarea, Th, WarningNotice } from '#/components/ui';
+import { Badge, Button, Checkbox, EmptyState, ErrorNotice, Input, Kv, Labeled, Loading, PageBody, PageHeader, Panel, Select, Stat, Td, Textarea, TextLink, Th, WarningNotice } from '#/components/ui';
 import { fromNow } from '#/lib/time';
 
 type Item = Record<string, unknown>;
@@ -37,7 +37,7 @@ const Cell = ({ column, value }: { column: PluginColumn; value: unknown }) => {
         case 'link': {
             const href = String(value);
 
-            if (href.startsWith('/')) return <Link className="text-accent hover:underline" to={href}>{href}</Link>;
+            if (href.startsWith('/')) return <TextLink inline to={href}>{href}</TextLink>;
             if (/^https?:\/\//.test(href)) return <a className="text-accent hover:underline" href={href} target="_blank" rel="noreferrer">{href}</a>;
 
             return <span>{href}</span>;

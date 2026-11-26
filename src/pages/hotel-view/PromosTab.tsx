@@ -3,9 +3,8 @@ import { useState } from 'react';
 
 import { ask } from '#/components/confirm';
 import { SearchInput } from '#/components/SearchInput';
-import { Badge, type BadgeTone, Button, EmptyState, Input, Labeled, Panel, Select } from '#/components/ui';
+import { Badge, type BadgeTone, Button, EmptyState, Input, Labeled, ListPanel, Panel, Select, TextButton } from '#/components/ui';
 import { cx, rowFill } from '#/lib/cx';
-import { useFillHeight } from '#/lib/fillHeight';
 
 import type { HotelViewDraft } from './draft';
 import { GenericEditor } from './GenericEditor';
@@ -114,7 +113,7 @@ const WhereItShows = ({ draft, code, now, onOpenSlot, disabled }: { draft: Hotel
                         <ul className="divide-y divide-line rounded-lg border border-line text-sm">
                             {windows.map(x => (
                                 <li key={`${x.slot}:${x.index}`} className="flex flex-wrap items-center gap-x-3 gap-y-1 px-3 py-2">
-                                    <button type="button" onClick={() => onOpenSlot(x.slot)} className="font-medium text-accent hover:underline">Slot {x.slot}</button>
+                                    <TextButton inline onClick={() => onOpenSlot(x.slot)}>Slot {x.slot}</TextButton>
                                     <span className="text-muted">
                                         {x.from === null
                                             ? <>at <span className="font-mono text-xs">{x.entry.at || 'no time'}</span>, which is no time the server reads</>
@@ -173,7 +172,6 @@ export const PromosTab = ({ draft, codes, now, open, onOpen, onOpenSlot, disable
 }) => {
     const [ making, setMaking ] = useState<{ from: string | null } | null>(null);
     const [ filter, setFilter ] = useState('');
-    const fillPromos = useFillHeight<HTMLElement>();
     const shown = codes.filter(x => x.toLowerCase().includes(filter.trim().toLowerCase()));
     const selected = open && codes.includes(open) ? open : null;
 
@@ -221,7 +219,7 @@ export const PromosTab = ({ draft, codes, now, open, onOpen, onOpenSlot, disable
         <div className="flex flex-col gap-4">
             <Placement draft={draft} widget="widgetcontainer" what="scheduled promos" onOpenSlot={onOpenSlot} disabled={disabled} />
             <div className="grid items-start gap-4 lg:gap-6 lg:grid-cols-[18rem_minmax(0,1fr)]">
-                <Panel ref={fillPromos} className="flex flex-col overflow-clip lg:sticky lg:top-4 lg:max-h-(--fill-height)">
+                <ListPanel>
                     <div className="flex items-center gap-2 border-b border-line px-4 py-3">
                         <SearchInput value={filter} onValueChange={setFilter} placeholder="Find a promo" className="min-w-0 flex-1" />
                         {!disabled && <Button variant="secondary" icon={<Plus />} onClick={() => setMaking({ from: null })}>New</Button>}
@@ -256,7 +254,7 @@ export const PromosTab = ({ draft, codes, now, open, onOpen, onOpenSlot, disable
                             );
                         })}
                     </ul>
-                </Panel>
+                </ListPanel>
                 {!selected && <Panel><EmptyState>Choose a promo to edit, or make a new one.</EmptyState></Panel>}
                 {selected && (() => {
                     const type = draft.text(codeKey(selected, 'widget'));
@@ -267,12 +265,12 @@ export const PromosTab = ({ draft, codes, now, open, onOpen, onOpenSlot, disable
                             key={selected}
                             title={<span className="font-mono">{selected}</span>}
                             description={uses.length > 0
-                                ? <>Scheduled in {uses.map((x, i) => <span key={x.slot}>{i > 0 && ', '}<button type="button" className="text-accent hover:underline" onClick={() => onOpenSlot(x.slot)}>slot {x.slot}</button>{x.showing && ' (showing)'}</span>)}</>
+                                ? <>Scheduled in {uses.map((x, i) => <span key={x.slot}>{i > 0 && ', '}<TextButton inline onClick={() => onOpenSlot(x.slot)}>slot {x.slot}</TextButton>{x.showing && ' (showing)'}</span>)}</>
                                 : 'Not scheduled in any slot yet.'}
                             actions={!disabled && (
                                 <>
                                     <Button variant="ghost" icon={<Copy />} onClick={() => setMaking({ from: selected })}>Copy</Button>
-                                    <Button variant="ghost" icon={<Trash2 />} className="text-bad hover:text-bad" onClick={() => remove(selected)}>Remove</Button>
+                                    <Button variant="danger-ghost" icon={<Trash2 />} onClick={() => remove(selected)}>Remove</Button>
                                 </>
                             )}
                         >

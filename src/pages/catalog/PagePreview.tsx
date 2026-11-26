@@ -4,7 +4,7 @@ import type { ReactNode } from 'react';
 
 import { catalogImageUrl, promoImageUrl, useClientAssets } from '#/api/assets';
 import type { CatalogFeaturedItem, CatalogOffer, CatalogPageDetail, CatalogTree, PageDisplay } from '#/api/catalog';
-import { EmptyState } from '#/components/ui';
+import { EmptyState, FieldLabel } from '#/components/ui';
 import { cx } from '#/lib/cx';
 
 import { checkLayout } from './layoutCheck';
@@ -220,7 +220,7 @@ export const PagePreview = ({ tree, page, draft, featured, selectedOffer, onSele
                 {/* A club or gifts page is filled by the client, but its first membership or gift is made here: its grid shows even while empty. */}
                 {!sells && spec.kind !== 'featured' && (page.offers.length > 0 || ((spec.kind === 'club' || spec.kind === 'gifts') && tree.canManage)) && (
                     <div className="flex flex-col gap-2 border-t border-line pt-3">
-                        <span className="text-xs font-medium text-muted">Offers on this page ({page.offers.length})</span>
+                        <FieldLabel>Offers on this page ({page.offers.length})</FieldLabel>
                         <OfferGrid tree={tree} offers={page.offers} selectedOffer={selectedOffer} flagged={flagged} onSelectOffer={onSelectOffer} onAddOffer={onAddOffer} dim />
                     </div>
                 )}

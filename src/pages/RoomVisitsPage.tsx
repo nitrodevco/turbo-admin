@@ -6,14 +6,12 @@ import { useMe } from '#/api/queries';
 import { type RoomVisitEntry, type RoomVisitsFilter, useRoomVisits } from '#/api/roomVisits';
 import { ListToolbar } from '#/components/ListToolbar';
 import { LogFilters } from '#/components/LogFilters';
-import { PhoneLabel, Row, RowList } from '#/components/RowList';
+import { PhoneLabel, Row, RowList, WhenCell } from '#/components/RowList';
 import { SearchInput } from '#/components/SearchInput';
 import { Button, EmptyState, ErrorNotice, Input, Loading, PageBody, PageHeader, Panel } from '#/components/ui';
 import { useHubTabs } from '#/layout/nav';
 import { cx } from '#/lib/cx';
 import { type ListOrder, listQuery, orderOf, pageOf, type Sorting } from '#/lib/sort';
-import { fromNow } from '#/lib/time';
-import { formatDateTime } from '#/pages/rooms/labels';
 
 const filterOf = (params: URLSearchParams): RoomVisitsFilter => ({
     player: params.get('player') ?? '',
@@ -132,9 +130,7 @@ export const RoomVisitsPage = () => {
                                         >
                                             {entries.map(entry => (
                                                 <Row key={entry.id}>
-                                                    <span className="text-xs whitespace-nowrap text-muted sm:text-sm" title={formatDateTime(entry.atUtc)}>
-                                                        {fromNow(entry.atUtc)}
-                                                    </span>
+                                                    <WhenCell at={entry.atUtc} />
                                                     <Who entry={entry} />
                                                     <Where entry={entry} linked={canViewRooms} />
                                                     <span className="font-mono text-2xs text-muted max-sm:ml-auto sm:text-right">#{entry.roomId}</span>

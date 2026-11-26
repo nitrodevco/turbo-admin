@@ -6,14 +6,12 @@ import { type CommandLogEntry, type CommandLogFilter, useCommandLog } from '#/ap
 import { useCommands } from '#/api/queries';
 import { ListToolbar } from '#/components/ListToolbar';
 import { LogFilters } from '#/components/LogFilters';
-import { PhoneLabel, Row, RowList } from '#/components/RowList';
+import { PhoneLabel, Row, RowList, WhenCell } from '#/components/RowList';
 import { SearchInput } from '#/components/SearchInput';
 import { Badge, type BadgeTone, Button, EmptyState, ErrorNotice, Input, Loading, PageBody, PageHeader, Panel, Select } from '#/components/ui';
 import { useHubTabs } from '#/layout/nav';
 import { cx } from '#/lib/cx';
 import { type ListOrder, listQuery, orderOf, pageOf, type Sorting } from '#/lib/sort';
-import { fromNow } from '#/lib/time';
-import { formatDateTime } from '#/pages/rooms/labels';
 
 /** How a command went, in the words the console uses for the same outcomes. */
 const OUTCOMES: Record<string, { label: string; tone: BadgeTone }> = {
@@ -185,9 +183,7 @@ export const CommandLogPage = () => {
                                         >
                                             {log.data.entries.map(entry => (
                                                 <Row key={entry.id}>
-                                                    <span className="text-xs whitespace-nowrap text-muted sm:text-sm" title={formatDateTime(entry.atUtc)}>
-                                                        {fromNow(entry.atUtc)}
-                                                    </span>
+                                                    <WhenCell at={entry.atUtc} />
                                                     <span className="truncate"><Who entry={entry} /></span>
                                                     <Where entry={entry} />
                                                     <span className="basis-full wrap-anywhere sm:basis-auto">

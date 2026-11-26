@@ -62,7 +62,7 @@ export const BackgroundsTab = ({ draft, codes, now, set: chosen, onSet: setSet, 
                             {codes.map(code => <option key={code} value={code}>{code}</option>)}
                         </Select>
                         {!disabled && <Button variant="secondary" icon={<Plus />} onClick={() => setMaking('')}>New set</Button>}
-                        {!disabled && chosen && <Button variant="ghost" icon={<Trash2 />} className="text-bad hover:text-bad" onClick={() => remove(chosen)}>Remove</Button>}
+                        {!disabled && chosen && <Button variant="danger-ghost" icon={<Trash2 />} onClick={() => remove(chosen)}>Remove</Button>}
                     </>
                 )}
             >

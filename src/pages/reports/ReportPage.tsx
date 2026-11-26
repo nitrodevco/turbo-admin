@@ -5,14 +5,13 @@ import { Link, useParams } from 'react-router';
 import { useMe } from '#/api/queries';
 import { type CloseReason, type ReportDetailResponse, type ReportHistory, type ReportItem, useReport, useReportAction } from '#/api/reports';
 import { ask } from '#/components/confirm';
-import { PhoneLabel, Row, RowList, SortedRowList } from '#/components/RowList';
+import { PhoneLabel, Row, RowList, SortedRowList, WhenCell } from '#/components/RowList';
 import { toast, toastError } from '#/components/toast';
 import { Badge, Button, Checkbox, EmptyState, ErrorNotice, Kv, Loading, PageBody, PageHeader, Panel, TextLink } from '#/components/ui';
 import { cx } from '#/lib/cx';
 import { plural } from '#/lib/plural';
 import type { SortKeys } from '#/lib/sort';
-import { fromNow } from '#/lib/time';
-import { formatDateTime } from '#/pages/rooms/labels';
+import { formatDateTime, fromNow } from '#/lib/time';
 
 import { CLOSE_REASONS, sanctionLabel, SOURCES } from './labels';
 import { PlayerLink, StateBadge } from './parts';
@@ -174,7 +173,7 @@ export const ReportPage = () => {
                                             <RowList columns="max-content minmax(0,9rem) minmax(0,1fr)" headers={[ { label: 'When' }, { label: 'Who' }, { label: 'Said' } ]}>
                                                 {detail.lines.map((line, index) => (
                                                     <Row key={index} className={cx(line.reported && 'bg-bad-soft hover:bg-bad-soft')}>
-                                                        <span className="text-xs whitespace-nowrap text-muted sm:text-sm" title={formatDateTime(line.atUtc)}>{timeOf(line.atUtc)}</span>
+                                                        <WhenCell at={line.atUtc} format={timeOf} />
                                                         <span className="truncate"><PlayerLink id={line.playerId} name={line.playerName} linked={linked} /></span>
                                                         <span className="basis-full wrap-anywhere sm:basis-auto">{line.text}</span>
                                                     </Row>
@@ -203,7 +202,7 @@ export const ReportPage = () => {
                                     >
                                         {other => (
                                             <Row key={other.id}>
-                                                <span className="text-xs whitespace-nowrap text-muted sm:text-sm" title={formatDateTime(other.atUtc)}>{fromNow(other.atUtc)}</span>
+                                                <WhenCell at={other.atUtc} />
                                                 <Link to={`/reports/${other.id}`} className="truncate font-medium hover:text-accent">{other.topic}</Link>
                                                 <span className="truncate"><PhoneLabel>from </PhoneLabel><PlayerLink id={other.reporterId} name={other.reporterName} linked={linked} /></span>
                                                 <span className="max-sm:ml-auto"><StateBadge report={other} me={me?.id} /></span>

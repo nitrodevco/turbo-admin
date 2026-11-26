@@ -4,8 +4,7 @@ import { type ReactNode, useState } from 'react';
 import { type Currency, type CurrencyInput, type CurrencyKind, useCurrencies, useDeleteCurrency, useSaveCurrency } from '#/api/content';
 import { ask } from '#/components/confirm';
 import { toast, toastError } from '#/components/toast';
-import { Badge, Button, EmptyState, ErrorNotice, IconButton, Input, Labeled, Loading, Panel, Select, Switch } from '#/components/ui';
-import { cx } from '#/lib/cx';
+import { Badge, Button, EmptyState, ErrorNotice, IconButton, IconTile, Input, Labeled, Loading, Panel, Select, Switch } from '#/components/ui';
 
 const KINDS: { value: CurrencyKind; label: string }[] = [
     { value: 'credits', label: 'Credits' },
@@ -123,9 +122,7 @@ const CurrencyRow = ({ currency, canManage, editing, onEdit, onDone }: { currenc
     return (
         <li>
             <div className="flex flex-wrap items-center gap-x-3 gap-y-2 px-4 py-3">
-                <span className={cx('grid size-10 shrink-0 place-items-center rounded-xl [&>svg]:size-5', currency.enabled ? 'bg-accent-soft text-accent' : 'bg-subtle text-muted')}>
-                    {ICONS[currency.type]}
-                </span>
+                <IconTile tone={currency.enabled ? 'accent' : 'muted'}>{ICONS[currency.type]}</IconTile>
                 <div className="min-w-0 flex-1">
                     <div className="flex flex-wrap items-center gap-2">
                         <span className="font-mono text-sm font-medium">{currency.name}</span>

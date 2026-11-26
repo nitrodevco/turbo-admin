@@ -1,5 +1,5 @@
 import { CheckCircle2, Menu, TriangleAlert, XCircle } from 'lucide-react';
-import { type ButtonHTMLAttributes, type InputHTMLAttributes, type ReactNode, type Ref, type SelectHTMLAttributes, type TextareaHTMLAttributes, useState } from 'react';
+import { type ButtonHTMLAttributes, type FormEventHandler, type InputHTMLAttributes, type ReactNode, type Ref, type SelectHTMLAttributes, type TextareaHTMLAttributes, useId, useState } from 'react';
 import { Link } from 'react-router';
 
 import { useClientAssets } from '#/api/assets';
@@ -8,13 +8,15 @@ import { HotelStatusPill } from '#/layout/HotelStatus';
 import { useActiveNavItem } from '#/layout/nav';
 import { NotificationsBell } from '#/layout/NotificationsBell';
 import { cx } from '#/lib/cx';
+import { useFillHeight } from '#/lib/fillHeight';
 import type { SortDir, Sorting } from '#/lib/sort';
+import { formatDateTime, fromNow } from '#/lib/time';
 import { avatarUrl } from '#/preview/avatar';
 
 import { BackArrow } from './BackArrow';
 import { HeaderActions } from './HeaderActions';
 import { SortButton } from './SortHeader';
-import { type TabItem, Tabs } from './Tabs';
+import { Count, type TabItem, Tabs } from './Tabs';
 
 /**
  * The width every page's content keeps to, header and body alike; `wide`, the whole width beside
@@ -99,7 +101,7 @@ const HeaderIcon = () => {
     if (!entry)
         return null;
 
-    return <span aria-hidden className="grid size-9 shrink-0 place-items-center rounded-xl bg-accent-soft text-accent max-sm:hidden [&>svg]:size-5">{entry.icon}</span>;
+    return <IconTile className="max-sm:hidden">{entry.icon}</IconTile>;
 };
 
 /** A page with no tabs, where its tabs would be: its name, marked as the chosen tab is. */
@@ -125,6 +127,8 @@ export const PageBody = ({ children, className, still, wide }: { children: React
 
 interface PanelProps {
     title?: ReactNode;
+    /** How many the card lists, in a pill beside its title, as a tab has it. */
+    count?: number;
     /** A short line under the title. */
     description?: ReactNode;
     actions?: ReactNode;
@@ -133,13 +137,18 @@ interface PanelProps {
     ref?: Ref<HTMLElement>;
 }
 
-export const Panel = ({ title, description, actions, children, className, ref }: PanelProps) => (
+export const Panel = ({ title, count, description, actions, children, className, ref }: PanelProps) => (
     <section ref={ref} className={cx('card', className)}>
         {(title || actions) && (
             <header className="flex flex-wrap items-center justify-between gap-x-4 gap-y-2 border-b border-line px-4 py-3.5">
                 {/* Shrinks to 8rem, its description wrapping, before the actions drop below it. */}
                 <div className="min-w-0 flex-[1_1_8rem]">
-                    {title && <h2 className="text-sm font-semibold">{title}</h2>}
+                    {title && (
+                        <h2 className="text-sm font-semibold">
+                            {title}
+                            {count !== undefined && <Count count={count} className="ml-2" />}
+                        </h2>
+                    )}
                     {description && <div className="mt-0.5 text-xs text-muted">{description}</div>}
                 </div>
                 {actions && <div className="flex flex-wrap items-center gap-2">{actions}</div>}
@@ -147,6 +156,47 @@ export const Panel = ({ title, description, actions, children, className, ref }:
         )}
         {children}
     </section>
+);
+
+/**
+ * The form at a card's foot that adds to the list above it: a line of fields and the button that
+ * adds (a secondary `Button`, as a card's own actions are), on a rule of its own, wrapping on a
+ * phone. Its error, if any, goes under it, outside the form.
+ */
+export const AddRow = ({ onSubmit, children }: { onSubmit: FormEventHandler<HTMLFormElement>; children: ReactNode }) => (
+    <form onSubmit={onSubmit} className="flex flex-wrap items-center gap-2 border-t border-line px-4 py-3">{children}</form>
+);
+
+/**
+ * The list beside an editor: the rows to pick from, the editor to their right. From `from` up
+ * (where the page's grid puts the two side by side) it sticks 16px under the window's top as the
+ * page scrolls and reaches the window's bottom (`useFillHeight`), its list scrolling inside it: a
+ * child with `min-h-0` and `overflow-y-auto`. Below `from` it sits over the editor, as tall as
+ * its list lets it be.
+ */
+export const ListPanel = ({ from = 'lg', className, ...panel }: Omit<PanelProps, 'ref'> & { from?: 'lg' | 'xl' }) => {
+    const fill = useFillHeight<HTMLElement>(from === 'xl' ? '(min-width: 80rem)' : '(min-width: 64rem)');
+
+    return (
+        <Panel
+            {...panel}
+            ref={fill}
+            className={cx('flex flex-col overflow-clip', from === 'xl' ? 'xl:sticky xl:top-4 xl:max-h-(--fill-height)' : 'lg:sticky lg:top-4 lg:max-h-(--fill-height)', className)}
+        />
+    );
+};
+
+/**
+ * The heading over a group of a list's rows (a category, a type): a strip across the card in
+ * `Label`'s words, with how many rows it holds at its end (`count`) or a tag beside it. `sticky`
+ * keeps it at the top of the list's scrolling box while its rows pass under it: only inside one (a
+ * `ListPanel`'s list), or it would stick to the window instead.
+ */
+export const GroupHeading = ({ children, count, sticky }: { children: ReactNode; count?: number; sticky?: boolean }) => (
+    <Label as="h3" className={cx('flex items-center gap-2 border-b border-line bg-subtle px-4 py-1.5', sticky && 'sticky top-0 z-10')}>
+        {children}
+        {count !== undefined && <span className="ml-auto tabular-nums">{count.toLocaleString()}</span>}
+    </Label>
 );
 
 /**
@@ -260,19 +310,76 @@ export const Select = ({ className, small, ...select }: SelectHTMLAttributes<HTM
     <select {...select} className={cx(small ? SMALL_FIELD_CLASS : FIELD_CLASS, className)} />
 );
 
+/**
+ * A whole number typed in place, from `min` up (and `max` at most): what is typed stays as typed
+ * until it is one in range, and is put back to the value on leaving. Centred, in the mono face;
+ * `className` for its width only, 80px unless given.
+ */
+export const CountInput = ({ value, onChange, min, max, label, disabled, className }: { value: number; onChange: (value: number) => void; min: number; max?: number; label: string; disabled?: boolean; className?: string }) => {
+    const [ text, setText ] = useState(String(value));
+    const [ was, setWas ] = useState(value);
+
+    if (value !== was) {
+        setWas(value);
+        setText(String(value));
+    }
+
+    return (
+        <Input
+            type="number"
+            inputMode="numeric"
+            step={1}
+            min={min}
+            max={max}
+            aria-label={label}
+            disabled={disabled}
+            value={text}
+            onChange={(event) => {
+                const typed = event.target.value;
+                const number = Number(typed);
+
+                setText(typed);
+
+                if (typed.trim() !== '' && Number.isInteger(number) && number >= min && (max === undefined || number <= max)) onChange(number);
+            }}
+            onBlur={() => setText(String(value))}
+            className={cx('text-center font-mono', className ?? 'w-20')}
+        />
+    );
+};
+
 /** As tall as its rows; text as a field's. */
 export const Textarea = ({ className, ...textarea }: TextareaHTMLAttributes<HTMLTextAreaElement>) => (
     <textarea {...textarea} className={cx(`px-2.5 py-2 text-base leading-relaxed sm:text-ui ${FIELD_LOOK}`, className ?? 'w-full')} />
 );
 
-/** A label over any control: a drop-down, a textarea, a row of them. */
-export const Labeled = ({ label, hint, children, className }: { label: string; hint?: ReactNode; children: ReactNode; className?: string }) => (
-    <label className={cx('flex flex-col gap-1.5', className)}>
-        <span className="text-xs font-medium text-muted">{label}</span>
-        {children}
-        {hint && <span className="text-xs text-muted">{hint}</span>}
-    </label>
-);
+/**
+ * The words over a field or a group of them ("Status", "Always worn by"): a `<label>` given
+ * `htmlFor`, else words a group names itself by (`id`, for its `aria-labelledby`).
+ */
+export const FieldLabel = ({ children, htmlFor, id }: { children: ReactNode; htmlFor?: string; id?: string }) => {
+    const Tag = htmlFor ? 'label' : 'span';
+
+    return <Tag htmlFor={htmlFor} id={id} className="text-xs font-medium text-muted">{children}</Tag>;
+};
+
+/**
+ * A label over any control: a drop-down, a textarea, a row of them. `group` for a set of controls
+ * that begins with a button (a picker with its Clear): a group named by the label, since a label
+ * element hands every click on it to its first control, and that button would be pressed.
+ */
+export const Labeled = ({ label, hint, children, className, group }: { label: string; hint?: ReactNode; children: ReactNode; className?: string; group?: boolean }) => {
+    const Tag = group ? 'div' : 'label';
+    const labelId = useId();
+
+    return (
+        <Tag role={group ? 'group' : undefined} aria-labelledby={group ? labelId : undefined} className={cx('flex flex-col gap-1.5', className)}>
+            <FieldLabel id={labelId}>{label}</FieldLabel>
+            {children}
+            {hint && <span className="text-xs text-muted">{hint}</span>}
+        </Tag>
+    );
+};
 
 /**
  * A checkbox's look, for one in a row of a list as for `Checkbox`: 20px on a phone, a thumb's
@@ -356,20 +463,26 @@ export const Field = ({ label, hint, id, ...input }: FieldProps) => {
 
     return (
         <div className="flex flex-col gap-1.5">
-            <label htmlFor={fieldId} className="text-xs font-medium text-muted">{label}</label>
+            <FieldLabel htmlFor={fieldId}>{label}</FieldLabel>
             <Input id={fieldId} {...input} />
             {hint && <p className="text-xs text-muted">{hint}</p>}
         </div>
     );
 };
 
-type ButtonVariant = 'primary' | 'secondary' | 'ghost' | 'danger';
+/**
+ * `danger` for the destructive action a page or a dialog is about; `danger-ghost` for one among
+ * an editor's quiet actions (Delete, at the end of Save and Cancel), red words that fill red only
+ * when pointed at.
+ */
+type ButtonVariant = 'primary' | 'secondary' | 'ghost' | 'danger' | 'danger-ghost';
 
 const BUTTON_VARIANTS: Record<ButtonVariant, string> = {
     primary: 'border border-accent-solid bg-accent-solid font-semibold text-on-accent hover:border-accent-solid-hover hover:bg-accent-solid-hover',
     secondary: 'border border-line bg-subtle text-ink hover:border-line-strong',
     ghost: 'border border-transparent text-muted hover:border-line hover:bg-subtle hover:text-ink',
     danger: 'border border-bad-line bg-bad-soft text-bad hover:border-bad/60',
+    'danger-ghost': 'border border-transparent text-bad hover:border-bad-line hover:bg-bad-soft',
 };
 
 /** A button's look, for a `Button` and for a link drawn as one (`ButtonLink`). */
@@ -460,16 +573,26 @@ export const IconButton = ({ label, icon, tone, small, className, ...button }: B
     </button>
 );
 
-const TEXT_ACTION = 'inline-flex items-center gap-0.5 rounded text-xs font-medium text-accent hover:underline disabled:pointer-events-none disabled:opacity-50 [&>svg]:size-3.5';
+/** An action in words: in the accent, underlined when pointed at. */
+const TEXT_LOOK = 'rounded font-medium text-accent hover:underline disabled:pointer-events-none disabled:opacity-50';
+
+/**
+ * A small one, beside what it acts on (12px, an icon before or after its words); `inline`, one
+ * inside a sentence or a value, the size of the words around it, and wrapping with them.
+ */
+const textAction = (inline: boolean | undefined) => (inline ? TEXT_LOOK : `inline-flex items-center gap-0.5 text-xs ${TEXT_LOOK} [&>svg]:size-3.5`);
 
 /** A small action in words, in the accent: "all", "none", "open all", beside what it acts on. */
-export const TextButton = ({ className, ...button }: ButtonHTMLAttributes<HTMLButtonElement>) => (
-    <button type="button" {...button} className={cx(TEXT_ACTION, className)} />
+export const TextButton = ({ className, inline, ...button }: ButtonHTMLAttributes<HTMLButtonElement> & { inline?: boolean }) => (
+    <button type="button" {...button} className={cx(textAction(inline), className)} />
 );
 
-/** A small link in words, in the accent: a card's "The whole log ›" or "All settings". */
-export const TextLink = ({ to, className, children }: { to: string; className?: string; children: ReactNode }) => (
-    <Link to={to} className={cx(TEXT_ACTION, className)}>{children}</Link>
+/**
+ * A small link in words, in the accent: a card's "The whole log ›" or "All settings"; `inline`,
+ * one in a sentence or a value ("Owned by Bill", "go back to the catalog").
+ */
+export const TextLink = ({ to, inline, title, className, children }: { to: string; inline?: boolean; title?: string; className?: string; children: ReactNode }) => (
+    <Link to={to} title={title} className={cx(textAction(inline), className)}>{children}</Link>
 );
 
 /** A pill that is on or off: a quick value to pick, or a filter to narrow a list by. */
@@ -486,6 +609,14 @@ export const Chip = ({ active, className, children, ...button }: ButtonHTMLAttri
     >
         {children}
     </button>
+);
+
+/**
+ * When something happened (or will), as how long ago it is ("5 min ago", "in 2 days"), the date
+ * and time in full on hover; `format` writes it otherwise (a clock time, for a chat line).
+ */
+export const Ago = ({ at, format = fromNow, className }: { at: string; format?: (utc: string) => string; className?: string }) => (
+    <time dateTime={at} title={formatDateTime(at)} className={className}>{format(at)}</time>
 );
 
 /** A fact and its value on one line; `mono` for a value that is code (a hash, a path, an id). */
@@ -536,6 +667,39 @@ export const EmptyState = ({ children, icon, framed }: { children: ReactNode; ic
                 </div>
             )
         : <p className="px-4 py-8 text-center text-sm text-muted">{children}</p>
+);
+
+const ICON_TILE_TONES = {
+    accent: 'bg-accent-soft text-accent',
+    muted: 'bg-subtle text-muted',
+    good: 'bg-good-soft text-good',
+    warn: 'bg-warn-soft text-warn',
+    solid: 'bg-accent-solid text-on-accent',
+};
+
+/**
+ * An icon in a tinted tile, before what it stands for: a page's title, a tool's card, a row of a
+ * list (a currency, a task, a theme), `muted` while that is off. 40px with a 20px icon; `small`,
+ * 32px with a 16px one, for a dense row.
+ */
+export const IconTile = ({ children, tone = 'accent', small, className }: { children: ReactNode; tone?: keyof typeof ICON_TILE_TONES; small?: boolean; className?: string }) => (
+    <span
+        aria-hidden
+        className={cx('grid shrink-0 place-items-center', small ? 'size-8 rounded-lg [&>svg]:size-4' : 'size-10 rounded-xl [&>svg]:size-5', ICON_TILE_TONES[tone], className)}
+    >
+        {children}
+    </span>
+);
+
+/**
+ * A picture from the game (a furni's icon, a badge) in a well of its own, before its name in a row
+ * or a field: 40px, or `large` 48px beside a field it is the picture of. `className` for a size
+ * from a breakpoint (`sm:size-8`) or a dashed edge, never a base size.
+ */
+export const Thumb = ({ children, large, className }: { children?: ReactNode; large?: boolean; className?: string }) => (
+    <span className={cx('grid shrink-0 place-items-center overflow-hidden rounded-lg border border-line bg-canvas', large ? 'size-12' : 'size-10', className)}>
+        {children}
+    </span>
 );
 
 /** A player's initials in a coloured tile, the colour picked from their id so it stays theirs. */

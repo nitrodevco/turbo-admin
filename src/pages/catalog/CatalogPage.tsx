@@ -512,7 +512,7 @@ const CatalogEditor = ({ view }: { view: View }) => {
                                             ref={fillTree}
                                             aria-label="Pages"
                                             className={cx(
-                                                'card flex flex-col overflow-hidden lg:sticky lg:top-6 lg:max-h-(--fill-height)',
+                                                'card flex flex-col overflow-hidden lg:sticky lg:top-4 lg:max-h-(--fill-height)',
                                                 selected !== null && 'max-lg:hidden',
                                             )}
                                         >

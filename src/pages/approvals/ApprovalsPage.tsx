@@ -5,13 +5,11 @@ import { Link, useSearchParams } from 'react-router';
 import { type ApprovalFilter, type ApprovalState, useApprovals } from '#/api/approvals';
 import { useMe } from '#/api/queries';
 import { ListToolbar } from '#/components/ListToolbar';
-import { PhoneLabel, Row, RowList } from '#/components/RowList';
+import { PhoneLabel, Row, RowList, WhenCell } from '#/components/RowList';
 import { SearchInput } from '#/components/SearchInput';
 import { Badge, Button, EmptyState, ErrorNotice, Loading, PageBody, PageHeader, Panel, Segmented } from '#/components/ui';
 import { cx } from '#/lib/cx';
 import { plural } from '#/lib/plural';
-import { fromNow } from '#/lib/time';
-import { formatDateTime } from '#/pages/rooms/labels';
 
 import { ApprovalBadge, Requester } from './parts';
 
@@ -131,9 +129,7 @@ export const ApprovalsPage = () => {
                                     >
                                         {entries.map(approval => (
                                             <Row key={approval.id}>
-                                                <span className="text-xs whitespace-nowrap text-muted sm:text-sm" title={formatDateTime(approval.requestedAtUtc)}>
-                                                    {fromNow(approval.requestedAtUtc)}
-                                                </span>
+                                                <WhenCell at={approval.requestedAtUtc} />
                                                 <Link to={`/approvals/${approval.id}`} className="basis-full truncate font-medium hover:text-accent sm:basis-auto">{approval.summary}</Link>
                                                 <span className="min-w-0 truncate font-mono text-xs">
                                                     <button type="button" className="hover:text-accent" onClick={() => go({ ...filter, kind: approval.kind })}>{approval.kind}</button>

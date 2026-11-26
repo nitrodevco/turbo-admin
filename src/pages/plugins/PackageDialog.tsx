@@ -2,7 +2,7 @@ import { Package } from 'lucide-react';
 import { useState } from 'react';
 
 import { downloadPluginPackage } from '#/api/noCode';
-import { Modal, ModalActions } from '#/components/Modal';
+import { Modal, ModalActions, ModalBody } from '#/components/Modal';
 import { toast, toastError } from '#/components/toast';
 import { Button, Input, Labeled } from '#/components/ui';
 
@@ -18,8 +18,7 @@ export const PackageDialog = ({ pluginKey, open, onClose }: { pluginKey: string;
 
     return (
         <Modal title="Make a plugin" open={open} onClose={onClose} className="sm:h-fit! sm:max-w-lg">
-            <form
-                className="flex flex-col gap-3 p-4 sm:p-5"
+            <ModalBody
                 onSubmit={(event) => {
                     event.preventDefault();
                     setBusy(true);
@@ -46,7 +45,7 @@ export const PackageDialog = ({ pluginKey, open, onClose }: { pluginKey: string;
                     <Button variant="ghost" onClick={onClose}>Cancel</Button>
                     <Button type="submit" icon={<Package />} disabled={busy || !key.trim() || !name.trim() || !version.trim()}>Download the zip</Button>
                 </ModalActions>
-            </form>
+            </ModalBody>
         </Modal>
     );
 };

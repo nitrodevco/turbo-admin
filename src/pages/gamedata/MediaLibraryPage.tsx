@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { Copy, ImageOff, LayoutGrid, List, Pencil, Trash2, Upload } from 'lucide-react';
 import { type DragEvent, useEffect, useRef, useState } from 'react';
-import { Link, useSearchParams } from 'react-router';
+import { useSearchParams } from 'react-router';
 
 import { ApiError } from '#/api/client';
 import { CATALOG_PICTURE, mediaFilePath, type MediaImage, type MediaQuery, type MediaUse, useDeleteMedia, useEditMedia, useMediaImage, useMediaSearch, useUploadMedia } from '#/api/media';
@@ -9,7 +9,7 @@ import { ask } from '#/components/confirm';
 import { Pagination } from '#/components/Pagination';
 import { SearchInput } from '#/components/SearchInput';
 import { toast, toastError } from '#/components/toast';
-import { Badge, Button, Chip, EmptyState, ErrorNotice, IconButton, Input, Kv, Labeled, Loading, PageBody, PageHeader, Panel, Segmented, Select } from '#/components/ui';
+import { Badge, Button, Chip, EmptyState, ErrorNotice, IconButton, Input, Kv, Labeled, Loading, PageBody, PageHeader, Panel, Segmented, Select, TextLink } from '#/components/ui';
 import { cx, rowFill } from '#/lib/cx';
 import { useDebounced } from '#/lib/debounce';
 import { CHECKS } from '#/pages/catalog/CatalogImageThumb';
@@ -74,7 +74,7 @@ const UsedOnList = ({ uses }: { uses: MediaUse[] }) => (
         {uses.map(use => (
             <li key={`${use.area}:${use.id}:${use.field}`} className="flex flex-wrap items-baseline gap-2 text-sm">
                 <Badge>{use.area}</Badge>
-                <Link to={use.link} className="text-accent hover:underline">{use.title}</Link>
+                <TextLink inline to={use.link}>{use.title}</TextLink>
                 <span className="text-xs text-muted">{use.field}</span>
             </li>
         ))}

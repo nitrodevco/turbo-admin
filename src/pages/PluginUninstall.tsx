@@ -2,7 +2,7 @@ import { Download, Trash2 } from 'lucide-react';
 import { useState } from 'react';
 
 import { downloadPluginData, type PluginDataItem, type PluginUninstallMode, usePluginUninstallPlan, useUninstallPlugin } from '#/api/plugins';
-import { Modal, ModalActions } from '#/components/Modal';
+import { Modal, ModalActions, ModalBody } from '#/components/Modal';
 import { toast, toastError } from '#/components/toast';
 import { Button, ErrorNotice, Field, Labeled, Loading, Segmented, WarningNotice } from '#/components/ui';
 
@@ -74,8 +74,7 @@ export const PluginUninstall = ({ pluginKey, onClose }: { pluginKey: string; onC
 
     return (
         <Modal open onClose={onClose} title={`Uninstall ${name}`} className="sm:h-fit! sm:max-w-xl">
-            <form
-                className="flex flex-col gap-4 p-4 sm:p-5"
+            <ModalBody
                 onSubmit={(event) => {
                     event.preventDefault();
                     submit();
@@ -139,7 +138,7 @@ export const PluginUninstall = ({ pluginKey, onClose }: { pluginKey: string; onC
                         {deleting ? 'Uninstall and delete data' : 'Uninstall, keep data'}
                     </Button>
                 </ModalActions>
-            </form>
+            </ModalBody>
         </Modal>
     );
 };

@@ -2,7 +2,7 @@ import { Save } from 'lucide-react';
 import { useState } from 'react';
 
 import { type AssetTarget, type AssetTargetInput, DEFAULT_PORTS, PROTOCOLS, type TargetProtocol, useSaveTarget } from '#/api/bundles';
-import { Modal, ModalActions } from '#/components/Modal';
+import { Modal, ModalActions, ModalBody } from '#/components/Modal';
 import { toast } from '#/components/toast';
 import { Button, Checkbox, ErrorNotice, Field, Labeled, Segmented, Switch } from '#/components/ui';
 
@@ -50,8 +50,7 @@ export const TargetForm = ({ target, onClose }: { target: AssetTarget | null; on
 
     return (
         <Modal open onClose={onClose} title={target ? `Edit ${target.name}` : 'Add a publish target'} className="sm:h-fit! sm:max-w-xl">
-            <form
-                className="flex flex-col gap-4 p-4 sm:p-5"
+            <ModalBody
                 onSubmit={(event) => {
                     event.preventDefault();
                     submit();
@@ -182,7 +181,7 @@ export const TargetForm = ({ target, onClose }: { target: AssetTarget | null; on
                     <Button variant="ghost" onClick={onClose}>Cancel</Button>
                     <Button type="submit" icon={<Save />} disabled={save.isPending || !input.name.trim()}>{target ? 'Save' : 'Add target'}</Button>
                 </ModalActions>
-            </form>
+            </ModalBody>
         </Modal>
     );
 };

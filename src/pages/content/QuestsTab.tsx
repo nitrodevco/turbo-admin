@@ -6,7 +6,7 @@ import { ask } from '#/components/confirm';
 import { toast, toastError } from '#/components/toast';
 import { Badge, Button, EmptyState, ErrorNotice, IconButton, Input, Labeled, Loading, Panel, Switch } from '#/components/ui';
 import { plural } from '#/lib/plural';
-import { formatDateTime } from '#/pages/rooms/labels';
+import { formatDateTime } from '#/lib/time';
 
 /** A date for an input of type datetime-local, in UTC, and back. */
 const toInput = (utc: string | null) => (utc ? utc.slice(0, 16) : '');

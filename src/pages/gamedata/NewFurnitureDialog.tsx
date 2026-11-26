@@ -4,7 +4,7 @@ import { Link } from 'react-router';
 
 import { catalogCalls, useCatalogEdit, useCatalogTree } from '#/api/catalog';
 import { type FurnitureCreated, type FurnitureDraft, useCreateDefinitions, useFurnitureDraft, useLogicTypes } from '#/api/gamedata';
-import { Modal } from '#/components/Modal';
+import { Modal, ModalBody } from '#/components/Modal';
 import { toast, toastError } from '#/components/toast';
 import { Button, Checkbox, ErrorNotice, Field, Kv, Labeled, Loading, Segmented, Switch, WarningNotice } from '#/components/ui';
 import { PageSelect, type Price, PriceFields } from '#/pages/catalog/fields';
@@ -80,7 +80,7 @@ const Made = ({ made, onClose }: { made: FurnitureCreated; onClose: () => void }
     };
 
     return (
-        <div className="flex flex-col gap-4 p-4 sm:p-5">
+        <ModalBody>
             <p className="inline-flex items-center gap-2 text-sm text-good">
                 <CheckCircle2 className="size-4" />
                 {made.ids.length === 1 ? `Made ${made.definition.className}.` : `Made ${made.definition.className} and ${made.ids.length - 1} colours of it.`}
@@ -120,7 +120,7 @@ const Made = ({ made, onClose }: { made: FurnitureCreated; onClose: () => void }
             <div className="flex justify-end">
                 <Button variant="ghost" onClick={onClose}>Done</Button>
             </div>
-        </div>
+        </ModalBody>
     );
 };
 
@@ -139,7 +139,7 @@ const DraftForm = ({ draft, onMade }: { draft: FurnitureDraft; onMade: (made: Fu
     const submit = () => create.mutate({ type: kind, fields: fieldsOf(values, kind), colors: [ ...colors ].sort((a, b) => a - b) }, { onSuccess: onMade });
 
     return (
-        <div className="flex flex-col gap-4 p-4 sm:p-5">
+        <ModalBody>
             <p className="text-xs text-muted">
                 Read from the bundle&apos;s own data: its size, height, states and logic. Whether it is a seat, a bed or a surface is not in a bundle: say so below.
             </p>
@@ -222,7 +222,7 @@ const DraftForm = ({ draft, onMade }: { draft: FurnitureDraft; onMade: (made: Fu
                     {create.isPending ? 'Making…' : colors.size > 0 ? `Make ${colors.size + 1} definitions` : 'Make the definition'}
                 </Button>
             </div>
-        </div>
+        </ModalBody>
     );
 };
 
@@ -243,7 +243,7 @@ export const NewFurnitureDialog = ({ bundle, onClose }: { bundle: string | null;
     return (
         <Modal open={bundle !== null} onClose={close} title={<span className="font-mono">{`New furniture from ${bundle ?? ''}`}</span>} className="sm:h-fit! sm:max-w-3xl">
             {made && <Made made={made} onClose={close} />}
-            {!made && draft.error && <div className="p-4 sm:p-5"><ErrorNotice error={draft.error} /></div>}
+            {!made && draft.error && <ModalBody><ErrorNotice error={draft.error} /></ModalBody>}
             {!made && !draft.data && !draft.error && <Loading />}
             {!made && draft.data && draft.data.bundle === bundle && <DraftForm key={bundle} draft={draft.data} onMade={setMade} />}
         </Modal>

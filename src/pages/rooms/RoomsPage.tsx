@@ -6,12 +6,11 @@ import type { RoomSearchMode } from '#/api/types';
 import { ListToolbar } from '#/components/ListToolbar';
 import { SearchInput } from '#/components/SearchInput';
 import { PhoneSort } from '#/components/SortHeader';
-import { Badge, type BadgeTone, Button, EmptyState, ErrorNotice, Loading, PageBody, PageHeader, Panel, Select, Td, Th } from '#/components/ui';
+import { Ago, Badge, type BadgeTone, Button, EmptyState, ErrorNotice, Loading, PageBody, PageHeader, Panel, Select, Td, Th } from '#/components/ui';
 import { cx } from '#/lib/cx';
 import { type ListOrder, orderOf, orderParams, pageOf, type Sorting } from '#/lib/sort';
-import { fromNow } from '#/lib/time';
 
-import { doorModeLabel, formatDateTime } from './labels';
+import { doorModeLabel } from './labels';
 
 const DOOR_TONES: Record<string, BadgeTone> = { Locked: 'amber', Password: 'amber', Invisible: 'neutral' };
 
@@ -153,7 +152,7 @@ export const RoomsPage = () => {
                                                                         ? <>{room.population}<span className="text-muted"> / {room.playersMax}</span></>
                                                                         : <span className="font-sans text-xs text-muted">not loaded</span>}
                                                                 </Td>
-                                                                <Td className="text-muted"><span title={formatDateTime(room.lastActiveUtc)}>{fromNow(room.lastActiveUtc)}</span></Td>
+                                                                <Td className="text-muted"><Ago at={room.lastActiveUtc} /></Td>
                                                             </tr>
                                                         ))}
                                                     </tbody>

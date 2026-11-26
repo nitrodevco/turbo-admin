@@ -1,13 +1,12 @@
 import { LogOut, Save } from 'lucide-react';
 import { useState } from 'react';
-import { Link, useParams } from 'react-router';
+import { useParams } from 'react-router';
 
 import { useMe, useRoom } from '#/api/queries';
 import { roomCalls, type RoomPetItem, type RoomPetRequest, useRoomAction, useRoomPets } from '#/api/rooms';
 import { ask } from '#/components/confirm';
-import { Avatar, Badge, Button, EmptyState, ErrorNotice, Input, Labeled, Loading, PageBody, Panel, Switch } from '#/components/ui';
+import { Avatar, Badge, Button, EmptyState, ErrorNotice, Input, Labeled, ListPanel, Loading, PageBody, Panel, Switch, TextLink } from '#/components/ui';
 import { cx, rowFill } from '#/lib/cx';
-import { useFillHeight } from '#/lib/fillHeight';
 
 import { ActionOutcome, RoomHeader } from './RoomHeader';
 
@@ -39,7 +38,7 @@ const PetEditor = ({ roomId, pet, canManage, linked }: { roomId: number; pet: Ro
     return (
         <Panel
             title={pet.name}
-            description={<>Type {pet.typeId}, palette {pet.paletteId}. Owned by {linked ? <Link to={`/players/${pet.ownerId}`} className="text-accent hover:underline">{pet.ownerName}</Link> : pet.ownerName}.</>}
+            description={<>Type {pet.typeId}, palette {pet.paletteId}. Owned by {linked ? <TextLink inline to={`/players/${pet.ownerId}`}>{pet.ownerName}</TextLink> : pet.ownerName}.</>}
             actions={canManage && (
                 <Button
                     variant="ghost"
@@ -94,7 +93,6 @@ export const RoomPetsPage = () => {
     const { data: pets, error, isPending } = useRoomPets(id);
     const [ open, setOpen ] = useState<number | null>(null);
     const linked = useMe().data?.canViewPlayers ?? false;
-    const fillList = useFillHeight<HTMLElement>();
     const canManage = room?.can.manageBotsAndPets ?? false;
     const selected = pets?.find(x => x.id === open) ?? pets?.[0] ?? null;
 
@@ -107,7 +105,7 @@ export const RoomPetsPage = () => {
                 {pets && pets.length === 0 && <Panel><EmptyState>No pet stands in this room.</EmptyState></Panel>}
                 {pets && selected && (
                     <div className="grid items-start gap-4 lg:grid-cols-[20rem_minmax(0,1fr)] lg:gap-6">
-                        <Panel ref={fillList} title={`Pets (${pets.length})`} className="flex flex-col overflow-clip lg:sticky lg:top-4 lg:max-h-(--fill-height)">
+                        <ListPanel title="Pets" count={pets.length}>
                             <ul className="max-h-[60dvh] min-h-0 overflow-y-auto lg:max-h-none">
                                 {pets.map(pet => (
                                     <li key={pet.id} className="border-t border-line first:border-t-0">
@@ -122,7 +120,7 @@ export const RoomPetsPage = () => {
                                     </li>
                                 ))}
                             </ul>
-                        </Panel>
+                        </ListPanel>
                         {/* Keyed by what was saved, so the form starts again from it. */}
                         <PetEditor key={JSON.stringify(selected)} roomId={id} pet={selected} canManage={canManage} linked={linked} />
                     </div>

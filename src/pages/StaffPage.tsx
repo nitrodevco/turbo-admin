@@ -77,7 +77,7 @@ export const StaffPage = () => {
             <PermissionsHeader section="passkeys" />
             {/* The page's full width, as under the other access tabs, with the form kept to a readable column. */}
             <PageBody>
-                <div className="grid max-w-2xl gap-5">
+                <div className="grid max-w-2xl gap-4 lg:gap-6">
                     <Panel
                         title="Set up or reset a passkey"
                         description="A one-time link to create a passkey. For someone who already has one, it replaces them all. Only for players whose permissions you all hold yourself."

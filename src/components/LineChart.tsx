@@ -1,5 +1,6 @@
 import { Area, CartesianGrid, ComposedChart, Line, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 
+import { Th } from '#/components/ui';
 import { cx } from '#/lib/cx';
 
 /** One line: its name (for the legend, tooltip and table) and its colour token. */
@@ -155,10 +156,10 @@ export const ChartTable = ({ label, series, points, format, timeFormat = timeOf 
     <div className="max-h-[168px] overflow-y-auto">
         <table className="w-full text-xs">
             <caption className="sr-only">{label}</caption>
-            <thead className="sticky top-0 bg-surface text-muted">
+            <thead className="sticky top-0 bg-surface">
                 <tr>
-                    <th scope="col" className="px-4 py-1.5 text-left font-medium">Time</th>
-                    {series.map(s => <th key={s.name} scope="col" className="px-4 py-1.5 text-right font-medium">{s.name}</th>)}
+                    <Th>Time</Th>
+                    {series.map(s => <Th key={s.name} className="text-right">{s.name}</Th>)}
                 </tr>
             </thead>
             <tbody className="font-mono tabular-nums">

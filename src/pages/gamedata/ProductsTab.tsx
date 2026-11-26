@@ -83,9 +83,9 @@ const ProductEditor = ({ product, canManage, onDone }: { product: ProductEntry |
                     <Button variant="ghost" icon={<X />} onClick={onDone}>Cancel</Button>
                     {product && (
                         <Button
-                            variant="ghost"
+                            variant="danger-ghost"
                             icon={<Trash2 />}
-                            className="ml-auto text-bad hover:text-bad"
+                            className="ml-auto"
                             disabled={remove.isPending}
                             onClick={() => ask(
                                 {

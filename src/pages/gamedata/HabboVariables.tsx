@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { FILES, type GamedataStatus, HABBO_VARIABLE_ACTIONS, type HabboVariableUpdateItem, useHabboVariableUpdate, useTakeHabboVariables } from '#/api/gamedata';
 import { SearchInput } from '#/components/SearchInput';
 import { toast } from '#/components/toast';
-import { Badge, CHECK_CLASS, Checkbox } from '#/components/ui';
+import { Badge, CHECK_CLASS, Checkbox, TextButton } from '#/components/ui';
 
 import { showValue } from './labels';
 import { HabboUpdate } from './parts';
@@ -108,8 +108,8 @@ export const HabboVariables = ({ status, defaultOpen }: { status: GamedataStatus
                 <span className="text-xs text-muted tabular-nums">{picked.length.toLocaleString()} of {waiting.length.toLocaleString()} picked</span>
                 {status.canManage && (
                     <span className="flex gap-3 text-xs">
-                        <button type="button" className="font-medium text-accent hover:underline" onClick={() => pick(shown.map(x => x.key), true)}>Pick {words ? 'shown' : 'all'}</button>
-                        <button type="button" className="font-medium text-accent hover:underline" onClick={() => pick(shown.map(x => x.key), false)}>Pick none{words ? ' shown' : ''}</button>
+                        <TextButton inline onClick={() => pick(shown.map(x => x.key), true)}>Pick {words ? 'shown' : 'all'}</TextButton>
+                        <TextButton inline onClick={() => pick(shown.map(x => x.key), false)}>Pick none{words ? ' shown' : ''}</TextButton>
                     </span>
                 )}
             </li>

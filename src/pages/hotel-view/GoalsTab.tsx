@@ -1,12 +1,11 @@
 import { Plus, Save, Trash2, X } from 'lucide-react';
 import { useState } from 'react';
-import { Link } from 'react-router';
 
 import { promoImageUrl, useClientAssets } from '#/api/assets';
 import { type CommunityGoal, GOAL_MODES, useCommunityGoals, useDeleteCommunityGoal, useGoalStanding, useHotelViewTexts, useSaveCommunityGoal, useSaveHotelView } from '#/api/hotelView';
 import { ask } from '#/components/confirm';
 import { OpenRow } from '#/components/RowList';
-import { Badge, Button, EmptyState, ErrorNotice, Input, Labeled, Loading, Panel, Select, SuccessNotice, WarningNotice } from '#/components/ui';
+import { Badge, Button, EmptyState, ErrorNotice, Input, Labeled, Loading, Panel, Select, SuccessNotice, TextLink, WarningNotice } from '#/components/ui';
 
 import type { HotelViewDraft } from './draft';
 import { slotsHolding } from './hooks';
@@ -137,7 +136,7 @@ const Standing = ({ goal }: { goal: CommunityGoal }) => {
                             {data.top.map(x => (
                                 <li key={x.playerId} className="flex items-center gap-3 px-3 py-2">
                                     <span className="w-6 text-right font-mono text-xs text-muted">{x.rank}</span>
-                                    <Link to={`/players/${x.playerId}`} className="min-w-0 flex-1 truncate text-accent hover:underline">{x.name}</Link>
+                                    <TextLink inline to={`/players/${x.playerId}`} className="min-w-0 flex-1 truncate">{x.name}</TextLink>
                                     <span className="font-mono text-xs">{x.score}</span>
                                 </li>
                             ))}
@@ -208,9 +207,9 @@ const GoalEditor = ({ goal, now, onDone, disabled }: { goal: CommunityGoal | nul
                         <Button variant="ghost" icon={<X />} onClick={onDone}>{goal ? 'Close' : 'Cancel'}</Button>
                         {goal && (
                             <Button
-                                variant="ghost"
+                                variant="danger-ghost"
                                 icon={<Trash2 />}
-                                className="ml-auto text-bad hover:text-bad"
+                                className="ml-auto"
                                 disabled={remove.isPending}
                                 onClick={() => ask({ title: `Remove the goal ${goal.code}, and everything players gave it?`, confirm: 'Remove' }, () => remove.mutate(goal.id, { onSuccess: onDone }))}
                             >

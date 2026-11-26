@@ -1,30 +1,16 @@
-import { Box, ChevronDown, LogOut } from 'lucide-react';
+import { ChevronDown, LogOut } from 'lucide-react';
 import { useDeferredValue, useState } from 'react';
-import { Link, useParams } from 'react-router';
+import { useParams } from 'react-router';
 
-import { furniIconUrl, useClientAssets } from '#/api/assets';
 import { useMe, useRoom } from '#/api/queries';
 import { roomCalls, type RoomFurnitureItem, useRoomAction, useRoomFurniture } from '#/api/rooms';
 import { ask } from '#/components/confirm';
 import { SearchInput } from '#/components/SearchInput';
-import { Badge, Button, EmptyState, ErrorNotice, Loading, PageBody, Panel } from '#/components/ui';
+import { Badge, Button, EmptyState, ErrorNotice, FieldLabel, Loading, PageBody, Panel, TextLink } from '#/components/ui';
 import { cx } from '#/lib/cx';
+import { FurniThumb } from '#/pages/catalog/ProductIcon';
 
 import { ActionOutcome, RoomHeader } from './RoomHeader';
-
-const Icon = ({ className }: { className: string }) => {
-    const assets = useClientAssets();
-    const url = furniIconUrl(assets, className);
-    const [ failed, setFailed ] = useState<string | null>(null);
-
-    return (
-        <span className="grid size-9 shrink-0 place-items-center rounded-lg bg-subtle">
-            {url && failed !== url
-                ? <img key={url} src={url} alt="" loading="lazy" className="max-h-[85%] max-w-[85%] [image-rendering:pixelated]" onError={() => setFailed(url)} />
-                : <Box className="size-4 text-muted" aria-hidden />}
-        </span>
-    );
-};
 
 /** Its data as the room keeps it: JSON laid out to read, anything else as it is. */
 const readable = (data: string) => {
@@ -47,7 +33,7 @@ const ItemRow = ({ item, open, onToggle, canPickUp, linkPlayers, onPickUp, picki
 }) => (
     <li className="border-t border-line first:border-t-0">
         <button type="button" onClick={onToggle} aria-expanded={open} className={cx('flex min-h-14 w-full items-center gap-3 px-4 py-2 text-left hover:bg-subtle/60', open && 'bg-subtle/40')}>
-            <Icon className={item.className} />
+            <FurniThumb name={item.className} />
             <span className="min-w-0 flex-1">
                 <span className="flex min-w-0 items-baseline gap-2">
                     <span className="truncate font-mono text-ui font-medium">{item.className}</span>
@@ -64,16 +50,16 @@ const ItemRow = ({ item, open, onToggle, canPickUp, linkPlayers, onPickUp, picki
         {open && (
             <div className="flex flex-col gap-3 border-t border-line bg-canvas/50 px-4 py-3 text-ui">
                 <dl className="grid gap-x-6 gap-y-1.5 sm:grid-cols-2">
-                    <div className="flex justify-between gap-3"><dt className="text-muted">Owner</dt><dd>{linkPlayers ? <Link to={`/players/${item.ownerId}`} className="text-accent hover:underline">{item.ownerName}</Link> : item.ownerName}</dd></div>
+                    <div className="flex justify-between gap-3"><dt className="text-muted">Owner</dt><dd>{linkPlayers ? <TextLink inline to={`/players/${item.ownerId}`}>{item.ownerName}</TextLink> : item.ownerName}</dd></div>
                     <div className="flex justify-between gap-3">
                         <dt className="text-muted">Definition</dt>
-                        <dd><Link to={`/gamedata/library/furniture?q=${encodeURIComponent(item.className)}&id=${item.definitionId}`} className="font-mono text-accent hover:underline">{`${item.className} (sprite ${item.spriteId})`}</Link></dd>
+                        <dd><TextLink inline to={`/gamedata/library/furniture?q=${encodeURIComponent(item.className)}&id=${item.definitionId}`} className="font-mono">{`${item.className} (sprite ${item.spriteId})`}</TextLink></dd>
                     </div>
                     <div className="flex justify-between gap-3"><dt className="text-muted">Logic</dt><dd className="font-mono">{item.logic}</dd></div>
                     <div className="flex justify-between gap-3"><dt className="text-muted">Where</dt><dd className="font-mono">{item.wall ? 'on the wall' : `x ${item.x}, y ${item.y}, z ${item.z.toFixed(2)}, rotation ${item.rotation}`}</dd></div>
                 </dl>
                 <div>
-                    <span className="text-xs font-medium text-muted">Data</span>
+                    <FieldLabel>Data</FieldLabel>
                     <pre className="mt-1 max-h-60 overflow-auto rounded-lg border border-line bg-surface p-2.5 font-mono text-2xs whitespace-pre-wrap">{item.extraData ? readable(item.extraData) : '(none)'}</pre>
                 </div>
                 {canPickUp && (
@@ -116,7 +102,8 @@ export const RoomFurniturePage = () => {
                 {error && <ErrorNotice error={error} />}
                 {items && (
                     <Panel
-                        title={`Furniture (${items.length})`}
+                        title="Furniture"
+                        count={items.length}
                         actions={<SearchInput value={text} onValueChange={setText} placeholder="Classname, name, owner or id" aria-label="Find furniture" className="w-full sm:w-72" />}
                         className="overflow-clip"
                     >

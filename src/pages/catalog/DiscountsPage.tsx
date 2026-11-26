@@ -5,7 +5,7 @@ import { type ServerSetting, SOURCE, useResetSetting, useSaveSetting, useSetting
 import { ask } from '#/components/confirm';
 import { RestartServer } from '#/components/RestartServer';
 import { toast } from '#/components/toast';
-import { Button, ErrorNotice, Input, Loading, PageBody, PageHeader, Panel, Switch, TextButton, WarningNotice } from '#/components/ui';
+import { Button, CountInput, ErrorNotice, FieldLabel, Input, Loading, PageBody, PageHeader, Panel, Switch, TextButton, WarningNotice } from '#/components/ui';
 import { cx } from '#/lib/cx';
 
 import { catalogTabs } from './catalogTabs';
@@ -140,40 +140,6 @@ const sameRuleset = (a: Omit<Ruleset, 'maxPurchaseSize'>, b: Ruleset) =>
     && (a.bundleSize === 0 || a.bonusThreshold === b.bonusThreshold)
     && a.thresholds.join() === b.thresholds.join();
 
-/** A whole number typed in place: kept as typed until it is one in range, put back on leaving. */
-const Count = ({ value, onChange, min, max, label, disabled, className }: { value: number; onChange: (value: number) => void; min: number; max?: number; label: string; disabled?: boolean; className?: string }) => {
-    const [ text, setText ] = useState(String(value));
-    const [ was, setWas ] = useState(value);
-
-    if (value !== was) {
-        setWas(value);
-        setText(String(value));
-    }
-
-    return (
-        <Input
-            type="number"
-            inputMode="numeric"
-            step={1}
-            min={min}
-            max={max}
-            aria-label={label}
-            disabled={disabled}
-            value={text}
-            onChange={(event) => {
-                const typed = event.target.value;
-                const number = Number(typed);
-
-                setText(typed);
-
-                if (typed.trim() !== '' && Number.isInteger(number) && number >= min && (max === undefined || number <= max)) onChange(number);
-            }}
-            onBlur={() => setText(String(value))}
-            className={cx('text-center font-mono', className ?? 'w-20')}
-        />
-    );
-};
-
 /** One step of the setup: a number, a title, what it does, and its controls. */
 const Step = ({ number, title, hint, aside, children }: { number: number; title: string; hint: ReactNode; aside?: ReactNode; children?: ReactNode }) => (
     <section className="flex gap-3 p-4">
@@ -239,7 +205,7 @@ const ExtrasEditor = ({ thresholds, max, disabled, onChange }: { thresholds: num
             {!disabled && (
                 <div className="grid items-start gap-3 2xl:grid-cols-2">
                     <div className="flex flex-col gap-2 rounded-lg border border-line p-3">
-                        <span className="text-xs font-medium text-muted">Add one quantity</span>
+                        <FieldLabel>Add one quantity</FieldLabel>
                         <div className="flex items-center gap-2">
                             <Input
                                 type="number"
@@ -262,14 +228,14 @@ const ExtrasEditor = ({ thresholds, max, disabled, onChange }: { thresholds: num
                         <span className="text-xs text-muted">Add the same quantity again for two at once.</span>
                     </div>
                     <div className="flex flex-col gap-2 rounded-lg border border-line p-3">
-                        <span className="text-xs font-medium text-muted">Add a run</span>
+                        <FieldLabel>Add a run</FieldLabel>
                         <div className="flex flex-wrap items-center gap-2 text-sm">
-                            From <Count label="Run from" value={run.from} min={1} onChange={from => setRun({ ...run, from })} className="w-16" />
-                            to <Count label="Run to" value={run.to} min={1} onChange={to => setRun({ ...run, to })} className="w-16" />
-                            every <Count label="Run every" value={run.every} min={1} onChange={every => setRun({ ...run, every })} className="w-14" />
+                            From <CountInput label="Run from" value={run.from} min={1} onChange={from => setRun({ ...run, from })} className="w-16" />
+                            to <CountInput label="Run to" value={run.to} min={1} onChange={to => setRun({ ...run, to })} className="w-16" />
+                            every <CountInput label="Run every" value={run.every} min={1} onChange={every => setRun({ ...run, every })} className="w-14" />
                         </div>
                         <div className="flex flex-wrap items-center gap-2 text-sm">
-                            <Count label="Free at each" value={run.each} min={1} max={10} onChange={each => setRun({ ...run, each })} className="w-14" /> free at each
+                            <CountInput label="Free at each" value={run.each} min={1} max={10} onChange={each => setRun({ ...run, each })} className="w-14" /> free at each
                         </div>
                         <div className="flex flex-wrap items-center gap-2">
                             <Button variant="secondary" icon={<Plus />} disabled={runQuantities.length === 0} onClick={() => onChange(sorted([ ...thresholds, ...runQuantities.flatMap(x => Array<number>(run.each).fill(x)) ]))}>
@@ -367,7 +333,7 @@ const Preview = ({ ruleset }: { ruleset: Ruleset }) => {
                         aria-label="Quantity bought"
                         className="min-w-0 flex-1 accent-accent-solid"
                     />
-                    <Count label="Quantity bought" value={quantity} min={1} max={ruleset.maxPurchaseSize} onChange={setPicked} />
+                    <CountInput label="Quantity bought" value={quantity} min={1} max={ruleset.maxPurchaseSize} onChange={setPicked} />
                 </div>
                 <div className="grid grid-cols-3 divide-x divide-line rounded-lg border border-line text-center">
                     <div className="p-2.5">
@@ -471,7 +437,7 @@ const DiscountForm = ({ settings, canManage }: { settings: Record<Name, ServerSe
                         <Step number={1} title="Most at once" hint="How high the client's quantity spinner goes. A bigger order is refused. Only offers that can be bundled go past one.">
                             <div className="flex items-center gap-3">
                                 <input type="range" min={1} max={Math.max(200, draft.maxPurchaseSize)} value={draft.maxPurchaseSize} onChange={event => set({ maxPurchaseSize: Number(event.target.value) })} disabled={!editable('MaxPurchaseSize')} aria-label="Most at once" className="min-w-0 flex-1 accent-accent-solid" />
-                                <Count label="Most at once" value={draft.maxPurchaseSize} min={1} onChange={maxPurchaseSize => set({ maxPurchaseSize })} disabled={!editable('MaxPurchaseSize')} />
+                                <CountInput label="Most at once" value={draft.maxPurchaseSize} min={1} onChange={maxPurchaseSize => set({ maxPurchaseSize })} disabled={!editable('MaxPurchaseSize')} />
                             </div>
                         </Step>
                         <Step
@@ -485,9 +451,9 @@ const DiscountForm = ({ settings, canManage }: { settings: Record<Name, ServerSe
                                     <div className="flex flex-wrap items-center gap-2 text-sm">
                                         <Gift className="size-4 text-accent" />
                                         Every
-                                        <Count label="Bundle size" value={draft.bundleSize} min={1} onChange={bundleSize => set({ bundleSize })} disabled={!editable('BundleSize')} className="w-16" />
+                                        <CountInput label="Bundle size" value={draft.bundleSize} min={1} onChange={bundleSize => set({ bundleSize })} disabled={!editable('BundleSize')} className="w-16" />
                                         bought gives
-                                        <Count label="Free per bundle" value={draft.bundleDiscountSize} min={0} onChange={bundleDiscountSize => set({ bundleDiscountSize })} disabled={!editable('BundleDiscountSize')} className="w-16" />
+                                        <CountInput label="Free per bundle" value={draft.bundleDiscountSize} min={0} onChange={bundleDiscountSize => set({ bundleDiscountSize })} disabled={!editable('BundleDiscountSize')} className="w-16" />
                                         free.
                                     </div>
                                     <div className="rounded-lg border border-line p-3">
@@ -501,7 +467,7 @@ const DiscountForm = ({ settings, canManage }: { settings: Record<Name, ServerSe
                                         {bonusOn && (
                                             <div className="mt-2 flex flex-wrap items-center gap-2 text-sm">
                                                 From
-                                                <Count label="Growing bonus from" value={draft.bonusThreshold} min={-1} max={NO_BONUS - 1} onChange={bonusThreshold => set({ bonusThreshold })} disabled={!editable('BonusThreshold')} className="w-16" />
+                                                <CountInput label="Growing bonus from" value={draft.bonusThreshold} min={-1} max={NO_BONUS - 1} onChange={bonusThreshold => set({ bonusThreshold })} disabled={!editable('BonusThreshold')} className="w-16" />
                                                 whole bundles ({Math.max(0, draft.bonusThreshold) * draft.bundleSize} items) up.
                                             </div>
                                         )}

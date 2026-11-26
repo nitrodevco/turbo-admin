@@ -1,11 +1,11 @@
 import { Eye, EyeOff, Plus, Save, Trash2, X } from 'lucide-react';
 import { useState } from 'react';
-import { Link, useSearchParams } from 'react-router';
+import { useSearchParams } from 'react-router';
 
 import { type NavigatorFlatCategory, type NavigatorList, useDeleteNavigator, useNavigatorContent, useSaveNavigator } from '#/api/content';
 import { ask } from '#/components/confirm';
 import { OpenRow } from '#/components/RowList';
-import { Badge, Button, EmptyState, ErrorNotice, IconButton, Input, Labeled, Loading, Panel, Segmented, Switch } from '#/components/ui';
+import { AddRow, Badge, Button, EmptyState, ErrorNotice, IconButton, Input, Labeled, Loading, Panel, Segmented, Switch, TextLink } from '#/components/ui';
 import { plural } from '#/lib/plural';
 
 import { PublicRoomsTab } from './PublicRoomsTab';
@@ -50,9 +50,9 @@ const CategoryEditor = ({ category, onDone, canManage }: { category: NavigatorFl
                     <Button variant="ghost" icon={<X />} onClick={onDone}>Cancel</Button>
                     {category && (
                         <Button
-                            variant="ghost"
+                            variant="danger-ghost"
                             icon={<Trash2 />}
-                            className="ml-auto text-bad hover:text-bad"
+                            className="ml-auto"
                             disabled={remove.isPending}
                             onClick={() => ask({ title: `Remove the category ${category.name}?`, confirm: 'Remove' }, () => remove.mutate({ list: 'categories', id: category.id }, { onSuccess: onDone }))}
                         >
@@ -108,8 +108,7 @@ const SimpleList = ({ list, title, description, rows, placeholder, canManage }: 
                 ))}
             </ul>
             {canManage && (
-                <form
-                    className="flex gap-2 border-t border-line px-4 py-3"
+                <AddRow
                     onSubmit={(event) => {
                         event.preventDefault();
                         save.mutate({ list, id: null, body: { [field]: adding.trim(), visible: true } }, { onSuccess: () => setAdding('') });
@@ -117,7 +116,7 @@ const SimpleList = ({ list, title, description, rows, placeholder, canManage }: 
                 >
                     <Input value={adding} onChange={event => setAdding(event.target.value)} placeholder={placeholder} className="min-w-0 flex-1 font-mono" />
                     <Button type="submit" variant="secondary" icon={<Plus />} disabled={!adding.trim() || save.isPending}>Add</Button>
-                </form>
+                </AddRow>
             )}
             {(save.error || remove.error) && <div className="p-4"><ErrorNotice error={save.error ?? remove.error} /></div>}
         </Panel>
@@ -160,7 +159,7 @@ const NavigatorLists = ({ canManage }: { canManage: boolean }) => {
         <div className="flex flex-col gap-4">
             <Panel
                 title="Room categories"
-                description={<>A category with rooms in it can't be removed until they move. Staff picks are set on <Link to="/rooms" className="text-accent hover:underline">each room</Link>.</>}
+                description={<>A category with rooms in it can't be removed until they move. Staff picks are set on <TextLink inline to="/rooms">each room</TextLink>.</>}
                 actions={canManage && <Button variant="secondary" icon={<Plus />} onClick={() => setOpen('new')} disabled={open === 'new'}>New category</Button>}
                 className="overflow-clip"
             >

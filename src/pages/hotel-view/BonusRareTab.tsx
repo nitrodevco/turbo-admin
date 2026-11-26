@@ -1,14 +1,14 @@
 import { Plus, Receipt, Save, Trash2, X } from 'lucide-react';
 import { useState } from 'react';
 
-import { furniIconUrl, useClientAssets } from '#/api/assets';
-import { useFurnitureSearch } from '#/api/catalog';
 import { BONUS_SOURCES, type BonusRareCampaign, PURCHASE_RESULTS, useBonusRareCampaigns, useBonusRareStanding, useDeleteBonusRareCampaign, useRecordBonusRarePurchase, useSaveBonusRareCampaign } from '#/api/hotelView';
 import type { ImageAccept } from '#/api/media';
 import { ask } from '#/components/confirm';
 import { OpenRow } from '#/components/RowList';
-import { Badge, Button, EmptyState, ErrorNotice, Input, Labeled, Loading, Panel, Select, SuccessNotice } from '#/components/ui';
+import { Badge, Button, EmptyState, ErrorNotice, Input, Labeled, Loading, Panel, Select, SuccessNotice, Thumb } from '#/components/ui';
 import { cx } from '#/lib/cx';
+import { ProductIcon } from '#/pages/catalog/ProductIcon';
+import { ItemPicker } from '#/pages/catalog/ProductsEditor';
 
 import type { HotelViewDraft } from './draft';
 import { useResolveImage } from './hooks';
@@ -23,44 +23,18 @@ type CampaignDraft = Omit<BonusRareCampaign, 'id'>;
 /** Whether it runs at the time: started, and not ended. */
 const isRunning = (campaign: BonusRareCampaign, now: number) => (isoTime(campaign.startsAt) ?? 0) <= now && (isoTime(campaign.endsAt) ?? Infinity) > now;
 
-/** A furniture to give, found by name, with its icon. */
-const FurniturePicker = ({ value, onChange, disabled }: { value: string; onChange: (name: string) => void; disabled?: boolean }) => {
-    const assets = useClientAssets();
-    const [ text, setText ] = useState('');
-    const { data: found } = useFurnitureSearch(text);
-    const icon = furniIconUrl(assets, value || null);
-
-    return (
-        <Labeled label="Furniture given">
-            <div className="flex flex-col gap-2">
-                <div className="flex items-center gap-3">
-                    <span className="grid size-10 shrink-0 place-items-center rounded-lg border border-line bg-canvas">{icon && <img src={icon} alt="" className="max-h-8 max-w-8" />}</span>
-                    <Input value={value} onChange={event => onChange(event.target.value.trim())} className="font-mono" disabled={disabled} />
-                </div>
-                {!disabled && <Input type="search" value={text} onChange={event => setText(event.target.value)} placeholder="Find furniture" aria-label="Find furniture" />}
-                {found && found.length > 0 && text.trim() && (
-                    <ul className="max-h-48 divide-y divide-line overflow-y-auto rounded-lg border border-line">
-                        {found.slice(0, 20).map(furni => (
-                            <li key={furni.id}>
-                                <button
-                                    type="button"
-                                    onClick={() => {
-                                        onChange(furni.name);
-                                        setText('');
-                                    }}
-                                    className="flex w-full items-center gap-3 px-3 py-1.5 text-left text-sm hover:bg-subtle"
-                                >
-                                    <img src={furniIconUrl(assets, furni.name) ?? ''} alt="" className="max-h-6 max-w-6" />
-                                    <span className="font-mono text-xs">{furni.name}</span>
-                                </button>
-                            </li>
-                        ))}
-                    </ul>
-                )}
+/** A furniture to give, by its class name: typed, or found by name. */
+const FurniturePicker = ({ value, onChange, disabled }: { value: string; onChange: (name: string) => void; disabled?: boolean }) => (
+    <Labeled label="Furniture given">
+        <div className="flex flex-col gap-2">
+            <div className="flex items-center gap-3">
+                <Thumb>{value && <ProductIcon type="floor" name={value} />}</Thumb>
+                <Input value={value} onChange={event => onChange(event.target.value.trim())} className="font-mono" disabled={disabled} />
             </div>
-        </Labeled>
-    );
-};
+            <ItemPicker value={{ id: null, name: value || null }} onPick={item => onChange(item.name)} disabled={disabled} />
+        </div>
+    </Labeled>
+);
 
 const empty = (now: number): CampaignDraft => ({
     code: '',
@@ -132,9 +106,9 @@ const CampaignEditor = ({ campaign, now, onDone, disabled }: { campaign: BonusRa
                     <Button variant="ghost" icon={<X />} onClick={onDone}>{campaign ? 'Close' : 'Cancel'}</Button>
                     {campaign && (
                         <Button
-                            variant="ghost"
+                            variant="danger-ghost"
                             icon={<Trash2 />}
-                            className="ml-auto text-bad hover:text-bad"
+                            className="ml-auto"
                             disabled={remove.isPending}
                             onClick={() => ask({ title: `Remove the campaign ${campaign.code}?`, body: 'Players\' progress stays under its code.', confirm: 'Remove' }, () => remove.mutate(campaign.id, { onSuccess: onDone }))}
                         >

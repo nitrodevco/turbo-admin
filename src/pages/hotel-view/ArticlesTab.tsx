@@ -5,7 +5,7 @@ import { promoImageUrl, useClientAssets } from '#/api/assets';
 import { ARTICLE_LINK_TYPES, type PromoArticle, type PromoArticleDraft, useDeletePromoArticle, usePromoArticles, useReorderPromoArticles, useSavePromoArticle } from '#/api/hotelView';
 import type { ImageAccept } from '#/api/media';
 import { ask } from '#/components/confirm';
-import { Badge, Button, EmptyState, ErrorNotice, IconButton, Input, Labeled, Loading, Panel, Select, Switch, Textarea } from '#/components/ui';
+import { Badge, Button, EmptyState, ErrorNotice, FieldLabel, IconButton, Input, Labeled, Loading, Panel, Select, Switch, Textarea } from '#/components/ui';
 
 import type { HotelViewDraft } from './draft';
 import { inputToIso, isoTime, isoToInput } from './model';
@@ -96,9 +96,9 @@ const ArticleEditor = ({ article, onDone, disabled }: { article: PromoArticle | 
                         <Button variant="ghost" icon={<X />} onClick={onDone}>Cancel</Button>
                         {article && (
                             <Button
-                                variant="ghost"
+                                variant="danger-ghost"
                                 icon={<Trash2 />}
-                                className="ml-auto text-bad hover:text-bad"
+                                className="ml-auto"
                                 disabled={remove.isPending}
                                 onClick={() => ask({ title: `Remove the article "${article.title}"?`, confirm: 'Remove' }, () => remove.mutate(article.id, { onSuccess: onDone }))}
                             >
@@ -110,7 +110,7 @@ const ArticleEditor = ({ article, onDone, disabled }: { article: PromoArticle | 
                 {(save.error || remove.error) && <ErrorNotice error={save.error ?? remove.error} />}
             </div>
             <aside className="flex min-w-0 flex-col gap-2">
-                <span className="text-xs font-medium text-muted">As the carousel shows it</span>
+                <FieldLabel>As the carousel shows it</FieldLabel>
                 <ArticlePreview article={draft} />
             </aside>
         </form>

@@ -5,7 +5,7 @@ import { Link, useNavigate, useParams } from 'react-router';
 import { groupCalls, type GroupResponse, useGroup, useGroupAudit, useGroupMembers, useGroups, usePermissionChange } from '#/api/permissions';
 import { ask } from '#/components/confirm';
 import { TabbedPanel } from '#/components/TabbedPanel';
-import { Badge, Button, EmptyState, ErrorNotice, Field, IconButton, Loading, PageBody, Panel, Select } from '#/components/ui';
+import { AddRow, Badge, Button, EmptyState, ErrorNotice, Field, IconButton, Loading, PageBody, Panel, Select } from '#/components/ui';
 
 import { MetaCard, NodesCard } from './AssignmentCards';
 import { AuditTable, Expiry, PermissionsHeader } from './common';
@@ -49,7 +49,7 @@ const SettingsCard = ({ group }: { group: GroupResponse }) => {
                 <div className="flex flex-wrap items-center justify-between gap-2">
                     <Button type="submit" icon={<Save />} disabled={!dirty || update.isPending}>Save</Button>
                     {!group.isDefault && (
-                        <Button variant="ghost" icon={<Trash2 />} onClick={handleDelete} disabled={remove.isPending} className="text-bad hover:text-bad">
+                        <Button variant="danger-ghost" icon={<Trash2 />} onClick={handleDelete} disabled={remove.isPending}>
                             Delete group
                         </Button>
                     )}
@@ -101,13 +101,13 @@ const ParentsCard = ({ group }: { group: GroupResponse }) => {
                         </ul>
                     )}
             {group.canEdit && choices.length > 0 && (
-                <form onSubmit={handleSubmit} className="flex gap-2 border-t border-line p-4">
+                <AddRow onSubmit={handleSubmit}>
                     <Select value={parent} onChange={event => setParent(event.target.value)} aria-label="Group to inherit" className="min-w-0 flex-1">
                         <option value="">Choose a group</option>
                         {choices.map(x => <option key={x.name} value={x.name}>{x.displayName} ({x.weight})</option>)}
                     </Select>
-                    <Button type="submit" icon={<Plus />} disabled={parent === '' || add.isPending}>Inherit</Button>
-                </form>
+                    <Button type="submit" variant="secondary" icon={<Plus />} disabled={parent === '' || add.isPending}>Inherit</Button>
+                </AddRow>
             )}
             {(add.error ?? removeParent.error) && <div className="px-4 pb-3"><ErrorNotice error={add.error ?? removeParent.error} /></div>}
             {group.children.length > 0 && (
@@ -180,13 +180,13 @@ export const GroupPage = () => {
                 {isPending && <Loading />}
                 {error && <ErrorNotice error={error} />}
                 {group && (
-                    <div className="grid gap-5 xl:grid-cols-[22rem_1fr]">
-                        <div className="grid content-start gap-5">
+                    <div className="grid gap-4 lg:gap-6 xl:grid-cols-[22rem_1fr]">
+                        <div className="grid content-start gap-4 lg:gap-6">
                             {group.canEdit && <SettingsCard key={`${group.displayName}|${group.weight}`} group={group} />}
                             <ParentsCard group={group} />
                             <LevelCard level={group.level} who="a member" />
                         </div>
-                        <div className="grid min-w-0 content-start gap-5">
+                        <div className="grid min-w-0 content-start gap-4 lg:gap-6">
                             <NodesCard target={{ kind: 'group', name: group.name }} nodes={group.nodes} canEdit={group.canEdit} />
                             <MetaCard target={{ kind: 'group', name: group.name }} meta={group.meta} canEdit={group.canEdit} />
                             <TabbedPanel

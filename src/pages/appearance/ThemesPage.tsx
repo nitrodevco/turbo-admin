@@ -1,5 +1,5 @@
 import { CopyPlus, Eye, FolderPen, ImageIcon, Layers, MoreHorizontal, Palette, Plus, Power, PowerOff, TriangleAlert, Users } from 'lucide-react';
-import { type CSSProperties, type ReactNode, useState } from 'react';
+import { type CSSProperties, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router';
 
 import { type PluginTheme, type ThemeAudience, useThemeAudiences, useThemes } from '#/api/appearance';
@@ -10,7 +10,7 @@ import { ask } from '#/components/confirm';
 import { PhoneLabel, Row, RowList } from '#/components/RowList';
 import { Sheet, SheetItem } from '#/components/Sheet';
 import { toast, toastError } from '#/components/toast';
-import { Badge, Button, ButtonLink, EmptyState, ErrorNotice, IconButton, Loading, PageBody, PageHeader } from '#/components/ui';
+import { Badge, Button, ButtonLink, EmptyState, ErrorNotice, IconButton, IconTile, Loading, PageBody, PageHeader } from '#/components/ui';
 import { useHubTabs } from '#/layout/nav';
 import { cx } from '#/lib/cx';
 import { PLUGIN_STATES } from '#/pages/plugins/pluginStates';
@@ -59,11 +59,6 @@ const TreeLines = ({ depth, onward }: { depth: number; onward: boolean[] }) => (
     </>
 );
 
-/** The square a theme's icon sits in, before its name: in the accent for the theme staff work on. */
-const Tile = ({ children, active }: { children: ReactNode; active?: boolean }) => (
-    <span aria-hidden className={cx('grid size-9 shrink-0 place-items-center rounded-lg [&>svg]:size-4', active ? 'bg-accent-soft text-accent' : 'bg-subtle text-muted')}>{children}</span>
-);
-
 /** Where a theme stands: whether players get it (Live, In development, Off), or what its plugin is when it is not running. */
 const StatusTag = ({ theme, audience }: { theme: PluginTheme; audience: ThemeAudience | undefined }) => {
     if (theme.state !== 'loaded') {
@@ -103,7 +98,7 @@ const ThemeRow = ({ theme, depth, onward, audience, hasDefault, known, onMore }:
             {/* Indented a level a step from a tablet up, where the tree's lines are drawn; on a phone a little, the lines left out. */}
             <div className="flex min-w-0 items-center gap-3 pl-[calc(var(--depth)*0.75rem)] sm:pl-[calc(var(--depth)*var(--step))]" style={{ '--depth': depth, '--step': `${STEP}rem` } as CSSProperties} data-theme={theme.key}>
                 {depth > 0 && <TreeLines depth={depth} onward={onward} />}
-                <Tile active={workingOn}><Palette /></Tile>
+                <IconTile tone={workingOn ? 'accent' : 'muted'}><Palette /></IconTile>
                 <div className="min-w-0">
                     <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
                         <span className="font-medium">{name}</span>
@@ -268,7 +263,7 @@ export const ThemesPage = () => {
                                 <div className="flex min-w-0 items-center gap-3">
                                     {/* The tree's first line, from Habbo's own down to the themes that extend it. */}
                                     {tree.some(node => node.depth === 1) && <span aria-hidden className={cx(LINE_CLASS, 'top-[calc(50%+1.125rem)] bottom-0 w-px bg-line-strong')} style={{ left: lineAt(1) }} />}
-                                    <Tile><Layers /></Tile>
+                                    <IconTile tone="muted"><Layers /></IconTile>
                                     <div className="min-w-0">
                                         <div className="flex flex-wrap items-center gap-2">
                                             <span className="font-medium">Habbo&apos;s own</span>

@@ -2,20 +2,12 @@ import { ArrowRight, ChevronRight, Copy, EyeOff, PackageSearch, Star, Wand2 } fr
 import type { ReactNode } from 'react';
 
 import { type CatalogTree, FRONT_PAGE_LAYOUT, useDuplicates, useUnoffered } from '#/api/catalog';
-import { Button, Stat } from '#/components/ui';
-import { cx } from '#/lib/cx';
-
-/** The tint behind a card's icon: good news, something to see to, or neither. */
-const TONES = {
-    warn: 'bg-warn-soft text-warn',
-    good: 'bg-good-soft text-good',
-    none: 'bg-accent-soft text-accent',
-};
+import { Button, IconTile, Stat } from '#/components/ui';
 
 const Card = ({ icon, title, value, blurb, action, tone }: { icon: ReactNode; title: string; value?: ReactNode; blurb: string; action: ReactNode; tone?: 'warn' | 'good' }) => (
     <div className="card flex flex-col gap-3 p-4">
         <div className="flex items-start gap-3">
-            <span className={cx('grid size-10 shrink-0 place-items-center rounded-xl [&>svg]:size-5', TONES[tone ?? 'none'])}>{icon}</span>
+            <IconTile tone={tone}>{icon}</IconTile>
             <div className="min-w-0 flex-1">
                 <div className="text-sm font-semibold">{title}</div>
                 {value !== undefined && <div className="font-mono text-2xl font-semibold tabular-nums">{value}</div>}
@@ -30,7 +22,7 @@ const Card = ({ icon, title, value, blurb, action, tone }: { icon: ReactNode; ti
 const Shortcut = ({ icon, label, value, tone, disabled, onClick }: { icon: ReactNode; label: string; value?: ReactNode; tone?: 'warn' | 'good'; disabled?: boolean; onClick: () => void }) => (
     <li className="border-t border-line first:border-t-0">
         <button type="button" disabled={disabled} onClick={onClick} className="flex min-h-12 w-full items-center gap-3 px-3 py-2 text-left text-sm transition-colors hover:bg-subtle/60 disabled:opacity-50">
-            <span className={cx('grid size-8 shrink-0 place-items-center rounded-lg [&>svg]:size-4', TONES[tone ?? 'none'])}>{icon}</span>
+            <IconTile small tone={tone}>{icon}</IconTile>
             <span className="min-w-0 flex-1 truncate">{label}</span>
             {value !== undefined && <span className="font-mono text-sm text-muted tabular-nums">{value}</span>}
             <ChevronRight className="size-4 shrink-0 text-muted" />

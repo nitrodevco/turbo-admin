@@ -1,7 +1,5 @@
-import { Link } from 'react-router';
-
 import { useCanManageContent } from '#/api/content';
-import { PageBody, PageHeader, Panel } from '#/components/ui';
+import { PageBody, PageHeader, Panel, TextLink } from '#/components/ui';
 import { usePathTab } from '#/lib/tabs';
 
 import { AchievementsTab } from './AchievementsTab';
@@ -54,7 +52,7 @@ export const ContentPage = () => {
                     <Panel title="Chat styles">
                         <p className="p-4 text-sm">
                             {'Edit them, and see each drawn as the game draws it, under '}
-                            <Link to="/appearance/chat-bubbles" className="font-medium text-accent hover:underline">Appearance &gt; Chat bubbles</Link>
+                            <TextLink inline to="/appearance/chat-bubbles">Appearance &gt; Chat bubbles</TextLink>
                             .
                         </p>
                     </Panel>

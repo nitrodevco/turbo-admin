@@ -1,7 +1,7 @@
 import { useState } from 'react';
 
 import { usePlayerSearch } from '#/api/players';
-import { Input } from '#/components/ui';
+import { Input, TextButton } from '#/components/ui';
 
 /**
  * A player, found by name, or typed by id for staff who may not search players. Chosen by
@@ -36,9 +36,9 @@ export const PlayerPicker = ({ onPick, disabled }: { onPick: (player: { id: numb
                 </ul>
             )}
             {error && byId && (
-                <button type="button" className="self-start text-xs text-accent hover:underline" onClick={() => onPick({ id: Number(text.trim()), name: `#${text.trim()}` })}>
+                <TextButton className="self-start" onClick={() => onPick({ id: Number(text.trim()), name: `#${text.trim()}` })}>
                     Use player {text.trim()}
-                </button>
+                </TextButton>
             )}
         </div>
     );

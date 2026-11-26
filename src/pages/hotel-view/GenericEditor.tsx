@@ -2,7 +2,7 @@ import { ArrowDown, ArrowUp, Plus, Trash2 } from 'lucide-react';
 import { useState } from 'react';
 
 import type { ImageAccept } from '#/api/media';
-import { Button, IconButton, Input, Labeled, Select, Switch } from '#/components/ui';
+import { Button, FieldLabel, IconButton, Input, Labeled, Select, Switch } from '#/components/ui';
 
 import type { HotelViewDraft } from './draft';
 import { useResolveImage } from './hooks';
@@ -212,7 +212,7 @@ export const GenericEditor = ({ confKey, layoutKey, draft, wide: initialWide, te
                 </div>
                 <aside className="flex min-w-0 flex-col gap-2">
                     <div className="flex items-center justify-between gap-3">
-                        <span className="text-xs font-medium text-muted">As the client draws it</span>
+                        <FieldLabel>As the client draws it</FieldLabel>
                         <Select value={wide ? 'wide' : 'narrow'} onChange={event => setWide(event.target.value === 'wide')} aria-label="Slot width">
                             <option value="wide">In a wide slot (1, 2, 4)</option>
                             <option value="narrow">In a narrow slot (3, 5)</option>

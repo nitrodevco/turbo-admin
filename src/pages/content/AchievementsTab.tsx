@@ -4,9 +4,8 @@ import { useMemo, useState } from 'react';
 import { badgeUrl, useClientAssets } from '#/api/assets';
 import { ACHIEVEMENT_STATES, type AchievementDefinition, type AchievementItem, useAchievementDefinition, useAchievements, useCheckAchievement, usePublishAchievement } from '#/api/content';
 import { SearchInput } from '#/components/SearchInput';
-import { Badge, Button, EmptyState, ErrorNotice, IconButton, Input, Labeled, Loading, Panel, Select, SuccessNotice, Textarea } from '#/components/ui';
+import { Badge, Button, EmptyState, ErrorNotice, GroupHeading, IconButton, Input, Labeled, ListPanel, Loading, Panel, Select, SuccessNotice, Textarea, Thumb } from '#/components/ui';
 import { cx, rowFill } from '#/lib/cx';
-import { useFillHeight } from '#/lib/fillHeight';
 
 const STATE_TONES: Record<number, 'green' | 'neutral' | 'amber' | 'red'> = { 0: 'red', 1: 'green', 2: 'neutral', 3: 'amber', 4: 'neutral' };
 
@@ -15,14 +14,14 @@ const toInput = (iso: string | null) => (iso ? iso.replace(/Z$/, '').slice(0, 16
 const fromInput = (value: string) => (value ? `${value}:00Z` : null);
 
 /** A badge's picture, as the client loads it. */
-const BadgeImage = ({ code, className }: { code: string | null; className?: string }) => {
+const BadgeImage = ({ code }: { code: string | null }) => {
     const assets = useClientAssets();
     const url = badgeUrl(assets, code);
 
     return (
-        <span className={cx('grid size-10 shrink-0 place-items-center rounded-lg border border-line bg-canvas', className)}>
+        <Thumb>
             {url && <img src={url} alt="" className="max-h-full max-w-full [image-rendering:pixelated]" />}
-        </span>
+        </Thumb>
     );
 };
 
@@ -209,14 +208,13 @@ export const AchievementsTab = () => {
     const shown = items.filter(x => !words || x.key.toLowerCase().includes(words) || x.category.toLowerCase().includes(words) || x.source.toLowerCase().includes(words));
     const selected = items.find(x => x.id === open) ?? null;
     const categories = [ ...new Set(shown.map(x => x.category)) ];
-    const fillList = useFillHeight<HTMLElement>();
 
     if (error) return <ErrorNotice error={error} />;
     if (!data) return <Loading />;
 
     return (
         <div className="grid items-start gap-4 lg:gap-6 lg:grid-cols-[22rem_minmax(0,1fr)]">
-            <Panel ref={fillList} className="flex flex-col overflow-clip lg:sticky lg:top-4 lg:max-h-(--fill-height)">
+            <ListPanel>
                 <div className="border-b border-line px-4 py-3">
                     <SearchInput value={filter} onValueChange={setFilter} placeholder="Key, category or source" aria-label="Find achievements" />
                 </div>
@@ -224,12 +222,12 @@ export const AchievementsTab = () => {
                 <div className="max-h-[60dvh] min-h-0 overflow-y-auto lg:max-h-none">
                     {categories.map(category => (
                         <section key={category}>
-                            <h3 className="sticky top-0 border-b border-line bg-subtle px-4 py-1.5 font-mono text-2xs font-medium tracking-[0.08em] text-muted uppercase">{category}</h3>
+                            <GroupHeading sticky>{category}</GroupHeading>
                             <ul className="divide-y divide-line">
                                 {shown.filter(x => x.category === category).map(item => (
                                     <li key={item.id}>
                                         <button type="button" onClick={() => setOpen(item.id)} className={cx('flex w-full items-center gap-3 px-4 py-2 text-left', rowFill(open === item.id))}>
-                                            <BadgeImage code={item.lastBadge} className="size-9" />
+                                            <BadgeImage code={item.lastBadge} />
                                             <span className="min-w-0 flex-1">
                                                 <span className="block truncate font-mono text-ui">{item.key}</span>
                                                 <span className="block text-xs text-muted">{item.levels} levels · rev {item.revision}</span>
@@ -242,7 +240,7 @@ export const AchievementsTab = () => {
                         </section>
                     ))}
                 </div>
-            </Panel>
+            </ListPanel>
             {!selected && <Panel><EmptyState>Choose an achievement.</EmptyState></Panel>}
             {selected && (
                 <Panel key={selected.id} title={<span className="font-mono">{selected.key}</span>} description={`Id ${selected.id}, revision ${selected.revision}, counted from ${selected.source}.`}>

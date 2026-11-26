@@ -9,10 +9,10 @@ import type { RoomDetailResponse, RoomPlayerRef } from '#/api/types';
 import { ask, type Question } from '#/components/confirm';
 import { Sheet, SheetItem } from '#/components/Sheet';
 import { TabbedPanel } from '#/components/TabbedPanel';
-import { Avatar, Badge, Button, ButtonLink, EmptyState, ErrorNotice, IconButton, Input, Kv, Label, Loading, PageBody, Panel, Segmented, Select, Stat, Switch, Textarea, TextLink } from '#/components/ui';
-import { fromNow } from '#/lib/time';
+import { AddRow, Ago, Avatar, Badge, Button, ButtonLink, EmptyState, ErrorNotice, IconButton, Input, Kv, Label, Loading, PageBody, Panel, Segmented, Select, Stat, Switch, Textarea, TextLink } from '#/components/ui';
+import { formatDateTime } from '#/lib/time';
 
-import { doorModeLabel, formatDateTime, tradeModeLabel, whoLabel } from './labels';
+import { doorModeLabel, tradeModeLabel, whoLabel } from './labels';
 import { ActionOutcome, RoomHeader } from './RoomHeader';
 
 const MUTE_MINUTES = [
@@ -227,7 +227,7 @@ const Visitors = ({ roomId, linked }: { roomId: number; linked: boolean }) => {
                                 ? <Link to={`/players/${visit.playerId}`} className="font-medium hover:underline">{visit.playerName || `#${visit.playerId}`}</Link>
                                 : <span className="font-medium">{visit.playerName || `#${visit.playerId}`}</span>}
                         </div>
-                        <span className="text-xs text-muted" title={formatDateTime(visit.enteredUtc)}>{fromNow(visit.enteredUtc)}</span>
+                        <Ago at={visit.enteredUtc} className="text-xs text-muted" />
                     </li>
                 ))}
             </ul>
@@ -264,13 +264,13 @@ const Bans = ({ room, run, busy }: { room: RoomDetailResponse; run: Run; busy: b
                         </ul>
                     )}
             {room.can.moderate && (
-                <form onSubmit={handleBan} className="flex flex-wrap gap-2 border-t border-line p-4">
+                <AddRow onSubmit={handleBan}>
                     <Input value={name} onChange={event => setName(event.target.value)} placeholder="Player name" aria-label="Player to ban" className="min-w-0 flex-[1_1_10rem]" />
                     <Select value={duration} onChange={event => setDuration(event.target.value)} aria-label="How long" className="flex-[1_1_7rem]">
                         {BAN_DURATIONS.map(x => <option key={x.value} value={x.value}>{x.label}</option>)}
                     </Select>
                     <Button type="submit" variant="secondary" icon={<Gavel />} disabled={busy || name.trim() === ''} className="flex-[1_1_6rem]">Ban</Button>
-                </form>
+                </AddRow>
             )}
         </>
     );
@@ -333,7 +333,7 @@ export const RoomPage = () => {
 
                         <div className="flex flex-wrap items-start gap-4 lg:gap-6">
                             <div className="flex min-w-0 flex-[999_1_520px] flex-col gap-4 lg:gap-6">
-                                <Panel title={`In the room now (${room.playersInside.length})`} actions={room.isLoaded && !live ? <Label>refreshes every 10 s</Label> : undefined}>
+                                <Panel title="In the room now" count={room.playersInside.length} actions={room.isLoaded && !live ? <Label>refreshes every 10 s</Label> : undefined}>
                                     {room.playersInside.length === 0
                                         ? <EmptyState>{room.isLoaded ? 'Nobody is in the room.' : 'The room is not loaded, so nobody is in it.'}</EmptyState>
                                         : (
@@ -361,7 +361,7 @@ export const RoomPage = () => {
                                         <Kv label="Door">{doorModeLabel(room.doorMode).toLowerCase()}{room.hasPassword ? ' · password set' : ''}</Kv>
                                         <Kv label="Trading">{tradeModeLabel(room.tradeMode).toLowerCase()}</Kv>
                                         <Kv label="Mute · kick · ban">{[ room.whoCanMute, room.whoCanKick, room.whoCanBan ].map(x => whoLabel(x).toLowerCase()).join(' · ')}</Kv>
-                                        <Kv label="Last active"><span title={formatDateTime(room.lastActiveUtc)}>{fromNow(room.lastActiveUtc)}</span></Kv>
+                                        <Kv label="Last active"><Ago at={room.lastActiveUtc} /></Kv>
                                     </dl>
                                 </Panel>
                             </div>

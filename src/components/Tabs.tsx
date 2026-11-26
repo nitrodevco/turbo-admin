@@ -41,8 +41,12 @@ const tabClass = (active: boolean) => cx(
     active ? 'text-accent' : 'text-muted hover:text-ink',
 );
 
-const Count = ({ count, active }: { count: number; active: boolean }) => (
-    <span className={cx('rounded-full px-1.5 font-mono text-2xs tabular-nums transition-colors', active ? 'bg-accent-soft text-accent' : 'bg-subtle text-muted')}>
+/**
+ * How many a thing holds, in a pill beside its name: a tab's, a card's title (`Panel count`).
+ * `active` beside a chosen tab, in the accent.
+ */
+export const Count = ({ count, active, className }: { count: number; active?: boolean; className?: string }) => (
+    <span className={cx('rounded-full px-1.5 font-mono text-2xs font-medium tabular-nums transition-colors', active ? 'bg-accent-soft text-accent' : 'bg-subtle text-muted', className)}>
         {count.toLocaleString()}
     </span>
 );

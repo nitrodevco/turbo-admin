@@ -5,14 +5,12 @@ import { Link, useSearchParams } from 'react-router';
 import { type CurrencyLogEntry, type CurrencyLogFilter, useCurrencyLog } from '#/api/currencyLog';
 import { ListToolbar } from '#/components/ListToolbar';
 import { LogFilters } from '#/components/LogFilters';
-import { PhoneLabel, Row, RowList } from '#/components/RowList';
+import { PhoneLabel, Row, RowList, WhenCell } from '#/components/RowList';
 import { SearchInput } from '#/components/SearchInput';
 import { Button, EmptyState, ErrorNotice, Input, Loading, PageBody, PageHeader, Panel, Select, Stat, WarningNotice } from '#/components/ui';
 import { useHubTabs } from '#/layout/nav';
 import { cx } from '#/lib/cx';
 import { type ListOrder, listQuery, orderOf, pageOf, type Sorting } from '#/lib/sort';
-import { fromNow } from '#/lib/time';
-import { formatDateTime } from '#/pages/rooms/labels';
 
 const PlayerLink = ({ id, name }: { id: number; name: string | null }) => (
     <Link to={`/players/${id}`} className={cx('font-medium hover:text-accent', !name && 'text-muted')}>{name ?? `player #${id}`}</Link>
@@ -139,7 +137,7 @@ export const CurrencyLogPage = () => {
                                         >
                                             {entries.map(entry => (
                                                 <Row key={entry.id}>
-                                                    <span className="text-xs whitespace-nowrap text-muted sm:text-sm" title={formatDateTime(entry.atUtc)}>{fromNow(entry.atUtc)}</span>
+                                                    <WhenCell at={entry.atUtc} />
                                                     <span className="truncate"><PlayerLink id={entry.playerId} name={entry.playerName} /></span>
                                                     <span className={cx('font-mono whitespace-nowrap tabular-nums sm:text-right', entry.amount < 0 ? 'text-bad' : 'text-good')}>
                                                         {entry.amount > 0 ? '+' : '−'}{Math.abs(entry.amount).toLocaleString()} <span className="font-sans text-xs text-muted">{entry.currency}</span>

@@ -1,8 +1,7 @@
-import { Box, ChevronRight, Cpu, RotateCcw, Wand2, Wrench, X } from 'lucide-react';
+import { ChevronRight, Cpu, RotateCcw, Wand2, Wrench, X } from 'lucide-react';
 import { useDeferredValue, useState } from 'react';
 import { useSearchParams } from 'react-router';
 
-import { furniIconUrl, useClientAssets } from '#/api/assets';
 import { type BundleKind, useBundles } from '#/api/bundles';
 import { FILES, FURNITURE_KINDS, FURNITURE_TAGS, type FurnitureListItem, type FurnitureTag, type GamedataStatus, useFurnitureList, useImport, useImportPreview, useLogicTypes, useSetLogic } from '#/api/gamedata';
 import { ask } from '#/components/confirm';
@@ -14,6 +13,7 @@ import { cx } from '#/lib/cx';
 import { BundleDetail } from '#/pages/assets/BundleDetail';
 import { BundleIcon } from '#/pages/assets/BundleIcon';
 import { formatBytes } from '#/pages/assets/format';
+import { FurniThumb } from '#/pages/catalog/ProductIcon';
 
 import { WaitingFromHabbo } from './frame';
 import { FurnitureEditor } from './FurnitureEditor';
@@ -50,20 +50,6 @@ export const HabboFurniture = ({ status, defaultOpen }: { status: GamedataStatus
                 </ReviewItem>
             ))}
         </HabboUpdate>
-    );
-};
-
-const FurniIcon = ({ className }: { className: string }) => {
-    const assets = useClientAssets();
-    const url = furniIconUrl(assets, className);
-    const [ failed, setFailed ] = useState<string | null>(null);
-
-    return (
-        <span className="grid size-10 shrink-0 place-items-center rounded-lg bg-subtle">
-            {url && failed !== url
-                ? <img key={url} src={url} alt="" loading="lazy" className="max-h-[85%] max-w-[85%] [image-rendering:pixelated]" onError={() => setFailed(url)} />
-                : <Box className="size-4 text-muted" aria-hidden />}
-        </span>
     );
 };
 
@@ -113,7 +99,7 @@ const DefinitionRow = ({ item, onOpen, picked, onPick }: { item: FurnitureListIt
             onClick={onOpen}
             className="flex w-full items-center gap-3 px-3 py-2.5 text-left transition-colors hover:bg-subtle/60 focus-visible:bg-subtle focus-visible:outline-none sm:px-4"
         >
-            <FurniIcon className={item.className} />
+            <FurniThumb name={item.className} />
             <span className="flex min-w-0 flex-1 flex-col gap-1">
                 <span className="flex min-w-0 items-baseline gap-2">
                     <span className="truncate font-mono text-ui font-medium">{item.className}</span>

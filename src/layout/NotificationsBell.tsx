@@ -3,9 +3,8 @@ import { type ReactNode, useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router';
 
 import { type NotificationItem, useNotifications, useSeenNotifications } from '#/api/notifications';
-import { ErrorNotice, Label, Loading } from '#/components/ui';
+import { Ago, ErrorNotice, Label, Loading } from '#/components/ui';
 import { cx } from '#/lib/cx';
-import { fromNow } from '#/lib/time';
 
 /** Each kind's icon and colour, and where picking one goes. */
 const KINDS: Record<string, { icon: ReactNode; tone: string; to: (item: NotificationItem) => string }> = {
@@ -125,7 +124,7 @@ export const NotificationsBell = ({ align = 'end' }: { align?: 'start' | 'end' }
                                     <span className="min-w-0 flex-1">
                                         <span className="block text-sm leading-snug">{item.title}</span>
                                         {item.detail && <span className="mt-0.5 line-clamp-2 block font-mono text-xs break-words text-muted">{item.detail}</span>}
-                                        <span className="mt-0.5 block text-2xs text-muted" title={new Date(item.atUtc).toLocaleString()}>{fromNow(item.atUtc)}</span>
+                                        <Ago at={item.atUtc} className="mt-0.5 block text-2xs text-muted" />
                                     </span>
                                     {fresh && <span aria-label="New" className="mt-2 size-2 shrink-0 rounded-full bg-accent-solid" />}
                                 </button>

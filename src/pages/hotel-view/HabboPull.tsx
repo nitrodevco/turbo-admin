@@ -2,8 +2,8 @@ import { CloudDownload } from 'lucide-react';
 import { type ReactNode, useMemo, useState } from 'react';
 
 import { type HotelViewHabboEntry, useHabboHotelView, useHabboHotelViewTexts } from '#/api/hotelView';
-import { Modal } from '#/components/Modal';
-import { Badge, Button, Checkbox, EmptyState, ErrorNotice, Loading } from '#/components/ui';
+import { Modal, ModalBody } from '#/components/Modal';
+import { Badge, Button, Checkbox, EmptyState, ErrorNotice, GroupHeading, Loading } from '#/components/ui';
 import { fromNow } from '#/lib/time';
 
 import type { HotelViewDraft } from './draft';
@@ -30,10 +30,7 @@ const Change = ({ entry, text }: { entry: HotelViewHabboEntry; text?: boolean })
 
 const Section = ({ title, count, children }: { title: string; count: number; children: ReactNode }) => (
     <section className="flex flex-col">
-        <h3 className="flex items-center gap-2 border-b border-line bg-canvas/50 px-4 py-2 font-mono text-2xs font-medium tracking-[0.08em] text-muted uppercase">
-            {title}
-            <span className="rounded-full bg-subtle px-1.5 font-mono text-2xs text-muted tabular-nums">{count.toLocaleString()}</span>
-        </h3>
+        <GroupHeading count={count}>{title}</GroupHeading>
         <ul className="divide-y divide-line">{children}</ul>
     </section>
 );
@@ -69,7 +66,7 @@ export const HabboPull = ({ open, onClose, draft }: { open: boolean; onClose: ()
 
     return (
         <Modal open={open} onClose={onClose} title={preview ? `Habbo's hotel view, from habbo.${preview.domain}` : 'Habbo\'s hotel view'} className="sm:h-fit! sm:max-w-4xl">
-            {error && <div className="p-4 sm:p-5"><ErrorNotice error={error} /></div>}
+            {error && <ModalBody><ErrorNotice error={error} /></ModalBody>}
             {!preview && !error && <Loading />}
             {preview && (
                 <div className="flex flex-col">

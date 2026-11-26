@@ -1,12 +1,11 @@
 import { Plus, RotateCcw, Save, Trash2, Undo2 } from 'lucide-react';
 import { useMemo, useState } from 'react';
-import { Link } from 'react-router';
 
 import { useCurrencies } from '#/api/content';
 import { type ServerSetting, SOURCE, useResetSetting, useSaveSetting, useSettings } from '#/api/settings';
 import { ask } from '#/components/confirm';
 import { toast } from '#/components/toast';
-import { Button, EmptyState, ErrorNotice, IconButton, Input, Labeled, Loading, PageBody, PageHeader, Panel, Select, Switch, Td, Th, WarningNotice } from '#/components/ui';
+import { Button, CountInput, EmptyState, ErrorNotice, IconButton, Input, Labeled, Loading, PageBody, PageHeader, Panel, Select, Switch, Td, TextLink, Th, WarningNotice } from '#/components/ui';
 
 const SECTION = 'Turbo:OnlineRewards';
 
@@ -124,38 +123,6 @@ const problemOf = (rule: Rule, rules: Rule[], currencies: string[] | null) => {
     return null;
 };
 
-/** A whole number at least `min`, kept as typed until it is one. */
-const Count = ({ value, onChange, min, label, disabled }: { value: number; onChange: (value: number) => void; min: number; label: string; disabled?: boolean }) => {
-    const [ text, setText ] = useState(String(value));
-    const [ was, setWas ] = useState(value);
-
-    if (value !== was) {
-        setWas(value);
-        setText(String(value));
-    }
-
-    return (
-        <Input
-            type="number"
-            inputMode="numeric"
-            step={1}
-            min={min}
-            aria-label={label}
-            disabled={disabled}
-            value={text}
-            onChange={(event) => {
-                const typed = event.target.value;
-                const number = Number(typed);
-
-                setText(typed);
-
-                if (typed.trim() !== '' && Number.isInteger(number) && number >= min) onChange(number);
-            }}
-            className="w-24"
-        />
-    );
-};
-
 /** A whole number at least 0, or empty for the hotel's own (null). */
 const OwnCount = ({ value, onChange, label, disabled }: { value: number | null; onChange: (value: number | null) => void; label: string; disabled?: boolean }) => {
     const [ text, setText ] = useState(value === null ? '' : String(value));
@@ -237,10 +204,10 @@ const RulesTable = ({ rules, currencies, disabled, onChange }: { rules: Rule[]; 
                                                         : <Input value={rule.Currency} disabled={disabled} aria-label="Currency" onChange={event => set(index, { Currency: event.target.value.trim() })} className="w-36 font-mono" />}
                                                     {problem && <span className="mt-1 block text-xs text-warn">{problem}</span>}
                                                 </Td>
-                                                <Td><Count label="Amount" value={rule.Amount} min={1} disabled={disabled} onChange={Amount => set(index, { Amount })} /></Td>
-                                                <Td><Count label="Every (minutes)" value={rule.IntervalMinutes} min={1} disabled={disabled} onChange={IntervalMinutes => set(index, { IntervalMinutes })} /></Td>
-                                                <Td><Count label="HC bonus" value={rule.HcBonus} min={0} disabled={disabled} onChange={HcBonus => set(index, { HcBonus })} /></Td>
-                                                <Td><Count label="Daily cap" value={rule.DailyCap} min={0} disabled={disabled} onChange={DailyCap => set(index, { DailyCap })} /></Td>
+                                                <Td><CountInput label="Amount" value={rule.Amount} min={1} disabled={disabled} className="w-24" onChange={Amount => set(index, { Amount })} /></Td>
+                                                <Td><CountInput label="Every (minutes)" value={rule.IntervalMinutes} min={1} disabled={disabled} className="w-24" onChange={IntervalMinutes => set(index, { IntervalMinutes })} /></Td>
+                                                <Td><CountInput label="HC bonus" value={rule.HcBonus} min={0} disabled={disabled} className="w-24" onChange={HcBonus => set(index, { HcBonus })} /></Td>
+                                                <Td><CountInput label="Daily cap" value={rule.DailyCap} min={0} disabled={disabled} className="w-24" onChange={DailyCap => set(index, { DailyCap })} /></Td>
                                                 <Td><Switch label={<span className="sr-only">Rooms only</span>} checked={rule.InRoomOnly} disabled={disabled} onChange={InRoomOnly => set(index, { InRoomOnly })} className="min-h-0" /></Td>
                                                 <Td><OwnCount label="Idle after (minutes)" value={rule.IdleMinutes} disabled={disabled} onChange={IdleMinutes => set(index, { IdleMinutes })} /></Td>
                                                 <Td>
@@ -345,7 +312,7 @@ const OnlineRewardsForm = ({ settings, canManage }: { settings: Record<Name, Ser
             <Panel title="Idle players" description="A player who is away when a payout comes round misses that one. For every rule without its own.">
                 <div className="flex flex-col gap-3 p-4">
                     <Labeled label="Idle after (minutes)" hint="Not paid after this long without doing anything: walking, chatting, clicking. The client's own timers don't count. 0 to leave it to the room's sleep alone.">
-                        <Count label="Idle after (minutes)" value={draft.idleMinutes} min={0} disabled={!editable('IdleMinutes')} onChange={idleMinutes => set({ idleMinutes })} />
+                        <CountInput label="Idle after (minutes)" value={draft.idleMinutes} min={0} disabled={!editable('IdleMinutes')} className="w-24" onChange={idleMinutes => set({ idleMinutes })} />
                     </Labeled>
                     <Switch
                         label="Skip sleeping avatars"
@@ -355,7 +322,7 @@ const OnlineRewardsForm = ({ settings, canManage }: { settings: Record<Name, Ser
                         onChange={skipSleeping => set({ skipSleeping })}
                     />
                     <p className="text-xs text-muted">
-                        Each payout is in the <Link to={`/currency-log?${new URLSearchParams({ cause: 'reward.online' })}`} className="text-accent hover:underline">Currency log</Link> as reward.online.
+                        Each payout is in the <TextLink inline to={`/currency-log?${new URLSearchParams({ cause: 'reward.online' })}`}>Currency log</TextLink> as reward.online.
                     </p>
                 </div>
             </Panel>

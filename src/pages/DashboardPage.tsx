@@ -1,5 +1,5 @@
 import { ChevronRight, Cpu, CupSoda, PlugZap, SlidersHorizontal } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import { type ReactNode, useEffect, useState } from 'react';
 import { Link } from 'react-router';
 
 import { useCommandLog } from '#/api/commandLog';
@@ -8,11 +8,11 @@ import { useLive } from '#/api/live';
 import { type Plugin, usePlugins, useReloadPlugin } from '#/api/plugins';
 import { useDashboard, useHotelAbilities, useMe } from '#/api/queries';
 import type { AvailabilityPhase } from '#/api/types';
-import { Badge, Button, EmptyState, ErrorNotice, Label, LiveBadge, Loading, PageBody, PageHeader, Panel, Stat, TextLink } from '#/components/ui';
+import { Ago, Badge, Button, EmptyState, ErrorNotice, Label, LiveBadge, Loading, PageBody, PageHeader, Panel, Stat, TextLink } from '#/components/ui';
 import { phaseOf } from '#/layout/availability';
 import { useHotelSheet } from '#/layout/hotelSheet';
 import { useHubTabs } from '#/layout/nav';
-import { fromNow } from '#/lib/time';
+import { cx } from '#/lib/cx';
 
 import { Outcome } from './CommandLogPage';
 import { HotelControls } from './HotelControls';
@@ -141,6 +141,25 @@ const PluginAlerts = () => {
     return failed.length > 0 ? <FailedPlugins plugins={failed} canManage={data?.canManage ?? false} /> : null;
 };
 
+const ATTENTION_TONES = {
+    bad: { edge: 'border-bad-line', words: 'text-bad' },
+    warn: { edge: 'border-warn-line', words: 'text-warn' },
+};
+
+/**
+ * A card at the top of the overview about something to see to: what it is in its tone (the
+ * failed plugins' card has its title so), a line on it, and where to fix it.
+ */
+const Attention = ({ tone, icon, title, link, children }: { tone: keyof typeof ATTENTION_TONES; icon: ReactNode; title: string; link: ReactNode; children: ReactNode }) => (
+    <section className={cx('card flex flex-wrap items-center justify-between gap-x-4 gap-y-2 px-4 py-3.5', ATTENTION_TONES[tone].edge)}>
+        <div className="min-w-0 flex-[1_1_16rem]">
+            <h2 className={cx('flex items-center gap-2 text-sm font-semibold [&>svg]:size-4', ATTENTION_TONES[tone].words)}>{icon}{title}</h2>
+            <div className="mt-0.5 text-xs text-muted">{children}</div>
+        </div>
+        {link}
+    </section>
+);
+
 /**
  * Furniture the server runs as plain furniture where it has their logic (a group forum terminal
  * that opens no forum): a line on the overview, to the library's list of them.
@@ -150,13 +169,14 @@ const LogicAlert = () => {
     const count = data?.total ?? 0;
 
     return count > 0 && (
-        <section className="flex flex-wrap items-center justify-between gap-x-4 gap-y-2 rounded-xl border border-bad-line bg-surface px-4 py-3">
-            <div className="min-w-0 flex-[1_1_16rem]">
-                <h2 className="flex items-center gap-2 text-sm font-semibold text-bad"><Cpu className="size-4" />{`${count} furniture ${count === 1 ? 'runs' : 'run'} with the wrong logic`}</h2>
-                <div className="mt-0.5 text-xs text-muted">The server has a logic for each, but runs it as plain furniture: in a room it does nothing of its own.</div>
-            </div>
-            <TextLink to="/gamedata/library/furniture?tag=logic-mismatch">Fix in the library</TextLink>
-        </section>
+        <Attention
+            tone="bad"
+            icon={<Cpu />}
+            title={`${count} furniture ${count === 1 ? 'runs' : 'run'} with the wrong logic`}
+            link={<TextLink to="/gamedata/library/furniture?tag=logic-mismatch">Fix in the library</TextLink>}
+        >
+            The server has a logic for each, but runs it as plain furniture: in a room it does nothing of its own.
+        </Attention>
     );
 };
 
@@ -165,13 +185,14 @@ const VendingConfigAlert = () => {
     const count = data?.total ?? 0;
 
     return count > 0 && (
-        <section className="flex flex-wrap items-center justify-between gap-x-4 gap-y-2 rounded-xl border border-warn-line bg-surface px-4 py-3">
-            <div className="min-w-0 flex-[1_1_16rem]">
-                <h2 className="flex items-center gap-2 text-sm font-semibold text-warn"><CupSoda className="size-4" />{`${count} vending ${count === 1 ? 'machine needs' : 'machines need'} hand items`}</h2>
-                <div className="mt-0.5 text-xs text-muted">Choose the items each machine gives in its furniture settings.</div>
-            </div>
-            <TextLink to="/gamedata/library/furniture?tag=vending-config-missing">Review vending machines</TextLink>
-        </section>
+        <Attention
+            tone="warn"
+            icon={<CupSoda />}
+            title={`${count} vending ${count === 1 ? 'machine needs' : 'machines need'} hand items`}
+            link={<TextLink to="/gamedata/library/furniture?tag=vending-config-missing">Review vending machines</TextLink>}
+        >
+            Choose the items each machine gives in its furniture settings.
+        </Attention>
     );
 };
 
@@ -209,7 +230,7 @@ const RecentCommands = () => {
                             </span>
                             {/* Most go through: only those that didn't are marked. */}
                             {entry.outcome !== 'completed' && <span className="shrink-0 max-sm:hidden"><Outcome outcome={entry.outcome} /></span>}
-                            <span className="shrink-0 text-xs text-muted" title={new Date(entry.atUtc).toLocaleString()}>{fromNow(entry.atUtc)}</span>
+                            <Ago at={entry.atUtc} className="shrink-0 text-xs text-muted" />
                         </li>
                     ))}
                 </ul>

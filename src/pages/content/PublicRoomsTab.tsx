@@ -10,7 +10,7 @@ import { useRoomSearch } from '#/api/queries';
 import type { RoomSearchMode } from '#/api/types';
 import { ask } from '#/components/confirm';
 import { SearchInput } from '#/components/SearchInput';
-import { Badge, Button, EmptyState, ErrorNotice, IconButton, Input, Labeled, Loading, Panel, Segmented, Select, Switch } from '#/components/ui';
+import { AddRow, Badge, Button, EmptyState, ErrorNotice, IconButton, Input, Labeled, Loading, Panel, Segmented, Select, Switch } from '#/components/ui';
 import { cx } from '#/lib/cx';
 import { useDebounced } from '#/lib/debounce';
 import { plural } from '#/lib/plural';
@@ -141,9 +141,9 @@ const CategoryEditor = ({ category, canManage, onRemoved }: { category: PublicCa
                     <Button type="submit" icon={<Save />} disabled={!dirty || edit.isPending || (category.kind === 'manual' && !draft.name.trim())}>Save</Button>
                     <span className="text-xs text-muted">Search code <span className="font-mono">{category.searchCode}</span></span>
                     <Button
-                        variant="ghost"
+                        variant="danger-ghost"
                         icon={<Trash2 />}
-                        className="ml-auto text-bad hover:text-bad"
+                        className="ml-auto"
                         disabled={edit.isPending}
                         onClick={() => ask({ title: `Remove the category ${titleOf(category)}?`, body: 'Its room list goes with it; the rooms stay.', confirm: 'Remove' }, () => edit.mutate({ path: `/categories/${category.id}`, method: 'DELETE' }, { onSuccess: onRemoved }))}
                     >
@@ -316,8 +316,7 @@ export const PublicRoomsTab = () => {
                     </SortableContext>
                     {categories.length === 0 && <EmptyState>No categories yet.</EmptyState>}
                     {canManage && (
-                        <form
-                            className="flex gap-2 border-t border-line px-4 py-3"
+                        <AddRow
                             onSubmit={(event) => {
                                 event.preventDefault();
                                 edit.mutate({ path: '/categories', method: 'POST', body: { name: adding.trim() } }, {
@@ -330,7 +329,7 @@ export const PublicRoomsTab = () => {
                         >
                             <Input value={adding} onChange={event => setAdding(event.target.value)} maxLength={100} placeholder="New category" aria-label="New category name" className="min-w-0 flex-1" />
                             <Button type="submit" variant="secondary" icon={<Plus />} disabled={!adding.trim() || edit.isPending}>Add</Button>
-                        </form>
+                        </AddRow>
                     )}
                     {edit.error && <div className="p-4"><ErrorNotice error={edit.error} /></div>}
                 </Panel>

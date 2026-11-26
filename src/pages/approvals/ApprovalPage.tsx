@@ -6,9 +6,8 @@ import { type ApprovalItem, useApproval, useApprovalDecision } from '#/api/appro
 import { useMe } from '#/api/queries';
 import { ask } from '#/components/confirm';
 import { toast, toastError } from '#/components/toast';
-import { Button, ErrorNotice, Kv, Labeled, Loading, PageBody, PageHeader, Panel, Textarea } from '#/components/ui';
-import { fromNow } from '#/lib/time';
-import { formatDateTime } from '#/pages/rooms/labels';
+import { Ago, Button, ErrorNotice, Kv, Labeled, Loading, PageBody, PageHeader, Panel, Textarea } from '#/components/ui';
+import { formatDateTime, fromNow } from '#/lib/time';
 
 import { ApprovalBadge, Decider, Requester } from './parts';
 
@@ -119,7 +118,7 @@ export const ApprovalPage = () => {
                                     <Kv label="Asked by"><Requester approval={approval} linked={linked} /></Kv>
                                     <Kv label="Asked">{formatDateTime(approval.requestedAtUtc)}</Kv>
                                     <Kv label="Needs" mono>{approval.node}</Kv>
-                                    {approval.state === 'pending' && <Kv label="Expires">{fromNow(approval.expiresAtUtc)}</Kv>}
+                                    {approval.state === 'pending' && <Kv label="Expires"><Ago at={approval.expiresAtUtc} /></Kv>}
                                     {approval.decidedAtUtc && (
                                         <Kv label={approval.state === 'expired' ? 'Expired' : approval.state === 'denied' ? 'Denied' : 'Approved'}>
                                             {formatDateTime(approval.decidedAtUtc)}

@@ -4,12 +4,11 @@ import { Link } from 'react-router';
 
 import type { AuditEntry } from '#/api/permissions';
 import { useMe } from '#/api/queries';
-import { PhoneLabel, Row, RowList } from '#/components/RowList';
+import { PhoneLabel, Row, RowList, WhenCell } from '#/components/RowList';
 import type { TabItem } from '#/components/Tabs';
 import { Badge, CHECK_CLASS, EmptyState, Labeled, PageHeader, Select } from '#/components/ui';
 import { type Sorting, useSortedRows } from '#/lib/sort';
-import { fromNow } from '#/lib/time';
-import { formatDateTime } from '#/pages/rooms/labels';
+import { formatDateTime } from '#/lib/time';
 
 import { ACTIONS, AUDIT_KEYS, AUDIT_NEWEST } from './audit';
 import { DURATIONS, targetLink } from './links';
@@ -109,7 +108,7 @@ export const AuditTable = ({ entries, showTarget = true, sorting }: { entries: A
                 >
                     {rows.map((entry, index) => (
                         <Row key={index}>
-                            <span className="text-xs whitespace-nowrap text-muted sm:text-sm" title={formatDateTime(entry.atUtc)}>{fromNow(entry.atUtc)}</span>
+                            <WhenCell at={entry.atUtc} />
                             {showTarget && (
                                 <span>
                                     <span className="mr-1.5 text-xs text-muted">{entry.targetType === 'Group' ? 'group' : 'player'}</span>

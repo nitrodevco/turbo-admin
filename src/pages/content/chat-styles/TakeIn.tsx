@@ -2,7 +2,7 @@ import { CheckCircle2, FileUp, Loader2, MonitorDown } from 'lucide-react';
 import { type DragEvent, useRef, useState } from 'react';
 
 import { type ChatStyleImportResult, useChatStyles, useImportChatStyles } from '#/api/content';
-import { Modal } from '#/components/Modal';
+import { Modal, ModalBody } from '#/components/Modal';
 import { Button, Checkbox, ErrorNotice } from '#/components/ui';
 import { cx } from '#/lib/cx';
 
@@ -87,7 +87,7 @@ export const TakeInDialog = ({ open, onClose }: { open: boolean; onClose: () => 
 
     return (
         <Modal open={open} onClose={close} title="Take in chat styles" className="sm:h-fit! sm:max-w-2xl">
-            <div className="flex flex-col gap-4 p-4 sm:p-5">
+            <ModalBody>
                 <p className="text-sm text-muted">Each style taken in gets the look it has there, and one the hotel lacks is added. Who may speak with the hotel's own stays as it is set here.</p>
                 <label
                     onDragOver={(event) => {
@@ -153,7 +153,7 @@ export const TakeInDialog = ({ open, onClose }: { open: boolean; onClose: () => 
                 <div className="flex justify-end">
                     <Button variant={running ? 'ghost' : 'secondary'} disabled={running} onClick={close}>{running ? 'Taking in' : 'Done'}</Button>
                 </div>
-            </div>
+            </ModalBody>
         </Modal>
     );
 };

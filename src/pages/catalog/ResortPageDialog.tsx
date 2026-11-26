@@ -2,7 +2,7 @@ import { FolderTree } from 'lucide-react';
 import { useState } from 'react';
 
 import { type AddFurniSort, catalogCalls, type CatalogTree, useCatalogEdit, useResortPlan } from '#/api/catalog';
-import { Modal, ModalActions } from '#/components/Modal';
+import { Modal, ModalActions, ModalBody } from '#/components/Modal';
 import { toast, toastError } from '#/components/toast';
 import { Button, ErrorNotice, Loading, Segmented } from '#/components/ui';
 
@@ -34,7 +34,7 @@ export const ResortPageDialog = ({ tree, pageId, onClose }: { tree: CatalogTree;
 
     return (
         <Modal title={<span className="flex items-center gap-2"><FolderTree className="size-4 text-accent" />{`Sort ${title} into sub pages`}</span>} open onClose={onClose} className="sm:h-fit! sm:max-w-2xl">
-            <div className="flex flex-col gap-4 p-4 sm:p-5">
+            <ModalBody>
                 <div className="flex flex-col gap-1.5">
                     <div className="max-w-full overflow-x-auto">
                         <Segmented label="Sort by" value={sortBy} onChange={value => setSortBy(value as AddFurniSort)} options={SORTS} />
@@ -60,7 +60,7 @@ export const ResortPageDialog = ({ tree, pageId, onClose }: { tree: CatalogTree;
                         {resort.isPending ? 'Sorting…' : 'Sort'}
                     </Button>
                 </ModalActions>
-            </div>
+            </ModalBody>
         </Modal>
     );
 };

@@ -5,6 +5,7 @@ import { Link, useParams } from 'react-router';
 import { checkNode, type CheckResponse, type CheckSource, playerCalls, type PlayerPermissions, useCatalog, useGroups, usePermissionChange, usePlayerAudit, usePlayerPermissions } from '#/api/permissions';
 import { useMe } from '#/api/queries';
 import { ask } from '#/components/confirm';
+import { SearchInput } from '#/components/SearchInput';
 import { Badge, Button, ButtonLink, EmptyState, ErrorNotice, IconButton, Input, Labeled, Loading, PageBody, Panel, Select } from '#/components/ui';
 
 import { MetaCard, NodesCard } from './AssignmentCards';
@@ -167,9 +168,9 @@ const HoldsCard = ({ player }: { player: PlayerPermissions }) => {
     const meta = Object.entries(player.resolvedMeta);
 
     return (
-        <Panel title={`Holds (${player.holds.filter(x => !x.startsWith('group.')).length})`}>
+        <Panel title="Holds" count={player.holds.filter(x => !x.startsWith('group.')).length}>
             <div className="border-b border-line px-4 py-3">
-                <Input type="search" value={filter} onChange={event => setFilter(event.target.value)} placeholder="Filter" aria-label="Filter held nodes" />
+                <SearchInput value={filter} onValueChange={setFilter} placeholder="Filter" aria-label="Filter held nodes" />
             </div>
             <div className="max-h-80 overflow-y-auto px-4 py-3">
                 {nodes.length === 0
@@ -243,13 +244,13 @@ export const PlayerPage = () => {
                     </p>
                 )}
                 {player && (
-                    <div className="grid gap-5 xl:grid-cols-[22rem_1fr]">
-                        <div className="grid content-start gap-5">
+                    <div className="grid gap-4 lg:gap-6 xl:grid-cols-[22rem_1fr]">
+                        <div className="grid content-start gap-4 lg:gap-6">
                             <GroupsCard player={player} />
                             <CheckCard playerId={player.id} />
                             <LevelCard level={player.level} who={player.name} />
                         </div>
-                        <div className="grid min-w-0 content-start gap-5">
+                        <div className="grid min-w-0 content-start gap-4 lg:gap-6">
                             <NodesCard target={{ kind: 'player', id: player.id }} nodes={player.nodes} canEdit={player.canEdit} />
                             <MetaCard target={{ kind: 'player', id: player.id }} meta={player.meta} canEdit={player.canEdit} />
                             <HoldsCard player={player} />

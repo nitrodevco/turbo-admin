@@ -6,14 +6,12 @@ import { type ChatlogEntry, type ChatlogFilter, useChatlog, useChatlogContext } 
 import { useMe } from '#/api/queries';
 import { ListToolbar } from '#/components/ListToolbar';
 import { LogFilters } from '#/components/LogFilters';
-import { PhoneLabel, Row, RowList } from '#/components/RowList';
+import { PhoneLabel, Row, RowList, WhenCell } from '#/components/RowList';
 import { SearchInput } from '#/components/SearchInput';
 import { Badge, Button, EmptyState, ErrorNotice, Input, Loading, PageBody, PageHeader, Panel } from '#/components/ui';
 import { useHubTabs } from '#/layout/nav';
 import { cx } from '#/lib/cx';
 import { type ListOrder, listQuery, orderOf, pageOf, type Sorting } from '#/lib/sort';
-import { fromNow } from '#/lib/time';
-import { formatDateTime } from '#/pages/rooms/labels';
 
 /** A player on a line: a link to their page when you may look at players. */
 const PlayerName = ({ id, name, linked }: { id: number; name: string | null; linked: boolean }) => {
@@ -39,9 +37,7 @@ const Lines = ({ entries, highlight, onContext, sorting }: { entries: ChatlogEnt
         >
             {entries.map(entry => (
                 <Row key={entry.id} className={cx(entry.id === highlight && 'bg-accent-soft/50 hover:bg-accent-soft')}>
-                    <span className="text-xs whitespace-nowrap text-muted sm:text-sm" title={formatDateTime(entry.atUtc)}>
-                        {fromNow(entry.atUtc)}
-                    </span>
+                    <WhenCell at={entry.atUtc} />
                     <span className="truncate"><PlayerName id={entry.playerId} name={entry.playerName} linked={me?.canViewPlayers ?? false} /></span>
                     <span className="min-w-0 truncate">
                         <PhoneLabel>in </PhoneLabel>
