@@ -1,8 +1,8 @@
-import { Trash2 } from 'lucide-react';
+import { Download, Trash2 } from 'lucide-react';
 import { useState } from 'react';
 
 import type { HabboClientBuild, HabboClientBuiltLibrary } from '#/api/bundles';
-import { type HabboClientRelease, type HabboClientStatus, useForgetHabboClientRelease } from '#/api/gamedata';
+import { downloadHabboClientRelease, type HabboClientRelease, type HabboClientStatus, useForgetHabboClientRelease } from '#/api/gamedata';
 import { ask } from '#/components/confirm';
 import { toastError } from '#/components/toast';
 import { Badge, IconButton, Label } from '#/components/ui';
@@ -22,6 +22,7 @@ const KINDS: Record<HabboClientBuiltLibrary['kind'], string> = {
 /** A release kept, and - opened - the client libraries in it. */
 const ReleaseRow = ({ release, followed, canManage }: { release: HabboClientRelease; followed: boolean; canManage: boolean }) => {
     const [ open, setOpen ] = useState(false);
+    const [ downloading, setDownloading ] = useState(false);
     const forget = useForgetHabboClientRelease();
 
     return (
@@ -33,19 +34,29 @@ const ReleaseRow = ({ release, followed, canManage }: { release: HabboClientRele
                 <span className="text-xs text-muted">
                     {[ `${release.libraries.length} libraries`, formatBytes(release.size), release.builtAt ? `Habbo built it ${fromNow(release.builtAt)}` : null, `downloaded ${fromNow(release.downloadedAt)}` ].filter(Boolean).join(' · ')}
                 </span>
-                {canManage && !followed && (
+                <span className="ml-auto flex items-center gap-1">
                     <IconButton
-                        label={`Forget ${release.version}`}
-                        icon={<Trash2 />}
-                        tone="bad"
-                        className="ml-auto"
-                        disabled={forget.isPending}
-                        onClick={() => ask(
-                            { title: `Forget the release ${release.version}?`, body: 'Its files are removed; it is downloaded again if an environment serves it.', confirm: 'Forget' },
-                            () => forget.mutate(release.version, { onError: toastError }),
-                        )}
+                        label={`Download ${release.version} (app.asar, ${formatBytes(release.size)})`}
+                        icon={<Download />}
+                        disabled={downloading}
+                        onClick={() => {
+                            setDownloading(true);
+                            downloadHabboClientRelease(release.version).catch(toastError).finally(() => setDownloading(false));
+                        }}
                     />
-                )}
+                    {canManage && !followed && (
+                        <IconButton
+                            label={`Forget ${release.version}`}
+                            icon={<Trash2 />}
+                            tone="bad"
+                            disabled={forget.isPending}
+                            onClick={() => ask(
+                                { title: `Forget the release ${release.version}?`, body: 'Its files are removed; it is downloaded again if an environment serves it.', confirm: 'Forget' },
+                                () => forget.mutate(release.version, { onError: toastError }),
+                            )}
+                        />
+                    )}
+                </span>
             </div>
             {open && <p className="mt-2 font-mono text-2xs leading-5 text-muted">{release.libraries.map(x => x.replace(/^.*\//, '').replace(/\.hab$/, '')).join(' · ')}</p>}
         </li>

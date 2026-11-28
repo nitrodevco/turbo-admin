@@ -434,6 +434,22 @@ export const useForgetHabboClientRelease = () => {
     });
 };
 
+/**
+ * Saves a release's app.asar. The file needs the session's header, which a plain link can't
+ * carry, so it is fetched and handed to the browser as a download.
+ */
+export const downloadHabboClientRelease = async (version: string) => {
+    const url = URL.createObjectURL(await apiBlob(`/gamedata/habbo/client/releases/${encodeURIComponent(version)}/file`));
+    const link = document.createElement('a');
+
+    link.href = url;
+    link.download = `habbo-client-${version}.asar`;
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+};
+
 export const useCheckHabbo = () => {
     const refresh = useRefresh();
 
