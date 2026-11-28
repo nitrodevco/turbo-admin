@@ -15,7 +15,7 @@ import {
 } from '@dnd-kit/core';
 import { arrayMove, sortableKeyboardCoordinates } from '@dnd-kit/sortable';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { ArrowLeft, Eye, PackagePlus, Settings2, Sparkles } from 'lucide-react';
+import { ArrowLeft, Eye, PackagePlus, Settings2, Sparkles, Upload } from 'lucide-react';
 import { type CSSProperties, useEffect, useId, useMemo, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { Navigate, useLocation, useNavigate, useParams, useSearchParams } from 'react-router';
@@ -200,6 +200,7 @@ const CatalogEditor = ({ view }: { view: View }) => {
     const [ offsetX, setOffsetX ] = useState(0);
     const [ building, setBuilding ] = useState(false);
     const [ addingFurni, setAddingFurni ] = useState(false);
+    const [ addingImage, setAddingImage ] = useState(false);
     const [ treeWidth, setTreeWidth ] = useTreeWidth();
     const fillTree = useFillHeight<HTMLElement>();
 
@@ -451,7 +452,9 @@ const CatalogEditor = ({ view }: { view: View }) => {
                     ...catalogTabs(view === 'missing' || view === 'duplicates' ? 'audit' : view, true),
                     onChange: value => setView(value === 'audit' ? 'missing' : value as View),
                 }}
-            />
+            >
+                {view === 'images' && data?.canManage && <Button icon={<Upload />} onClick={() => setAddingImage(true)}>Upload</Button>}
+            </PageHeader>
             {/* Without the rising entrance: a transformed parent would move the drag overlay. */}
             <PageBody still>
                 {tree.error && <ErrorNotice error={tree.error} />}
@@ -495,7 +498,7 @@ const CatalogEditor = ({ view }: { view: View }) => {
                 {data && view === 'generate' && <GenerateCatalog tree={data} onDone={() => openPage(null)} />}
                 {data && view === 'import' && <ImportCapture tree={data} />}
                 {data && view === 'backups' && <Backups tree={data} />}
-                {data && view === 'images' && <CatalogImages tree={data} onOpenPage={id => openPage(id)} />}
+                {data && view === 'images' && <CatalogImages tree={data} adding={addingImage} onAdded={() => setAddingImage(false)} onOpenPage={id => openPage(id)} />}
 
                 {data && view === 'editor' && (
                     data.rootId === 0

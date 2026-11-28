@@ -4,7 +4,7 @@ import { type DragEvent, useEffect, useRef, useState } from 'react';
 import { useSearchParams } from 'react-router';
 
 import { ApiError } from '#/api/client';
-import { CATALOG_PICTURE, mediaFilePath, type MediaImage, type MediaQuery, type MediaUse, useDeleteMedia, useEditMedia, useMediaImage, useMediaSearch, useUploadMedia } from '#/api/media';
+import { mediaFilePath, type MediaImage, type MediaQuery, type MediaUse, useDeleteMedia, useEditMedia, useMediaImage, useMediaSearch, useUploadMedia } from '#/api/media';
 import { ask } from '#/components/confirm';
 import { Pagination } from '#/components/Pagination';
 import { SearchInput } from '#/components/SearchInput';
@@ -25,8 +25,6 @@ const KIND_LABELS: Record<string, string> = {
     reception: 'Hotel view',
     quest: 'Quest',
     'catalogue-picture': 'Catalog picture',
-    'catalogue-icon': 'Catalog icon',
-    'furni-icon': 'Furniture icon',
     'client-image': 'Client image',
     theme: 'Theme',
     other: 'Other',
@@ -44,8 +42,6 @@ const SOURCE_LABELS: Record<string, string> = {
 /** What each value a field can store is called, in the order the detail lists them. */
 const VALUE_LABELS: [ keyof MediaImage['values'], string ][] = [
     [ 'relative', 'Path under the image library' ],
-    [ 'catalogPicture', 'Catalog picture name' ],
-    [ 'catalogIcon', 'Catalog icon number' ],
     [ 'clientImage', 'Client image name' ],
     [ 'plugin', 'Path in the plugin' ],
     [ 'url', 'Address' ],
@@ -200,17 +196,16 @@ const Detail = ({ id, canManage, onGone }: { id: string; canManage: boolean; onG
     );
 };
 
-/** Files dropped or chosen, the folder under the image library they go to (or the catalog pictures), sent at once. */
+/** Files dropped or chosen, and the folder under the image library they go to, sent at once. */
 const UploadBar = ({ onUploaded }: { onUploaded: (ids: string[]) => void }) => {
     const upload = useUploadMedia();
     const input = useRef<HTMLInputElement>(null);
     const [ folder, setFolder ] = useState('web_promo');
-    const [ kind, setKind ] = useState('library');
 
     const send = (files: File[]) => {
         if (files.length === 0) return;
 
-        upload.mutate({ files, folder, kind: kind === 'library' ? '' : CATALOG_PICTURE }, {
+        upload.mutate({ files, folder }, {
             onSuccess: (result) => {
                 if (result.items.length) toast(`Uploaded ${plural(result.items.length, 'image')}. Publish the assets for players to see them.`);
                 for (const refusal of result.refused) toastError(new Error(`${refusal.file}: ${refusal.why}`));
@@ -222,17 +217,9 @@ const UploadBar = ({ onUploaded }: { onUploaded: (ids: string[]) => void }) => {
 
     return (
         <div className="flex flex-wrap items-end gap-3 px-4 py-3" data-testid="media-upload">
-            <Labeled label="Upload to">
-                <Select value={kind} onChange={event => setKind(event.target.value)} aria-label="Upload to">
-                    <option value="library">The image library</option>
-                    <option value="catalog">Catalog pictures</option>
-                </Select>
+            <Labeled label="Upload to" hint="A folder under the image library, such as web_promo or web_promo_small.">
+                <Input value={folder} onChange={event => setFolder(event.target.value)} aria-label="Folder" className="font-mono" />
             </Labeled>
-            {kind === 'library' && (
-                <Labeled label="Folder" hint="Under the image library, such as web_promo or web_promo_small.">
-                    <Input value={folder} onChange={event => setFolder(event.target.value)} aria-label="Folder" className="font-mono" />
-                </Labeled>
-            )}
             <Button variant="secondary" icon={<Upload />} disabled={upload.isPending} onClick={() => input.current?.click()}>
                 {upload.isPending ? 'Uploading…' : 'Choose images'}
             </Button>
@@ -302,10 +289,10 @@ const useWindowDrag = (setOver: (over: boolean) => void, onFiles: (files: File[]
 };
 
 /**
- * Gamedata > Media library: every image the hotel can show - the image library, the asset folder's
- * pictures, the client's own images, plugins' images and uploads - searched by name, path or tag,
- * filtered, and each opened to copy what a field stores for it and see where it is shown. Badges
- * are not here: the Library has a tab of them.
+ * Gamedata > Media library: the images the hotel can show - the image library, the client's own
+ * images, plugins' images and uploads - searched by name, path or tag, filtered, and each opened to
+ * copy what a field stores for it and see where it is shown. Badges are not here: the Library has a
+ * tab of them. Nor are the catalog's pictures and icons: Catalog > Images lists those.
  */
 export const MediaLibraryPage = () => {
     const [ params, setParams ] = useSearchParams();
@@ -318,7 +305,7 @@ export const MediaLibraryPage = () => {
     const [ view, setView ] = useState<'grid' | 'list'>('grid');
     const selected = params.get('id');
     const q = useDebounced(text.trim());
-    const query: MediaQuery = { q, kind, source, used, sort, desc: sort !== 'name', page, size: PAGE_SIZE };
+    const query: MediaQuery = { q, kind, source, used, sort, desc: sort !== 'name', page, size: PAGE_SIZE, catalog: false };
     const { data, error, isFetching } = useMediaSearch(query);
 
     const select = (id: string | null) => setParams((current) => {
@@ -346,7 +333,7 @@ export const MediaLibraryPage = () => {
                                         setText(value);
                                         setPage(0);
                                     }}
-                                    placeholder="Name, path or tag: summer, web_promo, icon_12"
+                                    placeholder="Name, path or tag: summer, web_promo"
                                     aria-label="Search images"
                                     className="min-w-64 flex-1"
                                 />

@@ -71,15 +71,14 @@ export interface MediaQuery {
     desc?: boolean;
     page?: number;
     size?: number;
+    /** False leaves out the catalog's pictures and icons, which Catalog > Images lists. */
+    catalog?: boolean;
 }
 
 export interface MediaUploadResponse {
     items: MediaImage[];
     refused: { file: string; why: string }[];
 }
-
-/** The kind an upload names to be a catalog picture rather than an image library picture. */
-export const CATALOG_PICTURE = 'catalogue-picture';
 
 const queryString = (query: MediaQuery) => new URLSearchParams(Object.entries(query)
     .filter(([ , value ]) => value !== undefined && value !== '' && value !== null)
@@ -104,12 +103,11 @@ export const useMediaImage = (id: string | null) => useQuery({
     enabled: !!id,
 });
 
-const uploadMedia = ({ files, folder, kind }: { files: File[]; folder: string; kind: string }) => {
+const uploadMedia = ({ files, folder }: { files: File[]; folder: string }) => {
     const form = new FormData();
 
     for (const file of files) form.append('files', file);
     form.append('folder', folder);
-    form.append('kind', kind);
 
     return postForm<MediaUploadResponse>('/media', form);
 };
@@ -248,12 +246,12 @@ export const useMediaFind = (key: keyof MediaValues | null, value: string, plugi
     retry: false,
 });
 
-/** Where an upload goes: a folder of the image library, the catalog pictures, or a plugin's images. */
+/** Where an upload goes: a folder of the image library, the catalog pictures (`catalog`), or a plugin's images. */
 export interface MediaUploadTarget {
     key: string;
     label: string;
     folder?: string;
-    kind?: string;
+    catalog?: boolean;
     plugin?: string;
 }
 
@@ -262,11 +260,23 @@ export const uploadTargetsOf = (accept: ImageAccept): MediaUploadTarget[] => {
     const keys = new Set(accept.shapes.map(valueKeyOf));
     const targets: MediaUploadTarget[] = [];
 
-    if (keys.has('catalogPicture')) targets.push({ key: 'catalog', label: 'the catalog pictures', kind: CATALOG_PICTURE });
+    if (keys.has('catalogPicture')) targets.push({ key: 'catalog', label: 'the catalog pictures', catalog: true });
     if (keys.has('relative') || keys.has('url')) targets.push({ key: 'library', label: `the image library's ${accept.folder ?? 'uploads'}/`, folder: accept.folder });
     if (keys.has('plugin') && accept.plugin) targets.push({ key: `plugin:${accept.plugin}`, label: 'the theme\'s images', plugin: accept.plugin });
 
     return targets;
+};
+
+/** Uploads a file as a catalog picture named as the file, and answers it as the library lists it. */
+const uploadCatalogPicture = async (file: File) => {
+    const form = new FormData();
+
+    form.append('file', file);
+    form.append('name', '');
+
+    const picture = await postForm<{ file: string }>('/catalog/images', form);
+
+    return api<MediaImage>(`/media/item?id=${encodeURIComponent(`catalog:${picture.file}`)}`);
 };
 
 /** A plugin's uploaded image, as the library lists it. */
@@ -294,23 +304,26 @@ const pluginImageOf = (plugin: string, file: File, image: PluginImage): MediaIma
 };
 
 /**
- * Uploads where a field can name the images: into the library (`POST /media`), or a theme's own
- * images through its plugin, as its Images section does - answered as the library would.
+ * Uploads where a field can name the images: into the library (`POST /media`), into the catalog's
+ * pictures as Catalog > Images does (which takes `catalog.manage`), or a theme's own images through
+ * its plugin, as its Images section does - each answered as the library would.
  */
 export const useUploadForField = () => {
     const queryClient = useQueryClient();
 
     return useMutation({
         mutationFn: async ({ files, target }: { files: File[]; target: MediaUploadTarget }): Promise<MediaUploadResponse> => {
-            if (!target.plugin)
-                return uploadMedia({ files, folder: target.folder ?? '', kind: target.kind ?? '' });
+            if (!target.plugin && !target.catalog)
+                return uploadMedia({ files, folder: target.folder ?? '' });
 
             const items: MediaImage[] = [];
             const refused: MediaUploadResponse['refused'] = [];
 
             for (const file of files) {
                 try {
-                    items.push(pluginImageOf(target.plugin, file, await uploadPluginImage(target.plugin, file)));
+                    items.push(target.plugin
+                        ? pluginImageOf(target.plugin, file, await uploadPluginImage(target.plugin, file))
+                        : await uploadCatalogPicture(file));
                 } catch (error) {
                     refused.push({ file: file.name, why: error instanceof Error ? error.message : String(error) });
                 }
@@ -318,6 +331,11 @@ export const useUploadForField = () => {
 
             return { items, refused };
         },
-        onSuccess: () => queryClient.invalidateQueries({ queryKey: [ 'media' ] }),
+        onSuccess: (_, { target }) => {
+            // A catalog picture is one Catalog > Images lists too.
+            if (target.catalog) void queryClient.invalidateQueries({ queryKey: [ 'catalog', 'images' ] });
+
+            return queryClient.invalidateQueries({ queryKey: [ 'media' ] });
+        },
     });
 };

@@ -2,6 +2,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 import { type AssetJob, postForm } from './bundles';
 import { api, post, remove } from './client';
+import { type MediaImage } from './media';
 
 /**
  * A catalog picture - a page's header or teaser - as a file in the server's `images/catalog`
@@ -88,6 +89,54 @@ export const useFetchCatalogPictures = () => {
     return useMutation({
         mutationFn: (names: string[]) => post<AssetJob>('/catalog/images/habbo', { names }),
         onSuccess: () => void queryClient.invalidateQueries({ queryKey: [ 'assets' ] }),
+    });
+};
+
+/** Where an icon's file is drawn from, through the admin API; its version makes a replaced one a new address. */
+export const catalogIconPath = (number: number, icon: Pick<MediaImage, 'modifiedUtc'>) =>
+    `/catalog/icons/${number}/file${icon.modifiedUtc ? `?v=${encodeURIComponent(icon.modifiedUtc)}` : ''}`;
+
+/** The pages' icons (`icon_<n>.png`), as the media library indexes them, by number. */
+export const useCatalogIcons = (query: CatalogImageQuery) => useQuery({
+    queryKey: [ 'catalog', 'icons', query ],
+    queryFn: () => api<{ total: number; items: MediaImage[] }>(`/catalog/icons?${new URLSearchParams({ q: query.q, show: query.show, page: String(query.page), size: String(query.size) })}`),
+    placeholderData: previous => previous,
+});
+
+/** An icon changed here is one the media library's index, which the picker searches, must read again. */
+const useRefreshIcons = () => {
+    const queryClient = useQueryClient();
+
+    return () => {
+        void queryClient.invalidateQueries({ queryKey: [ 'catalog', 'icons' ] });
+        void queryClient.invalidateQueries({ queryKey: [ 'media' ] });
+    };
+};
+
+/** Uploads a PNG as the icon of a number, replacing the one it has. */
+export const useUploadCatalogIcon = () => {
+    const refresh = useRefreshIcons();
+
+    return useMutation({
+        mutationFn: ({ file, number }: { file: File; number: string }) => {
+            const form = new FormData();
+
+            form.append('file', file);
+            form.append('number', number);
+
+            return postForm<MediaImage>('/catalog/icons', form);
+        },
+        onSuccess: refresh,
+    });
+};
+
+/** Deletes an icon no page shows; the server refuses one a page does. */
+export const useDeleteCatalogIcon = () => {
+    const refresh = useRefreshIcons();
+
+    return useMutation({
+        mutationFn: (number: string) => remove<void>(`/catalog/icons/${number}`),
+        onSuccess: refresh,
     });
 };
 
