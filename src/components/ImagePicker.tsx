@@ -37,7 +37,6 @@ const SHAPE_LABELS: Record<FieldShape, string> = {
     relative: 'a path in the image library',
     libraryUrl: 'an image library address',
     plugin: 'an image of the theme\'s',
-    badge: 'a badge',
     url: 'an address',
 };
 

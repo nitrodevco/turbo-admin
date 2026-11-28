@@ -1,7 +1,7 @@
 import { Download, Trash2 } from 'lucide-react';
 import { useState } from 'react';
 
-import { type BundleKind, downloadBundle, useBundle, useDeleteBundle } from '#/api/bundles';
+import { type BundleKind, bundleNoun, downloadBundle, isBundleKind, useBundle, useDeleteBundle } from '#/api/bundles';
 import { ask } from '#/components/confirm';
 import { Modal, ModalBody } from '#/components/Modal';
 import { toast, toastError } from '#/components/toast';
@@ -63,24 +63,26 @@ export const BundleDetail = ({ bundle, canManage, onClose }: { bundle: { kind: B
                         <Kv label="Hash" mono><span className="text-xs break-all">{data.hash ?? '-'}</span></Kv>
                     </dl>
 
-                    <div>
-                        <div className="mb-1.5 flex items-baseline justify-between gap-2">
-                            <Label>In the zip</Label>
-                            <span className="font-mono text-xs text-muted">{`${plural(data.files.length, 'file')}, ${formatBytes(total)}`}</span>
+                    {isBundleKind(bundle.kind) && (
+                        <div>
+                            <div className="mb-1.5 flex items-baseline justify-between gap-2">
+                                <Label>In the zip</Label>
+                                <span className="font-mono text-xs text-muted">{`${plural(data.files.length, 'file')}, ${formatBytes(total)}`}</span>
+                            </div>
+                            {data.files.length > 0
+                                ? (
+                                        <ul className="divide-y divide-line rounded-xl border border-line font-mono text-xs">
+                                            {data.files.map(file => (
+                                                <li key={file.name} className="flex items-center justify-between gap-3 px-3 py-2">
+                                                    <span className="min-w-0 truncate" title={file.name}>{file.name}</span>
+                                                    <span className="shrink-0 text-muted tabular-nums">{formatBytes(file.size)}</span>
+                                                </li>
+                                            ))}
+                                        </ul>
+                                    )
+                                : <p className="text-sm text-muted">It has no file.</p>}
                         </div>
-                        {data.files.length > 0
-                            ? (
-                                    <ul className="divide-y divide-line rounded-xl border border-line font-mono text-xs">
-                                        {data.files.map(file => (
-                                            <li key={file.name} className="flex items-center justify-between gap-3 px-3 py-2">
-                                                <span className="min-w-0 truncate" title={file.name}>{file.name}</span>
-                                                <span className="shrink-0 text-muted tabular-nums">{formatBytes(file.size)}</span>
-                                            </li>
-                                        ))}
-                                    </ul>
-                                )
-                            : <p className="text-sm text-muted">It has no file.</p>}
-                    </div>
+                    )}
 
                     <div className="flex flex-wrap items-center justify-between gap-2 border-t border-line pt-4">
                         {canManage
@@ -90,7 +92,7 @@ export const BundleDetail = ({ bundle, canManage, onClose }: { bundle: { kind: B
                                         icon={<Trash2 />}
                                         disabled={remove.isPending}
                                         onClick={() => ask(
-                                            `Delete the bundle ${bundle.name}? ${data.source === 'habbo' ? 'The next sync downloads it again from Habbo.' : data.source === 'built' ? 'It is built again on the next change to what it is built from.' : 'It was uploaded, so it is gone until it is uploaded again.'}`,
+                                            `Delete the ${bundleNoun(bundle.kind)} ${bundle.name}? ${data.source === 'habbo' ? 'The next sync downloads it again from Habbo.' : data.source === 'built' ? 'It is built again on the next change to what it is built from.' : 'It was uploaded, so it is gone until it is uploaded again.'}`,
                                             () => remove.mutate(bundle, {
                                                 onSuccess: () => {
                                                     toast(`Deleted ${bundle.name}.`);
@@ -104,8 +106,8 @@ export const BundleDetail = ({ bundle, canManage, onClose }: { bundle: { kind: B
                                     </Button>
                                 )
                             : <span />}
-                        <Button icon={<Download />} disabled={downloading || data.files.length === 0} onClick={download}>
-                            {downloading ? 'Downloading' : 'Download .nitro'}
+                        <Button icon={<Download />} disabled={downloading || (isBundleKind(bundle.kind) ? data.files.length === 0 : !data.hash)} onClick={download}>
+                            {downloading ? 'Downloading' : isBundleKind(bundle.kind) ? 'Download .nitro' : 'Download'}
                         </Button>
                     </div>
                 </ModalBody>

@@ -2,7 +2,7 @@ import { ChevronRight } from 'lucide-react';
 import { useDeferredValue, useState } from 'react';
 import { useSearchParams } from 'react-router';
 
-import { type AssetBundle, type AssetSyncPending, BUNDLE_KINDS, type BundleKind, type BundleStatus, useBundles, useSyncPreview } from '#/api/bundles';
+import { type AssetBundle, type AssetSyncPending, type BundleKind, bundleNoun, type BundleStatus, isBundleKind, useBundles, useSyncPreview } from '#/api/bundles';
 import { ListToolbar } from '#/components/ListToolbar';
 import { SearchInput } from '#/components/SearchInput';
 import { Badge, EmptyState, ErrorNotice, Loading, Select } from '#/components/ui';
@@ -76,8 +76,9 @@ const BundleRow = ({ bundle, pending, showsFile, onOpen }: { bundle: AssetBundle
 };
 
 /**
- * Every bundle of one kind, found by name or id and narrowed to the failed or unused ones; each
- * says when Habbo has a newer revision of it. A bundle opens to its files.
+ * Every bundle of one kind (or, for a kind kept as plain files, every badge or picture), a page at
+ * a time: found by name or id on the server and narrowed to the failed or unused ones; each says
+ * when Habbo has a newer revision of it. A bundle opens to its files.
  */
 export const BundleList = ({ kind, canManage }: { kind: BundleKind; canManage: boolean }) => {
     const [ params ] = useSearchParams();
@@ -91,7 +92,7 @@ export const BundleList = ({ kind, canManage }: { kind: BundleKind; canManage: b
     const { data: preview } = useSyncPreview();
     const pending = new Map((preview?.kinds.find(x => x.kind === kind)?.items ?? []).map(x => [ x.name, x ]));
     const pageSize = data?.pageSize ?? 60;
-    const one = BUNDLE_KINDS.find(x => x.value === kind)!.one;
+    const noun = bundleNoun(kind);
     const showsFile = SHOWS_FILE.has(kind);
 
     return (
@@ -106,7 +107,7 @@ export const BundleList = ({ kind, canManage }: { kind: BundleKind; canManage: b
                         setText(value);
                         setPage(0);
                     }}
-                    placeholder={kind === 'furniture' ? 'Find by name' : 'Find by name or id'}
+                    placeholder={kind === 'badge' ? 'Find by code' : kind === 'furniture' ? 'Find by name' : 'Find by name or id'}
                     className="w-full sm:w-56"
                 />
                 <Select
@@ -126,14 +127,14 @@ export const BundleList = ({ kind, canManage }: { kind: BundleKind; canManage: b
             {!data && !error && <Loading />}
             {data && data.items.length === 0 && (
                 <EmptyState>
-                    {q ? `No ${one} bundle matches "${q}".` : filter === 'all' ? `There are no ${one} bundles yet. A sync from Habbo takes them, or upload your own.` : `No ${filter} ${one} bundles.`}
+                    {q ? `No ${noun} matches "${q}".` : filter === 'all' ? `There are no ${noun}s yet. A sync from Habbo takes them, or upload your own.` : `No ${filter} ${noun}s.`}
                 </EmptyState>
             )}
             {data && data.items.length > 0 && (
                 <>
                     <div className="hidden items-center gap-3 border-b border-line px-4 py-2 text-xs font-medium text-muted md:flex">
                         <span className="w-10 shrink-0" />
-                        <span className="flex-1">Bundle</span>
+                        <span className="flex-1">{isBundleKind(kind) ? 'Bundle' : 'File'}</span>
                         {showsFile && (
                             <>
                                 <span className="w-24 shrink-0 text-right">Revision</span>

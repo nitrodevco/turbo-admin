@@ -18,11 +18,13 @@ const TABS = [
     { value: 'effects', label: 'Effects' },
     { value: 'pets', label: 'Pets' },
     { value: 'hand-items', label: 'Hand items' },
+    { value: 'badges', label: 'Badges' },
 ].map(x => ({ ...x, to: `/gamedata/library/${x.value}` }));
 
 /**
  * The library: what the hotel's rooms and avatars are drawn from, each kind in a tab with its data
- * and its bundles together - furniture, clothing (and its colours), effects and pets. What Habbo has
+ * and its bundles together - furniture, clothing (and its colours), effects, pets, hand items and
+ * the badges' pictures. What Habbo has
  * waiting for a kind is a line at the top, reviewed and taken in on Habbo updates. One upload
  * takes any file and finds what it is.
  */
@@ -55,6 +57,7 @@ export const LibraryPage = () => {
                             {tab === 'effects' && <BundleKindTab key={found} kind="effect" status={status} canManage={canManageAssets} />}
                             {tab === 'pets' && <BundleKindTab key={found} kind="pet" status={status} canManage={canManageAssets} />}
                             {tab === 'hand-items' && <HandItemsPage />}
+                            {tab === 'badges' && <BundleKindTab key={found} kind="badge" status={status} canManage={canManageAssets} />}
                         </>
                     )}
                 </GamedataLoaded>

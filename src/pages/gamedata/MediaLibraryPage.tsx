@@ -26,7 +26,6 @@ const KIND_LABELS: Record<string, string> = {
     quest: 'Quest',
     'catalogue-picture': 'Catalog picture',
     'catalogue-icon': 'Catalog icon',
-    badge: 'Badge',
     'furni-icon': 'Furniture icon',
     'client-image': 'Client image',
     theme: 'Theme',
@@ -48,7 +47,6 @@ const VALUE_LABELS: [ keyof MediaImage['values'], string ][] = [
     [ 'catalogPicture', 'Catalog picture name' ],
     [ 'catalogIcon', 'Catalog icon number' ],
     [ 'clientImage', 'Client image name' ],
-    [ 'badge', 'Badge code' ],
     [ 'plugin', 'Path in the plugin' ],
     [ 'url', 'Address' ],
 ];
@@ -306,7 +304,8 @@ const useWindowDrag = (setOver: (over: boolean) => void, onFiles: (files: File[]
 /**
  * Gamedata > Media library: every image the hotel can show - the image library, the asset folder's
  * pictures, the client's own images, plugins' images and uploads - searched by name, path or tag,
- * filtered, and each opened to copy what a field stores for it and see where it is shown.
+ * filtered, and each opened to copy what a field stores for it and see where it is shown. Badges
+ * are not here: the Library has a tab of them.
  */
 export const MediaLibraryPage = () => {
     const [ params, setParams ] = useSearchParams();

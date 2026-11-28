@@ -1,25 +1,29 @@
+import { useQuery } from '@tanstack/react-query';
 import { Award, Box, FolderTree, Image, LayoutGrid, MessageCircle, Music, PawPrint, Shirt, Sofa, Sparkles } from 'lucide-react';
 import { useState } from 'react';
 
 import { furniIconUrl, useClientAssets } from '#/api/assets';
-import { type BundleKind, useEffectIcons } from '#/api/bundles';
+import { bundleFilePath, type BundleKind, useEffectIcons } from '#/api/bundles';
 import { cx } from '#/lib/cx';
+import { apiImageQuery } from '#/preview/images';
 
 const GLYPHS = { furniture: Box, figure: Shirt, effect: Sparkles, pet: PawPrint, template: MessageCircle, room: LayoutGrid, 'furni-icon': Sofa, 'catalog-icon': FolderTree, badge: Award, 'catalog-image': Image, sound: Music, 'library-image': Image } satisfies Record<BundleKind, typeof Box>;
 
 /**
  * What a bundle is at a glance: a furniture's icon from the client's host, by the bundle's name; an
- * effect's icon from the hotel's inventory library, by the first of its ids that has one; clothing,
- * a pet, or one with no icon to find, gets its kind's symbol.
+ * effect's icon from the hotel's inventory library, by the first of its ids that has one; a badge's
+ * own picture, as this server keeps it; clothing, a pet, or one with no icon to find, gets its
+ * kind's symbol.
  */
 export const BundleIcon = ({ kind, name, ids = [], className }: { kind: BundleKind; name: string; ids?: number[]; className?: string }) => {
     const assets = useClientAssets();
     const { data: effectIcons } = useEffectIcons(kind === 'effect' && ids.length > 0);
+    const picture = useQuery(apiImageQuery(kind === 'badge' ? bundleFilePath(kind, name) : null));
     const url = kind === 'furniture'
         ? furniIconUrl(assets, name)
         : kind === 'effect'
             ? ids.map(id => effectIcons?.get(id)).find(Boolean) ?? null
-            : null;
+            : picture.data?.src ?? null;
     const [ failed, setFailed ] = useState<string | null>(null);
     const Glyph = GLYPHS[kind];
 

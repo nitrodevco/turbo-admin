@@ -7,20 +7,19 @@ import { type PluginImage, uploadPluginImage } from './noCode';
 /**
  * What a field stores to show an image, by the shape it takes: a path under the client's image
  * library, a catalog picture's name, a catalog icon's number, one of the client's own images, a
- * badge's code, a path in a plugin's `wwwroot/`, or the full address (empty when it has none).
+ * path in a plugin's `wwwroot/`, or the full address (empty when it has none).
  */
 export interface MediaValues {
     relative: string | null;
     catalogPicture: string | null;
     catalogIcon: number | null;
     clientImage: string | null;
-    badge: string | null;
     plugin: string | null;
     url: string;
 }
 
 /** A value shape a field stores (`?shape=`). */
-export type MediaShape = 'relative' | 'catalogpicture' | 'catalogicon' | 'clientimage' | 'badge' | 'plugin' | 'url';
+export type MediaShape = 'relative' | 'catalogpicture' | 'catalogicon' | 'clientimage' | 'plugin' | 'url';
 
 /** Where an image is shown: the area, the thing there, its field and the panel page that edits it. */
 export interface MediaUse {
@@ -214,7 +213,7 @@ export const shapeOfValue = (value: string, accept: ImageAccept): { key: keyof M
                 ? text.startsWith(LIBRARY_PLACEHOLDER)
                 : shape === 'url'
                     ? ADDRESS.test(text)
-                    : shape === 'clientImage' || shape === 'badge'
+                    : shape === 'clientImage'
                         ? /^[\w-]+$/.test(text)
                         : shape === 'catalogPicture'
                             ? !text.includes('/') && !ADDRESS.test(text)
@@ -289,7 +288,7 @@ const pluginImageOf = (plugin: string, file: File, image: PluginImage): MediaIma
         modifiedUtc: image.modified,
         tags: [],
         usedCount: 0,
-        values: { relative: null, catalogPicture: null, catalogIcon: null, clientImage: null, badge: null, plugin: image.path, url: image.url ?? '' },
+        values: { relative: null, catalogPicture: null, catalogIcon: null, clientImage: null, plugin: image.path, url: image.url ?? '' },
         usedOn: null,
     };
 };

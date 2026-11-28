@@ -35,6 +35,18 @@ export const BUNDLE_KINDS: { value: BundleKind; label: string; one: string }[] =
     { value: 'library-image', label: 'Image library', one: 'image library picture' },
 ];
 
+const NITRO_KINDS = new Set<BundleKind>([ 'furniture', 'figure', 'effect', 'pet', 'template', 'room' ]);
+
+/** Whether a file of the kind is a `.nitro` bundle; the rest are files as Habbo serves them (a badge's GIF). */
+export const isBundleKind = (kind: BundleKind) => NITRO_KINDS.has(kind);
+
+/** What one file of a kind is called: "effect bundle", "badge". */
+export const bundleNoun = (kind: BundleKind) => {
+    const one = BUNDLE_KINDS.find(x => x.value === kind)!.one;
+
+    return isBundleKind(kind) ? `${one} bundle` : one;
+};
+
 export const PROTOCOLS: { value: TargetProtocol; label: string }[] = [
     { value: 'folder', label: 'Folder' },
     { value: 'ftp', label: 'FTP' },
@@ -417,6 +429,9 @@ export const useEffectIcons = (enabled = true) => useQuery({
 
 const bundlePath = (kind: BundleKind, name: string) => `/assets/bundles/${kind}/${encodeURIComponent(name)}`;
 
+/** The admin API path a bundle's file is read from, before any publish. */
+export const bundleFilePath = (kind: BundleKind, name: string) => `${bundlePath(kind, name)}/file`;
+
 export const useBundle = (bundle: { kind: BundleKind; name: string } | null) => useQuery({
     queryKey: [ 'assets', 'bundle', bundle?.kind, bundle?.name ],
     queryFn: () => api<AssetBundleDetail>(bundlePath(bundle!.kind, bundle!.name)),
@@ -605,12 +620,12 @@ export const useRelist = () => {
  * carry, so it is fetched and handed to the browser as a download.
  */
 export const downloadBundle = async (kind: BundleKind, name: string) => {
-    const response = await send(`${bundlePath(kind, name)}/file`, {});
+    const response = await send(bundleFilePath(kind, name), {});
     const url = URL.createObjectURL(await response.blob());
     const link = document.createElement('a');
 
     link.href = url;
-    link.download = `${name}.nitro`;
+    link.download = isBundleKind(kind) ? `${name}.nitro` : name;
     document.body.appendChild(link);
     link.click();
     link.remove();

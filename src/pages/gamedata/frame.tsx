@@ -2,13 +2,14 @@ import { ArrowRight, CloudDownload } from 'lucide-react';
 import type { ReactNode } from 'react';
 import { Link } from 'react-router';
 
-import { type AssetsStatus, BUNDLE_KINDS, type BundleKind, useAssetJob, useSyncPreview } from '#/api/bundles';
+import { type AssetsStatus, type BundleKind, bundleNoun, useAssetJob, useSyncPreview } from '#/api/bundles';
 import { type GamedataStatus, useFigureImportPreview, useImportPreview, useProductImportPreview, useTextImportPreview } from '#/api/gamedata';
 import { ErrorNotice, Loading } from '#/components/ui';
 import { plural } from '#/lib/plural';
 import { JobPanel } from '#/pages/assets/JobPanel';
 
 import type { useGamedata } from './state';
+import { LIBRARY_CATEGORIES, waitingLink } from './updates';
 
 /** A page's body once the gamedata and the assets are both read: until then, loading or why not. */
 export const Loaded = ({ state, children }: { state: ReturnType<typeof useGamedata>; children: (status: GamedataStatus, assets: AssetsStatus) => ReactNode }) => {
@@ -64,12 +65,12 @@ export const WaitingFromHabbo = ({ status, data, bundles }: { status: GamedataSt
     if (changes === 0 && toDownload === 0)
         return null;
 
-    const one = BUNDLE_KINDS.find(x => x.value === bundles)?.one;
+    const noun = bundles && bundleNoun(bundles);
     const parts = [
         changes > 0 ? plural(changes, `${DATA_WORDS[data!]} change`, `${DATA_WORDS[data!]} changes`) : null,
-        toDownload > 0 ? plural(toDownload, `${one} bundle`, `${one} bundles`) : null,
+        toDownload > 0 ? plural(toDownload, noun!, `${noun}s`) : null,
     ].filter(Boolean);
-    const pick = changes > 0 ? data : `${bundles}-bundles`;
+    const pick = changes > 0 ? data! : LIBRARY_CATEGORIES.find(x => x.kind === bundles)?.id ?? `${bundles}-bundles`;
 
     return (
         <div className="flex flex-wrap items-center gap-x-3 gap-y-2 rounded-xl border border-accent/40 bg-accent-soft/50 px-4 py-2.5">
@@ -77,7 +78,7 @@ export const WaitingFromHabbo = ({ status, data, bundles }: { status: GamedataSt
             <p className="min-w-0 flex-1 text-sm">
                 Habbo has <span className="font-semibold">{parts.join(' and ')}</span> the hotel hasn't taken in.
             </p>
-            <Link to={`/gamedata/updates/waiting?pick=${pick}`} className="inline-flex min-h-9 items-center gap-1 text-sm font-medium text-accent hover:underline [&>svg]:size-4">
+            <Link to={waitingLink(pick)} className="inline-flex min-h-9 items-center gap-1 text-sm font-medium text-accent hover:underline [&>svg]:size-4">
                 Review <ArrowRight />
             </Link>
         </div>
