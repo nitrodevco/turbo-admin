@@ -2,16 +2,15 @@ import { CheckCircle2, ChevronDown, RefreshCw } from 'lucide-react';
 import { useState } from 'react';
 import { useSearchParams } from 'react-router';
 
-import { type AssetsStatus, type BundleKind, useAssetJob, useSyncPreview } from '#/api/bundles';
+import { useSyncPreview } from '#/api/bundles';
 import { type GamedataStatus, useCheckHabbo, useFigureImportPreview, useHabboVariableUpdate, useImportPreview, useProductImportPreview, useTextImportPreview } from '#/api/gamedata';
 import { toast, toastError } from '#/components/toast';
-import { Button, Label, PageBody, PageHeader, Panel } from '#/components/ui';
+import { Button, EmptyState, Label, Loading, PageBody, PageHeader, Panel } from '#/components/ui';
 import { cx } from '#/lib/cx';
 import { plural } from '#/lib/plural';
 import { usePathTab } from '#/lib/tabs';
 import { fromNow } from '#/lib/time';
 import { BundleUpdate } from '#/pages/assets/BundleUpdate';
-import { JobPanel } from '#/pages/assets/JobPanel';
 
 import { HabboFigures } from './FiguresTab';
 import { Loaded } from './frame';
@@ -22,7 +21,7 @@ import { HabboProducts } from './ProductsTab';
 import { SourcesTab } from './SourcesTab';
 import { useGamedata } from './state';
 import { HabboTexts } from './TextsTab';
-import { type Category, LIBRARY_CATEGORIES } from './updates';
+import { type Category, CATEGORY_GROUPS, LIBRARY_CATEGORIES } from './updates';
 
 /** The categories, worked out from the same previews the library and texts pages show; before the gamedata is read, none. */
 const useCategories = (status: GamedataStatus | undefined, canManage: boolean): Category[] => {
@@ -41,13 +40,13 @@ const useCategories = (status: GamedataStatus | undefined, canManage: boolean): 
     const dataCount = (checked: boolean, data: { added: number; updated: number; kept: number } | undefined, extra = 0) =>
         checked && data ? data.added + data.updated + data.kept + extra : null;
 
-    const bundleCategory = (kind: BundleKind, id: string, label: string): Category => {
+    const bundleCategory = ({ kind, id, label, group }: typeof LIBRARY_CATEGORIES[number]): Category => {
         const entry = bundles.data?.kinds.find(x => x.kind === kind);
 
         return {
             id,
             label,
-            group: 'Bundles',
+            group,
             count: entry?.listed ? entry.new + entry.updated : null,
             note: bundles.error ? 'Habbo couldn\'t be read.' : entry && !entry.listed ? 'Habbo\'s list couldn\'t be read.' : undefined,
             content: <BundleUpdate kind={kind} canManage={canManage} defaultOpen />,
@@ -65,7 +64,7 @@ const useCategories = (status: GamedataStatus | undefined, canManage: boolean): 
         },
         {
             id: 'figures',
-            label: 'Clothing data',
+            label: 'Figure data',
             group: 'Gamedata',
             count: dataCount(status.latestFigures !== null, figures.data),
             note: status.latestFigures ? undefined : unchecked,
@@ -95,7 +94,7 @@ const useCategories = (status: GamedataStatus | undefined, canManage: boolean): 
             note: status.latestVariables ? undefined : unchecked,
             content: <HabboVariables status={status} defaultOpen />,
         },
-        ...LIBRARY_CATEGORIES.map(x => bundleCategory(x.kind, x.id, x.label)),
+        ...LIBRARY_CATEGORIES.map(bundleCategory),
     ];
 };
 
@@ -119,15 +118,11 @@ const NavButton = ({ category, active, onClick }: { category: Category; active: 
 
 /**
  * What Habbo has that the hotel hasn't taken in, as nitro-studio's updater lays it out: every kind
- * of data and bundle with what waits, those up to date folded away; the one picked (or the one a
- * library page's link asked for), to review and take in; and the sync or publish running above.
+ * of data and bundle with what waits, those up to date folded away, and the one picked (or the one a
+ * library page's link asked for), to review and take in. With nothing waiting, only that is said.
  */
-const WaitingTab = ({ categories, assets, canManage }: { categories: Category[]; assets: AssetsStatus; canManage: boolean }) => {
+const WaitingTab = ({ categories }: { categories: Category[] }) => {
     const [ params ] = useSearchParams();
-    const { data: job } = useAssetJob();
-    // A sync or a build, however it ended; a publish only while it runs (its own page keeps the last).
-    const lastJob = job ?? assets.job;
-    const shownJob = lastJob && (lastJob.status === 'running' || lastJob.kind !== 'publish') ? lastJob : null;
     const waiting = categories.filter(x => x.count);
     const total = waiting.reduce((sum, x) => sum + x.count!, 0);
     const [ picked, setPicked ] = useState<string | null>(() => params.get('pick'));
@@ -136,17 +131,22 @@ const WaitingTab = ({ categories, assets, canManage }: { categories: Category[];
     const listed = categories.filter(x => showAll || x.count !== 0 || x.id === selected.id);
     const folded = categories.length - listed.length;
 
+    // Nothing waits and nothing was asked for: say so, once every count is in (a count with a note never comes).
+    if (waiting.length === 0 && picked === null && categories.every(x => x.count === 0 || !x.note)) {
+        return categories.every(x => x.count === 0)
+            ? <EmptyState framed icon={<CheckCircle2 className="text-good" />}>No updates. The hotel has everything Habbo serves.</EmptyState>
+            : <Loading />;
+    }
+
     return (
         <>
-            {shownJob && <JobPanel job={shownJob} canManage={canManage} compact={shownJob.status !== 'running'} />}
-
             <Panel
-                title={total > 0 ? `${plural(total, 'update')} to take in` : 'Nothing to take in'}
-                description={total > 0 ? 'Each is taken in on its own, and can be rolled back from the history.' : 'The hotel has everything Habbo serves that it was checked for.'}
+                title="Pending updates"
+                description={total > 0 ? `${plural(total, 'update')} to take in. Each is taken in on its own, and can be rolled back from the history.` : 'Nothing waits to be taken in.'}
             >
                 <div className="grid items-start lg:grid-cols-[14rem_minmax(0,1fr)]">
                     <nav aria-label="What to update" className="flex flex-col gap-3 border-b border-line p-2 lg:border-r lg:border-b-0">
-                        {([ 'Gamedata', 'Bundles' ] as const).map(group => listed.some(x => x.group === group) && (
+                        {CATEGORY_GROUPS.map(group => listed.some(x => x.group === group) && (
                             <div key={group} className="flex flex-col gap-0.5">
                                 <Label className="px-3 pt-1 pb-1">{group}</Label>
                                 {listed.filter(x => x.group === group).map(category => (
@@ -235,7 +235,7 @@ export const UpdatesPage = () => {
                 <Loaded state={state}>
                     {(status, assets) => (
                         <>
-                            {tab === 'waiting' && <WaitingTab categories={categories} assets={assets} canManage={state.canManage} />}
+                            {tab === 'waiting' && <WaitingTab categories={categories} />}
                             {tab === 'sources' && <SourcesTab status={status} assets={assets} canManage={state.canManage} categories={categories} />}
                             {tab === 'history' && <HistoryPanel scope="habbo" canManage={status.canManage} />}
                         </>
