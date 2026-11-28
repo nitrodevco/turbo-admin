@@ -254,6 +254,22 @@ export const useHandItems = () => useQuery({
     staleTime: 5 * 60_000,
 });
 
+/** A page of the catalogue: the hand items the words found, and how many there are on every page. */
+export interface HandItemPage {
+    items: HandItem[];
+    total: number;
+    pageSize: number;
+    revision: string | null;
+    message: string | null;
+}
+
+/** The Library's list of hand items, found by id, name or figure library. */
+export const useHandItemSearch = (text: string, page: number) => useQuery({
+    queryKey: [ 'gamedata', 'hand-items', 'list', text, page ],
+    queryFn: () => api<HandItemPage>(`/gamedata/hand-items/list?${new URLSearchParams({ q: text, page: String(page) })}`),
+    placeholderData: keepPreviousData,
+});
+
 export const handItemPreview = (id: number) => apiBlob(`/gamedata/hand-items/${id}/preview`);
 
 /** A furniture definition in the list. */

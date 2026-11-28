@@ -1,8 +1,11 @@
-import { useDeferredValue, useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
-import { type HandItem, handItemPreview, useHandItems } from '#/api/gamedata';
+import { type HandItem, handItemPreview, useHandItemSearch } from '#/api/gamedata';
+import { ListToolbar } from '#/components/ListToolbar';
 import { SearchInput } from '#/components/SearchInput';
-import { Button, EmptyState, ErrorNotice, Loading } from '#/components/ui';
+import { EmptyState, ErrorNotice, Loading, Panel } from '#/components/ui';
+import { cx } from '#/lib/cx';
+import { useDebounced } from '#/lib/debounce';
 
 export const HandItemPreview = ({ item, compact = false }: { item: HandItem; compact?: boolean }) => {
     const host = useRef<HTMLSpanElement>(null);
@@ -58,26 +61,43 @@ export const HandItemPreview = ({ item, compact = false }: { item: HandItem; com
     );
 };
 
+/**
+ * The hand items a vending furni can give, as the hotel's own client data has them: each with its
+ * name from the texts and its art from the figure bundles. Found by id, name or figure library.
+ */
 export const HandItemsPage = () => {
-    const { data, error, isLoading, isFetching, refetch } = useHandItems();
-    const [ search, setSearch ] = useState('');
-    const query = useDeferredValue(search.trim().toLocaleLowerCase());
-    const items = (data?.items ?? []).filter(item => !query || `${item.id} ${item.name ?? ''} ${item.library ?? ''}`.toLocaleLowerCase().includes(query));
+    const [ text, setText ] = useState('');
+    const [ page, setPage ] = useState(0);
+    const { data: found, error, isFetching } = useHandItemSearch(useDebounced(text), page);
+    const size = found?.pageSize ?? 1;
 
     return (
         <>
-            <p className="text-sm text-muted">Hand items available to vending furniture, with locally stored names and artwork.</p>
-            <section className="flex flex-col gap-4 lg:gap-6">
-                <div className="flex items-center gap-3"><SearchInput value={search} onValueChange={setSearch} placeholder="Name or ID" aria-label="Search hand items" className="w-full sm:w-72" /><Button variant="secondary" onClick={() => void refetch()} disabled={isFetching}>Refresh</Button></div>
-                {data?.message && <p className="rounded-lg bg-canvas px-3 py-2.5 text-sm text-muted">{data.message} Download and build client assets if needed, then sync assets and import texts for names.</p>}
-                {error && <ErrorNotice error={error} />}
-                {isLoading && <Loading />}
-                {data && items.length === 0 && <EmptyState>{query ? 'No hand items match that search.' : 'No hand items are available yet. Download and build client assets, sync assets and import texts, then try again.'}</EmptyState>}
-                {data && items.length > 0 && (
-                    <ul className="card divide-y divide-line overflow-hidden">
-                        {items.map(item => (
+            {found?.message && <p className="rounded-lg bg-canvas px-3 py-2.5 text-sm text-muted">{found.message} Download and build client assets if needed, then sync assets and import texts for names.</p>}
+            <Panel className="overflow-clip">
+                <ListToolbar
+                    watch={[ text, page ]}
+                    page={{ offset: page * size, limit: size, total: found?.total, onChange: offset => setPage(Math.floor(offset / size)) }}
+                >
+                    <SearchInput
+                        value={text}
+                        onValueChange={(value) => {
+                            setText(value);
+                            setPage(0);
+                        }}
+                        placeholder="Name or ID"
+                        className="min-w-48 flex-1 sm:max-w-96"
+                        aria-label="Find hand items"
+                    />
+                </ListToolbar>
+                {error && <div className="p-4"><ErrorNotice error={error} /></div>}
+                {!found && isFetching && <Loading />}
+                {found && found.items.length === 0 && <EmptyState>{text.trim() ? 'No hand item has those words.' : 'No hand items are available yet. Download and build client assets, sync assets and import texts, then try again.'}</EmptyState>}
+                {found && found.items.length > 0 && (
+                    <ul className={cx('divide-y divide-line transition-opacity', isFetching && 'opacity-60')}>
+                        {found.items.map(item => (
                             <li key={item.id} className="flex items-center gap-3 px-3 py-3 sm:px-4">
-                                <HandItemPreview key={`${data.revision}-${item.id}`} item={item} />
+                                <HandItemPreview key={`${found.revision}-${item.id}`} item={item} />
                                 <span className="flex min-w-0 flex-1 flex-col gap-1">
                                     <span className="truncate font-medium">{item.name || `Hand item ${item.id}`}</span>
                                     <span className="font-mono text-xs text-muted">Hand item {item.id}</span>
@@ -87,7 +107,7 @@ export const HandItemsPage = () => {
                         ))}
                     </ul>
                 )}
-            </section>
+            </Panel>
         </>
     );
 };
