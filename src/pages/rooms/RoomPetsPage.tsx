@@ -5,7 +5,8 @@ import { useParams } from 'react-router';
 import { useMe, useRoom } from '#/api/queries';
 import { roomCalls, type RoomPetItem, type RoomPetRequest, useRoomAction, useRoomPets } from '#/api/rooms';
 import { ask } from '#/components/confirm';
-import { Avatar, Badge, Button, EmptyState, ErrorNotice, Input, Labeled, ListPanel, Loading, PageBody, Panel, Switch, TextLink } from '#/components/ui';
+import { PetHead } from '#/components/PetHead';
+import { Badge, Button, EmptyState, ErrorNotice, Input, Labeled, ListPanel, Loading, PageBody, Panel, Switch, TextLink } from '#/components/ui';
 import { cx, rowFill } from '#/lib/cx';
 
 import { ActionOutcome, RoomHeader } from './RoomHeader';
@@ -110,7 +111,7 @@ export const RoomPetsPage = () => {
                                 {pets.map(pet => (
                                     <li key={pet.id} className="border-t border-line first:border-t-0">
                                         <button type="button" onClick={() => setOpen(pet.id)} className={cx('flex min-h-14 w-full items-center gap-3 px-4 py-2 text-left', rowFill(selected.id === pet.id))}>
-                                            <Avatar id={pet.id} name={pet.name} />
+                                            <PetHead typeId={pet.typeId} paletteId={pet.paletteId} color={pet.color} fallback={<span className="text-xs font-semibold text-muted">{pet.name.slice(0, 2).toUpperCase()}</span>} />
                                             <span className="min-w-0 flex-1">
                                                 <span className="block truncate text-sm font-medium">{pet.name}</span>
                                                 <span className="block truncate text-xs text-muted">{pet.ownerName} · level {pet.level}</span>

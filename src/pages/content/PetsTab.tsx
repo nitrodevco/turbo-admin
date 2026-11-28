@@ -3,6 +3,7 @@ import { useState } from 'react';
 
 import { type PetBreed, type PetLine, useDeletePetLine, usePets, useSavePet } from '#/api/content';
 import { ask } from '#/components/confirm';
+import { PetHead } from '#/components/PetHead';
 import { AddRow, Badge, Button, CHECK_CLASS, EmptyState, ErrorNotice, GroupHeading, IconButton, Input, ListPanel, Loading, Select } from '#/components/ui';
 
 /** A pet type by its number; the hotel's texts name them in the client. */
@@ -29,6 +30,7 @@ const BreedRow = ({ breed, canManage }: { breed: PetBreed; canManage: boolean })
 
     return (
         <li className="flex flex-wrap items-center gap-2 px-4 py-1.5 text-sm">
+            <PetHead typeId={breed.typeId} paletteId={breed.paletteId} />
             <span className="w-20 font-mono text-xs">palette {breed.paletteId}</span>
             {number('breedId', 'Breed')}
             {number('rarityLevel', 'Rarity')}
